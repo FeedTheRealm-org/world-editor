@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 public class MainMenu : MonoBehaviour {
 
     public VisualElement ui;
     public Button _startButton;
     public Button _browseButton;
     public Button _quitButton;
+
+    [SerializeField] Player player;
 
 
     private void Awake() {
@@ -26,6 +29,13 @@ public class MainMenu : MonoBehaviour {
     private void OnStartClicked() {
         Debug.Log("Start Button Clicked");
         gameObject.SetActive(false);
+
+        // Re-lock the cursor so mouse look works again
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
+
+        player.enabled = true;
+
     }
 
     private void OnBrowseClicked() {
