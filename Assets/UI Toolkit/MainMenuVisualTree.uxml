@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/MainMenuSytle.uss?fileID=7433441132597879392&amp;guid=093d6881d67229834b3ea47fabae5feb&amp;type=3#MainMenuSytle" />
+    <ui:VisualElement name="Panel" class="panel" style="flex-grow: 1; flex-direction: column; align-content: center; align-items: center; -unity-text-align: middle-left; align-self: auto; justify-content: center;">
+        <ui:VisualElement name="Container" class="menu" style="flex-grow: 1; width: 1004px; height: 10%; flex-direction: column; transform-origin: center; min-height: 0%; max-height: 50%;">
+            <ui:Label text="Welcome to Feed The Realm!" name="Title" class="header" style="align-content: center; align-self: center; white-space: normal; -unity-font-style: bold; color: rgb(0, 0, 0); text-shadow: 0 0 10px rgb(255, 255, 255); bottom: auto; top: 0; align-items: stretch; padding-bottom: 25px; -unity-font-definition: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=6d8a522c08260fef09cf0cbe45633478&amp;type=3#NotInter-Regular&quot;);" />
+            <ui:Button text="Start Building!" name="Start" class="button unity-button" />
+            <ui:Button text="Browse Projects" name="Browse" class="button unity-button" />
+            <ui:Button text="Quit" name="Quit" class="button unity-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
