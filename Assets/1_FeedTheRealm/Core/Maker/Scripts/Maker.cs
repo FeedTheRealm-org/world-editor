@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(FPController))]
-public class Player : MonoBehaviour {
+public class Maker : MonoBehaviour {
     [Header("Components")]
     [SerializeField] FPController fpController;
 

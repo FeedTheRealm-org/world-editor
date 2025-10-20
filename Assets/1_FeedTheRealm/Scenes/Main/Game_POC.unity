@@ -299,7 +299,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3657537774566351166, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: Maker
       objectReference: {fileID: 0}
     - target: {fileID: 3657537774566351166, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive

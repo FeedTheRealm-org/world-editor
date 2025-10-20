@@ -8,10 +8,11 @@ public class MainMenu : MonoBehaviour {
     public Button _browseButton;
     public Button _quitButton;
 
-    [SerializeField] Player player;
+    [SerializeField] Maker player;
 
 
     private void Awake() {
+        player.gameObject.SetActive(false);
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
@@ -34,7 +35,7 @@ public class MainMenu : MonoBehaviour {
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
 
-        player.enabled = true;
+        player.gameObject.SetActive(true);
 
     }
 
