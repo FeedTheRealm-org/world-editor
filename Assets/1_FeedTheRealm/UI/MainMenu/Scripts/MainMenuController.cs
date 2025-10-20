@@ -32,8 +32,8 @@ public class MainMenu : MonoBehaviour {
         gameObject.SetActive(false);
 
         // Re-lock the cursor so mouse look works again
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        // UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        // UnityEngine.Cursor.visible = true;
 
         player.gameObject.SetActive(true);
 
