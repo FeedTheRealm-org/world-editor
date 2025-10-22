@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,6 +21,7 @@ public class Maker : MonoBehaviour
     {
         if (Mouse.current.middleButton.isPressed)
         {
+
             lookInput = value.Get<Vector2>();
         }
         else
@@ -41,6 +43,7 @@ public class Maker : MonoBehaviour
 
         // Apply combined movement
         fpController.MoveInput = new Vector3(moveInput.x, moveInput.y, verticalInput);
+        
     }
 
     void OnValidate()
