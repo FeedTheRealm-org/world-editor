@@ -10,17 +10,19 @@ public class DragAndDrop : MonoBehaviour {
     private Vector3 offset;
 
     [Header("Zoom Settings")]
-    [SerializeField] private float scrollSpeed = 5f;       // How fast zoom changes with scroll
-    [SerializeField] private float zoomSmoothness = 10f;   // How smooth the zoom transition feels
-    [SerializeField] private float minDistance = 1f;       // Minimum zoom distance
-    [SerializeField] private float maxDistance = 200f;     // Maximum zoom distance
+    [SerializeField] private float scrollSpeed = 5f;
+    [SerializeField] private float zoomSmoothness = 10f;
+    [SerializeField] private float minDistance = 1f;
+    [SerializeField] private float maxDistance = 200f;
 
     [Header("Drag Settings")]
-    [SerializeField] private bool smoothDrag = false;      // Optionally smooth dragging movement
-    [SerializeField] private float dragSmoothness = 15f;   // Only used if smoothDrag = true
+    [SerializeField] private float dragSmoothness = 15f;
+
+    private Plane groundPlane;
 
     void Start() {
         mainCamera = Camera.main;
+        groundPlane = new Plane(Vector3.up, new Vector3(0, 0, 0));
     }
 
     void Update() {
@@ -44,36 +46,28 @@ public class DragAndDrop : MonoBehaviour {
                 distanceFromCamera = Vector3.Distance(mainCamera.transform.position, hit.point);
                 targetDistance = distanceFromCamera;
                 offset = transform.position - hit.point;
-                Debug.Log($"Started dragging {gameObject.name}");
             }
         }
     }
 
     private void HandleScroll() {
-        float scrollDelta = -Mouse.current.scroll.ReadValue().y;
-
+        float scrollDelta = Mouse.current.scroll.ReadValue().y;
         if (Mathf.Abs(scrollDelta) > 0.01f) {
             targetDistance -= scrollDelta * scrollSpeed * Time.deltaTime;
             targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);
         }
-
-        // Smoothly interpolate toward the target distance
         distanceFromCamera = Mathf.Lerp(distanceFromCamera, targetDistance, Time.deltaTime * zoomSmoothness);
     }
 
     private void UpdateDrag() {
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Vector3 targetPoint = ray.GetPoint(distanceFromCamera);
+        Vector3 targetPoint;
+        targetPoint = ray.GetPoint(distanceFromCamera);
         Vector3 desiredPosition = targetPoint + offset;
-
-        if (smoothDrag)
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * dragSmoothness);
-        else
-            transform.position = desiredPosition;
+        transform.position = desiredPosition;
     }
 
     private void StopDragging() {
         isDragging = false;
-        Debug.Log($"Stopped dragging {gameObject.name}");
     }
 }
