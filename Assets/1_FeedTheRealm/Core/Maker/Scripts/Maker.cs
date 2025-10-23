@@ -45,7 +45,7 @@ public class Maker : MonoBehaviour
         fpController.MoveInput = new Vector3(moveInput.x, moveInput.y, verticalInput);
         
     }
-
+    // TODO: check to remove this since we already set as required
     void OnValidate()
     {
         if (fpController == null)
