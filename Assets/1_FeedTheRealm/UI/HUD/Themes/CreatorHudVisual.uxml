@@ -1,10 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/HUD/Themes/creator_HUD.uss?fileID=7433441132597879392&amp;guid=d7a943589b1d59189a0d8ceceab959e8&amp;type=3#creator_HUD" />
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/HUD/Themes/CreatorHudStyleSheet.uss?fileID=7433441132597879392&amp;guid=d7a943589b1d59189a0d8ceceab959e8&amp;type=3#CreatorHudStyleSheet" />
     <ui:VisualElement style="flex-grow: 1; justify-content: flex-end;" />
-    <ui:ScrollView name="ItemScrollView"
-                   mode="Horizontal"
-                   class="scroll_view"
-                   vertical-scroller-visibility="Hidden"
-                   horizontal-scroller-visibility="Auto">
-    </ui:ScrollView>
+    <ui:ScrollView name="ItemScrollView" mode="Horizontal" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Auto" class="scroll_view" style="background-color: rgba(0, 0, 255, 0.1); padding-left: 5%; padding-right: 5%; padding-top: 1%; padding-bottom: 1%; -unity-background-image-tint-color: rgba(255, 255, 255, 0); height: 15%;" />
 </ui:UXML>
