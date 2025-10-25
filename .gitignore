@@ -101,3 +101,8 @@ InitTestScene*.unity*
 
 # Editors
 .vscode/
+
+# Asset libraries - ignore contents but keep meta files
+/Assets/RPGPP_LT/*
+!/Assets/RPGPP_LT/*.meta
+!/Assets/RPGPP_LT/**/*.meta
