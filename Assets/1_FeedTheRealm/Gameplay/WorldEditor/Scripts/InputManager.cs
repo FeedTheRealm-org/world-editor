@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class InputManager : MonoBehaviour
@@ -12,14 +13,27 @@ public class InputManager : MonoBehaviour
     private LayerMask placementLayerMask;
 
 
-    public Vector3 GetSelectedMapPosition()
-    {
+    public event Action OnClicked, OnExit;
+
+    void Update() {
+        if (Mouse.current.leftButton.wasPressedThisFrame) {
+            Debug.Log("Mouse clicked!");
+            OnClicked?.Invoke();
+        }
+        if (Keyboard.current.escapeKey.wasPressedThisFrame) {
+            Debug.Log("Exit placement mode!");
+            OnExit?.Invoke();
+        }
+    }
+
+
+
+    public Vector3 GetSelectedMapPosition() {
 
         Vector3 mousePosition = Mouse.current.position.ReadValue();
         mousePosition.z = mainCamera.nearClipPlane;
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, placementLayerMask))
-        {
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, placementLayerMask)) {
             lastMousePosition = hitInfo.point;
         }
         return lastMousePosition;
