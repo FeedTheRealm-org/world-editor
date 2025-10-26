@@ -11,6 +11,8 @@ public class HUDController : MonoBehaviour {
         // Get the UIDocument attached to this GameObject
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
+        var deleteButton = root.Q<Button>("DeleteButton");
+        deleteButton.clicked += () => placementSystem.StartRemoving();
 
         // Find the ScrollView from the UXML by its name
         itemScrollView = root.Q<ScrollView>("ItemScrollView");
@@ -34,6 +36,6 @@ public class HUDController : MonoBehaviour {
 
     private void OnItemSelected(ObjectData obj) {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
-        placementSystem.StartPlacement(obj.Id);
+        placementSystem.StartPlacement(obj);
     }
 }

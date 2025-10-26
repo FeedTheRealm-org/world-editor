@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3b6a27f2941ab673a72ff5033fb22f3, type: 3}
-  m_Name: AssetDatabase
+  m_Name: WorldAssetDatabase
   m_EditorClassIdentifier: Assembly-CSharp::AssetDatabase
   objectData:
   - name: Table
@@ -25,3 +25,7 @@ MonoBehaviour:
     id: 3
     size: {x: 1, y: 1}
     prefab: {fileID: 1075210506956534, guid: c20b40242fb425a48840e03f7f3a50f4, type: 3}
+  - name: Tree
+    id: 12
+    size: {x: 1, y: 1}
+    prefab: {fileID: 1369031296425274, guid: 22a3fd8d3e59a1149bdcd775c0e87241, type: 3}

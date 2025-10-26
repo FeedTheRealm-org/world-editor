@@ -20,6 +20,8 @@ public class ObjectData {
     private Vector2Int size = Vector2Int.one;
     [SerializeField]
     private GameObject prefab;
+    [SerializeField]
+    private int uniqueID;
 
     // Public accessors
     public string Name => name;
@@ -27,4 +29,9 @@ public class ObjectData {
     public Vector2Int Size => size;
     public GameObject Prefab => prefab;
 
+    // Unique ID with setter functionality
+    public int UniqueID {
+        get => uniqueID;
+        set => uniqueID = value;
+    }
 }
