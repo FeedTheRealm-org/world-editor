@@ -17,16 +17,12 @@ public class InputManager : MonoBehaviour
 
     void Update() {
         if (Mouse.current.leftButton.wasPressedThisFrame) {
-            Debug.Log("Mouse clicked!");
             OnClicked?.Invoke();
         }
         if (Keyboard.current.escapeKey.wasPressedThisFrame) {
-            Debug.Log("Exit placement mode!");
             OnExit?.Invoke();
         }
     }
-
-
 
     public Vector3 GetSelectedMapPosition() {
 

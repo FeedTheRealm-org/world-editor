@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
-using UnityEngine.EventSystems;
+
 
 public class PlacementSystem : MonoBehaviour {
     #region Inspector Fields
@@ -14,6 +11,9 @@ public class PlacementSystem : MonoBehaviour {
 
     [SerializeField]
     private Grid grid;
+
+    [SerializeField]
+    private Logging.Logger logger;
 
     private ObjectData selectedObjectData = null;
 
@@ -27,7 +27,7 @@ public class PlacementSystem : MonoBehaviour {
 
     #region Methods
     public void StartPlacement(ObjectData objData) {
-        Debug.Log("Started placement of object ID: " + objData.Id);
+        logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false; // make sure we’re not in remove mode
         gridVisualization.SetActive(true);
@@ -39,26 +39,20 @@ public class PlacementSystem : MonoBehaviour {
     }
 
     private void RemoveObjectAt(Vector3Int gridPosition) {
-        Debug.Log($"Trying to remove object at {gridPosition}");
         GameObject removedObject = placementManager.RemovePlacedObject(gridPosition);
-
         if (removedObject == null) {
-            Debug.LogWarning($"No object found at {gridPosition} to remove.");
             return;
         }
-
-        Debug.Log($"Destroyed placed GameObject for: {removedObject.name}");
+        logger.Log($"Destroyed placed GameObject for: {removedObject.name}", this, Logging.LogType.Info);
         DestroyImmediate(removedObject, true);
     }
 
 
     public void StartRemoving() {
-        Debug.Log("Started removing mode.");
         isRemoving = true;
         selectedObjectData = null;
         gridVisualization.SetActive(true);
         cellIndicator.SetActive(true);
-
         inputManager.OnClicked += HandleRemoveClick;
         inputManager.OnExit += StopRemoving;
     }
@@ -70,7 +64,6 @@ public class PlacementSystem : MonoBehaviour {
     }
 
     private void StopRemoving() {
-        Debug.Log("Stopped removing mode.");
         isRemoving = false;
         gridVisualization.SetActive(false);
         cellIndicator.SetActive(false);
@@ -80,28 +73,23 @@ public class PlacementSystem : MonoBehaviour {
     }
 
     private void PlaceObject() {
-        Debug.Log("Placing object...");
         if (selectedObjectData == null) {
             return;
         }
-
         (bool canBePlaced, GameObject placeableObject) = placementManager.AddPlacedObject(
             grid.WorldToCell(inputManager.GetSelectedMapPosition()),
             selectedObjectData
         );
 
         if (!canBePlaced) {
-            Debug.LogWarning("Cannot place object here, cell is occupied.");
             return;
         }
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
         Vector3Int cellPosition = grid.WorldToCell(placementPosition);
         placeableObject.transform.position = grid.GetCellCenterWorld(cellPosition);
-        Debug.Log($"Placed object: {selectedObjectData.Name} at {cellPosition} with UniqueID: {selectedObjectData.UniqueID}");
     }
 
     private void StopPlacement() {
-        Debug.Log("Stopped placement mode.");
         selectedObjectData = null;
         gridVisualization.SetActive(false);
         cellIndicator.SetActive(false);

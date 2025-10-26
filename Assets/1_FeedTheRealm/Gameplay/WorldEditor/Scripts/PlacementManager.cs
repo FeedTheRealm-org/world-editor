@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: refactor this to be a monobehavior script insted of a regular class
 public class PlacementManager {
+
     private readonly Dictionary<Vector3Int, PlacementData> occupiedCells = new();
 
     // Adds an object to the grid

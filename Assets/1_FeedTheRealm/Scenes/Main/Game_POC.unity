@@ -693,7 +693,7 @@ GameObject:
   m_Component:
   - component: {fileID: 954521914}
   m_Layer: 0
-  m_Name: GridParent
+  m_Name: GridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1333,6 +1333,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 620592678}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 513993f93790b37098ee65c493403135, type: 2}
+    - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: assetDatabase
       value: 
       objectReference: {fileID: 11400000, guid: 46617b3f0559eb37d8b4aab826dfcc02, type: 2}
@@ -1490,12 +1494,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2795755946988542685, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1889743594}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
