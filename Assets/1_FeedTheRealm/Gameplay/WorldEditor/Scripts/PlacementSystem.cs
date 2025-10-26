@@ -17,6 +17,8 @@ public class PlacementSystem : MonoBehaviour {
     private AssetDatabaseSO assetDatabase;
     private int selectedObjectIndex = -1;
 
+    private GridData floorData;
+
     [SerializeField]
     private GameObject gridVisualization;
     #endregion
@@ -41,6 +43,17 @@ public class PlacementSystem : MonoBehaviour {
             return;
         }
 
+        bool canBePlaced = floorData.AddPlacedObject(
+            grid.WorldToCell(inputManager.GetSelectedMapPosition()),
+            assetDatabase.objectData[selectedObjectIndex].Size,
+            selectedObjectIndex,
+            assetDatabase.objectData[selectedObjectIndex].Id);
+
+        if (!canBePlaced) {
+            Debug.LogWarning("Cannot place object here, cell is occupied.");
+            return;
+        }
+
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
         Vector3Int cellPosition = grid.WorldToCell(placementPosition);
         GameObject placeableObject = Instantiate(assetDatabase.objectData[selectedObjectIndex].Prefab);
@@ -58,6 +71,7 @@ public class PlacementSystem : MonoBehaviour {
     #endregion
 
     void Start() {
+        floorData = new GridData();
         StopPlacement();
     }
 
