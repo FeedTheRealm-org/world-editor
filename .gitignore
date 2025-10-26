@@ -103,5 +103,6 @@ InitTestScene*.unity*
 .vscode/
 
 # Asset libraries - ignore contents but keep meta files
-/[Aa]ssets/RPGPP_LT
-/[Aa]ssets/Samples
+/[Aa]ssets/RPGPP_LT/
+/[Aa]ssets/Samples/
+/[Aa]ssets/TextMesh Pro/
