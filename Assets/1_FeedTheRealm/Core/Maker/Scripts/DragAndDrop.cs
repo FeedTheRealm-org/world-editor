@@ -15,9 +15,6 @@ public class DragAndDrop : MonoBehaviour {
     [SerializeField] private float minDistance = 1f;
     [SerializeField] private float maxDistance = 200f;
 
-    [Header("Drag Settings")]
-    [SerializeField] private float dragSmoothness = 15f;
-
     private Plane groundPlane;
 
     void Start() {
