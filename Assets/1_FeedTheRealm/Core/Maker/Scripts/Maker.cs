@@ -12,12 +12,20 @@ public class Maker : MonoBehaviour
     private float verticalInput = 0f;         // Up/Down
     private Vector2 lookInput = Vector2.zero;  // Mouse look
 
-    void OnMove(InputValue value)
-    {
-        moveInput = value.Get<Vector2>(); // WASD input
+
+    void Awake() {
+        // This is to ensure the PlayerInput uses Keyboard & Mouse by default
+        // I'm not sure if this is correct, we should review the player input system
+        var playerInput = GetComponent<PlayerInput>();
+        playerInput.SwitchCurrentControlScheme("Keyboard&Mouse", Keyboard.current, Mouse.current);
     }
 
-    void OnLook(InputValue value)
+
+    public void OnMove(InputValue value) {
+        moveInput = value.Get<Vector2>();
+    }
+
+    public void OnLook(InputValue value)
     {
         if (Mouse.current.middleButton.isPressed)
         {
@@ -26,7 +34,7 @@ public class Maker : MonoBehaviour
         }
         else
         {
-            lookInput = Vector2.zero; // ignore mouse movement
+            lookInput = Vector2.zero;
         }
 
         fpController.LookInput = lookInput;

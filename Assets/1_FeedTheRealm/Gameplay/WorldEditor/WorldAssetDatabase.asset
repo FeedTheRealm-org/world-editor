@@ -36,5 +36,5 @@ MonoBehaviour:
   - name: Cabin
     id: 4
     size: {x: 3, y: 3}
-    prefab: {fileID: 7222793530440653811, guid: 598462f600b222b7fbf77eaa0b2ce437, type: 3}
+    prefab: {fileID: 2487189961273559472, guid: e970abcb0dd23bf9dafcca1c096a74b0, type: 3}
     uniqueID: 0
