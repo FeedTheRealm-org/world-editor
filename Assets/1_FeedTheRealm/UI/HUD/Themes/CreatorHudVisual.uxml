@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/HUD/Themes/CreatorHudStyleSheet.uss?fileID=7433441132597879392&amp;guid=d7a943589b1d59189a0d8ceceab959e8&amp;type=3#CreatorHudStyleSheet" />
+    <ui:VisualElement style="flex-grow: 1; justify-content: flex-end;">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; height: 10px; min-width: auto; max-width: none; min-height: 100px; margin-top: 50%;">
+            <ui:Button text="x" name="DeleteButton" style="white-space: pre-wrap; flex-wrap: wrap-reverse; flex-direction: column; width: 8%; background-color: rgb(120, 0, 42); border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 100px; -unity-text-align: middle-center; padding-bottom: 30px;" />
+            <ui:ScrollView name="ItemScrollView" mode="Horizontal" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Auto" class="scroll_view" style="background-color: rgba(0, 0, 255, 0.1); padding-left: 5%; padding-right: 10%; padding-top: 1%; padding-bottom: 1%; -unity-background-image-tint-color: rgba(255, 255, 255, 0); height: 100%; margin-right: 0%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

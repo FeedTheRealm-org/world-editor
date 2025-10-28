@@ -1,2 +1,2 @@
 # map-editor-client
-Front-end client for map editing and uploading.
+This is Feed the Realm's custom World editor client, designed to let player creata and customize their own worlds
