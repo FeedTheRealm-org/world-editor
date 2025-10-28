@@ -70,6 +70,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::SignUpController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  targetScene: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
-  otherFormScene: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
+  targetScene:
+    sceneName: LoginScene
+    sceneAsset: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
+  otherFormScene:
+    sceneName: LoginScene
+    sceneAsset: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}
