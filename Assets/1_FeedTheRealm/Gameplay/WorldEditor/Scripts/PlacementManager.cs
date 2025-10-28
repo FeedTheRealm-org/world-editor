@@ -29,11 +29,26 @@ public class PlacementManager {
 
     private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int size) {
         var positions = new List<Vector3Int>(size.x * size.y);
-        for (int x = 0; x < size.x; x++) {
-            for (int z = 0; z < size.y; z++) {
-                positions.Add(new Vector3Int(gridPosition.x + x, gridPosition.y, gridPosition.z + z));
+
+        // Calculate offsets from center
+        int halfWidth = size.x / 2;
+        int halfLength = size.y / 2;
+
+        // Adjust for even-sized objects
+        int xOffset = size.x % 2 == 0 ? 1 : 0;
+        int zOffset = size.y % 2 == 0 ? 1 : 0;
+
+        // Iterate from negative half to positive half
+        for (int x = -halfWidth; x < halfWidth + (1 - xOffset); x++) {
+            for (int z = -halfLength; z < halfLength + (1 - zOffset); z++) {
+                positions.Add(new Vector3Int(
+                    gridPosition.x + x,
+                    gridPosition.y,
+                    gridPosition.z + z
+                ));
             }
         }
+
         return positions;
     }
 
