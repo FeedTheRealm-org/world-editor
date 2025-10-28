@@ -1,6 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using UnityEngine.InputSystem;
 public class MainMenu : MonoBehaviour {
 
     public VisualElement ui;
@@ -8,11 +8,11 @@ public class MainMenu : MonoBehaviour {
     public Button _browseButton;
     public Button _quitButton;
 
-    [SerializeField] Maker player;
+    [SerializeField]
+    private SceneReference gameScene;
 
 
     private void Awake() {
-        player.gameObject.SetActive(false);
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
@@ -28,15 +28,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void OnStartClicked() {
-        Debug.Log("Start Button Clicked");
-        gameObject.SetActive(false);
-
-        // Re-lock the cursor so mouse look works again
-        // UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        // UnityEngine.Cursor.visible = true;
-
-        player.gameObject.SetActive(true);
-
+        SceneManager.LoadScene(gameScene.SceneName);
     }
 
     private void OnBrowseClicked() {
@@ -45,7 +37,6 @@ public class MainMenu : MonoBehaviour {
 
     private void OnQuitClicked() {
         Application.Quit();
-        Debug.Log("Quit Button Clicked");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
