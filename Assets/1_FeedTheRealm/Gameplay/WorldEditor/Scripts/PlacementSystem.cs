@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class PlacementSystem : MonoBehaviour {
+public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
     [SerializeField]
     private GameObject placementIndicator, cellIndicator;
@@ -18,12 +18,16 @@ public class PlacementSystem : MonoBehaviour {
     [SerializeField]
     private Material placementGridMaterial;
 
+    [SerializeField]
+    private AssetDatabaseSO assetDatabase;
+
     private ObjectData selectedObjectData = null;
 
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
     #endregion
+
 
 
     #region  Placement Methods
@@ -52,19 +56,36 @@ public class PlacementSystem : MonoBehaviour {
         if (selectedObjectData == null) {
             return;
         }
-        (bool canBePlaced, GameObject placeableObject) = placementManager.AddPlacedObject(
+        bool canBePlaced = PlaceObjectAt(
             grid.WorldToCell(inputManager.GetSelectedMapPosition()),
             selectedObjectData
         );
 
         if (!canBePlaced) {
+            logger.Log($"Placement failed for object ID: {selectedObjectData.Id}", this, Logging.LogType.Warning);
             return;
         }
-        Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
-        Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        placeableObject.transform.position = pos;
     }
+
+
+    private bool PlaceObjectAt(Vector3Int gridPosition, ObjectData objectData) {
+        (bool canBePlaced, PlacementData placeableObject) = placementManager.CheckAndPlaceObject(
+            gridPosition,
+            objectData
+        );
+
+        if (!canBePlaced) {
+            return false;
+        }
+        Vector3Int cellPosition = grid.WorldToCell(placeableObject.GridPosition);
+        Vector3 pos = grid.GetCellCenterWorld(cellPosition);
+
+        GameObject gameObject = placeableObject.gameObject;
+        gameObject.transform.position = pos;
+        return true;
+    }
+
+
     #endregion
 
 
@@ -107,9 +128,12 @@ public class PlacementSystem : MonoBehaviour {
     #endregion
 
 
-    #region Start & Update
-    void Start() {
+    #region Initialization & Update
+    void Awake() {
         placementManager = new PlacementManager();
+    }
+
+    void Start() {
         StopPlacement();
     }
 
@@ -132,5 +156,31 @@ public class PlacementSystem : MonoBehaviour {
         placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
     }
 
+    #region Data Persistence Implementation
+
+    public void LoadData(WorldData data) {
+
+        foreach (PlacementData placementData in data.objectPlacementData) {
+
+            ObjectData objectData = assetDatabase.GetObjectDataById(placementData.ObjectDataRef.Id);
+            placementData.ObjectDataRef = objectData;
+
+            bool canBePlaced = PlaceObjectAt(placementData.GridPosition, placementData.ObjectDataRef);
+            if (!canBePlaced) {
+                logger.Log($"Failed to load placed object at {placementData.GridPosition}", this, Logging.LogType.Error);
+            }
+        }
+        logger.Log($"Loaded {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+    }
+
+    public void SaveData(ref WorldData data) {
+        // Save the world data
+        // TODO: refactor this to only save changes, not the entire list every time
+        // Since this is going to be a big project, we want to optimize data saving/loading
+        data.objectPlacementData = placementManager.GetAllPlacedObjects();
+        logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+    }
+
+    #endregion
 }
 

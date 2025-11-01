@@ -1,14 +1,5 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-
-
-//TODO: check this[CreateAssetMenu(fileName = "AssetDatabase", menuName = "Asset Library/Asset Database")]
-[CreateAssetMenu]
-public class AssetDatabaseSO : ScriptableObject {
-
-    public List<ObjectData> objectData;
-}
 
 [Serializable]
 public class ObjectData {

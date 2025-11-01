@@ -11,6 +11,10 @@ public class HUDController : MonoBehaviour {
         // Get the UIDocument attached to this GameObject
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
+
+        var saveButton = root.Q<Button>("SaveButton");
+        saveButton.clicked += () => DataPersistenceManager.instance.SaveWorld();
+
         var deleteButton = root.Q<Button>("DeleteButton");
         deleteButton.clicked += () => placementSystem.StartRemoving();
 
