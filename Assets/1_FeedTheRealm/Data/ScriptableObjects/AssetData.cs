@@ -1,8 +1,11 @@
 using System;
 using UnityEngine;
-
+/// <summary>
+/// This is the Asset Data type used to store Assets in the Database
+/// Assets are considered all kind of placeable objects in the world editor
+/// </summary>
 [Serializable]
-public class ObjectData {
+public class AssetData {
     [SerializeField]
     private string name;
     [SerializeField]
@@ -11,18 +14,10 @@ public class ObjectData {
     private Vector2Int size = Vector2Int.one;
     [SerializeField]
     private GameObject prefab;
-    [SerializeField]
-    private int uniqueID;
 
-    // Public accessors
     public string Name => name;
     public int Id => id;
     public Vector2Int Size => size;
     public GameObject Prefab => prefab;
 
-    // Unique ID with setter functionality
-    public int UniqueID {
-        get => uniqueID;
-        set => uniqueID = value;
-    }
 }

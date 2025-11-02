@@ -21,7 +21,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [SerializeField]
     private AssetDatabaseSO assetDatabase;
 
-    private ObjectData selectedObjectData = null;
+    private AssetData selectedObjectData = null;
 
     private PlacementManager placementManager;
 
@@ -31,7 +31,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
 
     #region  Placement Methods
-    public void StartPlacement(ObjectData objData) {
+    public void StartPlacement(AssetData objData) {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false; // make sure we’re not in remove mode
@@ -56,9 +56,11 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         if (selectedObjectData == null) {
             return;
         }
-        bool canBePlaced = PlaceObjectAt(
-            grid.WorldToCell(inputManager.GetSelectedMapPosition()),
-            selectedObjectData
+        Vector3Int gridPosition = grid.WorldToCell(inputManager.GetSelectedMapPosition());
+
+        bool canBePlaced = TryPlaceObjectAt(
+            selectedObjectData,
+            gridPosition
         );
 
         if (!canBePlaced) {
@@ -68,19 +70,15 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
 
-    private bool PlaceObjectAt(Vector3Int gridPosition, ObjectData objectData) {
-        (bool canBePlaced, PlacementData placeableObject) = placementManager.CheckAndPlaceObject(
-            gridPosition,
-            objectData
-        );
+    private bool TryPlaceObjectAt(AssetData objectData, Vector3Int gridPosition) {
+        PlacementData placeableObject = placementManager.TryPlaceObject(objectData, gridPosition);
 
-        if (!canBePlaced) {
+        if (placeableObject == null) {
             return false;
         }
-        Vector3Int cellPosition = grid.WorldToCell(placeableObject.GridPosition);
+        Vector3Int cellPosition = grid.WorldToCell(gridPosition);
         Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-
-        GameObject gameObject = placeableObject.gameObject;
+        GameObject gameObject = placeableObject.InstancedGameObject;
         gameObject.transform.position = pos;
         return true;
     }
@@ -157,17 +155,13 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
     #region Data Persistence Implementation
-
     public void LoadData(WorldData data) {
-
         foreach (PlacementData placementData in data.objectPlacementData) {
-
-            ObjectData objectData = assetDatabase.GetObjectDataById(placementData.ObjectDataRef.Id);
-            placementData.ObjectDataRef = objectData;
-
-            bool canBePlaced = PlaceObjectAt(placementData.GridPosition, placementData.ObjectDataRef);
+            AssetData assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
+            Vector3Int gridPosition = placementData.Position;
+            bool canBePlaced = TryPlaceObjectAt(assetData, gridPosition);
             if (!canBePlaced) {
-                logger.Log($"Failed to load placed object at {placementData.GridPosition}", this, Logging.LogType.Error);
+                logger.Log($"Failed to load placed object ID: {assetData.Id}", this, Logging.LogType.Error);
             }
         }
         logger.Log($"Loaded {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);

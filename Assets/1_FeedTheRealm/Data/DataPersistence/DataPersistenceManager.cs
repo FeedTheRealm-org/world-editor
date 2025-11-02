@@ -5,13 +5,13 @@ using System;
 
 
 
-/*
-This singleton class is responsible for managing data persistence within the application.
-Usage:
-    DataPersistenceManager.instance.NewWorld();
-    DataPersistenceManager.instance.SaveWorld();
-    DataPersistenceManager.instance.LoadWorld();
-*/
+/// <summary>
+/// This singleton class is responsible for managing data persistence within the application.
+/// Usage:
+///    DataPersistenceManager.instance.NewWorld();
+///    DataPersistenceManager.instance.SaveWorld();
+///    DataPersistenceManager.instance.LoadWorld();
+/// </summary>
 [Serializable]
 public class DataPersistenceManager : MonoBehaviour {
 
@@ -30,10 +30,6 @@ public class DataPersistenceManager : MonoBehaviour {
     public static DataPersistenceManager instance { get; private set; }
 
     private void Awake() {
-        if (instance != null && instance != this) {
-            Destroy(gameObject);
-            return;
-        }
         instance = this;
     }
 
