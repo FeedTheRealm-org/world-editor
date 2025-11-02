@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+
+[RequireComponent(typeof(UIDocument))]
 public class MainMenu : MonoBehaviour {
 
     public VisualElement ui;
@@ -9,7 +11,10 @@ public class MainMenu : MonoBehaviour {
     public Button _quitButton;
 
     [SerializeField]
-    private SceneReference gameScene;
+    private SceneReference newWorldScene;
+
+    [SerializeField]
+    private SceneReference loadWorldScene;
 
 
     private void Awake() {
@@ -28,11 +33,14 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void OnStartClicked() {
-        SceneManager.LoadScene(gameScene.SceneName);
+        // TODO: in the future, this should be a new scene that lets
+        // makers set preset values for their new world
+        //DataPersistenceManager.instance.NewWorld();
+        SceneManager.LoadScene(newWorldScene.SceneName);
     }
 
     private void OnBrowseClicked() {
-        Debug.Log("Browse Button Clicked");
+        SceneManager.LoadScene(loadWorldScene.SceneName);
     }
 
     private void OnQuitClicked() {

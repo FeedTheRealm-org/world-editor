@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(UIDocument))]
 public class HUDController : MonoBehaviour {
     [SerializeField] private AssetDatabaseSO assetDatabase;
     [SerializeField] private PlacementSystem placementSystem;

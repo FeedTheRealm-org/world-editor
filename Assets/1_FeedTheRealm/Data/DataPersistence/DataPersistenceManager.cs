@@ -83,6 +83,12 @@ public class DataPersistenceManager : MonoBehaviour {
             dataPersistenceObj.LoadData(worldData);
         }
         logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
-
     }
+
+
+    private List<string> ListAllWorlds() {
+        return fileDataHandler.GetAllWorlds();
+    }
+
+
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FileDataHandler {
 
@@ -55,6 +56,24 @@ public class FileDataHandler {
             Debug.LogError($"Error loading data from file: {e}");
             return null;
         }
+    }
+
+
+    public List<string> GetAllWorlds() {
+        List<string> worldFiles = new();
+        try {
+            if (!Directory.Exists(dataDirPath)) {
+                return worldFiles;
+            }
+
+            var files = Directory.GetFiles(dataDirPath, "*.world");
+            foreach (var file in files) {
+                worldFiles.Add(Path.GetFileName(file));
+            }
+        } catch (Exception e) {
+            Debug.LogError($"Error listing world files: {e}");
+        }
+        return worldFiles;
     }
 }
 

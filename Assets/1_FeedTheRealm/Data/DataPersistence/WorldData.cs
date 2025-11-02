@@ -5,7 +5,10 @@ using UnityEngine;
 
 [Serializable]
 public class WorldData {
+    [SerializeField]
+    public string worldName;
 
     [SerializeField]
     public List<PlacementData> objectPlacementData;
+
 }
