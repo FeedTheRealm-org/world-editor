@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class PlacementSystem : MonoBehaviour {
+public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
     [Header("Indicator settings")]
     [SerializeField]
@@ -131,7 +131,7 @@ public class PlacementSystem : MonoBehaviour {
     #region Initialization & Update
     void Awake() {
         placementManager = new PlacementManager();
-        LoadData(dataPersistenceManager.CurrentWorldData);
+        dataPersistenceManager.LoadWorld();
     }
 
     void Start() {
@@ -150,8 +150,6 @@ public class PlacementSystem : MonoBehaviour {
         cellIndicator.transform.position = grid.GetCellCenterWorld(cellPosition);
     }
     #endregion
-
-
 
     private void ToggleGridVisualization(bool isVisible) {
         placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
@@ -177,9 +175,6 @@ public class PlacementSystem : MonoBehaviour {
     }
 
     public void SaveData(ref WorldData data) {
-        // Save the world data
-        // TODO: refactor this to only save changes, not the entire list every time
-        // Since this is going to be a big project, we want to optimize data saving/loading
         data.objectPlacementData = placementManager.GetAllPlacedObjects();
         logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
     }

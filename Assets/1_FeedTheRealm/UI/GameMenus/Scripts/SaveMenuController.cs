@@ -15,6 +15,8 @@ public class SaveMenuController : MonoBehaviour {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
 
+        WorldData worldData = dataPersistenceManager.CurrentWorldData;
+
         if (player != null) {
             player.ToggleMovement(false);
         }
@@ -22,6 +24,10 @@ public class SaveMenuController : MonoBehaviour {
         saveButton = root.Q<Button>("Save");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
+
+        if (worldData != null && !string.IsNullOrEmpty(worldData.worldName)) {
+            nameInput.value = worldData.worldName;
+        }
 
         if (saveButton != null)
             saveButton.clicked += OnSaveClicked;

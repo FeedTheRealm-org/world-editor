@@ -60,7 +60,7 @@ public class LoadMenu : MonoBehaviour {
     }
 
     private void OnLoadWorldClicked(string worldName) {
-        dataPersistenceManager.LoadWorld(worldName);
+        dataPersistenceManager.SetActiveWorld(worldName);
         SceneManager.LoadScene(gameScene.SceneName);
     }
 
