@@ -9,11 +9,6 @@
 .unity-button:hover {
     -unity-background-image-tint-color: rgb(255, 255, 255);
     background-color: rgb(146, 0, 162);
-    transition-property: scale;
-    transition-duration: 0.1s;
-    scale: 1.1 1.1;
-    transition-delay: 0s;
-    transition-timing-function: ease;
     color: rgb(255, 255, 255);
 }
 
@@ -51,14 +46,20 @@
 }
 
 .load-world-button {
-    background-color: rgb(255, 255, 255);
-    -unity-text-align: upper-left;
-    padding-left: 3%;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+    -unity-text-align: middle-left;
     -unity-font-style: bold;
-    -unity-text-outline-color: rgb(81, 81, 81);
-    color: rgb(137, 7, 124);
+    font-size: 40px;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    padding-left: 3%;
+    color: rgb(117, 17, 243);
+    align-content: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
 }

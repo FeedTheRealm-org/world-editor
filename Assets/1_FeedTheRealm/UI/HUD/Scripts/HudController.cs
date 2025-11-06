@@ -6,6 +6,9 @@ public class HUDController : MonoBehaviour {
     [SerializeField] private AssetDatabaseSO assetDatabase;
     [SerializeField] private PlacementSystem placementSystem;
 
+    [Header("Menus")]
+    [SerializeField] private GameObject saveMenu;
+
     private ScrollView itemScrollView;
 
     private void OnEnable() {
@@ -14,7 +17,7 @@ public class HUDController : MonoBehaviour {
         var root = uiDocument.rootVisualElement;
 
         var saveButton = root.Q<Button>("SaveButton");
-        saveButton.clicked += () => DataPersistenceManager.instance.SaveWorld();
+        saveButton.clicked += OpenSaveMenu;
 
         var deleteButton = root.Q<Button>("DeleteButton");
         deleteButton.clicked += () => placementSystem.StartRemoving();
@@ -42,5 +45,13 @@ public class HUDController : MonoBehaviour {
     private void OnItemSelected(AssetData obj) {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
         placementSystem.StartPlacement(obj);
+    }
+
+    private void OpenSaveMenu() {
+        if (saveMenu != null) {
+            saveMenu.SetActive(true);
+        } else {
+            Debug.LogWarning("HUDController: Save menu reference is not set.");
+        }
     }
 }

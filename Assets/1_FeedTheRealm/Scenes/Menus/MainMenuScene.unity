@@ -180,6 +180,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
+      propertyPath: dataPersistenceManager
+      value: 
+      objectReference: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: newWorldScene.sceneName
       value: Game_POC
       objectReference: {fileID: 0}

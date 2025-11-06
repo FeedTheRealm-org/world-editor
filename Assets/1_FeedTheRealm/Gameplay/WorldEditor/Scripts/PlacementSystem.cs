@@ -3,32 +3,34 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
+    [Header("Indicator settings")]
     [SerializeField]
-    private GameObject placementIndicator, cellIndicator;
-
+    private GameObject placementIndicator;
     [SerializeField]
-    private InputManager inputManager;
+    private GameObject cellIndicator;
 
+
+    [Header("Grid Settings")]
     [SerializeField]
     private Grid grid;
-
-    [SerializeField]
-    private Logging.Logger logger;
-
     [SerializeField]
     private Material placementGridMaterial;
 
+    [Header("Dependencies")]
+    [SerializeField]
+    private InputManager inputManager;
+    [SerializeField]
+    private Logging.Logger logger;
     [SerializeField]
     private AssetDatabaseSO assetDatabase;
+    [SerializeField]
+    private DataPersistenceManagerSO dataPersistenceManager;
 
     private AssetData selectedObjectData = null;
-
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
     #endregion
-
-
 
     #region  Placement Methods
     public void StartPlacement(AssetData objData) {
@@ -129,6 +131,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Initialization & Update
     void Awake() {
         placementManager = new PlacementManager();
+        LoadData(dataPersistenceManager.CurrentWorldData);
     }
 
     void Start() {
@@ -156,6 +159,12 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
     #region Data Persistence Implementation
     public void LoadData(WorldData data) {
+
+        if (data == null || data.objectPlacementData == null) {
+            logger.Log("New world created!", this, Logging.LogType.Info);
+            return;
+        }
+
         foreach (PlacementData placementData in data.objectPlacementData) {
             AssetData assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
             Vector3Int gridPosition = placementData.Position;

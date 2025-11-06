@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class WorldData {
     [SerializeField]
-    public string worldName;
+    public string worldName = "New World";
 
     [SerializeField]
     public List<PlacementData> objectPlacementData;

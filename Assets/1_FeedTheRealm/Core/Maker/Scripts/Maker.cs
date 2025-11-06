@@ -1,8 +1,8 @@
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(FPController))]
+[RequireComponent(typeof(PlayerInput))]
 public class Maker : MonoBehaviour
 {
     [Header("Components")]
@@ -11,6 +11,21 @@ public class Maker : MonoBehaviour
     private Vector2 moveInput = Vector2.zero; // WASD / XY
     private float verticalInput = 0f;         // Up/Down
     private Vector2 lookInput = Vector2.zero;  // Mouse look
+    private bool enableMovement = true;
+
+    public void ToggleMovement(bool enable)
+    {
+        enableMovement = enable;
+        if (!enable)
+        {
+            // Reset inputs when disabling movement
+            moveInput = Vector2.zero;
+            verticalInput = 0f;
+            lookInput = Vector2.zero;
+            fpController.MoveInput = Vector3.zero;
+            fpController.LookInput = Vector2.zero;
+        }
+    }
 
 
     void Awake() {
@@ -42,6 +57,7 @@ public class Maker : MonoBehaviour
 
     void Update()
     {
+        if (!enableMovement) return;
         // Check vertical keys
         verticalInput = 0f;
         if (Keyboard.current.spaceKey.isPressed)
@@ -53,10 +69,10 @@ public class Maker : MonoBehaviour
         fpController.MoveInput = new Vector3(moveInput.x, moveInput.y, verticalInput);
         
     }
-    // TODO: check to remove this since we already set as required
-    void OnValidate()
-    {
-        if (fpController == null)
-            fpController = GetComponent<FPController>();
-    }
+    // // TODO: check to remove this since we already set as required
+    // void OnValidate()
+    // {
+    //     if (fpController == null)
+    //         fpController = GetComponent<FPController>();
+    // }
 }

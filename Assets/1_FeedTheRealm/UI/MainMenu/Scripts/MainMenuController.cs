@@ -15,7 +15,8 @@ public class MainMenu : MonoBehaviour {
 
     [SerializeField]
     private SceneReference loadWorldScene;
-
+    [SerializeField]
+    private DataPersistenceManagerSO dataPersistenceManager;
 
     private void Awake() {
         ui = GetComponent<UIDocument>().rootVisualElement;
@@ -35,7 +36,7 @@ public class MainMenu : MonoBehaviour {
     private void OnStartClicked() {
         // TODO: in the future, this should be a new scene that lets
         // makers set preset values for their new world
-        //DataPersistenceManager.instance.NewWorld();
+        dataPersistenceManager.NewWorld();
         SceneManager.LoadScene(newWorldScene.SceneName);
     }
 
