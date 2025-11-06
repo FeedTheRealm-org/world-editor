@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class PlacementSystem : MonoBehaviour, IDataPersistence {
+public class PlacementSystem : MonoBehaviour {
     #region Inspector Fields
     [Header("Indicator settings")]
     [SerializeField]
@@ -160,7 +160,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Data Persistence Implementation
     public void LoadData(WorldData data) {
 
-        if (data == null || data.objectPlacementData == null) {
+        if (data.objectPlacementData == null || data.objectPlacementData.Count == 0) {
             logger.Log("New world created!", this, Logging.LogType.Info);
             return;
         }
