@@ -44,7 +44,6 @@ public class Maker : MonoBehaviour
     {
         if (Mouse.current.middleButton.isPressed)
         {
-
             lookInput = value.Get<Vector2>();
         }
         else
