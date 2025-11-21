@@ -11,7 +11,7 @@ public class PlacementManager {
     private readonly List<PlacementData> storedPlacedObjects = new();
     public List<PlacementData> GetAllPlacedObjects() => storedPlacedObjects;
 
-    public PlacementData TryPlaceObject(AssetData assetData, Vector3Int gridPosition) {
+    public PlacementData TryPlaceObject(Asset assetData, Vector3Int gridPosition) {
         List<Vector3Int> positions = CalculatePositions(assetData, gridPosition);
 
         // Check for overlaps
@@ -29,7 +29,7 @@ public class PlacementManager {
         return data;
     }
 
-    private List<Vector3Int> CalculatePositions(AssetData assetData, Vector3Int gridPosition) {
+    private List<Vector3Int> CalculatePositions(Asset assetData, Vector3Int gridPosition) {
         Vector2Int size = assetData.Size;
         var positions = new List<Vector3Int>(size.x * size.y);
         // Calculate offsets from center

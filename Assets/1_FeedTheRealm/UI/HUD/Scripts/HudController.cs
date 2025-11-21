@@ -42,7 +42,7 @@ public class HUDController : MonoBehaviour {
         }
     }
 
-    private void OnItemSelected(AssetData obj) {
+    private void OnItemSelected(Asset obj) {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
         placementSystem.StartPlacement(obj);
     }

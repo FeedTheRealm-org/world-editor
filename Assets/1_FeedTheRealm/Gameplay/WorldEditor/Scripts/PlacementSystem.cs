@@ -26,14 +26,14 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
-    private AssetData selectedObjectData = null;
+    private Asset selectedObjectData = null;
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
     #endregion
 
     #region  Placement Methods
-    public void StartPlacement(AssetData objData) {
+    public void StartPlacement(Asset objData) {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false;
@@ -72,7 +72,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
 
-    private bool TryPlaceObjectAt(AssetData objectData, Vector3Int gridPosition) {
+    private bool TryPlaceObjectAt(Asset objectData, Vector3Int gridPosition) {
         PlacementData placeableObject = placementManager.TryPlaceObject(objectData, gridPosition);
 
         if (placeableObject == null) {
@@ -163,7 +163,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         }
 
         foreach (PlacementData placementData in data.objectPlacementData) {
-            AssetData assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
+            Asset assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
             Vector3Int gridPosition = placementData.Position;
             bool canBePlaced = TryPlaceObjectAt(assetData, gridPosition);
             if (!canBePlaced) {

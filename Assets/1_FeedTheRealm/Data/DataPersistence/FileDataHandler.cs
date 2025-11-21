@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class FileDataHandler {
 
-    public FileDataHandler() { }
-
     public void Save(WorldData worldData, string dataDirPath, string fileExtension) {
 
         dataDirPath = Path.Combine(Application.persistentDataPath, dataDirPath);

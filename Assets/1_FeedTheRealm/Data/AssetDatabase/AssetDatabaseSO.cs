@@ -11,12 +11,12 @@ using UnityEngine;
 public class AssetDatabaseSO : ScriptableObject {
 
     [SerializeField] private Logging.Logger logger;
-    [HideInInspector] public List<AssetData> objectData = new();
+    [HideInInspector] public List<Asset> objectData = new();
     [SerializeField] public string dataFileName = "models.json";
     private bool isInitialized = false;
 
 
-    public AssetData GetAssetById(int id) {
+    public Asset GetAssetById(int id) {
         EnsureInitialized();
         return objectData.Find(obj => obj.Id == id);
     }
@@ -48,7 +48,7 @@ public class AssetDatabaseSO : ScriptableObject {
 
             AssetModelsRaw rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
 
-            foreach (AssetData model in rawModels.assetObjects) {
+            foreach (Asset model in rawModels.assetObjects) {
                 // TODO: add validations later (if needed)
                 objectData.Add(model);
             }
@@ -65,5 +65,5 @@ public class AssetDatabaseSO : ScriptableObject {
 
 [Serializable]
 public class AssetModelsRaw {
-    public AssetData[] assetObjects;
+    public Asset[] assetObjects;
 }

@@ -14,7 +14,7 @@ public class PlacementData {
     [NonSerialized]
     public GameObject InstancedGameObject;
 
-    public PlacementData(Vector3Int position, List<Vector3Int> occupiedPositions, AssetData assetData) {
+    public PlacementData(Vector3Int position, List<Vector3Int> occupiedPositions, Asset assetData) {
         Position = position;
         OccupiedPositions = occupiedPositions;
         AssetDataId = assetData.Id;
