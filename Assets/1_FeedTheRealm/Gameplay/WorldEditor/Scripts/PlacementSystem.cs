@@ -22,7 +22,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [SerializeField]
     private Logging.Logger logger;
     [SerializeField]
-    private AssetDatabaseSO assetDatabase;
+    private AssetLibrarySO assetDatabase;
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 

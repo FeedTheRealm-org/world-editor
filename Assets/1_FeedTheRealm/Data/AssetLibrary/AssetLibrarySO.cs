@@ -8,17 +8,21 @@ using UnityEngine;
 /// a generic library to store any kind of obect data, like assets, items, etc
 /// </summary>
 [CreateAssetMenu(fileName = "AssetLibrary", menuName = "Scriptable Objects/Persistence/AssetLibrary")]
-public class AssetDatabaseSO : ScriptableObject {
+public class AssetLibrarySO : ScriptableObject {
 
     [SerializeField] private Logging.Logger logger;
-    [HideInInspector] public List<Asset> objectData = new();
     [SerializeField] public string dataFileName = "models.json";
     private bool isInitialized = false;
-
+    private List<Asset> objectData = new();
 
     public Asset GetAssetById(int id) {
         EnsureInitialized();
         return objectData.Find(obj => obj.Id == id);
+    }
+
+    public List<Asset> GetAllAssets() {
+        EnsureInitialized();
+        return objectData;
     }
 
     private void EnsureInitialized() {
@@ -58,8 +62,6 @@ public class AssetDatabaseSO : ScriptableObject {
             logger.Log($"Error loading Asset Database JSON: {e}", this, Logging.LogType.Error);
         }
     }
-
-
 }
 
 

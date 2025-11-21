@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AssetLibraryLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   _showLogs: 1
-  _loggerPrefix: DataPersistence
-  _loggerColor: {r: 0, g: 0.75550485, b: 1, a: 0}
+  _loggerPrefix: AssetLibrary
+  _loggerColor: {r: 1, g: 0, b: 0.71579885, a: 0}

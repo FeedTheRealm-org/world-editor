@@ -18,18 +18,10 @@ public class Asset {
     private void LoadModel() {
         try {
             GameObject model = Resources.Load<GameObject>(modelPath);
-            GameObject material = Resources.Load<GameObject>(materialPath);
             if (model == null) {
-                Debug.LogError($"Asset {name} | Model prefab not found at path: {modelPath}");
+                Debug.LogError($"Asset {name} | Model not found at path: {modelPath}");
                 return;
             }
-            if (material != null) {
-                Debug.Log($"Material loaded successfully for: {name}");
-            } else {
-                Debug.LogWarning($"Asset {name} | Material not found at path: {materialPath}");
-                return;
-            }
-
             assetModel = model;
             isModelLoaded = true;
         } catch (Exception e) {
