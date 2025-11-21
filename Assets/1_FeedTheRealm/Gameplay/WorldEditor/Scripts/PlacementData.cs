@@ -18,6 +18,6 @@ public class PlacementData {
         Position = position;
         OccupiedPositions = occupiedPositions;
         AssetDataId = assetData.Id;
-        InstancedGameObject = UnityEngine.Object.Instantiate(assetData.Prefab);
+        InstancedGameObject = assetData.AssetModelInstance;
     }
 }
