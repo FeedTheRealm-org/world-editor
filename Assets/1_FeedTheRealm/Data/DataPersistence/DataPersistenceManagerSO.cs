@@ -1,16 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Models;
 
 [CreateAssetMenu(fileName = "DataPersistence", menuName = "Scriptable Objects/Persistence/DataPersistenceManager")]
 public class DataPersistenceManagerSO : ScriptableObject {
-    [Header("File storage config")]
+    [Header("World storage config")]
     [SerializeField] private string saveDirectory = "Worlds";
     [SerializeField] private string fileExtension = ".world";
 
     [SerializeField] private Logging.Logger logger;
 
-    private readonly FileDataHandler fileDataHandler = new();
+    private readonly WorldHandler worldDataHandler = new();
     private WorldData worldData = null;
     private List<IDataPersistence> dataPersistenceObjects = new();
 
@@ -45,12 +46,12 @@ public class DataPersistenceManagerSO : ScriptableObject {
             dataPersistenceObj.SaveData(ref worldData);
         }
 
-        fileDataHandler.Save(worldData, saveDirectory, fileExtension);
+        worldDataHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
     }
 
     public void SetActiveWorld(string dataFileName) {
-        worldData = fileDataHandler.Load(dataFileName, saveDirectory);
+        worldData = worldDataHandler.Load(dataFileName, saveDirectory);
     }
 
 
@@ -76,6 +77,6 @@ public class DataPersistenceManagerSO : ScriptableObject {
     }
 
     public List<string> ListAllWorlds() {
-        return fileDataHandler.GetAllWorlds(saveDirectory, fileExtension);
+        return worldDataHandler.GetAllWorlds(saveDirectory, fileExtension);
     }
 }

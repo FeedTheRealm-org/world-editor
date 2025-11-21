@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
+using Models;
 
-public class FileDataHandler {
+public class WorldHandler {
 
     public void Save(WorldData worldData, string dataDirPath, string fileExtension) {
 

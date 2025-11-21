@@ -12,21 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b6a27f2941ab673a72ff5033fb22f3, type: 3}
   m_Name: AssetLibrary
   m_EditorClassIdentifier: Assembly-CSharp::AssetDatabase
+  assetsDirectory: Assets
+  assetsFileName: models.json
   logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
-  objectData:
-  - id: 1
-    name: Barrel
-    size: {x: 1, y: 1}
-    modelPath: Models/rpgpp_lt_barrel_01
-    materialPath: Materials/rpgpp_lt_mat_a
-  - id: 2
-    name: Building
-    size: {x: 3, y: 3}
-    modelPath: Models/rpgpp_lt_building_01
-    materialPath: Materials/rpgpp_lt_mat_a
-  - id: 3
-    name: Bush
-    size: {x: 1, y: 1}
-    modelPath: Models/rpgpp_lt_bush_01
-    materialPath: Materials/rpgpp_lt_mat_a
-  dataFileName: models.json

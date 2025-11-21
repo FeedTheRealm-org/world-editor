@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Models;
 using UnityEngine;
 
 /// <summary>
@@ -9,9 +10,10 @@ using UnityEngine;
 /// </summary>
 [CreateAssetMenu(fileName = "AssetLibrary", menuName = "Scriptable Objects/Persistence/AssetLibrary")]
 public class AssetLibrarySO : ScriptableObject {
-
+    [Header("Asset storage config")]
+    [SerializeField] private string assetsDirectory = "Assets";
+    [SerializeField] public string assetsFileName = "models.json";
     [SerializeField] private Logging.Logger logger;
-    [SerializeField] public string dataFileName = "models.json";
     private bool isInitialized = false;
     private List<Asset> objectData = new();
 
@@ -35,17 +37,14 @@ public class AssetLibrarySO : ScriptableObject {
         objectData.Clear();
         logger.Log("Initializing Asset Database...", this, Logging.LogType.Info);
 
-        string dataDirPath = "Assets";
-
-        // Combine with persistent data path
-        dataDirPath = Path.Combine(Application.persistentDataPath, dataDirPath);
+        string assetDirPath = Path.Combine(Application.persistentDataPath, assetsDirectory);
 
         try {
-            if (!File.Exists(Path.Combine(dataDirPath, dataFileName))) {
-                logger.Log($"Asset Database JSON not found at path: {Path.Combine(dataDirPath, dataFileName)}", this, Logging.LogType.Error);
+            if (!File.Exists(Path.Combine(assetDirPath, assetsFileName))) {
+                logger.Log($"Asset Database JSON not found at path: {Path.Combine(assetDirPath, assetsFileName)}", this, Logging.LogType.Error);
                 return;
             }
-            string fullPath = Path.Combine(dataDirPath, dataFileName);
+            string fullPath = Path.Combine(assetDirPath, assetsFileName);
             using FileStream fs = new(fullPath, FileMode.Open);
             using StreamReader reader = new(fs);
             string jsonContent = reader.ReadToEnd();

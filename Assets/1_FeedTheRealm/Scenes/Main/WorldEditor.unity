@@ -1077,7 +1077,27 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5682136210255627570, guid: b8d8224b901583cee973a24582738043, type: 3}
@@ -1123,6 +1143,14 @@ PrefabInstance:
     - target: {fileID: 5714931997946157916, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.z
       value: 9.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343466532493618097, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533114475512384106, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_Name
+      value: World
       objectReference: {fileID: 0}
     - target: {fileID: 6853865918570880066, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: mainCamera
@@ -1180,7 +1208,8 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6327020185403487318, guid: b8d8224b901583cee973a24582738043, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

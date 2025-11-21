@@ -1,3 +1,4 @@
+using Models;
 using UnityEngine;
 
 
@@ -8,7 +9,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     private GameObject placementIndicator;
     [SerializeField]
     private GameObject cellIndicator;
-
 
     [Header("Grid Settings")]
     [SerializeField]
