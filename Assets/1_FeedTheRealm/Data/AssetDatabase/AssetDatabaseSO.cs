@@ -12,8 +12,7 @@ public class AssetDatabaseSO : ScriptableObject {
 
     [SerializeField] private Logging.Logger logger;
     [HideInInspector] public List<AssetData> objectData = new();
-    [SerializeField] public string dataFileName;
-    [SerializeField] public bool resetOnLoad = true;
+    [SerializeField] public string dataFileName = "models.json";
     private bool isInitialized = false;
 
 
@@ -29,20 +28,8 @@ public class AssetDatabaseSO : ScriptableObject {
     }
 
     public void InitializeDatabase() {
-
-        if (resetOnLoad) {
-            objectData.Clear();
-            isInitialized = false;
-            resetOnLoad = false;
-        }
-
-
-        if (isInitialized) {
-            return;
-        }
-
+        objectData.Clear();
         logger.Log("Initializing Asset Database...", this, Logging.LogType.Info);
-
 
         string dataDirPath = "Assets";
 
@@ -62,7 +49,7 @@ public class AssetDatabaseSO : ScriptableObject {
             AssetModelsRaw rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
 
             foreach (AssetData model in rawModels.assetObjects) {
-                logger.Log($"Loaded AssetData - ID: {model.Id}, Name: {model.Name}, Size: {model.Size}, ModelPath: {model.ModelPath}, MaterialPath: {model.MaterialPath}", this, Logging.LogType.Info);
+                // TODO: add validations later (if needed)
                 objectData.Add(model);
             }
             logger.Log($"Asset Database initialized with {objectData.Count} assets.", this, Logging.LogType.Info);

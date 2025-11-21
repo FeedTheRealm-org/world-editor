@@ -23,14 +23,13 @@ public class AssetData {
             isModelLoaded = true;
             return;
         }
-        assetModel = model;
-
         if (material != null) {
             Debug.Log($"Material loaded successfully for: {name}");
         } else {
             Debug.LogWarning($"Asset {name} | Material not found at path: {materialPath}");
         }
 
+        assetModel = model;
         isModelLoaded = true;
     }
 

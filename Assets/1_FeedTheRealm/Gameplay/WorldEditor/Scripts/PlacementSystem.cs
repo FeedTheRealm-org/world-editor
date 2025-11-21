@@ -36,7 +36,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     public void StartPlacement(AssetData objData) {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
-        isRemoving = false; // make sure we’re not in remove mode
+        isRemoving = false;
         ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
 
@@ -80,8 +80,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         }
         Vector3Int cellPosition = grid.WorldToCell(gridPosition);
         Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        GameObject gameObject = placeableObject.InstancedGameObject;
-        gameObject.transform.position = pos;
+        placeableObject.InstancedGameObject.transform.position = pos;
         return true;
     }
 

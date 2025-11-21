@@ -31,8 +31,6 @@ public class HUDController : MonoBehaviour {
     private void PopulateButtons() {
         itemScrollView.Clear();
 
-        assetDatabase.InitializeDatabase();
-
         foreach (var objData in assetDatabase.objectData) {
             var button = new Button {
                 text = objData.Name
