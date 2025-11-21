@@ -9,6 +9,6 @@ public class WorldData {
     public string worldName = "New World";
 
     [SerializeField]
-    public List<PlacementData> objectPlacementData;
+    public List<PlacedAsset> objectPlacementData;
 
 }

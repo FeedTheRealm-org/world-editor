@@ -7,11 +7,11 @@ using UnityEngine;
 */
 public class PlacementManager {
 
-    private readonly Dictionary<Vector3Int, PlacementData> occupiedCells = new();
-    private readonly List<PlacementData> storedPlacedObjects = new();
-    public List<PlacementData> GetAllPlacedObjects() => storedPlacedObjects;
+    private readonly Dictionary<Vector3Int, PlacedAsset> occupiedCells = new();
+    private readonly List<PlacedAsset> storedPlacedObjects = new();
+    public List<PlacedAsset> GetAllPlacedObjects() => storedPlacedObjects;
 
-    public PlacementData TryPlaceObject(Asset assetData, Vector3Int gridPosition) {
+    public PlacedAsset TryPlaceObject(Asset assetData, Vector3Int gridPosition) {
         List<Vector3Int> positions = CalculatePositions(assetData, gridPosition);
 
         // Check for overlaps
@@ -21,7 +21,7 @@ public class PlacementManager {
             }
         }
 
-        PlacementData data = new(gridPosition, positions, assetData);
+        PlacedAsset data = new(gridPosition, positions, assetData);
         foreach (var pos in data.OccupiedPositions) {
             occupiedCells.Add(pos, data);
         }

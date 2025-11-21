@@ -73,7 +73,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
 
     private bool TryPlaceObjectAt(Asset objectData, Vector3Int gridPosition) {
-        PlacementData placeableObject = placementManager.TryPlaceObject(objectData, gridPosition);
+        PlacedAsset placeableObject = placementManager.TryPlaceObject(objectData, gridPosition);
 
         if (placeableObject == null) {
             return false;
@@ -162,7 +162,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
             return;
         }
 
-        foreach (PlacementData placementData in data.objectPlacementData) {
+        foreach (PlacedAsset placementData in data.objectPlacementData) {
             Asset assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
             Vector3Int gridPosition = placementData.Position;
             bool canBePlaced = TryPlaceObjectAt(assetData, gridPosition);

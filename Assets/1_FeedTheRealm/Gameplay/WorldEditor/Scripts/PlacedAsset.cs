@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [Serializable]
-public class PlacementData {
+public class PlacedAsset {
     [SerializeField]
     public Vector3Int Position;
     [SerializeField]
@@ -14,7 +14,7 @@ public class PlacementData {
     [NonSerialized]
     public GameObject InstancedGameObject;
 
-    public PlacementData(Vector3Int position, List<Vector3Int> occupiedPositions, Asset assetData) {
+    public PlacedAsset(Vector3Int position, List<Vector3Int> occupiedPositions, Asset assetData) {
         Position = position;
         OccupiedPositions = occupiedPositions;
         AssetDataId = assetData.Id;
