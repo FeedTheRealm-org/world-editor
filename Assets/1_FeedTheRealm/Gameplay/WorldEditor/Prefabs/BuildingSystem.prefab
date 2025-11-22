@@ -67,12 +67,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
   placementIndicator: {fileID: 1563248125848677339}
   cellIndicator: {fileID: 0}
-  grid: {fileID: 0}
-  placementGridMaterial: {fileID: 0}
   inputManager: {fileID: 6853865918570880066}
   logger: {fileID: 0}
-  assetDatabase: {fileID: 0}
+  assetLibrary: {fileID: 0}
   dataPersistenceManager: {fileID: 0}
+  worldController: {fileID: 0}
 --- !u!1 &1563248125848677339
 GameObject:
   m_ObjectHideFlags: 0
