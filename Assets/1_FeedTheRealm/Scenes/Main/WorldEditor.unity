@@ -924,11 +924,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
---- !u!1 &1839565251 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1278964745274817439, guid: b8d8224b901583cee973a24582738043, type: 3}
-  m_PrefabInstance: {fileID: 1645386354960940949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1889743589 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3657537774566351166, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
@@ -1013,24 +1008,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
   m_PrefabInstance: {fileID: 1645386354960940949}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839565251}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
---- !u!156049354 &1916555105
-Grid:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839565251}
-  m_Enabled: 1
-  m_CellSize: {x: 1, y: 0, z: 1}
-  m_CellGap: {x: 0, y: 0, z: 0}
-  m_CellLayout: 0
-  m_CellSwizzle: 0
 --- !u!1001 &1645386354960940949
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1046,7 +1029,7 @@ PrefabInstance:
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: grid
       value: 
-      objectReference: {fileID: 1916555105}
+      objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: logger
       value: 
@@ -1109,19 +1092,19 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1129,7 +1112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: cellSize
@@ -1259,10 +1242,7 @@ PrefabInstance:
     - {fileID: 6327020185403487318, guid: b8d8224b901583cee973a24582738043, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1278964745274817439, guid: b8d8224b901583cee973a24582738043, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1916555105}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8d8224b901583cee973a24582738043, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

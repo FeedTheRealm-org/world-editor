@@ -17,7 +17,7 @@ public class AssetLibrarySO : ScriptableObject {
     private bool isInitialized = false;
     private List<Asset> objectData = new();
 
-    public Asset GetAssetById(int id) {
+    public Asset GetAssetById(string id) {
         EnsureInitialized();
         return objectData.Find(obj => obj.Id == id);
     }
