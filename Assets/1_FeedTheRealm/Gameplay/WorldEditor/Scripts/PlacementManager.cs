@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Models;
 using UnityEngine;
 
 /*
@@ -7,11 +8,11 @@ using UnityEngine;
 */
 public class PlacementManager {
 
-    private readonly Dictionary<Vector3Int, PlacementData> occupiedCells = new();
-    private readonly List<PlacementData> storedPlacedObjects = new();
-    public List<PlacementData> GetAllPlacedObjects() => storedPlacedObjects;
+    private readonly Dictionary<Vector3Int, PlacedAsset> occupiedCells = new();
+    private readonly List<PlacedAsset> storedPlacedObjects = new();
+    public List<PlacedAsset> GetAllPlacedObjects() => storedPlacedObjects;
 
-    public PlacementData TryPlaceObject(AssetData assetData, Vector3Int gridPosition) {
+    public PlacedAsset TryPlaceObject(Asset assetData, Vector3Int gridPosition) {
         List<Vector3Int> positions = CalculatePositions(assetData, gridPosition);
 
         // Check for overlaps
@@ -21,7 +22,7 @@ public class PlacementManager {
             }
         }
 
-        PlacementData data = new(gridPosition, positions, assetData);
+        PlacedAsset data = new(gridPosition, positions, assetData);
         foreach (var pos in data.OccupiedPositions) {
             occupiedCells.Add(pos, data);
         }
@@ -29,7 +30,7 @@ public class PlacementManager {
         return data;
     }
 
-    private List<Vector3Int> CalculatePositions(AssetData assetData, Vector3Int gridPosition) {
+    private List<Vector3Int> CalculatePositions(Asset assetData, Vector3Int gridPosition) {
         Vector2Int size = assetData.Size;
         var positions = new List<Vector3Int>(size.x * size.y);
         // Calculate offsets from center

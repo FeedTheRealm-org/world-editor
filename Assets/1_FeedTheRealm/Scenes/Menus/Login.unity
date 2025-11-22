@@ -173,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7511683846028582421, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
       propertyPath: targetScene.sceneName
-      value: MainMenuScene
+      value: MainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 7511683846028582421, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
       propertyPath: targetScene.sceneAsset

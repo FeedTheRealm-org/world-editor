@@ -3,8 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(FPController))]
 [RequireComponent(typeof(PlayerInput))]
-public class Maker : MonoBehaviour
-{
+public class Maker : MonoBehaviour {
     [Header("Components")]
     [SerializeField] FPController fpController;
 
@@ -13,11 +12,9 @@ public class Maker : MonoBehaviour
     private Vector2 lookInput = Vector2.zero;  // Mouse look
     private bool enableMovement = true;
 
-    public void ToggleMovement(bool enable)
-    {
+    public void ToggleMovement(bool enable) {
         enableMovement = enable;
-        if (!enable)
-        {
+        if (!enable) {
             // Reset inputs when disabling movement
             moveInput = Vector2.zero;
             verticalInput = 0f;
@@ -40,22 +37,17 @@ public class Maker : MonoBehaviour
         moveInput = value.Get<Vector2>();
     }
 
-    public void OnLook(InputValue value)
-    {
-        if (Mouse.current.middleButton.isPressed)
-        {
+    public void OnLook(InputValue value) {
+        if (Mouse.current.middleButton.isPressed) {
             lookInput = value.Get<Vector2>();
-        }
-        else
-        {
+        } else {
             lookInput = Vector2.zero;
         }
 
         fpController.LookInput = lookInput;
     }
 
-    void Update()
-    {
+    void Update() {
         if (!enableMovement) return;
         // Check vertical keys
         verticalInput = 0f;
@@ -66,12 +58,7 @@ public class Maker : MonoBehaviour
 
         // Apply combined movement
         fpController.MoveInput = new Vector3(moveInput.x, moveInput.y, verticalInput);
-        
+
     }
-    // // TODO: check to remove this since we already set as required
-    // void OnValidate()
-    // {
-    //     if (fpController == null)
-    //         fpController = GetComponent<FPController>();
-    // }
+
 }

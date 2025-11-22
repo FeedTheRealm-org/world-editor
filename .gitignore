@@ -106,3 +106,6 @@ InitTestScene*.unity*
 /[Aa]ssets/RPGPP_LT/
 /[Aa]ssets/Samples/
 /[Aa]ssets/TextMesh Pro/
+
+/[Aa]ssets/Resources
+/[Aa]ssets/Resources.meta

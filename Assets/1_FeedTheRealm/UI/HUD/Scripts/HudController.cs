@@ -1,9 +1,10 @@
+using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
 public class HUDController : MonoBehaviour {
-    [SerializeField] private AssetDatabaseSO assetDatabase;
+    [SerializeField] private AssetLibrarySO assetDatabase;
     [SerializeField] private PlacementSystem placementSystem;
 
     [Header("Menus")]
@@ -25,13 +26,15 @@ public class HUDController : MonoBehaviour {
         // Find the ScrollView from the UXML by its name
         itemScrollView = root.Q<ScrollView>("ItemScrollView");
 
+        assetDatabase.InitializeDatabase();
+
         PopulateButtons();
     }
 
     private void PopulateButtons() {
         itemScrollView.Clear();
 
-        foreach (var objData in assetDatabase.objectData) {
+        foreach (var objData in assetDatabase.GetAllAssets()) {
             var button = new Button {
                 text = objData.Name
             };
@@ -42,7 +45,7 @@ public class HUDController : MonoBehaviour {
         }
     }
 
-    private void OnItemSelected(AssetData obj) {
+    private void OnItemSelected(Asset obj) {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
         placementSystem.StartPlacement(obj);
     }
