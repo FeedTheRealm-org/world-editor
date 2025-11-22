@@ -4,7 +4,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 project_assets_dir="$(cd "$script_dir/.." && pwd)"
 
 # creates Resources/Models and Resources/Materials inside project Assets
-resources_dir="$project_assets_dir/Resources"
+resources_dir="$project_assets_dir/Assets/Resources"
 mkdir -p "$resources_dir/Models" "$resources_dir/Materials"
 
 # creates the user config Assets folder and write models.json
