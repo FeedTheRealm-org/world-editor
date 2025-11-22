@@ -185,11 +185,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: newWorldScene.sceneName
-      value: Game_POC
+      value: WorldEditor
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: loadWorldScene.sceneName
-      value: LoadWorldScene
+      value: LoadWorld
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: newWorldScene.sceneAsset
