@@ -251,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 623825318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -10}
+  m_LocalPosition: {x: 10, y: 2, z: -2.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -495,7 +495,7 @@ PrefabInstance:
       objectReference: {fileID: 1916555103}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -503,7 +503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -2.09
       objectReference: {fileID: 0}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -897,22 +897,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7432047408904556487, guid: b8d8224b901583cee973a24582738043, type: 3}
   m_PrefabInstance: {fileID: 1645386354960940949}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1524625782 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6533114475512384106, guid: b8d8224b901583cee973a24582738043, type: 3}
-  m_PrefabInstance: {fileID: 1645386354960940949}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1524625784 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
-  m_PrefabInstance: {fileID: 1645386354960940949}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524625782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa8c4e3a25bc91045a343fb7aa2ae4a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FeedTheRealm_Shared::World.WorldController
 --- !u!114 &1644542925 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5742400189667717054, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
@@ -941,8 +925,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a51060c9aa220977f8e087e82e0a2185, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPController
-  maxSpeed: 3
-  acceleration: 15
+  maxSpeed: 10
+  acceleration: 50
   lookSensitivity: {x: 0.1, y: 0.1}
   pitchLimit: 85
   currentPitch: 0
@@ -1049,11 +1033,11 @@ PrefabInstance:
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: worldController
       value: 
-      objectReference: {fileID: 1524625784}
+      objectReference: {fileID: 1645386354960940950}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: gridVisualization
       value: 
-      objectReference: {fileID: 1524625782}
+      objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementGridMaterial
       value: 
@@ -1078,6 +1062,14 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2077720549764580972, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_CellSize.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2077720549764580972, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_CellSize.z
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3037383106014469897, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -1090,17 +1082,49 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
+    - target: {fileID: 3491019444070359265, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: cellSize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3491019444070359265, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: gridSize
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3491019444070359265, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: showGridVisualization
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522845190183939672, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522845190183939672, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522845190183939672, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522845190183939672, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522845190183939672, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 4434243106868584164, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1115,12 +1139,36 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: cellSize
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: worldSize
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: totalCells
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: worldPlane
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: totalWorldSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: placementGridMaterial
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: showGridVisualization
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5682136210255627570, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalScale.x
@@ -1168,7 +1216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6343466532493618097, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6343466532493618097, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_CellSize.x
@@ -1189,6 +1237,18 @@ PrefabInstance:
     - target: {fileID: 6853865918570880066, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementLayerMask.m_Bits
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954949869464235420, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954949869464235420, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954949869464235420, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6954949869464235420, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1240,10 +1300,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6327020185403487318, guid: b8d8224b901583cee973a24582738043, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6533114475512384106, guid: b8d8224b901583cee973a24582738043, type: 3}
+    - {fileID: 4149419672146469329, guid: b8d8224b901583cee973a24582738043, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8d8224b901583cee973a24582738043, type: 3}
+--- !u!114 &1645386354960940950 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3491019444070359265, guid: b8d8224b901583cee973a24582738043, type: 3}
+  m_PrefabInstance: {fileID: 1645386354960940949}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8c4e3a25bc91045a343fb7aa2ae4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FeedTheRealm_Shared::World.WorldController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

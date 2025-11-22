@@ -15,14 +15,14 @@ cat > "$user_assets_dir/models.json" <<'JSON'
 {
     "assetObjects": [
         {
-            "id": 1,
+            "id": "1",
             "name": "Barrel",
             "size": { "x": 1, "y": 1 },
             "modelPath": "Models/<<INSERT MODEL FILE HERE>>",
             "materialPath": "Materials/<<INSERT MATERIAL FILE HERE>>"
         },
         {
-            "id": 2,
+            "id": "2",
             "name": "Tree",
             "size": { "x": 1, "y": 1 },
             "modelPath": "Models/<<INSERT MODEL FILE HERE>>",
