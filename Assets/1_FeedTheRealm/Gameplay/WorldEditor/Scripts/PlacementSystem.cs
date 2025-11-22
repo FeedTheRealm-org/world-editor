@@ -1,5 +1,6 @@
 using Models;
 using UnityEngine;
+using World;
 
 
 public class PlacementSystem : MonoBehaviour, IDataPersistence {
@@ -10,21 +11,17 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [SerializeField]
     private GameObject cellIndicator;
 
-    [Header("Grid Settings")]
-    [SerializeField]
-    private Grid grid;
-    [SerializeField]
-    private Material placementGridMaterial;
-
     [Header("Dependencies")]
     [SerializeField]
     private InputManager inputManager;
     [SerializeField]
     private Logging.Logger logger;
     [SerializeField]
-    private AssetLibrarySO assetDatabase;
+    private AssetLibrarySO assetLibrary;
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
+    [SerializeField]
+    private WorldController worldController;
 
     private Asset selectedObjectData = null;
     private PlacementManager placementManager;
@@ -37,7 +34,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false;
-        ToggleGridVisualization(true);
+        worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
 
         // Subscribe to input events
@@ -47,18 +44,17 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
     private void StopPlacement() {
         selectedObjectData = null;
-        ToggleGridVisualization(false);
+        worldController.ToggleGridVisualization(false);
         cellIndicator.SetActive(false);
 
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
     }
-
     private void PlaceObject() {
         if (selectedObjectData == null) {
             return;
         }
-        Vector3Int gridPosition = grid.WorldToCell(inputManager.GetSelectedMapPosition());
+        Vector3Int gridPosition = worldController.GetSelectedPosition(inputManager.GetSelectedMapPosition());
 
         bool canBePlaced = TryPlaceObjectAt(
             selectedObjectData,
@@ -78,9 +74,10 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         if (placeableObject == null) {
             return false;
         }
-        Vector3Int cellPosition = grid.WorldToCell(gridPosition);
-        Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        placeableObject.InstancedGameObject.transform.position = pos;
+        // Vector3Int cellPosition = grid.WorldToCell(gridPosition);
+        // Vector3 pos = grid.GetCellCenterWorld(cellPosition);
+        // placeableObject.InstancedGameObject.transform.position = pos;
+        worldController.PlaceObjectAt(gridPosition, placeableObject.InstancedGameObject);
         return true;
     }
 
@@ -103,7 +100,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     public void StartRemoving() {
         isRemoving = true;
         selectedObjectData = null;
-        ToggleGridVisualization(true);
+        worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
         inputManager.OnClicked += HandleRemoveClick;
         inputManager.OnExit += StopRemoving;
@@ -111,7 +108,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
     private void StopRemoving() {
         isRemoving = false;
-        ToggleGridVisualization(false);
+        worldController.ToggleGridVisualization(false);
         cellIndicator.SetActive(false);
 
         inputManager.OnClicked -= HandleRemoveClick;
@@ -120,7 +117,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
     private void HandleRemoveClick() {
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
+        Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
         RemoveObjectAt(cellPosition);
     }
 
@@ -143,16 +140,12 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         }
 
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
+        Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
         placementIndicator.transform.position = placementPosition;
-        cellIndicator.transform.position = grid.GetCellCenterWorld(cellPosition);
+        cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion
-
-    private void ToggleGridVisualization(bool isVisible) {
-        placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
-    }
 
     #region Data Persistence Implementation
     public void LoadData(WorldData data) {
@@ -163,7 +156,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         }
 
         foreach (PlacedAsset placementData in data.objectPlacementData) {
-            Asset assetData = assetDatabase.GetAssetById(placementData.AssetDataId);
+            Asset assetData = assetLibrary.GetAssetById(placementData.AssetDataId);
             Vector3Int gridPosition = placementData.Position;
             bool canBePlaced = TryPlaceObjectAt(assetData, gridPosition);
             if (!canBePlaced) {
@@ -180,4 +173,3 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
     #endregion
 }
-
