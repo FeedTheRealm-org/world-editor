@@ -44,7 +44,9 @@ public class WorldHandler {
             using FileStream fs = new(fullPath, FileMode.Open);
             using StreamReader reader = new(fs);
             string dataToLoad = reader.ReadToEnd();
-            return JsonUtility.FromJson<WorldData>(dataToLoad);
+            WorldData worldData = JsonUtility.FromJson<WorldData>(dataToLoad);
+            worldData.filepath = fullPath;
+            return worldData;
 
         } catch (Exception e) {
             Debug.LogError($"Error loading data from file: {e}");

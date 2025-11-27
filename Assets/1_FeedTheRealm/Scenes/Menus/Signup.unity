@@ -131,6 +131,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Signup
       objectReference: {fileID: 0}
+    - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
+      propertyPath: targetScene.sceneName
+      value: Login
+      objectReference: {fileID: 0}
+    - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
+      propertyPath: targetScene.sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
+    - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
+      propertyPath: otherFormScene.sceneName
+      value: Login
+      objectReference: {fileID: 0}
+    - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
+      propertyPath: otherFormScene.sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
     - target: {fileID: 9070586079720592906, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.60496

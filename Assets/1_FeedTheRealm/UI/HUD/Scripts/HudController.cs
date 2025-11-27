@@ -9,6 +9,7 @@ public class HUDController : MonoBehaviour {
 
     [Header("Menus")]
     [SerializeField] private GameObject saveMenu;
+    [SerializeField] private GameObject publishMenu;
 
     private ScrollView itemScrollView;
 
@@ -22,6 +23,9 @@ public class HUDController : MonoBehaviour {
 
         var deleteButton = root.Q<Button>("DeleteButton");
         deleteButton.clicked += () => placementSystem.StartRemoving();
+
+        var publishButton = root.Q<Button>("PublishWorld");
+        publishButton.clicked += OpenPublishMenu;
 
         // Find the ScrollView from the UXML by its name
         itemScrollView = root.Q<ScrollView>("ItemScrollView");
@@ -50,11 +54,20 @@ public class HUDController : MonoBehaviour {
         placementSystem.StartPlacement(obj);
     }
 
+    // TODO: refactor to a MenuManager
     private void OpenSaveMenu() {
         if (saveMenu != null) {
             saveMenu.SetActive(true);
         } else {
             Debug.LogWarning("HUDController: Save menu reference is not set.");
+        }
+    }
+
+    private void OpenPublishMenu() {
+        if (publishMenu != null) {
+            publishMenu.SetActive(true);
+        } else {
+            Debug.LogWarning("HUDController: Publish menu reference is not set.");
         }
     }
 }
