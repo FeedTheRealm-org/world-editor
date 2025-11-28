@@ -48,13 +48,13 @@ def create_directories(paths):
 
 def copy_material(material_file, materials_dir):
     """Copy the material file to the Materials directory."""
-    material_basename = Path(material_file).stem
-    destination = materials_dir / f"{material_basename}.mat"
+    material_filename = Path(material_file).name  # Get full filename with extension
 
+    destination = materials_dir / material_filename
     print("Copying material file...")
     shutil.copy2(material_file, destination)
 
-    return material_basename
+    return material_filename
 
 
 def copy_models(models_folder, models_dir):
@@ -67,10 +67,10 @@ def copy_models(models_folder, models_dir):
     for extension in model_extensions:
         pattern = os.path.join(models_folder, extension)
         for model_file in glob.glob(pattern):
-            filename = os.path.basename(model_file)
+            filename = os.path.basename(model_file)  # Get full filename with extension
             destination = models_dir / filename
             shutil.copy2(model_file, destination)
-            copied_files.append(Path(model_file).stem)
+            copied_files.append(filename)  # Store full filename
 
     return copied_files
 
@@ -96,11 +96,14 @@ def get_existing_model_names(data):
     return {obj.get("name") for obj in data.get("assetObjects", [])}
 
 
-def add_new_models(data, copied_models, material_basename, existing_names):
+def add_new_models(data, copied_models, material_filename, existing_names):
     """Add new model entries to the JSON data."""
     added_count = 0
 
-    for model_name in copied_models:
+    for model_filename in copied_models:
+        # Extract name without extension for duplicate checking
+        model_name = Path(model_filename).stem
+
         if model_name not in existing_names:
             # Generate a random UUID for the ID
             unique_id = str(uuid.uuid4())
@@ -109,13 +112,13 @@ def add_new_models(data, copied_models, material_basename, existing_names):
                 "id": unique_id,
                 "name": model_name,
                 "size": {"x": 1, "y": 1},
-                "modelPath": f"Models/{model_name}",
-                "materialPath": f"Materials/{material_basename}",
+                "modelPath": f"Models/{model_filename}",  # Include full filename with extension
+                "materialPath": f"Materials/{material_filename}",  # Include full filename with extension
             }
 
             data["assetObjects"].append(new_entry)
             added_count += 1
-            print(f"Added: {model_name} (ID: {unique_id[:8]}...)")
+            print(f"Added: {model_filename} (ID: {unique_id[:8]}...)")
 
     return added_count
 
@@ -162,7 +165,7 @@ def main():
     create_directories(paths)
 
     # Copy files
-    material_basename = copy_material(material_file, paths["materials_dir"])
+    material_filename = copy_material(material_file, paths["materials_dir"])
     copied_models = copy_models(models_folder, paths["models_dir"])
 
     # Load existing JSON data
@@ -172,17 +175,17 @@ def main():
     existing_names = get_existing_model_names(data)
 
     # Add new models to JSON
-    added_count = add_new_models(data, copied_models, material_basename, existing_names)
+    added_count = add_new_models(data, copied_models, material_filename, existing_names)
 
     # Save updated JSON
     save_json(data, paths["json_file"])
 
     # Print summary
     print("")
-    print("✅ Library filled successfully!")
-    print(f"📁 Copied models to: {paths['models_dir']}")
-    print(f"🎨 Copied material to: {paths['materials_dir']}/{material_basename}.mat")
-    print(f"📄 Updated: {paths['json_file']}")
+    print("Library filled successfully!")
+    print(f"Copied models to: {paths['models_dir']}")
+    print(f"Copied material to: {paths['materials_dir']}/{material_filename}")
+    print(f"Updated: {paths['json_file']}")
     print("")
     print(f"Added {added_count} new assets")
     print(f"Total assets in library: {len(data['assetObjects'])}")

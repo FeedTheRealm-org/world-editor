@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
-  m_Name: WorldServiceLogger
+  m_Name: ModelServiceLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   _showLogs: 1
-  _loggerPrefix: '[WORLD-SERVICE]'
-  _loggerColor: {r: 0.13252613, g: 0.5211724, b: 0.8601233, a: 0}
+  _loggerPrefix: '[MODEL-SERVICE]'
+  _loggerColor: {r: 1, g: 0, b: 0.4002924, a: 0}

@@ -264,6 +264,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2401504226016459371, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+      propertyPath: backScene.sceneName
+      value: Login
+      objectReference: {fileID: 0}
+    - target: {fileID: -2401504226016459371, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+      propertyPath: backScene.sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
+    - target: {fileID: -2401504226016459371, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+      propertyPath: targetScene.sceneName
+      value: Login
+      objectReference: {fileID: 0}
+    - target: {fileID: -2401504226016459371, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+      propertyPath: targetScene.sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
     - target: {fileID: 1146576951633495747, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.20741

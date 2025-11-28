@@ -8,14 +8,14 @@ public class WorldHandler {
 
     public void Save(WorldData worldData, string dataDirPath, string fileExtension) {
 
-        dataDirPath = Path.Combine(Application.persistentDataPath, dataDirPath);
+        string saveFilePath = Application.persistentDataPath;
+        dataDirPath = Path.Combine(saveFilePath, dataDirPath);
 
         try {
             string data = JsonUtility.ToJson(worldData, true);
             if (!Directory.Exists(dataDirPath)) {
                 Directory.CreateDirectory(dataDirPath);
             }
-            Debug.Log($"Saving data: {data}");
 
             if (string.IsNullOrEmpty(data) || data.Trim() == "{}") {
                 Debug.LogWarning("No data to save.");
@@ -35,23 +35,30 @@ public class WorldHandler {
     }
 
     public WorldData Load(string dataFileName, string dataDirPath) {
-        dataDirPath = Path.Combine(Application.persistentDataPath, dataDirPath);
         try {
-            if (!File.Exists(Path.Combine(dataDirPath, dataFileName))) {
+            string saveFilePath = Application.persistentDataPath;
+            string fullDataDirPath = Path.Combine(saveFilePath, dataDirPath);
+            if (!File.Exists(Path.Combine(fullDataDirPath, dataFileName))) {
                 return null;
             }
-            string fullPath = Path.Combine(dataDirPath, dataFileName);
+            string fullPath = Path.Combine(fullDataDirPath, dataFileName);
             using FileStream fs = new(fullPath, FileMode.Open);
             using StreamReader reader = new(fs);
             string dataToLoad = reader.ReadToEnd();
             WorldData worldData = JsonUtility.FromJson<WorldData>(dataToLoad);
-            worldData.filepath = fullPath;
             return worldData;
 
         } catch (Exception e) {
             Debug.LogError($"Error loading data from file: {e}");
             return null;
         }
+    }
+
+    public string GetWorldFilePath(string worldName, string dataDirPath, string fileExtension) {
+        string saveFilePath = Application.persistentDataPath;
+        string dataFileName = CreateFileName(worldName, fileExtension);
+        string fullDataDirPath = Path.Combine(saveFilePath, dataDirPath);
+        return Path.Combine(fullDataDirPath, dataFileName);
     }
 
     public List<string> GetAllWorlds(string dataDirPath, string fileExtension) {
