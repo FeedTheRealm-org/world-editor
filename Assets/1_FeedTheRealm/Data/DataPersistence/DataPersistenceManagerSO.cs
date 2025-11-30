@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Models;
+using UnityEditor;
 
 [CreateAssetMenu(fileName = "DataPersistence", menuName = "Scriptable Objects/Persistence/DataPersistenceManager")]
 public class DataPersistenceManagerSO : ScriptableObject {
@@ -31,6 +32,21 @@ public class DataPersistenceManagerSO : ScriptableObject {
     public void UnSetActiveWorld() {
         worldData = null;
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(DataPersistenceManagerSO))]
+    public class DataPersistenceManagerSOEditor : Editor {
+        public override void OnInspectorGUI() {
+            DrawDefaultInspector();
+
+            DataPersistenceManagerSO manager = (DataPersistenceManagerSO)target;
+
+            if (GUILayout.Button("Unset Active World")) {
+                manager.NewWorld();
+            }
+        }
+    }
+#endif
 
     public void SaveWorld(string worldName) {
         if (worldData == null) {
@@ -62,21 +78,30 @@ public class DataPersistenceManagerSO : ScriptableObject {
             logger.Log($"No world data set, creating new world.", this, Logging.LogType.Warning);
             return;
         }
+        try {
+            logger.Log("Loading world data...", this, Logging.LogType.Info);
+            dataPersistenceObjects = FindAllDataPersistenceObjects();
+            foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) {
+                dataPersistenceObj.LoadData(worldData);
+            }
 
-        logger.Log("Loading world data...", this, Logging.LogType.Info);
-
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
-        logger.Log($"Found {dataPersistenceObjects.Count} data persistence objects.", this, Logging.LogType.Info);
-
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) {
-            logger.Log($"Loading data into: {dataPersistenceObj.GetType().Name}", this, Logging.LogType.Info);
-            dataPersistenceObj.LoadData(worldData);
+            logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
+        } catch (System.Exception) {
+            logger.Log("Error loading world data, initiating a new world", this, Logging.LogType.Error);
+            NewWorld();
         }
-
-        logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
     }
 
     public List<string> ListAllWorlds() {
         return worldDataHandler.GetAllWorlds(saveDirectory, fileExtension);
+    }
+
+
+    public string GetCurrentWorldFilePath() {
+        if (worldData == null) {
+            logger.Log("No active world data found.", this, Logging.LogType.Warning);
+            return null;
+        }
+        return worldDataHandler.GetWorldFilePath(worldData.worldName, saveDirectory, fileExtension);
     }
 }

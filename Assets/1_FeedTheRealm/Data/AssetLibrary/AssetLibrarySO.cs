@@ -22,6 +22,21 @@ public class AssetLibrarySO : ScriptableObject {
         return objectData.Find(obj => obj.Id == id);
     }
 
+    public List<Asset> GetAssetsFromWorld(WorldData worldData) {
+        EnsureInitialized();
+        var assetsSet = new HashSet<Asset>();
+        foreach (var placedAsset in worldData.objectPlacementData) {
+            var asset = GetAssetById(placedAsset.AssetDataId);
+            if (asset != null) {
+                assetsSet.Add(asset);
+            } else {
+                logger.Log($"Asset with ID {placedAsset.AssetDataId} not found in Asset Library.", this, Logging.LogType.Warning);
+            }
+        }
+        logger.Log($"Found {assetsSet.Count} unique assets from world data.", this, Logging.LogType.Info);
+        return new List<Asset>(assetsSet);
+    }
+
     public List<Asset> GetAllAssets() {
         EnsureInitialized();
         return objectData;
