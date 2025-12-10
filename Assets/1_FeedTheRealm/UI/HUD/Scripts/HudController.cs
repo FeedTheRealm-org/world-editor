@@ -1,6 +1,7 @@
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(UIDocument))]
 public class HUDController : MonoBehaviour {
@@ -11,7 +12,8 @@ public class HUDController : MonoBehaviour {
     [SerializeField] private GameObject saveMenu;
     [SerializeField] private GameObject publishMenu;
 
-    private ScrollView itemScrollView;
+    private ListView itemListView;
+    private List<Asset> assetList;
 
     private void OnEnable() {
         // Get the UIDocument attached to this GameObject
@@ -27,26 +29,44 @@ public class HUDController : MonoBehaviour {
         var publishButton = root.Q<Button>("PublishWorld");
         publishButton.clicked += OpenPublishMenu;
 
-        // Find the ScrollView from the UXML by its name
-        itemScrollView = root.Q<ScrollView>("ItemScrollView");
+        // Find the ListView from the UXML
+        itemListView = root.Q<ListView>("ItemListView");
+        if (itemListView == null) {
+            Debug.LogError("HUDController: ItemListView not found in UXML");
+            return;
+        }
 
         assetDatabase.InitializeDatabase();
-
-        PopulateButtons();
+        SetupListView();
     }
 
-    private void PopulateButtons() {
-        itemScrollView.Clear();
+    private void SetupListView() {
+        assetList = new List<Asset>(assetDatabase.GetAllAssets());
 
-        foreach (var objData in assetDatabase.GetAllAssets()) {
-            var button = new Button {
-                text = objData.Name
-            };
-            button.AddToClassList("item_box");
-            button.clicked += () => OnItemSelected(objData);
-
-            itemScrollView.Add(button);
+        if (assetList == null || assetList.Count == 0) {
+            Debug.LogWarning("HUDController: No assets found in database");
+            return;
         }
+
+        itemListView.itemsSource = assetList;
+
+        itemListView.makeItem = () => {
+            var button = new Button();
+            button.AddToClassList("item_box");
+            button.style.marginBottom = 12;
+            button.style.marginTop = 12;
+            return button;
+        };
+
+        itemListView.bindItem = (element, index) => {
+            var button = element as Button;
+            var asset = assetList[index];
+
+            button.text = asset.Name;
+            button.clicked += () => OnItemSelected(asset);
+        };
+
+        itemListView.fixedItemHeight = 150;
     }
 
     private void OnItemSelected(Asset obj) {

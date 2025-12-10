@@ -143,5 +143,4 @@ MonoBehaviour:
   gridSize: 10
   worldPlane: {fileID: 8965638004177047631}
   grid: {fileID: 8290546892413514904}
-  placementGridMaterial: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
   showGridVisualization: 0
