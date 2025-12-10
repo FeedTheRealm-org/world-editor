@@ -180,17 +180,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
     - target: {fileID: 7511683846028582421, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
-<<<<<<< HEAD
-      propertyPath: otherFormScene.sceneName
-      value: Signup
-      objectReference: {fileID: 0}
-    - target: {fileID: 7511683846028582421, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
-      propertyPath: otherFormScene.sceneAsset
-      value: 
-      objectReference: {fileID: 102900000, guid: b5130eb7c7f243e829d5318ca82cdcf6, type: 3}
-    - target: {fileID: 7511683846028582421, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
-=======
->>>>>>> cd84cfa699897c2ba9310730c551ed35204267cd
       propertyPath: verifyCodeScene.sceneName
       value: VerifyCode
       objectReference: {fileID: 0}
