@@ -1,5 +1,22 @@
 #!/usr/bin/env bash
 
+# Flag to use simplified config path on Windows
+bgdm=false
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -bgdm)
+            bgdm=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 project_assets_dir="$(cd "$script_dir/.." && pwd)"
 
@@ -8,7 +25,12 @@ resources_dir="$project_assets_dir/Assets/Resources"
 mkdir -p "$resources_dir/Models" "$resources_dir/Materials"
 
 # creates the user config Assets folder and write models.json
-user_assets_dir="$HOME/.config/unity3d/AtusGames/World creator/Assets"
+if [[ "$bgdm" == true ]]; then
+    user_assets_dir="$HOME/AppData/LocalLow/AtusGames/World creator/Assets"
+else
+    user_assets_dir="$HOME/.config/unity3d/AtusGames/World creator/Assets"
+fi
+
 mkdir -p "$user_assets_dir"
 
 cat > "$user_assets_dir/models.json" <<'JSON'
