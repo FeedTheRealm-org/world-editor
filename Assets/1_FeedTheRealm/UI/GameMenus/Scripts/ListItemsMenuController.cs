@@ -1,0 +1,150 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+[RequireComponent(typeof(UIDocument))]
+public class ListItemsMenuController : MonoBehaviour {
+  [SerializeField] private ConsumableItems consumableItemsDatabase;
+  [SerializeField] private Maker player;
+
+  private VisualElement root;
+  private ListView listView;
+  private Button refreshButton;
+  private Button closeButton;
+
+  private void OnEnable() {
+    var uiDoc = GetComponent<UIDocument>();
+    root = uiDoc.rootVisualElement;
+    if (root == null) {
+      Debug.LogError("ListItemsMenuController: UIDocument has no visual tree. Assign a UXML to the Source Asset.");
+      return;
+    }
+
+    var container = root.Q<VisualElement>("ListContainer");
+    if (container == null) {
+      Debug.LogError("ListItemsMenuController: Could not find 'ListContainer' element in UXML.");
+      return;
+    }
+
+    refreshButton = root.Q<Button>("Refresh");
+    closeButton = root.Q<Button>("Close");
+
+    if (refreshButton != null) refreshButton.clicked += RefreshItems;
+    if (closeButton != null) closeButton.clicked += CloseMenu;
+
+    if (player != null) player.ToggleMovement(false);
+
+    // Create ListView
+    listView = new ListView();
+    listView.name = "ConsumableListView";
+    listView.selectionType = SelectionType.Single;
+    listView.itemHeight = 56;
+    listView.showBoundCollectionSize = true;
+
+    // makeItem: create reusable element structure
+    listView.makeItem = () => {
+      var rootElem = new VisualElement();
+      rootElem.style.flexDirection = FlexDirection.Row;
+      rootElem.style.alignItems = Align.Center;
+      rootElem.style.paddingLeft = 6;
+      rootElem.style.paddingRight = 6;
+
+      var img = new Image { name = "itemImage" };
+      img.style.width = 48;
+      img.style.height = 48;
+      img.style.marginRight = 8;
+
+      var textCol = new VisualElement();
+      textCol.style.flexDirection = FlexDirection.Column;
+      textCol.style.flexGrow = 1;
+
+      var nameLabel = new Label { name = "itemName" };
+      nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+
+      var infoLabel = new Label { name = "itemInfo" };
+      infoLabel.style.unityFontStyleAndWeight = FontStyle.Normal;
+      infoLabel.style.fontSize = 12;
+
+      textCol.Add(nameLabel);
+      textCol.Add(infoLabel);
+
+      var deleteBtn = new Button() { name = "deleteBtn", text = "Delete" };
+      deleteBtn.style.width = 80;
+      deleteBtn.style.height = 30;
+
+      // Handler uses the element.userData which is updated in bindItem
+      deleteBtn.clicked += () => {
+        int idx = (int?)(rootElem.userData as int?) ?? -1;
+        if (idx >= 0) DeleteItemAtIndex(idx);
+      };
+
+      rootElem.Add(img);
+      rootElem.Add(textCol);
+      rootElem.Add(deleteBtn);
+
+      return rootElem;
+    };
+
+    // bindItem: populate the reusable element for the given index
+    listView.bindItem = (element, i) => {
+      element.userData = i;
+      var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItems.ConsumableData>();
+      if (i < 0 || i >= items.Count) return;
+      var data = items[i];
+
+      var img = element.Q<Image>("itemImage");
+      if (img != null) img.sprite = data.sprite;
+
+      var nameLabel = element.Q<Label>("itemName");
+      if (nameLabel != null) nameLabel.text = data.name ?? "(unnamed)";
+
+      var infoLabel = element.Q<Label>("itemInfo");
+      if (infoLabel != null) infoLabel.text = $"{data.effectType} • Value: {data.value} • MaxStack: {data.maxStack}";
+    };
+
+    container.Add(listView);
+
+    RefreshItems();
+  }
+
+  private void OnDisable() {
+    if (refreshButton != null) refreshButton.clicked -= RefreshItems;
+    if (closeButton != null) closeButton.clicked -= CloseMenu;
+    if (player != null) player.ToggleMovement(true);
+  }
+
+  private void RefreshItems() {
+    if (consumableItemsDatabase == null) {
+      Debug.LogWarning("ListItemsMenuController: consumableItemsDatabase is not assigned.");
+      listView.itemsSource = new List<ConsumableItems.ConsumableData>();
+      listView.Rebuild();
+      return;
+    }
+
+    var items = consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItems.ConsumableData>();
+    listView.itemsSource = items;
+    listView.Rebuild();
+  }
+
+  private void DeleteItemAtIndex(int index) {
+    if (consumableItemsDatabase == null) return;
+    var list = consumableItemsDatabase.GetAllConsumableItems();
+    if (list == null || index < 0 || index >= list.Count) return;
+
+    var removed = list[index];
+    list.RemoveAt(index);
+
+#if UNITY_EDITOR
+    UnityEditor.EditorUtility.SetDirty(consumableItemsDatabase);
+    UnityEditor.AssetDatabase.SaveAssets();
+#endif
+
+    Debug.Log($"ListItemsMenuController: Removed item '{removed.name}' at index {index}.");
+    RefreshItems();
+  }
+
+  private void CloseMenu() {
+    if (player != null) player.ToggleMovement(true);
+    gameObject.SetActive(false);
+  }
+}

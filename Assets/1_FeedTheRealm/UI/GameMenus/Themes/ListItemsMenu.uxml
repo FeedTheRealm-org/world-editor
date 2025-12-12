@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/gameMenuUSS.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#gameMenuUSS"/>
+    <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(165, 0, 255, 0.12); flex-direction: column; justify-content: center; align-items: center;">
+        <ui:VisualElement name="ListMenuContainer" class="menu-container" style="flex-direction: column; width: 900px; max-width: 900px; min-width: 600px; max-height: 80%;">
+            <ui:Label text="Items" class="text" style="-unity-font-style: bold; font-size: 40%; padding-left: 3%; padding-top: 6px; padding-bottom: 6px;"/>
+            <ui:VisualElement style="flex-direction: row; gap: 8px; padding-left: 3%; padding-right: 3%; align-items: center;">
+                <ui:Button text="Refresh" name="Refresh" style="width: 100px; height: 32px;"/>
+                <ui:Button text="Close" name="Close" style="width: 100px; height: 32px; margin-left: auto;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="ListContainer" style="flex-direction: column; flex-grow: 1; padding: 12px; overflow: auto;">
+                <!-- ListView is created at runtime by the controller and added here -->
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
