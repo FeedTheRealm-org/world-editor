@@ -360,6 +360,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1889743594}
+    - target: {fileID: 3701420702172498568, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 3972978763712568489, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Enabled
       value: 1

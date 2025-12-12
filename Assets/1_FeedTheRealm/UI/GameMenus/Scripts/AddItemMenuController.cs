@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
@@ -7,24 +8,7 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UIDocument))]
 public class AddItemMenuController : MonoBehaviour {
     [SerializeField] private Maker player;
-
-    [Serializable]
-    public class ConsumableData {
-        public string name;
-        public string description;
-        public string effectType; // e.g., Heal, Buff, Damage, Speed, Mana, Custom
-        public int value; // magnitude of effect
-        public float duration; // seconds; 0 if instant
-        public float cooldown; // seconds
-        public int maxStack; // default 1
-        public Sprite sprite;
-    }
-
-    [Serializable]
-    public class ItemAddedEvent : UnityEvent<ConsumableData> { }
-
-    [Header("Events")]
-    public ItemAddedEvent OnItemAdded;
+    [SerializeField] private ConsumableItems consumableItemsDatabase;
 
     private Button addButton;
     private Button closeButton;
@@ -84,19 +68,51 @@ public class AddItemMenuController : MonoBehaviour {
     }
 
     private void OnAddClicked() {
+        if (consumableItemsDatabase == null) {
+            Debug.LogError("AddItemMenuController: consumableItemsDatabase is not assigned. Assign it in the Inspector.");
+            return;
+        }
+
         var consumable = BuildConsumableFromUI();
         if (consumable == null) return;
 
         Debug.Log($"AddItemMenuController: Adding consumable '{consumable.name}' (Effect {consumable.effectType}, Value {consumable.value}, Duration {consumable.duration}s)");
 
-        OnItemAdded?.Invoke(consumable);
+        try {
+            consumableItemsDatabase.AddConsumableItem(consumable);
+        } catch (Exception ex) {
+            Debug.LogError($"AddItemMenuController: Failed to add consumable to database: {ex.Message}");
+            return;
+        }
+
         CloseMenu();
     }
 
     private void OnLoadSpriteClicked() {
+        // In the Editor, allow picking a file from disk; otherwise fall back to Resources path loading
+#if UNITY_EDITOR
+        string startDir = Application.dataPath;
+        string selected = UnityEditor.EditorUtility.OpenFilePanel("Select Sprite", startDir, "png,jpg,jpeg");
+        if (!string.IsNullOrEmpty(selected)) {
+            // Try to compute a Resources-relative path (no extension) if inside a Resources folder
+            string resourcesPath = TryMakeResourcesPath(selected);
+            if (!string.IsNullOrEmpty(resourcesPath) && spritePathInput != null) {
+                spritePathInput.value = resourcesPath;
+            }
+
+            // Preview from the absolute file path to give immediate feedback
+            var previewSprite = LoadSpriteFromAbsoluteFile(selected);
+            if (previewSprite != null) {
+                spritePreview.sprite = previewSprite;
+                spritePreview.image = previewSprite.texture;
+                return;
+            }
+        }
+#endif
+
+        // Fallback to existing behavior using Resources path typed in the input
         Sprite sprite = LoadSpriteFromPath(spritePathInput?.value);
         if (sprite != null) {
-            // UI Toolkit Image supports sprite in modern versions; also set image for compatibility
             spritePreview.sprite = sprite;
             spritePreview.image = sprite.texture;
         } else {
@@ -104,7 +120,7 @@ public class AddItemMenuController : MonoBehaviour {
         }
     }
 
-    private ConsumableData BuildConsumableFromUI() {
+    private ConsumableItems.ConsumableData BuildConsumableFromUI() {
         string itemName = nameInput != null ? nameInput.value?.Trim() : string.Empty;
         if (string.IsNullOrEmpty(itemName)) {
             Debug.LogError("Item name cannot be empty.");
@@ -123,7 +139,7 @@ public class AddItemMenuController : MonoBehaviour {
             spritePreview.image = sprite.texture;
         }
 
-        return new ConsumableData {
+        return new ConsumableItems.ConsumableData {
             name = itemName,
             description = desc,
             effectType = effect,
@@ -140,6 +156,43 @@ public class AddItemMenuController : MonoBehaviour {
         // Path should be relative to a Resources folder and without extension
         var sprite = Resources.Load<Sprite>(path.Trim());
         return sprite;
+    }
+
+    private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {
+        try {
+            if (string.IsNullOrEmpty(absolutePath) || !File.Exists(absolutePath)) return null;
+            byte[] data = File.ReadAllBytes(absolutePath);
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            if (!tex.LoadImage(data)) return null;
+            tex.name = Path.GetFileNameWithoutExtension(absolutePath);
+            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+            sprite.name = tex.name;
+            return sprite;
+        } catch (Exception ex) {
+            Debug.LogWarning($"AddItemMenuController: Failed to load sprite from file '{absolutePath}'. {ex.Message}");
+            return null;
+        }
+    }
+
+    private string TryMakeResourcesPath(string absolutePath) {
+        // If file is under any 'Resources' folder within the project, return the path relative to that folder without extension
+        try {
+            if (string.IsNullOrEmpty(absolutePath)) return null;
+            string projectPath = Application.dataPath.Replace("/", Path.DirectorySeparatorChar.ToString());
+            string normalized = absolutePath.Replace("/", Path.DirectorySeparatorChar.ToString());
+            if (!normalized.StartsWith(projectPath, StringComparison.OrdinalIgnoreCase)) return null;
+
+            // Find "/Resources/" segment
+            int idx = normalized.IndexOf(Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return null;
+            int start = idx + ("" + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar).Length;
+            string rel = normalized.Substring(start);
+            string withoutExt = Path.ChangeExtension(rel, null);
+            // Convert back to Unity-style forward slashes
+            return withoutExt.Replace(Path.DirectorySeparatorChar, '/');
+        } catch {
+            return null;
+        }
     }
 
     private void OnCloseClicked() {
