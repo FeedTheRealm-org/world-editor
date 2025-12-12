@@ -11,6 +11,7 @@ public class HUDController : MonoBehaviour {
     [Header("Menus")]
     [SerializeField] private GameObject saveMenu;
     [SerializeField] private GameObject publishMenu;
+    [SerializeField] private GameObject addItemMenu;
 
     private ListView itemListView;
     private List<Asset> assetList;
@@ -28,6 +29,9 @@ public class HUDController : MonoBehaviour {
 
         var publishButton = root.Q<Button>("PublishWorld");
         publishButton.clicked += OpenPublishMenu;
+
+        var addItemButton = root.Q<Button>("AddItemButton");
+        addItemButton.clicked += OpenAddItemMenu;
 
         // Find the ListView from the UXML
         itemListView = root.Q<ListView>("ItemListView");
@@ -88,6 +92,14 @@ public class HUDController : MonoBehaviour {
             publishMenu.SetActive(true);
         } else {
             Debug.LogWarning("HUDController: Publish menu reference is not set.");
+        }
+    }
+
+    private void OpenAddItemMenu() {
+        if (addItemMenu != null) {
+            addItemMenu.SetActive(true);
+        } else {
+            Debug.LogWarning("HUDController: Add Item menu reference is not set.");
         }
     }
 }
