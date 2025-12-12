@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &8724705 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8875210531301147476, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &528598227 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 128852270443363891, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
@@ -536,10 +541,22 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[18].m_ActionName
       value: UI/TrackedDeviceOrientation
       objectReference: {fileID: 0}
+    - target: {fileID: 5361051829409678914, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_ParentUI
+      value: 
+      objectReference: {fileID: 1208954295}
+    - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: CreatorHUD
+      value: 
+      objectReference: {fileID: 8724705}
     - target: {fileID: 6535934248912987449, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8072287528335950566, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: sourceAsset
+      value: 
+      objectReference: {fileID: 9197481963319205126, guid: 23a79520e84082d42a5c8be34996fbfd, type: 3}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: saveMenu
       value: 
@@ -547,7 +564,7 @@ PrefabInstance:
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: addItemMenu
       value: 
-      objectReference: {fileID: 2044723882}
+      objectReference: {fileID: 0}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: publishMenu
       value: 
@@ -556,6 +573,10 @@ PrefabInstance:
       propertyPath: placementSystem
       value: 
       objectReference: {fileID: 1916555103}
+    - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsHUD
+      value: 
+      objectReference: {fileID: 1208954293}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10
@@ -751,6 +772,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7432047408904556487, guid: b8d8224b901583cee973a24582738043, type: 3}
   m_PrefabInstance: {fileID: 1645386354960940949}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1208954293 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4680633239119515451, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1208954295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8072287528335950566, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208954293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
 --- !u!114 &1644542925 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5742400189667717054, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
@@ -847,11 +884,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
---- !u!1 &2044723882 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3550725247831493268, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
-  m_PrefabInstance: {fileID: 732672093}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1645386354960940949
 PrefabInstance:
   m_ObjectHideFlags: 0
