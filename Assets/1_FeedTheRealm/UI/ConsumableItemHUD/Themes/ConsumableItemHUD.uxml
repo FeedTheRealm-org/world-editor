@@ -5,7 +5,7 @@
             <ui:Button text="X" name="CloseConsumableHUDButton" class="hud_buttons" style="background-color: rgb(10, 10, 10); max-width: none; align-self: stretch; align-content: auto; justify-content: center; align-items: auto; position: absolute; top: 2%; left: 2%; right: 0%; bottom: 0; height: 5%; width: 3%; border-top-left-radius: 50%; border-top-right-radius: 50%; border-bottom-right-radius: 50%; border-bottom-left-radius: 50%;"/>
             <ui:VisualElement name="Buttons" style="flex-grow: 1; height: 0; position: relative; top: -37%; left: auto; align-content: auto; justify-content: space-evenly; align-self: center; flex-direction: row; translate: 0% 0%; align-items: stretch; right: auto; width: 20%; background-size: 10% 100%; min-width: 3%; max-width: 20%; bottom: auto; flex-wrap: nowrap; min-height: 5%;">
                 <ui:Button text="Add Items" name="AddItemButton" class="hud_buttons" style="background-color: rgb(202, 0, 217); max-width: 50%;"/>
-                <ui:Button text="List Items" name="ListItem" class="hud_buttons" style="background-color: rgb(202, 0, 217); max-width: 50%;"/>
+                <ui:Button text="List Items" name="ListItemsButton" class="hud_buttons" style="background-color: rgb(202, 0, 217); max-width: 50%;"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
