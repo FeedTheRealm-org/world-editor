@@ -26,9 +26,9 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement name="SpriteContainer" style="flex-direction: column; align-self: stretch; margin-bottom: 15px;">
-                        <ui:Label text="Sprite (Resources path, e.g. Sprites/MyIcon)" class="text" style="margin-bottom: 8px; color: rgb(0, 0, 0);"/>
+                        <ui:Label text="Sprite" class="text" style="margin-bottom: 8px; color: rgb(0, 0, 0);"/>
                         <ui:VisualElement style="flex-direction: row; align-items: auto; justify-content: center; gap: 10px; align-self: auto; align-content: auto;">
-                            <ui:TextField name="SpritePath" value="dslfsdlfsdlkflsdflksdfjlkdsfjlskdfjldskfjdslkfjsdlkfjsdklfjlsdkfjlksdjklfsdklfsdlkflksdklf" style="flex-grow: 1; height: 36px; text-overflow: ellipsis; max-width: 80%; min-width: 80%;"/>
+                            <ui:TextField name="SpritePath" value="" style="flex-grow: 1; height: 36px; text-overflow: ellipsis; max-width: 80%; min-width: 80%;"/>
                             <ui:Button text="Load" name="LoadSprite" style="width: initial; height: 36px; max-width: 20%; align-items: stretch; min-width: 20%;"/>
                         </ui:VisualElement>
                     </ui:VisualElement>

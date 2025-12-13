@@ -25,6 +25,7 @@ public class AddItemMenuController : MonoBehaviour {
     private TextField spritePathInput;
     private Image spritePreview;
     private VisualElement root;
+    private Label nameErrorLabel;
 
     private void OnEnable() {
         var uiDocument = GetComponent<UIDocument>();
@@ -75,6 +76,8 @@ public class AddItemMenuController : MonoBehaviour {
             return;
         }
 
+        if (!ValidateName()) return;
+
         var consumable = BuildConsumableFromUI();
         if (consumable == null) return;
 
@@ -88,6 +91,45 @@ public class AddItemMenuController : MonoBehaviour {
         }
 
         CloseMenu();
+    }
+
+    private bool ValidateName() {
+        string itemName = nameInput != null ? nameInput.value?.Trim() : string.Empty;
+        if (string.IsNullOrEmpty(itemName)) {
+            ShowNameRequiredMessage();
+            return false;
+        }
+        ClearNameError();
+        return true;
+    }
+
+    private void ShowNameRequiredMessage() {
+        logger.Log("Item name cannot be empty.", this, Logging.LogType.Error);
+
+        if (nameInput != null) nameInput.Focus();
+
+        if (root == null) return;
+
+        if (nameErrorLabel == null) {
+            nameErrorLabel = new Label("MessageErrorName") { name = "NameError" };
+            nameErrorLabel.style.color = new StyleColor(Color.red);
+            nameErrorLabel.style.unityFontStyleAndWeight = new StyleEnum<FontStyle>(FontStyle.Bold);
+        } else {
+            nameErrorLabel.text = "Name is required";
+        }
+
+        var parent = nameInput != null ? nameInput.parent : root;
+        try {
+            int idx = parent.IndexOf(nameInput);
+            if (idx >= 0) parent.Insert(idx + 1, nameErrorLabel);
+            else parent.Add(nameErrorLabel);
+        } catch {
+            parent.Add(nameErrorLabel);
+        }
+    }
+
+    private void ClearNameError() {
+        if (nameErrorLabel != null && nameErrorLabel.parent != null) nameErrorLabel.RemoveFromHierarchy();
     }
 
     private void OnLoadSpriteClicked() {
