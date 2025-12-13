@@ -8,6 +8,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
   [SerializeField] private GameObject listItemsMenu;
   [SerializeField] private GameObject addItemMenu;
   [SerializeField] private GameObject CreatorHUD;
+  [SerializeField] private Logging.Logger logger;
   [SerializeField] private ConsumableItems consumableItemsDatabase;
   [SerializeField] private Maker player;
 
@@ -21,7 +22,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     var uiDocument = GetComponent<UIDocument>();
     var root = uiDocument.rootVisualElement;
     if (root == null) {
-      Debug.LogError("ConsumableItemHUDController: UIDocument has no visual tree. Assign a UXML to the Source Asset.");
+      logger.Log("ConsumableItemHUDController: UIDocument has no visual tree. Assign a UXML to the Source Asset.", this, Logging.LogType.Error);
       return;
     }
 
@@ -97,7 +98,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     var items = consumableItemsDatabase != null ? consumableItemsDatabase.GetAllConsumableItems() : null;
     if (items == null || index < 0 || index >= items.Count) return;
     var item = items[index];
-    Debug.Log($"ConsumableItemHUDController: Selected item '{item.name}' (Effect {item.effectType}, Value {item.value})");
+    logger.Log($"ConsumableItemHUDController: Selected item '{item.name}' (Effect {item.effectType}, Value {item.value})", this);
     // future integration: inspect or place item
   }
 
@@ -106,7 +107,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     if (addItemMenu != null) {
       addItemMenu.SetActive(true);
     } else {
-      Debug.LogWarning("ConsumableItemHUDController: Add Item menu reference is not set.");
+      logger.Log("ConsumableItemHUDController: Add Item menu reference is not set.", this, Logging.LogType.Warning);
     }
   }
 
@@ -114,7 +115,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     if (listItemsMenu != null) {
       listItemsMenu.SetActive(true);
     } else {
-      Debug.LogWarning("ConsumableItemHUDController: List Items menu reference is not set.");
+      logger.Log("ConsumableItemHUDController: List Items menu reference is not set.", this, Logging.LogType.Warning);
     }
   }
 
@@ -122,7 +123,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     if (CreatorHUD != null) {
       CreatorHUD.SetActive(true);
     } else {
-      Debug.LogWarning("ConsumableItemHUDController: CreatorHUD reference is not set.");
+      logger.Log("ConsumableItemHUDController: CreatorHUD reference is not set.", this, Logging.LogType.Warning);
     }
     gameObject.SetActive(false);
   }

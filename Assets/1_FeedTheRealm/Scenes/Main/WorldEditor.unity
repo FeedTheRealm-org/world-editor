@@ -344,8 +344,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 672882727782900535, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_SortingOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+    - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
+    - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 2470528793478854222, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -554,6 +566,34 @@ PrefabInstance:
       propertyPath: m_ParentUI
       value: 
       objectReference: {fileID: 1208954295}
+    - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+    - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
+    - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
+    - target: {fileID: 6024777782553604111, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_Position
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6024777782553604111, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+    - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: CreatorHUD
       value: 

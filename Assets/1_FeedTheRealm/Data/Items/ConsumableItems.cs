@@ -10,7 +10,6 @@ public class ConsumableItems : ScriptableObject {
     [SerializeField]
     public string description;
     [SerializeField]
-
     public string effectType; // e.g., Heal, Buff, Damage, Speed, Mana, Custom
     [SerializeField]
     public int value; // magnitude of effect
@@ -19,7 +18,6 @@ public class ConsumableItems : ScriptableObject {
     [SerializeField]
     public float cooldown; // seconds
     [SerializeField]
-
     public int maxStack; // default 1
     [SerializeField]
     public Sprite sprite;

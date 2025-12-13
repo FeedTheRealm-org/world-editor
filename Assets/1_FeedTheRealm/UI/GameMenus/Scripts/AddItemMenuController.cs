@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 public class AddItemMenuController : MonoBehaviour {
     [SerializeField] private Maker player;
     [SerializeField] private ConsumableItems consumableItemsDatabase;
+    [SerializeField] private Logging.Logger logger;
 
     private Button addButton;
     private Button closeButton;
@@ -28,7 +29,7 @@ public class AddItemMenuController : MonoBehaviour {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
         if (root == null) {
-            Debug.LogError("AddItemMenuController: UIDocument has no visual tree. Assign a UXML to the Source Asset.");
+            logger.Log("AddItemMenuController: UIDocument has no visual tree. Assign a UXML to the Source Asset.", this, Logging.LogType.Error);
             return;
         }
 
@@ -69,19 +70,19 @@ public class AddItemMenuController : MonoBehaviour {
 
     private void OnAddClicked() {
         if (consumableItemsDatabase == null) {
-            Debug.LogError("AddItemMenuController: consumableItemsDatabase is not assigned. Assign it in the Inspector.");
+            logger.Log("AddItemMenuController: consumableItemsDatabase is not assigned. Assign it in the Inspector.", this, Logging.LogType.Error);
             return;
         }
 
         var consumable = BuildConsumableFromUI();
         if (consumable == null) return;
 
-        Debug.Log($"AddItemMenuController: Adding consumable '{consumable.name}' (Effect {consumable.effectType}, Value {consumable.value}, Duration {consumable.duration}s)");
+        logger.Log($"AddItemMenuController: Adding consumable '{consumable.name}' (Effect {consumable.effectType}, Value {consumable.value}, Duration {consumable.duration}s)", this);
 
         try {
             consumableItemsDatabase.AddConsumableItem(consumable);
         } catch (Exception ex) {
-            Debug.LogError($"AddItemMenuController: Failed to add consumable to database: {ex.Message}");
+            logger.Log($"AddItemMenuController: Failed to add consumable to database: {ex.Message}", this, Logging.LogType.Error);
             return;
         }
 
@@ -94,10 +95,9 @@ public class AddItemMenuController : MonoBehaviour {
         string startDir = Application.dataPath;
         string selected = UnityEditor.EditorUtility.OpenFilePanel("Select Sprite", startDir, "png,jpg,jpeg");
         if (!string.IsNullOrEmpty(selected)) {
-            // Try to compute a Resources-relative path (no extension) if inside a Resources folder
-            string resourcesPath = TryMakeResourcesPath(selected);
-            if (!string.IsNullOrEmpty(resourcesPath) && spritePathInput != null) {
-                spritePathInput.value = resourcesPath;
+            Debug.Log($"AddItemMenuController: Selected sprite file '{selected}'");
+            if (!string.IsNullOrEmpty(selected) && spritePathInput != null) {
+                spritePathInput.value = selected;
             }
 
             // Preview from the absolute file path to give immediate feedback
@@ -109,23 +109,15 @@ public class AddItemMenuController : MonoBehaviour {
             }
         }
 #endif
-
-        // Fallback to existing behavior using Resources path typed in the input
-        Sprite sprite = LoadSpriteFromPath(spritePathInput?.value);
-        if (sprite != null) {
-            spritePreview.sprite = sprite;
-            spritePreview.image = sprite.texture;
-        } else {
-            Debug.LogWarning("AddItemMenuController: Could not load sprite. Ensure it is under Resources and path has no extension.");
-        }
     }
 
     private ConsumableItems.ConsumableData BuildConsumableFromUI() {
         string itemName = nameInput != null ? nameInput.value?.Trim() : string.Empty;
         if (string.IsNullOrEmpty(itemName)) {
-            Debug.LogError("Item name cannot be empty.");
+            logger.Log("Item name cannot be empty.", this, Logging.LogType.Error);
             return null;
         }
+        
         string desc = descriptionInput != null ? descriptionInput.value?.Trim() : string.Empty;
         string effect = effectTypeDropdown != null ? effectTypeDropdown.value : "Heal";
         int val = valueField != null ? valueField.value : 0;
@@ -133,11 +125,14 @@ public class AddItemMenuController : MonoBehaviour {
         float cd = cooldownField != null ? cooldownField.value : 0f;
         int stack = Mathf.Max(1, maxStackField != null ? maxStackField.value : 1);
 
-        Sprite sprite = LoadSpriteFromPath(spritePathInput != null ? spritePathInput.value : null);
+        Sprite sprite = LoadSpriteFromAbsoluteFile(spritePathInput?.value);
         if (sprite != null && spritePreview != null) {
             spritePreview.sprite = sprite;
             spritePreview.image = sprite.texture;
         }
+
+        if (sprite != null) Debug.Log($"Try add Item with Sprite={sprite.GetType()}");
+        else Debug.LogWarning("Try add Item with Sprite=null");
 
         return new ConsumableItems.ConsumableData {
             name = itemName,
@@ -151,13 +146,6 @@ public class AddItemMenuController : MonoBehaviour {
         };
     }
 
-    private Sprite LoadSpriteFromPath(string path) {
-        if (string.IsNullOrWhiteSpace(path)) return null;
-        // Path should be relative to a Resources folder and without extension
-        var sprite = Resources.Load<Sprite>(path.Trim());
-        return sprite;
-    }
-
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {
         try {
             if (string.IsNullOrEmpty(absolutePath) || !File.Exists(absolutePath)) return null;
@@ -169,34 +157,13 @@ public class AddItemMenuController : MonoBehaviour {
             sprite.name = tex.name;
             return sprite;
         } catch (Exception ex) {
-            Debug.LogWarning($"AddItemMenuController: Failed to load sprite from file '{absolutePath}'. {ex.Message}");
-            return null;
-        }
-    }
-
-    private string TryMakeResourcesPath(string absolutePath) {
-        // If file is under any 'Resources' folder within the project, return the path relative to that folder without extension
-        try {
-            if (string.IsNullOrEmpty(absolutePath)) return null;
-            string projectPath = Application.dataPath.Replace("/", Path.DirectorySeparatorChar.ToString());
-            string normalized = absolutePath.Replace("/", Path.DirectorySeparatorChar.ToString());
-            if (!normalized.StartsWith(projectPath, StringComparison.OrdinalIgnoreCase)) return null;
-
-            // Find "/Resources/" segment
-            int idx = normalized.IndexOf(Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
-            if (idx < 0) return null;
-            int start = idx + ("" + Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar).Length;
-            string rel = normalized.Substring(start);
-            string withoutExt = Path.ChangeExtension(rel, null);
-            // Convert back to Unity-style forward slashes
-            return withoutExt.Replace(Path.DirectorySeparatorChar, '/');
-        } catch {
+            logger.Log($"AddItemMenuController: Failed to load sprite from file '{absolutePath}'. {ex.Message}", this, Logging.LogType.Warning);
             return null;
         }
     }
 
     private void OnCloseClicked() {
-        Debug.Log("AddItemMenuController: Closing add item menu.");
+        logger.Log("AddItemMenuController: Closing add item menu.", this);
         CloseMenu();
     }
 

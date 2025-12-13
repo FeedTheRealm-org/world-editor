@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class ListItemsMenuController : MonoBehaviour {
   [SerializeField] private ConsumableItems consumableItemsDatabase;
   [SerializeField] private Maker player;
+  [SerializeField] private Logging.Logger logger;
 
   private VisualElement root;
   private ListView listView;
@@ -16,13 +17,13 @@ public class ListItemsMenuController : MonoBehaviour {
     var uiDoc = GetComponent<UIDocument>();
     root = uiDoc.rootVisualElement;
     if (root == null) {
-      Debug.LogError("ListItemsMenuController: UIDocument has no visual tree. Assign a UXML to the Source Asset.");
+      logger.Log("ListItemsMenuController: UIDocument has no visual tree. Assign a UXML to the Source Asset.", this, Logging.LogType.Error);
       return;
     }
 
     var container = root.Q<VisualElement>("ListContainer");
     if (container == null) {
-      Debug.LogError("ListItemsMenuController: Could not find 'ListContainer' element in UXML.");
+      logger.Log("ListItemsMenuController: Could not find 'ListContainer' element in UXML.", this, Logging.LogType.Error);
       return;
     }
 
@@ -93,7 +94,9 @@ public class ListItemsMenuController : MonoBehaviour {
       var data = items[i];
 
       var img = element.Q<Image>("itemImage");
-      if (img != null) img.sprite = data.sprite;
+      if (img != null) {
+        img.image = data.sprite != null ? data.sprite.texture : null;
+      }
 
       var nameLabel = element.Q<Label>("itemName");
       if (nameLabel != null) nameLabel.text = data.name ?? "(unnamed)";
@@ -115,7 +118,7 @@ public class ListItemsMenuController : MonoBehaviour {
 
   private void RefreshItems() {
     if (consumableItemsDatabase == null) {
-      Debug.LogWarning("ListItemsMenuController: consumableItemsDatabase is not assigned.");
+      logger.Log("ListItemsMenuController: consumableItemsDatabase is not assigned.", this, Logging.LogType.Warning);
       listView.itemsSource = new List<ConsumableItems.ConsumableData>();
       listView.Rebuild();
       return;
@@ -139,7 +142,7 @@ public class ListItemsMenuController : MonoBehaviour {
     UnityEditor.AssetDatabase.SaveAssets();
 #endif
 
-    Debug.Log($"ListItemsMenuController: Removed item '{removed.name}' at index {index}.");
+    logger.Log($"ListItemsMenuController: Removed item '{removed.name}' at index {index}.", this);
     RefreshItems();
   }
 
