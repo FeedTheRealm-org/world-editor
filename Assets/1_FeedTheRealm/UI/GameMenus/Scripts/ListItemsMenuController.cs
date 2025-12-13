@@ -10,7 +10,6 @@ public class ListItemsMenuController : MonoBehaviour {
 
   private VisualElement root;
   private ListView listView;
-  private Button refreshButton;
   private Button closeButton;
 
   private void OnEnable() {
@@ -27,91 +26,90 @@ public class ListItemsMenuController : MonoBehaviour {
       return;
     }
 
-    refreshButton = root.Q<Button>("Refresh");
     closeButton = root.Q<Button>("Close");
 
-    if (refreshButton != null) refreshButton.clicked += RefreshItems;
     if (closeButton != null) closeButton.clicked += CloseMenu;
 
     if (player != null) player.ToggleMovement(false);
 
-    // Create ListView
+    SetUpListView();
+
+    container.Add(listView);
+  }
+
+  private void SetUpListView() {
     listView = new ListView();
     listView.name = "ConsumableListView";
     listView.selectionType = SelectionType.Single;
     listView.itemHeight = 56;
     listView.showBoundCollectionSize = true;
 
-    // makeItem: create reusable element structure
-    listView.makeItem = () => {
-      var rootElem = new VisualElement();
-      rootElem.style.flexDirection = FlexDirection.Row;
-      rootElem.style.alignItems = Align.Center;
-      rootElem.style.paddingLeft = 6;
-      rootElem.style.paddingRight = 6;
+    listView.makeItem = () => CreateItemForList();
+    listView.bindItem = (element, i) => FillElementWithData(element, i);
+  }
 
-      var img = new Image { name = "itemImage" };
-      img.style.width = 48;
-      img.style.height = 48;
-      img.style.marginRight = 8;
+  private void FillElementWithData(VisualElement element, int i) {
+    element.userData = i;
+    var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItems.ConsumableData>();
+    if (i < 0 || i >= items.Count) return;
+    var data = items[i];
 
-      var textCol = new VisualElement();
-      textCol.style.flexDirection = FlexDirection.Column;
-      textCol.style.flexGrow = 1;
+    var img = element.Q<Image>("itemImage");
+    if (img != null) {
+      img.image = data.sprite != null ? data.sprite.texture : null;
+    }
 
-      var nameLabel = new Label { name = "itemName" };
-      nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+    var nameLabel = element.Q<Label>("itemName");
+    if (nameLabel != null) nameLabel.text = data.name ?? "(unnamed)";
 
-      var infoLabel = new Label { name = "itemInfo" };
-      infoLabel.style.unityFontStyleAndWeight = FontStyle.Normal;
-      infoLabel.style.fontSize = 12;
+    var infoLabel = element.Q<Label>("itemInfo");
+    if (infoLabel != null) infoLabel.text = $"{data.effectType} • Value: {data.value} • MaxStack: {data.maxStack}";
+  }
 
-      textCol.Add(nameLabel);
-      textCol.Add(infoLabel);
+  private VisualElement CreateItemForList() {
+    var rootElem = new VisualElement();
+    rootElem.style.flexDirection = FlexDirection.Row;
+    rootElem.style.alignItems = Align.Center;
+    rootElem.style.paddingLeft = 6;
+    rootElem.style.paddingRight = 6;
 
-      var deleteBtn = new Button() { name = "deleteBtn", text = "Delete" };
-      deleteBtn.style.width = 80;
-      deleteBtn.style.height = 30;
+    var img = new Image { name = "itemImage" };
+    img.style.width = 48;
+    img.style.height = 48;
+    img.style.marginRight = 8;
 
-      // Handler uses the element.userData which is updated in bindItem
-      deleteBtn.clicked += () => {
-        int idx = (int?)(rootElem.userData as int?) ?? -1;
-        if (idx >= 0) DeleteItemAtIndex(idx);
-      };
+    var textCol = new VisualElement();
+    textCol.style.flexDirection = FlexDirection.Column;
+    textCol.style.flexGrow = 1;
 
-      rootElem.Add(img);
-      rootElem.Add(textCol);
-      rootElem.Add(deleteBtn);
+    var nameLabel = new Label { name = "itemName" };
+    nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
 
-      return rootElem;
+    var infoLabel = new Label { name = "itemInfo" };
+    infoLabel.style.unityFontStyleAndWeight = FontStyle.Normal;
+    infoLabel.style.fontSize = 12;
+
+    textCol.Add(nameLabel);
+    textCol.Add(infoLabel);
+
+    var deleteBtn = new Button() { name = "deleteBtn", text = "Delete" };
+    deleteBtn.style.width = 80;
+    deleteBtn.style.height = 30;
+
+    // Handler uses the element.userData which is updated in bindItem
+    deleteBtn.clicked += () => {
+      int idx = (int?)(rootElem.userData as int?) ?? -1;
+      if (idx >= 0) DeleteItemAtIndex(idx);
     };
 
-    // bindItem: populate the reusable element for the given index
-    listView.bindItem = (element, i) => {
-      element.userData = i;
-      var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItems.ConsumableData>();
-      if (i < 0 || i >= items.Count) return;
-      var data = items[i];
+    rootElem.Add(img);
+    rootElem.Add(textCol);
+    rootElem.Add(deleteBtn);
 
-      var img = element.Q<Image>("itemImage");
-      if (img != null) {
-        img.image = data.sprite != null ? data.sprite.texture : null;
-      }
-
-      var nameLabel = element.Q<Label>("itemName");
-      if (nameLabel != null) nameLabel.text = data.name ?? "(unnamed)";
-
-      var infoLabel = element.Q<Label>("itemInfo");
-      if (infoLabel != null) infoLabel.text = $"{data.effectType} • Value: {data.value} • MaxStack: {data.maxStack}";
-    };
-
-    container.Add(listView);
-
-    RefreshItems();
+    return rootElem;
   }
 
   private void OnDisable() {
-    if (refreshButton != null) refreshButton.clicked -= RefreshItems;
     if (closeButton != null) closeButton.clicked -= CloseMenu;
     if (player != null) player.ToggleMovement(true);
   }
