@@ -38,4 +38,13 @@ public class ConsumableItems : ScriptableObject {
     if (consumableItems == null) return new List<ConsumableData>();
     return consumableItems;
   }
+
+  public void RemoveConsumableItem(ConsumableData item) {
+    if (consumableItems == null) return;
+    if (consumableItems.Remove(item)) {
+      logger.Log($"Removed consumable item: {item.name}", this, Logging.LogType.Info);
+    } else {
+      logger.Log($"Failed to remove consumable item (not found): {item.name}", this, Logging.LogType.Warning);
+    }
+  }
 }

@@ -33,8 +33,8 @@ public class ListItemsMenuController : MonoBehaviour {
     if (player != null) player.ToggleMovement(false);
 
     SetUpListView();
-
     container.Add(listView);
+    RefreshItems();
   }
 
   private void SetUpListView() {
@@ -133,7 +133,7 @@ public class ListItemsMenuController : MonoBehaviour {
     if (list == null || index < 0 || index >= list.Count) return;
 
     var removed = list[index];
-    list.RemoveAt(index);
+    consumableItemsDatabase.RemoveConsumableItem(removed);
 
 #if UNITY_EDITOR
     UnityEditor.EditorUtility.SetDirty(consumableItemsDatabase);
