@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
+using Models;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
@@ -110,7 +111,7 @@ public class AddItemMenuController : MonoBehaviour {
 #endif
     }
 
-    private ConsumableItems.ConsumableData BuildConsumableFromUI() {
+    private ConsumableItem BuildConsumableFromUI() {
         string itemName = nameInput != null ? nameInput.value?.Trim() : string.Empty;
         if (string.IsNullOrEmpty(itemName)) {
             logger.Log("Item name cannot be empty.", this, Logging.LogType.Error);
@@ -133,16 +134,7 @@ public class AddItemMenuController : MonoBehaviour {
         if (sprite != null) Debug.Log($"Try add Item with Sprite={sprite.GetType()}");
         else Debug.LogWarning("Try add Item with Sprite=null");
 
-        return new ConsumableItems.ConsumableData {
-            name = itemName,
-            description = desc,
-            effectType = effect,
-            value = val,
-            duration = dur,
-            cooldown = cd,
-            maxStack = stack,
-            sprite = sprite
-        };
+        return new ConsumableItem(itemName, desc, effect, val, dur, cd, stack, sprite);
     }
 
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {

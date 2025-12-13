@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Models;
 
 [RequireComponent(typeof(UIDocument))]
 public class ListItemsMenuController : MonoBehaviour {
@@ -41,7 +42,7 @@ public class ListItemsMenuController : MonoBehaviour {
     listView = new ListView();
     listView.name = "ConsumableListView";
     listView.selectionType = SelectionType.Single;
-    listView.itemHeight = 56;
+    listView.fixedItemHeight = 56;
     listView.showBoundCollectionSize = true;
 
     listView.makeItem = () => CreateItemForList();
@@ -50,7 +51,7 @@ public class ListItemsMenuController : MonoBehaviour {
 
   private void FillElementWithData(VisualElement element, int i) {
     element.userData = i;
-    var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItems.ConsumableData>();
+    var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItem>();
     if (i < 0 || i >= items.Count) return;
     var data = items[i];
 
@@ -117,12 +118,12 @@ public class ListItemsMenuController : MonoBehaviour {
   private void RefreshItems() {
     if (consumableItemsDatabase == null) {
       logger.Log("ListItemsMenuController: consumableItemsDatabase is not assigned.", this, Logging.LogType.Warning);
-      listView.itemsSource = new List<ConsumableItems.ConsumableData>();
+      listView.itemsSource = new List<ConsumableItem>();
       listView.Rebuild();
       return;
     }
 
-    var items = consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItems.ConsumableData>();
+    var items = consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItem>();
     listView.itemsSource = items;
     listView.Rebuild();
   }

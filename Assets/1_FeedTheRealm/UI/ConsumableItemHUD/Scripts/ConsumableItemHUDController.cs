@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Models;
 
 [RequireComponent(typeof(UIDocument))]
 public class ConsumableItemHUDController : MonoBehaviour {
@@ -49,7 +50,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
   }
 
   private void SetupListView() {
-    itemListView.itemsSource = new List<ConsumableItems.ConsumableData>();
+    itemListView.itemsSource = new List<ConsumableItem>();
     itemListView.makeItem = () => {
       var rootElem = new VisualElement();
       rootElem.style.flexDirection = FlexDirection.Row;
@@ -75,7 +76,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
     itemListView.bindItem = (element, i) => {
       element.userData = i;
       var btn = element.Q<Button>("itemButton");
-      var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItems.ConsumableData>();
+      var items = (consumableItemsDatabase != null) ? consumableItemsDatabase.GetAllConsumableItems() : new List<ConsumableItem>();
       if (i < 0 || i >= items.Count) {
         if (btn != null) btn.text = "";
         return;
@@ -89,7 +90,7 @@ public class ConsumableItemHUDController : MonoBehaviour {
 
   private void RefreshItems() {
     if (itemListView == null) return;
-    var items = consumableItemsDatabase != null ? consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItems.ConsumableData>() : new List<ConsumableItems.ConsumableData>();
+    var items = consumableItemsDatabase != null ? consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItem>() : new List<ConsumableItem>();
     itemListView.itemsSource = items;
     itemListView.Rebuild();
   }
