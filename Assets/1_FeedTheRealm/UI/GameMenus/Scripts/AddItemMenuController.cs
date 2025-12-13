@@ -90,7 +90,6 @@ public class AddItemMenuController : MonoBehaviour {
     }
 
     private void OnLoadSpriteClicked() {
-        // In the Editor, allow picking a file from disk; otherwise fall back to Resources path loading
 #if UNITY_EDITOR
         string startDir = Application.dataPath;
         string selected = UnityEditor.EditorUtility.OpenFilePanel("Select Sprite", startDir, "png,jpg,jpeg");
@@ -117,7 +116,7 @@ public class AddItemMenuController : MonoBehaviour {
             logger.Log("Item name cannot be empty.", this, Logging.LogType.Error);
             return null;
         }
-        
+
         string desc = descriptionInput != null ? descriptionInput.value?.Trim() : string.Empty;
         string effect = effectTypeDropdown != null ? effectTypeDropdown.value : "Heal";
         int val = valueField != null ? valueField.value : 0;
