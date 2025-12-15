@@ -7,8 +7,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
     [Header("Indicator settings")]
     [SerializeField]
-    private GameObject placementIndicator;
-    [SerializeField]
     private GameObject cellIndicator;
 
     [Header("Dependencies")]
@@ -142,7 +140,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
         Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
-        placementIndicator.transform.position = placementPosition;
         cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion
