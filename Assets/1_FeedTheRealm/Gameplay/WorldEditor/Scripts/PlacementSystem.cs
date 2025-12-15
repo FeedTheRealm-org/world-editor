@@ -72,9 +72,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         if (placeableObject == null) {
             return false;
         }
-        // Vector3Int cellPosition = grid.WorldToCell(gridPosition);
-        // Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        // placeableObject.InstancedGameObject.transform.position = pos;
         worldController.PlaceObjectAt(gridPosition, placeableObject.InstancedGameObject);
         return true;
     }
