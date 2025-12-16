@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Models;
 using UnityEngine;
 
@@ -48,32 +49,107 @@ public class AssetLibrarySO : ScriptableObject {
         }
     }
 
+    /// <summary>
+    /// Initializes the asset database by loading existing assets from a JSON file 
+    /// and scanning the Models directory for new assets.
+    /// </summary>
     public void InitializeDatabase() {
         objectData.Clear();
-        logger.Log("Initializing Asset Database...", this, Logging.LogType.Info);
-
         string assetDirPath = Path.Combine(Application.persistentDataPath, assetsDirectory);
 
         try {
-            if (!File.Exists(Path.Combine(assetDirPath, assetsFileName))) {
-                logger.Log($"Asset Database JSON not found at path: {Path.Combine(assetDirPath, assetsFileName)}", this, Logging.LogType.Error);
+            if (!Directory.Exists(assetDirPath)) {
+                Directory.CreateDirectory(assetDirPath);
+            }
+
+            string modelsResourcePath = Path.Combine(Application.dataPath, "Resources", "Models");
+            if (!Directory.Exists(modelsResourcePath)) {
+                logger.Log($"Models directory not found at: {modelsResourcePath}", this, Logging.LogType.Error);
                 return;
             }
-            string fullPath = Path.Combine(assetDirPath, assetsFileName);
-            using FileStream fs = new(fullPath, FileMode.Open);
-            using StreamReader reader = new(fs);
-            string jsonContent = reader.ReadToEnd();
 
-            AssetModelsRaw rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
+            string filePath = Path.Combine(assetDirPath, assetsFileName);
 
-            foreach (Asset model in rawModels.assetObjects) {
-                // TODO: add validations later (if needed)
-                objectData.Add(model);
+            // Load existing assets from JSON file
+            AssetModelsRaw rawModels = new() { assetObjects = new Asset[0] };
+            List<Asset> existingAssets = new();
+
+            if (File.Exists(filePath)) {
+                try {
+                    using FileStream fs = new(filePath, FileMode.Open);
+                    using StreamReader reader = new(fs);
+                    string jsonContent = reader.ReadToEnd();
+                    rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
+                    existingAssets.AddRange(rawModels.assetObjects);
+                    logger.Log($"Loaded {existingAssets.Count} existing assets from JSON.", this, Logging.LogType.Info);
+                } catch (Exception e) {
+                    logger.Log($"Error loading existing JSON: {e}", this, Logging.LogType.Error);
+                }
             }
-            logger.Log($"Asset Database initialized with {objectData.Count} assets.", this, Logging.LogType.Info);
+
+            string materialsResourcePath = Path.Combine(Application.dataPath, "Resources", "Materials");
+            string[] modelFiles = Directory.GetFiles(modelsResourcePath)
+                .Where(f => Path.GetExtension(f) != ".meta")
+                .ToArray();
+
+            List<Asset> newAssets = new();
+            int addedCount = 0;
+
+            foreach (string modelFile in modelFiles) {
+                string fileName = Path.GetFileNameWithoutExtension(modelFile);
+                string fileNameWithExt = Path.GetFileName(modelFile);
+
+                bool assetExists = existingAssets.Any(a => a.ModelPath == $"Models/{fileNameWithExt}");
+
+                if (assetExists) {
+                    logger.Log($"Asset already exists: {fileName}", this, Logging.LogType.Info);
+                    continue;
+                }
+
+                string materialPath = "";
+                if (Directory.Exists(materialsResourcePath)) {
+                    string[] materialFiles = Directory.GetFiles(materialsResourcePath, $"{fileName}.*");
+                    if (materialFiles.Length > 0) {
+                        materialPath = $"Materials/{Path.GetFileName(materialFiles[0])}";
+                    }
+                }
+
+                Asset asset = new(
+                    Guid.NewGuid().ToString(),
+                    fileName,
+                    Vector2Int.one,
+                    $"Models/{fileNameWithExt}",
+                    materialPath
+                );
+
+                newAssets.Add(asset);
+                existingAssets.Add(asset);
+                addedCount++;
+
+                logger.Log($"New asset added: {fileName}", this, Logging.LogType.Info);
+            }
+
+            objectData.AddRange(existingAssets);
+
+            if (addedCount > 0) {
+                rawModels.assetObjects = existingAssets.ToArray();
+                string jsonContent = JsonUtility.ToJson(rawModels, true);
+
+                using (FileStream fs = new(filePath, FileMode.Create))
+                using (StreamWriter writer = new(fs)) {
+                    writer.Write(jsonContent);
+                }
+
+                logger.Log($"Asset Database updated: {addedCount} new assets added.", this, Logging.LogType.Info);
+            } else {
+                logger.Log("No new assets to add.", this, Logging.LogType.Info);
+            }
+
+            logger.Log($"Asset Database initialized with {objectData.Count} total assets.", this, Logging.LogType.Info);
             isInitialized = true;
+
         } catch (Exception e) {
-            logger.Log($"Error loading Asset Database JSON: {e}", this, Logging.LogType.Error);
+            logger.Log($"Error initializing Asset Database: {e}", this, Logging.LogType.Error);
         }
     }
 }
