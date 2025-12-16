@@ -60,12 +60,13 @@ public class ListItemsMenuController : MonoBehaviour {
     if (img != null) {
       Sprite sprite = null;
       try {
-        string path = data != null ? data.spritePath : null;
-        if (!string.IsNullOrEmpty(path)) {
-          if (Path.IsPathRooted(path) || File.Exists(path)) {
-            sprite = LoadSpriteFromAbsoluteFile(path);
+        string idOrPath = data != null ? data.spriteId : null;
+        if (!string.IsNullOrEmpty(idOrPath)) {
+          string resolved = SpriteStorage.GetFilePathFromIdOrPath(idOrPath);
+          if (!string.IsNullOrEmpty(resolved) && (Path.IsPathRooted(resolved) || File.Exists(resolved))) {
+            sprite = LoadSpriteFromAbsoluteFile(resolved);
           } else {
-            sprite = Resources.Load<Sprite>(path);
+            sprite = Resources.Load<Sprite>(idOrPath);
           }
         }
       } catch (System.Exception ex) {

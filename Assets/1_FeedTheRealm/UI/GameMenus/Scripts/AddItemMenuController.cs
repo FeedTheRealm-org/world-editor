@@ -139,12 +139,13 @@ public class AddItemMenuController : MonoBehaviour {
         if (!string.IsNullOrEmpty(selected)) {
             Debug.Log($"AddItemMenuController: Selected sprite file '{selected}'");
             if (!string.IsNullOrEmpty(selected) && spritePathInput != null) {
-                // Copy file into persistent data so it can be used at runtime in builds
-                string dest = SaveSpriteFileToPersistentData(selected);
-                if (!string.IsNullOrEmpty(dest)) spritePathInput.value = dest;
+                // Save file into persistent storage and get generated UUID
+                string id = SpriteStorage.SaveFileReturnId(selected);
+                if (!string.IsNullOrEmpty(id)) spritePathInput.value = id;
                 else spritePathInput.value = selected;
-                // Preview from the copied location (or original if copy failed)
-                var previewSprite = LoadSpriteFromAbsoluteFile(!string.IsNullOrEmpty(dest) ? dest : selected);
+                // Preview from resolved id or from the source file
+                string resolved = SpriteStorage.GetFilePathFromIdOrPath(!string.IsNullOrEmpty(id) ? id : selected);
+                var previewSprite = LoadSpriteFromAbsoluteFile(!string.IsNullOrEmpty(resolved) ? resolved : selected);
                 if (previewSprite != null) {
                     spritePreview.sprite = previewSprite;
                     spritePreview.image = previewSprite.texture;
@@ -169,22 +170,16 @@ public class AddItemMenuController : MonoBehaviour {
         float cd = cooldownField != null ? cooldownField.value : 0f;
         int stack = Mathf.Max(1, maxStackField != null ? maxStackField.value : 1);
 
-        string spritePath = spritePathInput != null ? spritePathInput.value?.Trim() : string.Empty;
+        string spriteId = spritePathInput != null ? spritePathInput.value?.Trim() : string.Empty;
         Sprite sprite = null;
-        if (!string.IsNullOrEmpty(spritePath)) {
-            // If path is an absolute file or rooted path, try loading from file bytes
-            if (Path.IsPathRooted(spritePath) || File.Exists(spritePath)) {
-                // Copy into persistent data folder and load from the copied file so builds can access it
-                string dest = SaveSpriteFileToPersistentData(spritePath);
-                if (!string.IsNullOrEmpty(dest) && File.Exists(dest)) {
-                    spritePath = dest;
-                    sprite = LoadSpriteFromAbsoluteFile(dest);
-                } else {
-                    sprite = LoadSpriteFromAbsoluteFile(spritePath);
-                }
+        if (!string.IsNullOrEmpty(spriteId)) {
+            // Resolve id (or treat input as path) to an absolute file path
+            string resolved = SpriteStorage.GetFilePathFromIdOrPath(spriteId);
+            if (!string.IsNullOrEmpty(resolved) && (Path.IsPathRooted(resolved) || File.Exists(resolved))) {
+                sprite = LoadSpriteFromAbsoluteFile(resolved);
             } else {
-                // Otherwise treat it as a Resources path
-                sprite = Resources.Load<Sprite>(spritePath);
+                // If resolution failed, try Resources.Load using the provided value
+                sprite = Resources.Load<Sprite>(spriteId);
             }
 
             if (sprite != null && spritePreview != null) {
@@ -194,9 +189,9 @@ public class AddItemMenuController : MonoBehaviour {
         }
 
         if (sprite != null) Debug.Log($"Try add Item with Sprite='{sprite.name}'");
-        else Debug.LogWarning($"Try add Item with Sprite null for path '{spritePath}'");
+        else Debug.LogWarning($"Try add Item with Sprite null for id/path '{spriteId}'");
 
-        return new ConsumableItem(itemName, desc, effect, val, dur, cd, stack, spritePath);
+        return new ConsumableItem(itemName, desc, effect, val, dur, cd, stack, spriteId);
     }
 
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {
