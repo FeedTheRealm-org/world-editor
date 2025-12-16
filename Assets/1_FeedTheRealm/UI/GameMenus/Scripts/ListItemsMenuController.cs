@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Models;
@@ -57,7 +58,21 @@ public class ListItemsMenuController : MonoBehaviour {
 
     var img = element.Q<Image>("itemImage");
     if (img != null) {
-      img.image = data.sprite != null ? data.sprite.texture : null;
+      Sprite sprite = null;
+      try {
+        string path = data != null ? data.spritePath : null;
+        if (!string.IsNullOrEmpty(path)) {
+          if (Path.IsPathRooted(path) || File.Exists(path)) {
+            sprite = LoadSpriteFromAbsoluteFile(path);
+          } else {
+            sprite = Resources.Load<Sprite>(path);
+          }
+        }
+      } catch (System.Exception ex) {
+        if (logger != null) logger.Log($"ListItemsMenuController: Failed to load sprite for item '{data?.name}': {ex.Message}", this, Logging.LogType.Warning);
+      }
+
+      img.image = sprite != null ? sprite.texture : null;
     }
 
     var nameLabel = element.Q<Label>("itemName");
@@ -148,5 +163,21 @@ public class ListItemsMenuController : MonoBehaviour {
   private void CloseMenu() {
     if (player != null) player.ToggleMovement(true);
     gameObject.SetActive(false);
+  }
+
+  private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {
+    try {
+      if (string.IsNullOrEmpty(absolutePath) || !File.Exists(absolutePath)) return null;
+      byte[] data = File.ReadAllBytes(absolutePath);
+      var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+      if (!tex.LoadImage(data)) return null;
+      tex.name = Path.GetFileNameWithoutExtension(absolutePath);
+      var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+      sprite.name = tex.name;
+      return sprite;
+    } catch (System.Exception ex) {
+      if (logger != null) logger.Log($"ListItemsMenuController: Failed to load sprite from file '{absolutePath}'. {ex.Message}", this, Logging.LogType.Warning);
+      return null;
+    }
   }
 }

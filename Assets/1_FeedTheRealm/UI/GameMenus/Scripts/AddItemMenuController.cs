@@ -167,16 +167,27 @@ public class AddItemMenuController : MonoBehaviour {
         float cd = cooldownField != null ? cooldownField.value : 0f;
         int stack = Mathf.Max(1, maxStackField != null ? maxStackField.value : 1);
 
-        Sprite sprite = LoadSpriteFromAbsoluteFile(spritePathInput?.value);
-        if (sprite != null && spritePreview != null) {
-            spritePreview.sprite = sprite;
-            spritePreview.image = sprite.texture;
+        string spritePath = spritePathInput != null ? spritePathInput.value?.Trim() : string.Empty;
+        Sprite sprite = null;
+        if (!string.IsNullOrEmpty(spritePath)) {
+            // If path is an absolute file or rooted path, try loading from file bytes
+            if (Path.IsPathRooted(spritePath) || File.Exists(spritePath)) {
+                sprite = LoadSpriteFromAbsoluteFile(spritePath);
+            } else {
+                // Otherwise treat it as a Resources path
+                sprite = Resources.Load<Sprite>(spritePath);
+            }
+
+            if (sprite != null && spritePreview != null) {
+                spritePreview.sprite = sprite;
+                spritePreview.image = sprite.texture;
+            }
         }
 
-        if (sprite != null) Debug.Log($"Try add Item with Sprite={sprite.GetType()}");
-        else Debug.LogWarning("Try add Item with Sprite=null");
+        if (sprite != null) Debug.Log($"Try add Item with Sprite='{sprite.name}'");
+        else Debug.LogWarning($"Try add Item with Sprite null for path '{spritePath}'");
 
-        return new ConsumableItem(itemName, desc, effect, val, dur, cd, stack, sprite);
+        return new ConsumableItem(itemName, desc, effect, val, dur, cd, stack, spritePath);
     }
 
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {
