@@ -28,4 +28,11 @@ public class ConsumableItems : ScriptableObject {
       logger.Log($"Failed to remove consumable item (not found): {item.name}", this, Logging.LogType.Warning);
     }
   }
+
+  public void LoadConsumableItems(List<ConsumableItem> itemsToLoad) {
+    if (consumableItems == null) consumableItems = new List<ConsumableItem>();
+    consumableItems.Clear();
+    consumableItems.AddRange(itemsToLoad);
+    logger.Log($"Loaded {itemsToLoad.Count} consumable items from world data.", this, Logging.LogType.Info);
+  }
 }

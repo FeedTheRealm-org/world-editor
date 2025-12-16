@@ -89,6 +89,8 @@ public class DataPersistenceManagerSO : ScriptableObject {
                 dataPersistenceObj.LoadData(worldData);
             }
 
+            consumableItemsDatabase.LoadConsumableItems(worldData.consumableItems);
+
             logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
         } catch (System.Exception) {
             logger.Log("Error loading world data, initiating a new world", this, Logging.LogType.Error);
