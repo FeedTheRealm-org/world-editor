@@ -139,15 +139,17 @@ public class AddItemMenuController : MonoBehaviour {
         if (!string.IsNullOrEmpty(selected)) {
             Debug.Log($"AddItemMenuController: Selected sprite file '{selected}'");
             if (!string.IsNullOrEmpty(selected) && spritePathInput != null) {
-                spritePathInput.value = selected;
-            }
-
-            // Preview from the absolute file path to give immediate feedback
-            var previewSprite = LoadSpriteFromAbsoluteFile(selected);
-            if (previewSprite != null) {
-                spritePreview.sprite = previewSprite;
-                spritePreview.image = previewSprite.texture;
-                return;
+                // Copy file into persistent data so it can be used at runtime in builds
+                string dest = SaveSpriteFileToPersistentData(selected);
+                if (!string.IsNullOrEmpty(dest)) spritePathInput.value = dest;
+                else spritePathInput.value = selected;
+                // Preview from the copied location (or original if copy failed)
+                var previewSprite = LoadSpriteFromAbsoluteFile(!string.IsNullOrEmpty(dest) ? dest : selected);
+                if (previewSprite != null) {
+                    spritePreview.sprite = previewSprite;
+                    spritePreview.image = previewSprite.texture;
+                    return;
+                }
             }
         }
 #endif
@@ -172,7 +174,14 @@ public class AddItemMenuController : MonoBehaviour {
         if (!string.IsNullOrEmpty(spritePath)) {
             // If path is an absolute file or rooted path, try loading from file bytes
             if (Path.IsPathRooted(spritePath) || File.Exists(spritePath)) {
-                sprite = LoadSpriteFromAbsoluteFile(spritePath);
+                // Copy into persistent data folder and load from the copied file so builds can access it
+                string dest = SaveSpriteFileToPersistentData(spritePath);
+                if (!string.IsNullOrEmpty(dest) && File.Exists(dest)) {
+                    spritePath = dest;
+                    sprite = LoadSpriteFromAbsoluteFile(dest);
+                } else {
+                    sprite = LoadSpriteFromAbsoluteFile(spritePath);
+                }
             } else {
                 // Otherwise treat it as a Resources path
                 sprite = Resources.Load<Sprite>(spritePath);
@@ -204,6 +213,47 @@ public class AddItemMenuController : MonoBehaviour {
             logger.Log($"AddItemMenuController: Failed to load sprite from file '{absolutePath}'. {ex.Message}", this, Logging.LogType.Warning);
             return null;
         }
+    }
+
+    private string SaveSpriteFileToPersistentData(string absolutePath) {
+        try {
+            if (string.IsNullOrEmpty(absolutePath) || !File.Exists(absolutePath)) return null;
+
+            string itemsDir = Path.Combine(Application.persistentDataPath, "Items");
+            Directory.CreateDirectory(itemsDir);
+
+            // If the file is already in persistent data, return it
+            string normalized = Path.GetFullPath(absolutePath);
+            if (normalized.StartsWith(Path.GetFullPath(itemsDir), StringComparison.OrdinalIgnoreCase)) {
+                return normalized;
+            }
+
+            string fileName = Path.GetFileName(absolutePath);
+            string destFull = Path.Combine(itemsDir, fileName);
+
+            // Make a unique filename if collision
+            destFull = GetUniqueFilePath(destFull);
+
+            File.Copy(absolutePath, destFull);
+
+            return destFull;
+        } catch (Exception ex) {
+            logger.Log($"AddItemMenuController: Failed to copy sprite to persistent data: {ex.Message}", this, Logging.LogType.Warning);
+            return null;
+        }
+    }
+
+    private string GetUniqueFilePath(string fullPath) {
+        string dir = Path.GetDirectoryName(fullPath);
+        string name = Path.GetFileNameWithoutExtension(fullPath);
+        string ext = Path.GetExtension(fullPath);
+        string candidate = fullPath;
+        int i = 1;
+        while (File.Exists(candidate)) {
+            candidate = Path.Combine(dir, $"{name} ({i}){ext}");
+            i++;
+        }
+        return candidate;
     }
 
     private void OnCloseClicked() {
