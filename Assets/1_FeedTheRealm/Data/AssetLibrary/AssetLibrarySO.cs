@@ -51,7 +51,7 @@ public class AssetLibrarySO : ScriptableObject {
 
     /// <summary>
     /// Initializes the asset database by loading existing assets from a JSON file 
-    /// and scanning the Models directory for new assets.
+    /// and scanning the Models directory for new assets. Also copies models to StreamingAssets.
     /// </summary>
     public void InitializeDatabase() {
         objectData.Clear();
@@ -62,10 +62,17 @@ public class AssetLibrarySO : ScriptableObject {
                 Directory.CreateDirectory(assetDirPath);
             }
 
-            string modelsResourcePath = Path.Combine(Application.dataPath, "Resources", "Models");
-            if (!Directory.Exists(modelsResourcePath)) {
-                logger.Log($"Models directory not found at: {modelsResourcePath}", this, Logging.LogType.Error);
-                return;
+            // TODO: This is a temporary solution to make models available at runtime when publishing a world
+            CopyModelsToStreamingAssets();
+
+            GameObject[] models = Resources.LoadAll<GameObject>("Models");
+
+            logger.Log($"[AssetLibrary] Models found in Resources: {models.Length}",
+                       this, Logging.LogType.Info);
+
+            if (models.Length == 0) {
+                logger.Log("[AssetLibrary] No models found in Resources/Models",
+                           this, Logging.LogType.Error);
             }
 
             string filePath = Path.Combine(assetDirPath, assetsFileName);
@@ -73,6 +80,7 @@ public class AssetLibrarySO : ScriptableObject {
             // Load existing assets from JSON file
             AssetModelsRaw rawModels = new() { assetObjects = new Asset[0] };
             List<Asset> existingAssets = new();
+            List<Asset> newAssets = new();
 
             if (File.Exists(filePath)) {
                 try {
@@ -88,45 +96,24 @@ public class AssetLibrarySO : ScriptableObject {
             }
 
             string materialsResourcePath = Path.Combine(Application.dataPath, "Resources", "Materials");
-            string[] modelFiles = Directory.GetFiles(modelsResourcePath)
-                .Where(f => Path.GetExtension(f) != ".meta")
-                .ToArray();
-
-            List<Asset> newAssets = new();
             int addedCount = 0;
 
-            foreach (string modelFile in modelFiles) {
-                string fileName = Path.GetFileNameWithoutExtension(modelFile);
-                string fileNameWithExt = Path.GetFileName(modelFile);
+            foreach (GameObject prefab in models) {
+                string name = prefab.name;
 
-                bool assetExists = existingAssets.Any(a => a.ModelPath == $"Models/{fileNameWithExt}");
-
-                if (assetExists) {
-                    logger.Log($"Asset already exists: {fileName}", this, Logging.LogType.Info);
-                    continue;
-                }
-
-                string materialPath = "";
-                if (Directory.Exists(materialsResourcePath)) {
-                    string[] materialFiles = Directory.GetFiles(materialsResourcePath, $"{fileName}.*");
-                    if (materialFiles.Length > 0) {
-                        materialPath = $"Materials/{Path.GetFileName(materialFiles[0])}";
-                    }
-                }
+                bool assetExists = existingAssets.Any(a => a.Name == name);
+                if (assetExists) continue;
 
                 Asset asset = new(
                     Guid.NewGuid().ToString(),
-                    fileName,
+                    name,
                     Vector2Int.one,
-                    $"Models/{fileNameWithExt}",
-                    materialPath
+                    $"Models/{name}",
+                    ""
                 );
-
                 newAssets.Add(asset);
                 existingAssets.Add(asset);
                 addedCount++;
-
-                logger.Log($"New asset added: {fileName}", this, Logging.LogType.Info);
             }
 
             objectData.AddRange(existingAssets);
@@ -150,6 +137,39 @@ public class AssetLibrarySO : ScriptableObject {
 
         } catch (Exception e) {
             logger.Log($"Error initializing Asset Database: {e}", this, Logging.LogType.Error);
+        }
+    }
+
+    private void CopyModelsToStreamingAssets() {
+        string sourcePath = Path.Combine(Application.dataPath, "Resources", "Models");
+        string destPath = Path.Combine(Application.dataPath, "StreamingAssets", "Models");
+
+        if (!Directory.Exists(sourcePath)) {
+            logger.Log($"[AssetLibrary] Source Models directory not found: {sourcePath}", this, Logging.LogType.Warning);
+            return;
+        }
+
+        try {
+            // Create destination directory if it doesn't exist
+            if (!Directory.Exists(destPath)) {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Copy all files from Resources/Models to StreamingAssets/Models
+            string[] files = Directory.GetFiles(sourcePath);
+            foreach (string file in files) {
+                // Skip .meta files
+                if (file.EndsWith(".meta")) continue;
+
+                string fileName = Path.GetFileName(file);
+                string destFile = Path.Combine(destPath, fileName);
+                File.Copy(file, destFile, true);
+            }
+
+            logger.Log($"[AssetLibrary] Copied {files.Length} files to StreamingAssets/Models", this, Logging.LogType.Info);
+
+        } catch (Exception e) {
+            logger.Log($"[AssetLibrary] Error copying models to StreamingAssets: {e}", this, Logging.LogType.Error);
         }
     }
 }
