@@ -47,4 +47,14 @@ public static class SpriteStorage {
             return null;
         }
     }
+
+    public static byte[] LoadSpriteBytesFromPath(string absolutePath) {
+        try {
+            if (string.IsNullOrEmpty(absolutePath) || !File.Exists(absolutePath)) return null;
+            return File.ReadAllBytes(absolutePath);
+        } catch (Exception ex) {
+            Debug.LogWarning($"SpriteStorage: Failed to load sprite bytes from path '{absolutePath}': {ex.Message}");
+            return null;
+        }
+    }
 }

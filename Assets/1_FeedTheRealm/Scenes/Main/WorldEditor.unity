@@ -150,6 +150,7 @@ MonoBehaviour:
   assetLibrary: {fileID: 11400000, guid: 46617b3f0559eb37d8b4aab826dfcc02, type: 2}
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   modelUploadService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
+  itemsService: {fileID: 11400000, guid: 17f57e963fa180443986afad2ea382b5, type: 2}
   player: {fileID: 1889743594}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
 --- !u!1 &623825318

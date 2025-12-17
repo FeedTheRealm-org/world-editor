@@ -21,4 +21,4 @@ MonoBehaviour:
     duration: 0
     cooldown: 0
     maxStack: 1
-    spritePath: C:/Users/Terminator 2/Desktop/TPF/feed_the_realm/world_creator/Assets/6000FantasyIcons/ArmorIcons/ArmorSet_Icons/Cloak/cloak_01.png
+    spriteId: 3464d520-4027-4028-a7ae-f35c00a9ba2c
