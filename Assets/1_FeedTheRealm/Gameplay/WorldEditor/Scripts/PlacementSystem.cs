@@ -1,37 +1,38 @@
+using Models;
 using UnityEngine;
+using World;
 
 
-public class PlacementSystem : MonoBehaviour {
+public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
+    [Header("Indicator settings")]
     [SerializeField]
-    private GameObject placementIndicator, cellIndicator;
+    private GameObject cellIndicator;
 
+    [Header("Dependencies")]
     [SerializeField]
     private InputManager inputManager;
-
-    [SerializeField]
-    private Grid grid;
-
     [SerializeField]
     private Logging.Logger logger;
-
     [SerializeField]
-    private Material placementGridMaterial;
+    private AssetLibrarySO assetLibrary;
+    [SerializeField]
+    private DataPersistenceManagerSO dataPersistenceManager;
+    [SerializeField]
+    private WorldController worldController;
 
-    private ObjectData selectedObjectData = null;
-
+    private Asset selectedObjectData = null;
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
     #endregion
 
-
     #region  Placement Methods
-    public void StartPlacement(ObjectData objData) {
+    public void StartPlacement(Asset objData) {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
-        isRemoving = false; // make sure we’re not in remove mode
-        ToggleGridVisualization(true);
+        isRemoving = false;
+        worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
 
         // Subscribe to input events
@@ -41,30 +42,41 @@ public class PlacementSystem : MonoBehaviour {
 
     private void StopPlacement() {
         selectedObjectData = null;
-        ToggleGridVisualization(false);
+        worldController.ToggleGridVisualization(false);
         cellIndicator.SetActive(false);
 
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
     }
-
     private void PlaceObject() {
         if (selectedObjectData == null) {
             return;
         }
-        (bool canBePlaced, GameObject placeableObject) = placementManager.AddPlacedObject(
-            grid.WorldToCell(inputManager.GetSelectedMapPosition()),
-            selectedObjectData
+        Vector3Int gridPosition = worldController.GetSelectedPosition(inputManager.GetSelectedMapPosition());
+
+        bool canBePlaced = TryPlaceObjectAt(
+            selectedObjectData,
+            gridPosition
         );
 
         if (!canBePlaced) {
+            logger.Log($"Placement failed for object ID: {selectedObjectData.Id}", this, Logging.LogType.Warning);
             return;
         }
-        Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
-        Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        placeableObject.transform.position = pos;
     }
+
+
+    private bool TryPlaceObjectAt(Asset objectData, Vector3Int gridPosition) {
+        PlacedAsset placeableObject = placementManager.TryPlaceObject(objectData, gridPosition);
+
+        if (placeableObject == null) {
+            return false;
+        }
+        worldController.PlaceObjectAt(gridPosition, placeableObject.InstancedGameObject);
+        return true;
+    }
+
+
     #endregion
 
 
@@ -83,7 +95,7 @@ public class PlacementSystem : MonoBehaviour {
     public void StartRemoving() {
         isRemoving = true;
         selectedObjectData = null;
-        ToggleGridVisualization(true);
+        worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
         inputManager.OnClicked += HandleRemoveClick;
         inputManager.OnExit += StopRemoving;
@@ -91,7 +103,7 @@ public class PlacementSystem : MonoBehaviour {
 
     private void StopRemoving() {
         isRemoving = false;
-        ToggleGridVisualization(false);
+        worldController.ToggleGridVisualization(false);
         cellIndicator.SetActive(false);
 
         inputManager.OnClicked -= HandleRemoveClick;
@@ -100,16 +112,20 @@ public class PlacementSystem : MonoBehaviour {
 
     private void HandleRemoveClick() {
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
+        Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
         RemoveObjectAt(cellPosition);
     }
 
     #endregion
 
 
-    #region Start & Update
-    void Start() {
+    #region Initialization & Update
+    void Awake() {
         placementManager = new PlacementManager();
+        dataPersistenceManager.LoadWorld();
+    }
+
+    void Start() {
         StopPlacement();
     }
 
@@ -119,18 +135,35 @@ public class PlacementSystem : MonoBehaviour {
         }
 
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
-        Vector3Int cellPosition = grid.WorldToCell(placementPosition);
+        Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
-        placementIndicator.transform.position = placementPosition;
-        cellIndicator.transform.position = grid.GetCellCenterWorld(cellPosition);
+        cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion
 
+    #region Data Persistence Implementation
+    public void LoadData(WorldData data) {
 
+        if (data.objectPlacementData == null || data.objectPlacementData.Count == 0) {
+            logger.Log("New world created!", this, Logging.LogType.Info);
+            return;
+        }
 
-    private void ToggleGridVisualization(bool isVisible) {
-        placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
+        foreach (PlacedAsset placementData in data.objectPlacementData) {
+            Asset assetData = assetLibrary.GetAssetById(placementData.AssetDataId);
+            Vector3Int gridPosition = placementData.Position;
+            bool canBePlaced = TryPlaceObjectAt(assetData, gridPosition);
+            if (!canBePlaced) {
+                logger.Log($"Failed to load placed object ID: {assetData.Id}", this, Logging.LogType.Error);
+            }
+        }
+        logger.Log($"Loaded {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
     }
 
-}
+    public void SaveData(ref WorldData data) {
+        data.objectPlacementData = placementManager.GetAllPlacedObjects();
+        logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+    }
 
+    #endregion
+}

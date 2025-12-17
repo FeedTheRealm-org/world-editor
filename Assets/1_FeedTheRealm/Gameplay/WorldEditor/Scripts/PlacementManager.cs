@@ -1,43 +1,44 @@
 using System.Collections.Generic;
+using Models;
 using UnityEngine;
 
-// TODO: refactor this to be a monobehavior script insted of a regular class
+/*
+    Manages the placement of objects in the world editor, ensuring no overlaps occur.
+    Implements IDataPersistence to save and load placement data.
+*/
 public class PlacementManager {
 
-    private readonly Dictionary<Vector3Int, PlacementData> occupiedCells = new();
+    private readonly Dictionary<Vector3Int, PlacedAsset> occupiedCells = new();
+    private readonly List<PlacedAsset> storedPlacedObjects = new();
+    public List<PlacedAsset> GetAllPlacedObjects() => storedPlacedObjects;
 
-    // Adds an object to the grid
-    public (bool, GameObject) AddPlacedObject(Vector3Int gridPosition, ObjectData objectData) {
-        List<Vector3Int> positions = CalculatePositions(gridPosition, objectData.Size);
+    public PlacedAsset TryPlaceObject(Asset assetData, Vector3Int gridPosition) {
+        List<Vector3Int> positions = CalculatePositions(assetData, gridPosition);
 
         // Check for overlaps
         foreach (var pos in positions) {
             if (occupiedCells.ContainsKey(pos)) {
-                Debug.LogWarning($"Cannot place object at {gridPosition}: cell {pos} is already occupied by object ID {occupiedCells[pos].ObjectData.Id}.");
-                return (false, null);
+                return null;
             }
         }
 
-        // Store placement data with ObjectData reference
-        PlacementData data = new PlacementData(positions, objectData);
-        foreach (var pos in positions) {
+        PlacedAsset data = new(gridPosition, positions, assetData);
+        foreach (var pos in data.OccupiedPositions) {
             occupiedCells.Add(pos, data);
         }
-
-        return (true, data.PlacedGameObject);
+        storedPlacedObjects.Add(data);
+        return data;
     }
 
-    private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int size) {
+    private List<Vector3Int> CalculatePositions(Asset assetData, Vector3Int gridPosition) {
+        Vector2Int size = assetData.Size;
         var positions = new List<Vector3Int>(size.x * size.y);
-
         // Calculate offsets from center
         int halfWidth = size.x / 2;
         int halfLength = size.y / 2;
-
         // Adjust for even-sized objects
         int xOffset = size.x % 2 == 0 ? 1 : 0;
         int zOffset = size.y % 2 == 0 ? 1 : 0;
-
         // Iterate from negative half to positive half
         for (int x = -halfWidth; x < halfWidth + (1 - xOffset); x++) {
             for (int z = -halfLength; z < halfLength + (1 - zOffset); z++) {
@@ -48,33 +49,19 @@ public class PlacementManager {
                 ));
             }
         }
-
         return positions;
     }
 
-    public bool IsCellOccupied(Vector3Int cell) => occupiedCells.ContainsKey(cell);
 
-    // Removes an object and returns its data (null if nothing was there)
     public GameObject RemovePlacedObject(Vector3Int gridPosition) {
-        if (!occupiedCells.TryGetValue(gridPosition, out var data))
+        if (!occupiedCells.TryGetValue(gridPosition, out var placedObject))
             return null;
 
-        foreach (var pos in data.OccupiedPositions)
+        foreach (var pos in placedObject.OccupiedPositions)
             occupiedCells.Remove(pos);
 
-        return data.PlacedGameObject;
+        storedPlacedObjects.Remove(placedObject);
+        return placedObject.InstancedGameObject;
     }
 }
 
-public class PlacementData {
-    public List<Vector3Int> OccupiedPositions;
-    public ObjectData ObjectData;
-
-    public GameObject PlacedGameObject;
-
-    public PlacementData(List<Vector3Int> occupiedPositions, ObjectData objectData) {
-        OccupiedPositions = occupiedPositions;
-        ObjectData = objectData;
-        PlacedGameObject = Object.Instantiate(objectData.Prefab);
-    }
-}
