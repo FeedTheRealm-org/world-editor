@@ -111,3 +111,5 @@ InitTestScene*.unity*
 
 /[Aa]ssets/Resources
 /[Aa]ssets/Resources.meta
+/[Aa]ssets/StreamingAssets
+/[Aa]ssets/StreamingAssets.meta
