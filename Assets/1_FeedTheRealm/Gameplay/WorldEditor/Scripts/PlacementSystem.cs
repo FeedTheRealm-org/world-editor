@@ -8,6 +8,8 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [Header("Indicator settings")]
     [SerializeField]
     private GameObject cellIndicator;
+    [SerializeField]
+    private GameObject enemySpawnIndicator;
 
     [Header("Dependencies")]
     [SerializeField]
@@ -25,6 +27,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
+    private bool isPlacingEnemySpawn = false;
     #endregion
 
     #region  Placement Methods
@@ -32,10 +35,25 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false;
+        isPlacingEnemySpawn = false;
         worldController.ToggleGridVisualization(true);
-        cellIndicator.SetActive(true);
+        // Default indicator for general placement
+        if (cellIndicator != null) cellIndicator.SetActive(true);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
 
         // Subscribe to input events
+        inputManager.OnClicked += PlaceObject;
+        inputManager.OnExit += StopPlacement;
+    }
+
+    public void StartEnemySpawnPlacement() {
+        logger.Log($"Started placement of Enemy Spawn Point", this, Logging.LogType.Info);
+        worldController.ToggleGridVisualization(true);
+
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(true);
+
+        isPlacingEnemySpawn = true;
         inputManager.OnClicked += PlaceObject;
         inputManager.OnExit += StopPlacement;
     }
@@ -43,8 +61,9 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     private void StopPlacement() {
         selectedObjectData = null;
         worldController.ToggleGridVisualization(false);
-        cellIndicator.SetActive(false);
-
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
+        isPlacingEnemySpawn = false;
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
     }
@@ -97,6 +116,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         selectedObjectData = null;
         worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
+        isPlacingEnemySpawn = false;
         inputManager.OnClicked += HandleRemoveClick;
         inputManager.OnExit += StopRemoving;
     }
@@ -130,7 +150,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
     void Update() {
-        if (selectedObjectData == null && !isRemoving) {
+        if (selectedObjectData == null && !isRemoving && !isPlacingEnemySpawn) {
             return;
         }
 
@@ -138,6 +158,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
         cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
+        enemySpawnIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion
 

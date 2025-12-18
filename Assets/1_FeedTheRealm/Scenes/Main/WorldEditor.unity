@@ -846,6 +846,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
+--- !u!1 &2090873056 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5246051850371158027, guid: b8d8224b901583cee973a24582738043, type: 3}
+  m_PrefabInstance: {fileID: 1645386354960940949}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1645386354960940949
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -886,6 +891,10 @@ PrefabInstance:
       propertyPath: gridVisualization
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: enemySpawnIndicator
+      value: 
+      objectReference: {fileID: 2090873056}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementGridMaterial
       value: 
