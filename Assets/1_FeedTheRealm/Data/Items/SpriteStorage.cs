@@ -38,7 +38,7 @@ public static class SpriteStorage {
 
             // Possible file with the id as filename
             var match = Directory.EnumerateFiles(itemsDir)
-                .FirstOrDefault(f => String.Equals(Path.GetFileNameWithoutExtension(f), idOrPath, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(f => string.Equals(Path.GetFileNameWithoutExtension(f), idOrPath, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrEmpty(match) && File.Exists(match)) return match;
 
             return null;
