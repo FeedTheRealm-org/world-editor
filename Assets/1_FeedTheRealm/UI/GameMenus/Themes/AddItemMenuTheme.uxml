@@ -1,0 +1,40 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/gameMenuUSS.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#gameMenuUSS"/>
+    <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(165, 0, 255, 0.45); flex-direction: column; justify-content: center; align-items: center;">
+        <ui:VisualElement name="AddItemMenuContainer" class="menu-container" style="flex-direction: column; justify-content: flex-start; width: 900px; max-width: 900px; min-width: 600px; height: 100%; max-height: 60%; background-color: rgba(0, 30, 154, 0.57);">
+            <ui:Label text="Add new item" class="text" style="-unity-font-style: bold; font-size: 50%; padding-left: 3%; padding-top: 3%; padding-bottom: 10px;">
+                <ui:Button text="X " name="Close" style="width: 50px; white-space: normal; -unity-text-align: middle-center; align-self: flex-end; min-height: 0; margin-top: 0; margin-right: 25px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: space-between; align-content: center; align-items: center; color: rgb(255, 255, 255); height: 50px; border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; -unity-font-style: bold; background-color: rgb(79, 79, 79);"/>
+            </ui:Label>
+            <ui:VisualElement name="ContentRow" style="flex-direction: row; align-items: flex-start; gap: 20px; padding-left: 3%; padding-right: 3%; flex-grow: 1; align-self: stretch;">
+                <ui:VisualElement name="ItemPreviewContainer" style="width: 35%; min-width: 220px; flex-direction: column; gap: 10px; align-items: center; align-self: auto; justify-content: flex-start; align-content: flex-start;">
+                    <ui:Label text="Preview" class="text" style="-unity-font-style: bold; align-self: center;"/>
+                    <ui:Image name="SpritePreview" style="width: 220px; height: 220px; background-color: rgba(255, 255, 255, 0.32); border-radius: 6px;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column;">
+                    <ui:TextField placeholder-text="Item name" name="NameInput" style="align-self: stretch; height: 40px; font-size: 18px; margin-bottom: 15px;"/>
+                    <ui:VisualElement name="ConsumableContainer" style="flex-direction: column; align-self: stretch; margin-bottom: 15px; align-content: auto;">
+                        <ui:Label text="Consumable Settings" class="text" style="-unity-font-style: bold; margin-top: 10px; margin-bottom: 10px; color: rgb(0, 0, 0);"/>
+                        <ui:TextField name="Description" multiline="true" placeholder-text="Description (what does this consumable do?)" style="height: 80px; margin-bottom: 10px;"/>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 12px; gap: 10px;">
+                            <ui:DropdownField name="EffectType" label="Effect" style="flex: 1;"/>
+                            <ui:IntegerField name="Value" label="Value" value="0" style="flex: 1; color: rgb(0, 0, 0);"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; gap: 10px;">
+                            <ui:FloatField name="Duration" label="Duration (s)" value="0" style="flex: 1; flex-direction: column; color: rgb(0, 0, 0);"/>
+                            <ui:FloatField name="Cooldown" label="Cooldown (s)" value="0" style="flex: 1; flex-direction: column; color: rgb(0, 0, 0);"/>
+                            <ui:IntegerField name="MaxStack" label="Max Stack" value="1" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="SpriteContainer" style="flex-direction: column; align-self: stretch; margin-bottom: 15px;">
+                        <ui:Label text="Sprite" class="text" style="margin-bottom: 8px; color: rgb(0, 0, 0);"/>
+                        <ui:VisualElement style="flex-direction: row; align-items: auto; justify-content: center; gap: 10px; align-self: auto; align-content: auto;">
+                            <ui:TextField name="SpritePath" value="" style="flex-grow: 1; height: 36px; text-overflow: ellipsis; max-width: 80%; min-width: 80%;"/>
+                            <ui:Button text="Load" name="LoadSprite" style="width: initial; height: 36px; max-width: 20%; align-items: stretch; min-width: 20%;"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Button text="Add Item" name="Add" class="cool-button" style="align-self: flex-end; margin-top: 10px; margin-bottom: 15px; padding: 10px 30px; font-size: 16px; max-height: 100px; max-width: 134px; width: 200px;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
