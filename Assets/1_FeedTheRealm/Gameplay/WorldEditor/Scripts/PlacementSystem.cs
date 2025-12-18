@@ -8,8 +8,12 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [Header("Indicator settings")]
     [SerializeField]
     private GameObject cellIndicator;
+
+    [Header("Enemy Spawn Settings")]
     [SerializeField]
     private GameObject enemySpawnIndicator;
+    [SerializeField]
+    private GameObject enemySpawnPlacePrefab;
 
     [Header("Dependencies")]
     [SerializeField]
@@ -54,8 +58,8 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(true);
 
         isPlacingEnemySpawn = true;
-        inputManager.OnClicked += PlaceObject;
-        inputManager.OnExit += StopPlacement;
+        inputManager.OnClicked += PlaceEnemySpawn;
+        inputManager.OnExit += StopEnemySpawnPlacement;
     }
 
     private void StopPlacement() {
@@ -67,6 +71,16 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
     }
+
+    private void StopEnemySpawnPlacement() {
+        worldController.ToggleGridVisualization(false);
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
+        isPlacingEnemySpawn = false;
+        inputManager.OnClicked -= PlaceEnemySpawn;
+        inputManager.OnExit -= StopEnemySpawnPlacement;
+    }
+
     private void PlaceObject() {
         if (selectedObjectData == null) {
             return;
@@ -83,6 +97,28 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
             return;
         }
     }
+
+    private void PlaceEnemySpawn() {
+        Vector3Int gridPosition = worldController.GetSelectedPosition(inputManager.GetSelectedMapPosition());
+
+        Asset enemySpawnAsset = new Asset(
+                "enemy_spawn",
+                "Enemy Spawn Point",
+                new Vector2Int(1, 1),
+                enemySpawnPlacePrefab
+            );
+
+        bool canBePlaced = TryPlaceObjectAt(
+            enemySpawnAsset,
+            gridPosition
+        );
+
+        if (!canBePlaced) {
+            logger.Log("Placement failed for Enemy Spawn Point", this, Logging.LogType.Warning);
+            return;
+        }
+    }
+
 
 
     private bool TryPlaceObjectAt(Asset objectData, Vector3Int gridPosition) {
