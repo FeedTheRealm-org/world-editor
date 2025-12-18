@@ -1,6 +1,7 @@
 using Models;
 using UnityEngine;
 using World;
+using System.Collections.Generic;
 
 
 public class PlacementSystem : MonoBehaviour, IDataPersistence {
@@ -218,8 +219,20 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
     public void SaveData(ref WorldData data) {
-        data.objectPlacementData = placementManager.GetAllPlacedObjects();
+        data.objectPlacementData = new List<PlacedAsset>();
+        data.enemySpawnAreas = new List<EnemySpawnAreaData>();
+
+        foreach (PlacedAsset placementData in placementManager.GetAllPlacedObjects()) {
+            if (placementData.AssetDataId == "enemy_spawn") {
+                EnemySpawnAreaData enemySpawnArea = new EnemySpawnAreaData(placementData.Position);
+                data.enemySpawnAreas.Add(enemySpawnArea);
+                continue;
+            }
+            data.objectPlacementData.Add(placementData);
+        }
+
         logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+        logger.Log($"Saved {data.enemySpawnAreas.Count} enemy spawn areas.", this, Logging.LogType.Info);
     }
 
     #endregion
