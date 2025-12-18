@@ -223,7 +223,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
                 new Vector2Int(1, 1),
                 enemySpawnPlacePrefab
             );
-            Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.position);
+            Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.Position);
             bool canBePlaced = TryPlaceObjectAt(enemySpawnAsset, gridPosition);
             if (!canBePlaced) {
                 logger.Log("Failed to load placed Enemy Spawn Point", this, Logging.LogType.Error);
