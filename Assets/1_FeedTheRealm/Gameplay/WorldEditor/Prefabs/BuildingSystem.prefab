@@ -65,7 +65,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
-  placementIndicator: {fileID: 1563248125848677339}
   cellIndicator: {fileID: 0}
   inputManager: {fileID: 6853865918570880066}
   logger: {fileID: 0}

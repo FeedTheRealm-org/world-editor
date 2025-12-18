@@ -7,8 +7,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     #region Inspector Fields
     [Header("Indicator settings")]
     [SerializeField]
-    private GameObject placementIndicator;
-    [SerializeField]
     private GameObject cellIndicator;
 
     [Header("Dependencies")]
@@ -74,9 +72,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         if (placeableObject == null) {
             return false;
         }
-        // Vector3Int cellPosition = grid.WorldToCell(gridPosition);
-        // Vector3 pos = grid.GetCellCenterWorld(cellPosition);
-        // placeableObject.InstancedGameObject.transform.position = pos;
         worldController.PlaceObjectAt(gridPosition, placeableObject.InstancedGameObject);
         return true;
     }
@@ -142,7 +137,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         Vector3 placementPosition = inputManager.GetSelectedMapPosition();
         Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
-        placementIndicator.transform.position = placementPosition;
         cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion

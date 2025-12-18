@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Models;
 using UnityEngine;
 
@@ -48,32 +49,122 @@ public class AssetLibrarySO : ScriptableObject {
         }
     }
 
+    /// <summary>
+    /// Initializes the asset database by loading existing assets from a JSON file 
+    /// and scanning the Models directory for new assets. Also copies models to StreamingAssets.
+    /// </summary>
     public void InitializeDatabase() {
         objectData.Clear();
-        logger.Log("Initializing Asset Database...", this, Logging.LogType.Info);
-
         string assetDirPath = Path.Combine(Application.persistentDataPath, assetsDirectory);
 
         try {
-            if (!File.Exists(Path.Combine(assetDirPath, assetsFileName))) {
-                logger.Log($"Asset Database JSON not found at path: {Path.Combine(assetDirPath, assetsFileName)}", this, Logging.LogType.Error);
-                return;
+            if (!Directory.Exists(assetDirPath)) {
+                Directory.CreateDirectory(assetDirPath);
             }
-            string fullPath = Path.Combine(assetDirPath, assetsFileName);
-            using FileStream fs = new(fullPath, FileMode.Open);
-            using StreamReader reader = new(fs);
-            string jsonContent = reader.ReadToEnd();
 
-            AssetModelsRaw rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
+            // TODO: This is a temporary solution to make models available at runtime when publishing a world
+            CopyModelsToStreamingAssets();
 
-            foreach (Asset model in rawModels.assetObjects) {
-                // TODO: add validations later (if needed)
-                objectData.Add(model);
+            GameObject[] models = Resources.LoadAll<GameObject>("Models");
+
+            logger.Log($"[AssetLibrary] Models found in Resources: {models.Length}",
+                       this, Logging.LogType.Info);
+
+            if (models.Length == 0) {
+                logger.Log("[AssetLibrary] No models found in Resources/Models",
+                           this, Logging.LogType.Error);
             }
-            logger.Log($"Asset Database initialized with {objectData.Count} assets.", this, Logging.LogType.Info);
+
+            string filePath = Path.Combine(assetDirPath, assetsFileName);
+
+            // Load existing assets from JSON file
+            AssetModelsRaw rawModels = new() { assetObjects = new Asset[0] };
+            List<Asset> assets = new();
+
+            if (File.Exists(filePath)) {
+                try {
+                    using FileStream fs = new(filePath, FileMode.Open);
+                    using StreamReader reader = new(fs);
+                    string jsonContent = reader.ReadToEnd();
+                    rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
+                    assets.AddRange(rawModels.assetObjects);
+                    logger.Log($"Loaded {assets.Count} existing assets from JSON.", this, Logging.LogType.Info);
+                } catch (Exception e) {
+                    logger.Log($"Error loading existing JSON: {e}", this, Logging.LogType.Error);
+                }
+            }
+
+            string materialsResourcePath = Path.Combine(Application.dataPath, "Resources", "Materials");
+            int addedCount = 0;
+
+            foreach (GameObject prefab in models) {
+                string name = prefab.name;
+
+                bool assetExists = assets.Any(a => a.Name == name);
+                if (assetExists) continue;
+
+                Asset asset = new(
+                    Guid.NewGuid().ToString(),
+                    name,
+                    Vector2Int.one,
+                    $"Models/{name}",
+                    ""
+                );
+                assets.Add(asset);
+                addedCount++;
+            }
+
+            objectData.AddRange(assets);
+
+            if (addedCount > 0) {
+                rawModels.assetObjects = assets.ToArray();
+                string jsonContent = JsonUtility.ToJson(rawModels, true);
+
+                using (FileStream fs = new(filePath, FileMode.Create))
+                using (StreamWriter writer = new(fs)) {
+                    writer.Write(jsonContent);
+                }
+
+                logger.Log($"Asset Database updated: {addedCount} new assets added.", this, Logging.LogType.Info);
+            } else {
+                logger.Log("No new assets to add.", this, Logging.LogType.Info);
+            }
+
+            logger.Log($"Asset Database initialized with {objectData.Count} total assets.", this, Logging.LogType.Info);
             isInitialized = true;
+
         } catch (Exception e) {
-            logger.Log($"Error loading Asset Database JSON: {e}", this, Logging.LogType.Error);
+            logger.Log($"Error initializing Asset Database: {e}", this, Logging.LogType.Error);
+        }
+    }
+
+    private void CopyModelsToStreamingAssets() {
+        string sourcePath = Path.Combine(Application.dataPath, "Resources", "Models");
+        string destPath = Path.Combine(Application.dataPath, "StreamingAssets", "Models");
+
+        if (!Directory.Exists(sourcePath)) {
+            logger.Log($"[AssetLibrary] Source Models directory not found: {sourcePath}", this, Logging.LogType.Warning);
+            return;
+        }
+
+        try {
+            // Create destination directory if it doesn't exist
+            if (!Directory.Exists(destPath)) {
+                Directory.CreateDirectory(destPath);
+            }
+
+            // Copy all files from Resources/Models to StreamingAssets/Models
+            string[] files = Directory.GetFiles(sourcePath);
+            foreach (string file in files) {
+                // Skip .meta files
+                if (file.EndsWith(".meta")) continue;
+
+                string fileName = Path.GetFileName(file);
+                string destFile = Path.Combine(destPath, fileName);
+                File.Copy(file, destFile, true);
+            }
+        } catch (Exception e) {
+            logger.Log($"[AssetLibrary] Error copying models to StreamingAssets: {e}", this, Logging.LogType.Error);
         }
     }
 }
