@@ -11,6 +11,7 @@ public class HUDController : MonoBehaviour {
     [Header("Menus")]
     [SerializeField] private GameObject saveMenu;
     [SerializeField] private GameObject publishMenu;
+    [SerializeField] private GameObject consumableItemsHUD;
 
     private ListView itemListView;
     private List<Asset> assetList;
@@ -28,6 +29,9 @@ public class HUDController : MonoBehaviour {
 
         var publishButton = root.Q<Button>("PublishWorld");
         publishButton.clicked += OpenPublishMenu;
+
+        var consumableItemsButton = root.Q<Button>("ConsumableItemsButton");
+        consumableItemsButton.clicked += OpenConsumableItemsMenu;
 
         // Find the ListView from the UXML
         itemListView = root.Q<ListView>("ItemListView");
@@ -88,6 +92,15 @@ public class HUDController : MonoBehaviour {
             publishMenu.SetActive(true);
         } else {
             Debug.LogWarning("HUDController: Publish menu reference is not set.");
+        }
+    }
+
+    private void OpenConsumableItemsMenu() {
+        if (consumableItemsHUD != null) {
+            consumableItemsHUD.SetActive(true);
+            gameObject.SetActive(false);
+        } else {
+            Debug.LogWarning("HUDController: Consumable Items menu reference is not set.");
         }
     }
 }
