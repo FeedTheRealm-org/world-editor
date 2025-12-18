@@ -79,8 +79,7 @@ public class AssetLibrarySO : ScriptableObject {
 
             // Load existing assets from JSON file
             AssetModelsRaw rawModels = new() { assetObjects = new Asset[0] };
-            List<Asset> existingAssets = new();
-            List<Asset> newAssets = new();
+            List<Asset> assets = new();
 
             if (File.Exists(filePath)) {
                 try {
@@ -88,8 +87,8 @@ public class AssetLibrarySO : ScriptableObject {
                     using StreamReader reader = new(fs);
                     string jsonContent = reader.ReadToEnd();
                     rawModels = JsonUtility.FromJson<AssetModelsRaw>(jsonContent);
-                    existingAssets.AddRange(rawModels.assetObjects);
-                    logger.Log($"Loaded {existingAssets.Count} existing assets from JSON.", this, Logging.LogType.Info);
+                    assets.AddRange(rawModels.assetObjects);
+                    logger.Log($"Loaded {assets.Count} existing assets from JSON.", this, Logging.LogType.Info);
                 } catch (Exception e) {
                     logger.Log($"Error loading existing JSON: {e}", this, Logging.LogType.Error);
                 }
@@ -101,7 +100,7 @@ public class AssetLibrarySO : ScriptableObject {
             foreach (GameObject prefab in models) {
                 string name = prefab.name;
 
-                bool assetExists = existingAssets.Any(a => a.Name == name);
+                bool assetExists = assets.Any(a => a.Name == name);
                 if (assetExists) continue;
 
                 Asset asset = new(
@@ -111,15 +110,14 @@ public class AssetLibrarySO : ScriptableObject {
                     $"Models/{name}",
                     ""
                 );
-                newAssets.Add(asset);
-                existingAssets.Add(asset);
+                assets.Add(asset);
                 addedCount++;
             }
 
-            objectData.AddRange(existingAssets);
+            objectData.AddRange(assets);
 
             if (addedCount > 0) {
-                rawModels.assetObjects = existingAssets.ToArray();
+                rawModels.assetObjects = assets.ToArray();
                 string jsonContent = JsonUtility.ToJson(rawModels, true);
 
                 using (FileStream fs = new(filePath, FileMode.Create))
@@ -165,9 +163,6 @@ public class AssetLibrarySO : ScriptableObject {
                 string destFile = Path.Combine(destPath, fileName);
                 File.Copy(file, destFile, true);
             }
-
-            logger.Log($"[AssetLibrary] Copied {files.Length} files to StreamingAssets/Models", this, Logging.LogType.Info);
-
         } catch (Exception e) {
             logger.Log($"[AssetLibrary] Error copying models to StreamingAssets: {e}", this, Logging.LogType.Error);
         }
