@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using API;
 using Models;
@@ -10,6 +11,7 @@ public class PublishMenuController : MonoBehaviour {
     [SerializeField] private AssetLibrarySO assetLibrary;
     [SerializeField] private WorldService worldService;
     [SerializeField] private ModelService modelUploadService;
+    [SerializeField] private ItemsService itemsService;
     [SerializeField] private Maker player;
     [SerializeField] private Session.Session session;
     private Models.WorldData worldData;
@@ -94,7 +96,42 @@ public class PublishMenuController : MonoBehaviour {
                     worldId = id;
                     worldError = error;
                 })
+
         );
+
+        foreach (var sprite in worldData.consumableItems) {
+            Debug.Log($"Uploading sprite for consumable item '{sprite.name}'");
+            string path = SpriteStorage.GetFilePathFromIdOrPath(sprite.spriteId);
+            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+            if (spriteBytes == null || spriteBytes.Length == 0) {
+                Debug.LogWarning($"Sprite bytes for asset ID '{sprite.spriteId}' are null or empty. Skipping upload.");
+                continue;
+            }
+
+            string itemError = null;
+            SpriteCreatedData createdSprite = null;
+
+            Debug.Log($"Sprite name: {path}");
+            Debug.Log($"Sprite path: {spriteBytes.Length}");
+            Debug.Log($"Uploading sprite from path: {Path.GetExtension(path)}");
+
+            string type = Path.GetExtension(path).Replace(".", "").ToLower();
+
+            yield return StartCoroutine(
+                itemsService.UploadItemSprite(spriteBytes, $"{sprite.name}{Path.GetExtension(path)}", $"image/{type}",
+                    (data, error) => {
+                        createdSprite = data;
+                        itemError = error;
+                    })
+            );
+
+            if (!string.IsNullOrEmpty(itemError) || createdSprite == null) {
+                Debug.LogError($"Failed to upload sprite for item '{sprite.name}': {itemError}");
+                continue;
+            }
+
+            Debug.Log($"Sprite uploaded successfully for item '{sprite.name}'");
+        }
 
         if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId)) {
             Debug.LogError($"Failed to publish world: {worldError}");

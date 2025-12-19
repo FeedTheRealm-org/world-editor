@@ -12,6 +12,8 @@ public class DataPersistenceManagerSO : ScriptableObject {
 
     [SerializeField] private Logging.Logger logger;
 
+    [SerializeField] private ConsumableItems consumableItemsDatabase;
+
     private readonly WorldHandler worldDataHandler = new();
     private WorldData worldData = null;
     private List<IDataPersistence> dataPersistenceObjects = new();
@@ -62,6 +64,8 @@ public class DataPersistenceManagerSO : ScriptableObject {
             dataPersistenceObj.SaveData(ref worldData);
         }
 
+        worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
+
         worldDataHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
     }
@@ -84,6 +88,8 @@ public class DataPersistenceManagerSO : ScriptableObject {
             foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) {
                 dataPersistenceObj.LoadData(worldData);
             }
+
+            consumableItemsDatabase.LoadConsumableItems(worldData.consumableItems);
 
             logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
         } catch (System.Exception) {
