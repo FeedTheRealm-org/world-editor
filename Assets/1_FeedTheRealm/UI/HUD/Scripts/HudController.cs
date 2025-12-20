@@ -30,6 +30,9 @@ public class HUDController : MonoBehaviour {
         var publishButton = root.Q<Button>("PublishWorld");
         publishButton.clicked += OpenPublishMenu;
 
+        var addEnemySpawnButton = root.Q<Button>("AddEnemySpawn");
+        addEnemySpawnButton.clicked += OnAddEnemySpawn;
+        
         var consumableItemsButton = root.Q<Button>("ConsumableItemsButton");
         consumableItemsButton.clicked += OpenConsumableItemsMenu;
 
@@ -76,6 +79,11 @@ public class HUDController : MonoBehaviour {
     private void OnItemSelected(Asset obj) {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
         placementSystem.StartPlacement(obj);
+    }
+
+    private void OnAddEnemySpawn() {
+        Debug.Log("HUDController: Starting Enemy Spawn placement");
+        placementSystem.StartEnemySpawnPlacement();
     }
 
     // TODO: refactor to a MenuManager

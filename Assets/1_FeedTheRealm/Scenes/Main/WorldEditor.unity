@@ -963,6 +963,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
+--- !u!1 &2090873056 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5246051850371158027, guid: b8d8224b901583cee973a24582738043, type: 3}
+  m_PrefabInstance: {fileID: 1645386354960940949}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1645386354960940949
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1004,6 +1009,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: enemySpawnIndicator
+      value: 
+      objectReference: {fileID: 2090873056}
+    - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: enemySpawnPlacePrefab
+      value: 
+      objectReference: {fileID: 5304767882133849496, guid: b3d2b2e667f129e4d843c2be8c439c63, type: 3}
+    - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementGridMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
@@ -1034,6 +1047,26 @@ PrefabInstance:
     - target: {fileID: 2077720549764580972, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_CellSize.z
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175380834150774192, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.9999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175380834150774192, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.59999996
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175380834150774192, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 5.9999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175380834150774192, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2175380834150774192, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.65
       objectReference: {fileID: 0}
     - target: {fileID: 3037383106014469897, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Materials.Array.size
@@ -1199,6 +1232,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: World
       objectReference: {fileID: 0}
+    - target: {fileID: 6773305366618913825, guid: b8d8224b901583cee973a24582738043, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6853865918570880066, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: mainCamera
       value: 
@@ -1290,6 +1327,7 @@ PrefabInstance:
     - {fileID: 4149419672146469329, guid: b8d8224b901583cee973a24582738043, type: 3}
     - {fileID: 1419799290264347323, guid: b8d8224b901583cee973a24582738043, type: 3}
     - {fileID: 1563248125848677339, guid: b8d8224b901583cee973a24582738043, type: 3}
+    - {fileID: 8374687285931370228, guid: b8d8224b901583cee973a24582738043, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8d8224b901583cee973a24582738043, type: 3}

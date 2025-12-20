@@ -1,6 +1,7 @@
 using Models;
 using UnityEngine;
 using World;
+using System.Collections.Generic;
 
 
 public class PlacementSystem : MonoBehaviour, IDataPersistence {
@@ -8,6 +9,12 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     [Header("Indicator settings")]
     [SerializeField]
     private GameObject cellIndicator;
+
+    [Header("Enemy Spawn Settings")]
+    [SerializeField]
+    private GameObject enemySpawnIndicator;
+    [SerializeField]
+    private GameObject enemySpawnPlacePrefab;
 
     [Header("Dependencies")]
     [SerializeField]
@@ -25,6 +32,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     private PlacementManager placementManager;
 
     private bool isRemoving = false;
+    private bool isPlacingEnemySpawn = false;
     #endregion
 
     #region  Placement Methods
@@ -32,22 +40,48 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         logger.Log($"Started placement of object ID: {objData.Id}", this, Logging.LogType.Info);
         selectedObjectData = objData;
         isRemoving = false;
+        isPlacingEnemySpawn = false;
         worldController.ToggleGridVisualization(true);
-        cellIndicator.SetActive(true);
+        // Default indicator for general placement
+        if (cellIndicator != null) cellIndicator.SetActive(true);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
 
         // Subscribe to input events
         inputManager.OnClicked += PlaceObject;
         inputManager.OnExit += StopPlacement;
     }
 
+    public void StartEnemySpawnPlacement() {
+        logger.Log($"Started placement of Enemy Spawn Point", this, Logging.LogType.Info);
+        worldController.ToggleGridVisualization(true);
+
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(true);
+
+        isPlacingEnemySpawn = true;
+        inputManager.OnClicked += PlaceEnemySpawn;
+        inputManager.OnExit += StopEnemySpawnPlacement;
+    }
+
     private void StopPlacement() {
         selectedObjectData = null;
         worldController.ToggleGridVisualization(false);
-        cellIndicator.SetActive(false);
-
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
+        isPlacingEnemySpawn = false;
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
     }
+
+    private void StopEnemySpawnPlacement() {
+        worldController.ToggleGridVisualization(false);
+        if (cellIndicator != null) cellIndicator.SetActive(false);
+        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
+        isPlacingEnemySpawn = false;
+        inputManager.OnClicked -= PlaceEnemySpawn;
+        inputManager.OnExit -= StopEnemySpawnPlacement;
+    }
+
     private void PlaceObject() {
         if (selectedObjectData == null) {
             return;
@@ -64,6 +98,28 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
             return;
         }
     }
+
+    private void PlaceEnemySpawn() {
+        Vector3Int gridPosition = worldController.GetSelectedPosition(inputManager.GetSelectedMapPosition());
+
+        Asset enemySpawnAsset = new Asset(
+                "enemy_spawn",
+                "Enemy Spawn Point",
+                new Vector2Int(1, 1),
+                enemySpawnPlacePrefab
+            );
+
+        bool canBePlaced = TryPlaceObjectAt(
+            enemySpawnAsset,
+            gridPosition
+        );
+
+        if (!canBePlaced) {
+            logger.Log("Placement failed for Enemy Spawn Point", this, Logging.LogType.Warning);
+            return;
+        }
+    }
+
 
 
     private bool TryPlaceObjectAt(Asset objectData, Vector3Int gridPosition) {
@@ -97,6 +153,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         selectedObjectData = null;
         worldController.ToggleGridVisualization(true);
         cellIndicator.SetActive(true);
+        isPlacingEnemySpawn = false;
         inputManager.OnClicked += HandleRemoveClick;
         inputManager.OnExit += StopRemoving;
     }
@@ -130,7 +187,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     }
 
     void Update() {
-        if (selectedObjectData == null && !isRemoving) {
+        if (selectedObjectData == null && !isRemoving && !isPlacingEnemySpawn) {
             return;
         }
 
@@ -138,6 +195,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         Vector3Int cellPosition = worldController.GetSelectedPosition(placementPosition);
 
         cellIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
+        enemySpawnIndicator.transform.position = worldController.GetCellCenterPosition(cellPosition);
     }
     #endregion
 
@@ -157,12 +215,40 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
                 logger.Log($"Failed to load placed object ID: {assetData.Id}", this, Logging.LogType.Error);
             }
         }
+
+        foreach (EnemySpawnAreaData enemySpawnAreaData in data.enemySpawnAreas) {
+            Asset enemySpawnAsset = new Asset(
+                "enemy_spawn",
+                "Enemy Spawn Point",
+                new Vector2Int(1, 1),
+                enemySpawnPlacePrefab
+            );
+            Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.Position);
+            bool canBePlaced = TryPlaceObjectAt(enemySpawnAsset, gridPosition);
+            if (!canBePlaced) {
+                logger.Log("Failed to load placed Enemy Spawn Point", this, Logging.LogType.Error);
+            }
+        }
+
         logger.Log($"Loaded {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+        logger.Log($"Loaded {data.enemySpawnAreas.Count} enemy spawn areas.", this, Logging.LogType.Info);
     }
 
     public void SaveData(ref WorldData data) {
-        data.objectPlacementData = placementManager.GetAllPlacedObjects();
+        data.objectPlacementData = new List<PlacedAsset>();
+        data.enemySpawnAreas = new List<EnemySpawnAreaData>();
+
+        foreach (PlacedAsset placementData in placementManager.GetAllPlacedObjects()) {
+            if (placementData.AssetDataId == "enemy_spawn") {
+                EnemySpawnAreaData enemySpawnArea = new EnemySpawnAreaData(placementData.Position);
+                data.enemySpawnAreas.Add(enemySpawnArea);
+                continue;
+            }
+            data.objectPlacementData.Add(placementData);
+        }
+
         logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+        logger.Log($"Saved {data.enemySpawnAreas.Count} enemy spawn areas.", this, Logging.LogType.Info);
     }
 
     #endregion
