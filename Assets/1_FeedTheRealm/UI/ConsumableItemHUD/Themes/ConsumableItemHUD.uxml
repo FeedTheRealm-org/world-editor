@@ -1,0 +1,12 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/ConsumableItemHUD/Themes/ConsumableItemHUDStyle.uss?fileID=7433441132597879392&amp;guid=584b220f594e0414ca928d4926a07d8b&amp;type=3#ConsumableItemHUDStyle"/>
+    <ui:VisualElement name="Root" style="flex-grow: 1; justify-content: flex-end;">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; height: 10px; min-width: auto; max-width: none; min-height: 100px; margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; justify-content: center; align-self: auto; align-content: auto; align-items: stretch; background-color: rgba(0, 0, 0, 0.4);">
+            <ui:Button text="X" name="CloseConsumableHUDButton" class="hud_buttons" style="background-color: rgb(10, 10, 10); max-width: none; align-self: stretch; align-content: auto; justify-content: center; align-items: auto; position: absolute; top: 2%; left: 2%; right: 0%; bottom: 0; height: 5%; width: 3%; border-top-left-radius: 50%; border-top-right-radius: 50%; border-bottom-right-radius: 50%; border-bottom-left-radius: 50%;"/>
+            <ui:VisualElement name="Buttons" style="flex-grow: 1; height: 0; position: relative; top: -37%; left: auto; align-content: auto; justify-content: space-evenly; align-self: center; flex-direction: row; translate: 0% 0%; align-items: stretch; right: auto; width: 20%; background-size: 10% 100%; min-width: 3%; max-width: 20%; bottom: auto; flex-wrap: nowrap; min-height: 5%;">
+                <ui:Button text="Add Items" name="AddItemButton" class="hud_buttons" style="background-color: rgb(202, 0, 217); max-width: 50%;"/>
+                <ui:Button text="List Items" name="ListItemsButton" class="hud_buttons" style="background-color: rgb(202, 0, 217); max-width: 50%;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
