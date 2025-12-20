@@ -215,7 +215,23 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
                 logger.Log($"Failed to load placed object ID: {assetData.Id}", this, Logging.LogType.Error);
             }
         }
+
+        foreach (EnemySpawnAreaData enemySpawnAreaData in data.enemySpawnAreas) {
+            Asset enemySpawnAsset = new Asset(
+                "enemy_spawn",
+                "Enemy Spawn Point",
+                new Vector2Int(1, 1),
+                enemySpawnPlacePrefab
+            );
+            Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.Position);
+            bool canBePlaced = TryPlaceObjectAt(enemySpawnAsset, gridPosition);
+            if (!canBePlaced) {
+                logger.Log("Failed to load placed Enemy Spawn Point", this, Logging.LogType.Error);
+            }
+        }
+
         logger.Log($"Loaded {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);
+        logger.Log($"Loaded {data.enemySpawnAreas.Count} enemy spawn areas.", this, Logging.LogType.Info);
     }
 
     public void SaveData(ref WorldData data) {
