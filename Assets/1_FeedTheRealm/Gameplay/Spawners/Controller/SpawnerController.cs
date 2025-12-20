@@ -2,38 +2,55 @@ using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
 public class SpawnerController : MonoBehaviour {
-    [SerializeField] private Color spawnerColor = Color.green;
-    [SerializeField] private float spawnerSize = 1.0f;
+    [SerializeField] private Material spawnerMaterialTemplate;
+    [SerializeField] private Color spawnerColor = Color.white;
+    [SerializeField] private string spawnerType = "default";
+    private float spawnerHeight = 0.2f;
 
-    void Start() {
+    void Awake() {
+        SetupMaterial();
         ApplyColor();
-        ApplySize();
     }
 
-    private void OnValidate() {
+    void OnValidate() {
         if (!isActiveAndEnabled) return;
-        ApplyColor();
-        ApplySize();
-    }
-
-    public void SetSpawnerColor(Color color) {
-        spawnerColor = color;
+        SetupMaterial();
         ApplyColor();
     }
 
-    public void SetSpawnerSize(float size) {
-        spawnerSize = size;
-        ApplySize();
+    private void SetupMaterial() {
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null && spawnerMaterialTemplate != null) {
+            renderer.material = new Material(spawnerMaterialTemplate);
+        }
     }
 
     private void ApplyColor() {
         Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null && renderer.sharedMaterial != null) {
-            renderer.sharedMaterial.color = spawnerColor;
+        if (renderer != null && renderer.material != null) {
+            renderer.material.color = spawnerColor;
         }
     }
 
-    private void ApplySize() {
-        transform.localScale = new Vector3(spawnerSize, 0.1f, spawnerSize);
+    public void SetColor(Color color) {
+        spawnerColor = color;
+        ApplyColor();
+    }
+
+    public void SetSize(int size) {
+        float spawnerSize = Mathf.Max(0.1f, size);
+        transform.localScale = new Vector3(spawnerSize, spawnerHeight, spawnerSize);
+    }
+
+    public string GetSpawnerType() {
+        return spawnerType;
+    }
+
+    public Vector3 GetSize() {
+        return transform.localScale;
+    }
+
+    public int GetSizeAsInt() {
+        return Mathf.RoundToInt(transform.localScale.x);
     }
 }

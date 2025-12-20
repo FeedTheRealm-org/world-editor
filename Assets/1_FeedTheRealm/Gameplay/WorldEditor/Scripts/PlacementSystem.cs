@@ -217,16 +217,22 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         }
 
         foreach (EnemySpawnAreaData enemySpawnAreaData in data.enemySpawnAreas) {
-            Asset enemySpawnAsset = new Asset(
-                "enemy_spawn",
-                "Enemy Spawn Point",
-                new Vector2Int(1, 1),
-                enemySpawnPlacePrefab
-            );
+
             Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.Position);
+            Asset enemySpawnAsset = assetLibrary.GetSpawnerByName("enemy_spawn");
             bool canBePlaced = TryPlaceObjectAt(enemySpawnAsset, gridPosition);
             if (!canBePlaced) {
                 logger.Log("Failed to load placed Enemy Spawn Point", this, Logging.LogType.Error);
+            }
+        }
+
+        foreach (PlayerSpawnAreaData playerSpawnAreaData in data.playerSpawnAreas) {
+
+            Vector3Int gridPosition = Vector3Int.FloorToInt(playerSpawnAreaData.Position);
+            Asset playerSpawnAsset = assetLibrary.GetSpawnerByName("player_spawn");
+            bool canBePlaced = TryPlaceObjectAt(playerSpawnAsset, gridPosition);
+            if (!canBePlaced) {
+                logger.Log("Failed to load placed Player Spawn Point", this, Logging.LogType.Error);
             }
         }
 
@@ -239,12 +245,17 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         data.enemySpawnAreas = new List<EnemySpawnAreaData>();
 
         foreach (PlacedAsset placementData in placementManager.GetAllPlacedObjects()) {
-            if (placementData.AssetDataId == "enemy_spawn") {
-                EnemySpawnAreaData enemySpawnArea = new EnemySpawnAreaData(placementData.Position);
-                data.enemySpawnAreas.Add(enemySpawnArea);
-                continue;
+            switch (placementData.AssetDataId) {
+                case "enemy_spawn":
+                    data.enemySpawnAreas.Add(new EnemySpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));
+                    break;
+                case "player_spawn":
+                    data.playerSpawnAreas.Add(new PlayerSpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));
+                    break;
+                default:
+                    data.objectPlacementData.Add(placementData);
+                    break;
             }
-            data.objectPlacementData.Add(placementData);
         }
 
         logger.Log($"Saved {data.objectPlacementData.Count} placed objects.", this, Logging.LogType.Info);

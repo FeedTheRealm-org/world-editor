@@ -14,7 +14,7 @@ public class HUDController : MonoBehaviour {
     [SerializeField] private GameObject consumableItemsHUD;
 
     private ListView itemListView;
-    private List<Asset> assetList;
+    private ListView spawnerListView;
 
     private void OnEnable() {
         // Get the UIDocument attached to this GameObject
@@ -30,8 +30,8 @@ public class HUDController : MonoBehaviour {
         var publishButton = root.Q<Button>("PublishWorld");
         publishButton.clicked += OpenPublishMenu;
 
-        var addEnemySpawnButton = root.Q<Button>("AddEnemySpawn");
-        addEnemySpawnButton.clicked += OnAddEnemySpawn;
+        // var addEnemySpawnButton = root.Q<Button>("AddEnemySpawn");
+        // addEnemySpawnButton.clicked += OnAddEnemySpawn;
         
         var consumableItemsButton = root.Q<Button>("ConsumableItemsButton");
         consumableItemsButton.clicked += OpenConsumableItemsMenu;
@@ -43,12 +43,18 @@ public class HUDController : MonoBehaviour {
             return;
         }
 
-        assetDatabase.InitializeDatabase();
-        SetupListView();
+        spawnerListView = root.Q<ListView>("SpawnerListView");
+        if (spawnerListView == null) {
+            Debug.LogError("HUDController: SpawnerListView not found in UXML");
+            return;
+        }
+        assetDatabase.ForceReinitialize();
+        SetupItemListView();
+        SetupSpawnerListView();
     }
 
-    private void SetupListView() {
-        assetList = new List<Asset>(assetDatabase.GetAllAssets());
+    private void SetupItemListView() {
+        var assetList = new List<Asset>(assetDatabase.GetAllAssets());
 
         if (assetList == null || assetList.Count == 0) {
             Debug.LogWarning("HUDController: No assets found in database");
@@ -62,6 +68,7 @@ public class HUDController : MonoBehaviour {
             button.AddToClassList("item_box");
             button.style.marginBottom = 12;
             button.style.marginTop = 12;
+            button.style.width = Length.Percent(100);
             return button;
         };
 
@@ -74,6 +81,36 @@ public class HUDController : MonoBehaviour {
         };
 
         itemListView.fixedItemHeight = 150;
+    }
+
+    private void SetupSpawnerListView() {
+        var spawnerList = new List<Asset>(assetDatabase.GetAllSpawners());
+
+        if (spawnerList == null || spawnerList.Count == 0) {
+            Debug.LogWarning("HUDController: No spawner assets found in database");
+            return;
+        }
+
+        spawnerListView.itemsSource = spawnerList;
+
+        spawnerListView.makeItem = () => {
+            var button = new Button();
+            button.AddToClassList("item_box");
+            button.style.marginBottom = 12;
+            button.style.marginTop = 12;
+            button.style.width = Length.Percent(100);  // Add this line
+            return button;
+        };
+
+        spawnerListView.bindItem = (element, index) => {
+            var button = element as Button;
+            var asset = spawnerList[index];
+
+            button.text = $"{asset.Name} Spawner";
+            button.clicked += () => OnItemSelected(asset);
+        };
+
+        spawnerListView.fixedItemHeight = 150;
     }
 
     private void OnItemSelected(Asset obj) {

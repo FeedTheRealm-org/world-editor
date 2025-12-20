@@ -6,7 +6,7 @@ using Models;
 using UnityEngine;
 
 /// <summary>
-/// This is the Asset Database, this is used for the world editor asset Library, in the future, this will be extended to be 
+/// This is the Asset Database, this is used for the world editor asset Library, in the future, this will be extended to be
 /// a generic library to store any kind of obect data, like assets, items, etc
 /// </summary>
 [CreateAssetMenu(fileName = "AssetLibrary", menuName = "Scriptable Objects/Persistence/AssetLibrary")]
@@ -17,10 +17,17 @@ public class AssetLibrarySO : ScriptableObject {
     [SerializeField] private Logging.Logger logger;
     private bool isInitialized = false;
     private List<Asset> objectData = new();
+    private List<Asset> spawnerAssets = new();
+    [SerializeField] private List<SpawnerData> spawners = new();
 
     public Asset GetAssetById(string id) {
         EnsureInitialized();
         return objectData.Find(obj => obj.Id == id);
+    }
+
+    public Asset GetSpawnerByName(string name) {
+        EnsureInitialized();
+        return spawnerAssets.Find(obj => obj.Name == name);
     }
 
     public List<Asset> GetAssetsFromWorld(WorldData worldData) {
@@ -43,17 +50,29 @@ public class AssetLibrarySO : ScriptableObject {
         return objectData;
     }
 
+    public List<Asset> GetAllSpawners() {
+        EnsureInitialized();
+        return spawnerAssets;
+    }
+
+    public void ForceReinitialize() {
+        InitializeDatabase();
+        InitSpawners();
+    }
+
     private void EnsureInitialized() {
         if (!isInitialized) {
             InitializeDatabase();
+            InitSpawners();
         }
     }
 
     /// <summary>
-    /// Initializes the asset database by loading existing assets from a JSON file 
+    /// Initializes the asset database by loading existing assets from a JSON file
     /// and scanning the Models directory for new assets. Also copies models to StreamingAssets.
     /// </summary>
-    public void InitializeDatabase() {
+    private void InitializeDatabase() {
+
         objectData.Clear();
         string assetDirPath = Path.Combine(Application.persistentDataPath, assetsDirectory);
 
@@ -167,10 +186,39 @@ public class AssetLibrarySO : ScriptableObject {
             logger.Log($"[AssetLibrary] Error copying models to StreamingAssets: {e}", this, Logging.LogType.Error);
         }
     }
-}
 
+
+    private void InitSpawners() {
+        spawnerAssets.Clear();
+        // Don't instantiate here, just create Asset references to the prefab
+        foreach (var spawnerData in spawners) {
+
+            SpawnerController spawnerController = spawnerData.spawnerPrefab.GetComponent<SpawnerController>();
+            if (spawnerController == null) {
+                logger.Log($"Spawner prefab {spawnerData.spawnerPrefab.name} does not have a SpawnerController component.",
+                           this, Logging.LogType.Warning);
+                continue;
+            }
+            spawnerController.SetSize(spawnerData.size);
+            string spawnerName = $"{spawnerController.GetSpawnerType()}_spawn";
+            Asset spawnerAsset = new Asset(
+                spawnerName,
+                spawnerName,
+                spawnerController.GetSize(),
+                spawnerData.spawnerPrefab
+            );
+            spawnerAssets.Add(spawnerAsset);
+        }
+    }
+}
 
 [Serializable]
 public class AssetModelsRaw {
     public Asset[] assetObjects;
+}
+
+[Serializable]
+public class SpawnerData {
+    public GameObject spawnerPrefab;
+    public int size;
 }
