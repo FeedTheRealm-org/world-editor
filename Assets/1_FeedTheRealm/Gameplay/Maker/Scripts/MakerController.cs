@@ -1,0 +1,47 @@
+using UnityEngine;
+
+public class MakerController : MonoBehaviour {
+    [SerializeField]
+    public MakerInputReader inputReader;
+
+    [SerializeField] public MovementController movementController;
+
+    [SerializeField] public CameraController cameraController;
+    public InteractionController interactionController;
+
+    [SerializeField]
+    private Logging.Logger logger;
+
+    private void OnEnable() {
+        // Register callbacks
+        if (inputReader != null) {
+            inputReader.MoveEvent += OnMoveInput;
+            inputReader.LookEvent += OnLookInput;
+            inputReader.InteractEvent += OnInteractInput;
+            logger.Log("MakerController subscribed from events.", this);
+        }
+    }
+
+    private void OnDisable() {
+        // Unregister callbacks
+        if (inputReader != null) {
+            inputReader.MoveEvent -= OnMoveInput;
+            inputReader.LookEvent -= OnLookInput;
+            inputReader.InteractEvent -= OnInteractInput;
+            logger.Log("MakerController unsubscribed from events.", this);
+        }
+    }
+
+    private void OnMoveInput(Vector2 vec) {
+        movementController.Move(vec);
+    }
+
+    private void OnLookInput(Vector2 vec) {
+        cameraController.Look(vec);
+    }
+
+    private void OnInteractInput() {
+
+    }
+
+}
