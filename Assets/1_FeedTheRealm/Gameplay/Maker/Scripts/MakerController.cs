@@ -17,7 +17,7 @@ public class MakerController : MonoBehaviour {
         if (inputReader != null) {
             inputReader.MoveEvent += OnMoveInput;
             inputReader.LookEvent += OnLookInput;
-            inputReader.InteractEvent += OnInteractInput;
+            inputReader.MoveVerticalEvent += OnMoveVertical;
             logger.Log("MakerController subscribed from events.", this);
         }
     }
@@ -27,7 +27,7 @@ public class MakerController : MonoBehaviour {
         if (inputReader != null) {
             inputReader.MoveEvent -= OnMoveInput;
             inputReader.LookEvent -= OnLookInput;
-            inputReader.InteractEvent -= OnInteractInput;
+            inputReader.MoveVerticalEvent -= OnMoveVertical;
             logger.Log("MakerController unsubscribed from events.", this);
         }
     }
@@ -35,13 +35,13 @@ public class MakerController : MonoBehaviour {
     private void OnMoveInput(Vector2 vec) {
         movementController.Move(vec);
     }
-
     private void OnLookInput(Vector2 vec) {
         cameraController.Look(vec);
     }
 
-    private void OnInteractInput() {
-
+    private void OnMoveVertical(float value) {
+        movementController.MoveVertical(value);
     }
+
 
 }

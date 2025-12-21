@@ -6,6 +6,7 @@ using System;
 public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions {
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
+    public event Action<float> MoveVerticalEvent;
     public event Action InteractEvent;
     private MakerControls controls;
 
@@ -40,6 +41,22 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions {
     public void OnInteract(InputAction.CallbackContext context) {
         if (context.performed) {
             InteractEvent?.Invoke();
+        }
+    }
+
+    public void OnMoveUp(InputAction.CallbackContext context) {
+        if (context.performed) {
+            MoveVerticalEvent?.Invoke(context.ReadValue<float>());
+        } else if (context.canceled) {
+            MoveVerticalEvent?.Invoke(0f);
+        }
+    }
+
+    public void OnMoveDown(InputAction.CallbackContext context) {
+        if (context.performed) {
+            MoveVerticalEvent?.Invoke(context.ReadValue<float>());
+        } else if (context.canceled) {
+            MoveVerticalEvent?.Invoke(0f);
         }
     }
 }

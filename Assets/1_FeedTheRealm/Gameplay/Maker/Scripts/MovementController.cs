@@ -5,12 +5,18 @@ public class MovementController : MonoBehaviour {
     [SerializeField] GameObject playerObject;
     [SerializeField] float acceleration = 10f;
     [SerializeField] float deceleration = 10f;
+    [SerializeField] float vertialSpeed = 3f;
 
     private Vector3 currentVelocity = Vector3.zero;
     private Vector2 inputDirection = Vector2.zero;
+    private float verticalInput = 0f;
 
     public void Move(Vector2 direction) {
         inputDirection = direction;
+    }
+
+    public void MoveVertical(float direction) {
+        verticalInput = direction;
     }
 
     private void Update() {
@@ -32,5 +38,6 @@ public class MovementController : MonoBehaviour {
         }
 
         playerObject.transform.position += currentVelocity * Time.deltaTime;
+        playerObject.transform.position += verticalInput * vertialSpeed * Time.deltaTime * Vector3.up;
     }
 }
