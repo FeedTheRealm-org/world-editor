@@ -1,16 +1,10 @@
+using System;
 using UnityEngine;
 
-public class HudControllerV2 : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+public class HudControllerV2 : MonoBehaviour {
+    [SerializeField] public GameObject SaveMenu;
+    [SerializeField] public GameObject PublishMenu;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
 }

@@ -1,0 +1,16 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/HUD/Themes/HUDStyles.uss?fileID=7433441132597879392&amp;guid=1e91ed1f716f799798ded1e5b8106874&amp;type=3#HUDStyles"/>
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement name="MenuOptions" class="menuList menuOptions">
+            <ui:Button text="Button" class="menuButtons"/>
+            <ui:Button text="Button 2" class="menuButtons"/>
+        </ui:VisualElement>
+        <ui:ScrollView name="AssetsList" class="assetList">
+            <ui:Button text="Cool House TEST" class="assetListButtons"/>
+            <ui:Button text="Cool House TEST" class="assetListButtons"/>
+            <ui:Button text="Cool House TEST" class="assetListButtons"/>
+            <ui:Button text="Cool House TEST" class="assetListButtons"/>
+            <ui:Button text="Cool House TEST" class="assetListButtons"/>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>
