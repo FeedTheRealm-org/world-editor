@@ -6,6 +6,7 @@ using System;
 public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions {
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
+    public event Action<Vector2> SelectEvent;
     public event Action<float> MoveVerticalEvent;
     public event Action InteractEvent;
     private MakerControls controls;

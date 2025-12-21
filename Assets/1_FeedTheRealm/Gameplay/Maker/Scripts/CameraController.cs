@@ -9,7 +9,6 @@ public class CameraController : MonoBehaviour {
     private Vector2 lookInput = Vector2.zero;
 
     public void Look(Vector2 input) {
-        Debug.Log("CameraController Look called with input: " + input);
         lookInput = input;
     }
 
