@@ -19,6 +19,7 @@ public class PublishMenuController : MonoBehaviour {
     private Button publishButton;
     private Button closeButton;
     private TextField nameInput;
+    private TextField descriptionInput;
     private VisualElement root;
     private string Token => session != null ? session.APIToken : "";
 
@@ -35,6 +36,7 @@ public class PublishMenuController : MonoBehaviour {
         publishButton = root.Q<Button>("Publish");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
+        descriptionInput = root.Q<TextField>("DescriptionInput");
 
         if (worldData != null && !string.IsNullOrEmpty(worldData.worldName)) {
             nameInput.value = worldData.worldName;
@@ -91,7 +93,7 @@ public class PublishMenuController : MonoBehaviour {
         string worldError = null;
 
         yield return StartCoroutine(
-            worldService.CreateWorld(worldData, Token,
+            worldService.CreateWorld(worldData, descriptionInput.value, Token,
                 (id, error) => {
                     worldId = id;
                     worldError = error;
