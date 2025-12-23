@@ -13,7 +13,7 @@ public abstract class InitializableSO : ScriptableObject {
 
     protected abstract void OnInitialize();
 
-    public void ResetState() {
+    public void Reset() {
         _initialized = false;
         OnReset();
     }

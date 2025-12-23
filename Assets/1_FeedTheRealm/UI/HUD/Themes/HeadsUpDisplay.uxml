@@ -5,7 +5,7 @@
             <ui:Button text="Button" class="menuButtons"/>
             <ui:Button text="Button 2" class="menuButtons"/>
         </ui:VisualElement>
-        <ui:ScrollView name="AssetsList" class="assetList">
+        <ui:ScrollView name="LibraryHUD" class="assetList">
             <ui:Button text="Cool House TEST" class="assetListButtons"/>
             <ui:Button text="Cool House TEST" class="assetListButtons"/>
             <ui:Button text="Cool House TEST" class="assetListButtons"/>
