@@ -151,6 +151,7 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   modelUploadService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
   itemsService: {fileID: 11400000, guid: 17f57e963fa180443986afad2ea382b5, type: 2}
+  enemiesService: {fileID: 0}
   player: {fileID: 1889743594}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
 --- !u!1 &623825318
@@ -343,6 +344,14 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 446170173870999728, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 654341602580993941, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 672882727782900535, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_SortingOrder
       value: 1
@@ -359,6 +368,10 @@ PrefabInstance:
       propertyPath: consumableItemsDatabase
       value: 
       objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
+    - target: {fileID: 1531135759895683556, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: sourceAsset
+      value: 
+      objectReference: {fileID: 9197481963319205126, guid: 42513f360e2a64d8894f430391757fbc, type: 3}
     - target: {fileID: 2470528793478854222, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -367,6 +380,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1889743594}
+    - target: {fileID: 2517658202033168806, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3550725247831493268, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -391,6 +408,14 @@ PrefabInstance:
       propertyPath: consumableItemsDatabase
       value: 
       objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
+    - target: {fileID: 3909328957957033965, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
+    - target: {fileID: 3909328957957033965, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: enemyDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 7a4964f205eeec471b4c45901aba0f21, type: 2}
     - target: {fileID: 3972978763712568489, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -563,6 +588,14 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[18].m_ActionName
       value: UI/TrackedDeviceOrientation
       objectReference: {fileID: 0}
+    - target: {fileID: 4680633239119515451, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4924378217637495890, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5361051829409678914, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_ParentUI
       value: 
@@ -587,6 +620,22 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6172885606612570316, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
+    - target: {fileID: 6172885606612570316, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: CreatorHUD
+      value: 
+      objectReference: {fileID: 8724705}
+    - target: {fileID: 6172885606612570316, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: addEnemyMenu
+      value: 
+      objectReference: {fileID: 732672094}
+    - target: {fileID: 6172885606612570316, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: enemyDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: 7a4964f205eeec471b4c45901aba0f21, type: 2}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: logger
       value: 
@@ -627,6 +676,10 @@ PrefabInstance:
       propertyPath: publishMenu
       value: 
       objectReference: {fileID: 528598227}
+    - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: editEnemiesHUD
+      value: 
+      objectReference: {fileID: 2135663700}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: placementSystem
       value: 
@@ -709,6 +762,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 528598229}
   m_SourcePrefab: {fileID: 100100000, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+--- !u!1 &732672094 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 446170173870999728, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &908202269 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2470528793478854222, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
@@ -967,6 +1025,11 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5246051850371158027, guid: b8d8224b901583cee973a24582738043, type: 3}
   m_PrefabInstance: {fileID: 1645386354960940949}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2135663700 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3160040694622349770, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1645386354960940949
 PrefabInstance:

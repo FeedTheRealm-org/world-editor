@@ -12,6 +12,7 @@ public class HUDController : MonoBehaviour {
     [SerializeField] private GameObject saveMenu;
     [SerializeField] private GameObject publishMenu;
     [SerializeField] private GameObject consumableItemsHUD;
+    [SerializeField] private GameObject editEnemiesHUD;
 
     private ListView itemListView;
     private List<Asset> assetList;
@@ -35,6 +36,9 @@ public class HUDController : MonoBehaviour {
         
         var consumableItemsButton = root.Q<Button>("ConsumableItemsButton");
         consumableItemsButton.clicked += OpenConsumableItemsMenu;
+
+        var editEnemyButton = root.Q<Button>("EnemiesButton");
+        editEnemyButton.clicked += OpenEnemyEditMenu;
 
         // Find the ListView from the UXML
         itemListView = root.Q<ListView>("ItemListView");
@@ -109,6 +113,15 @@ public class HUDController : MonoBehaviour {
             gameObject.SetActive(false);
         } else {
             Debug.LogWarning("HUDController: Consumable Items menu reference is not set.");
+        }
+    }
+
+    private void OpenEnemyEditMenu() {
+        if (editEnemiesHUD != null) {
+            editEnemiesHUD.SetActive(true);
+            gameObject.SetActive(false);
+        } else {
+            Debug.LogWarning("HUDController: Edit Enemies menu reference is not set.");
         }
     }
 }

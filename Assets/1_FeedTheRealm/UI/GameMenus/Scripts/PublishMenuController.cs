@@ -12,6 +12,7 @@ public class PublishMenuController : MonoBehaviour {
     [SerializeField] private WorldService worldService;
     [SerializeField] private ModelService modelUploadService;
     [SerializeField] private ItemsService itemsService;
+    [SerializeField] private EnemiesService enemiesService;
     [SerializeField] private Maker player;
     [SerializeField] private Session.Session session;
     private Models.WorldData worldData;
@@ -101,6 +102,7 @@ public class PublishMenuController : MonoBehaviour {
 
         );
 
+        // Upload consumable item sprites
         foreach (var sprite in worldData.consumableItems) {
             Debug.Log($"Uploading sprite for consumable item '{sprite.name}'");
             string path = SpriteStorage.GetFilePathFromIdOrPath(sprite.spriteId);
@@ -133,6 +135,39 @@ public class PublishMenuController : MonoBehaviour {
             }
 
             Debug.Log($"Sprite uploaded successfully for item '{sprite.name}'");
+        }
+
+        // Upload enemy sprites (if service and enemies are configured)
+        if (enemiesService != null && worldData.enemies != null) {
+            foreach (var enemy in worldData.enemies) {
+                Debug.Log($"Uploading sprite for enemy '{enemy.name}'");
+                string path = SpriteStorage.GetFilePathFromIdOrPath(enemy.spriteId);
+                byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+                if (spriteBytes == null || spriteBytes.Length == 0) {
+                    Debug.LogWarning($"Sprite bytes for enemy spriteId '{enemy.spriteId}' are null or empty. Skipping upload.");
+                    continue;
+                }
+
+                string enemyError = null;
+                SpriteCreatedData createdEnemySprite = null;
+
+                string type = Path.GetExtension(path).Replace(".", "").ToLower();
+
+                yield return StartCoroutine(
+                    enemiesService.UploadEnemySprite(spriteBytes, $"{enemy.name}{Path.GetExtension(path)}", $"image/{type}",
+                        (data, error) => {
+                            createdEnemySprite = data;
+                            enemyError = error;
+                        })
+                );
+
+                if (!string.IsNullOrEmpty(enemyError) || createdEnemySprite == null) {
+                    Debug.LogError($"Failed to upload sprite for enemy '{enemy.name}': {enemyError}");
+                    continue;
+                }
+
+                Debug.Log($"Sprite uploaded successfully for enemy '{enemy.name}'");
+            }
         }
 
         if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId)) {

@@ -13,6 +13,7 @@ public class DataPersistenceManagerSO : ScriptableObject {
     [SerializeField] private Logging.Logger logger;
 
     [SerializeField] private ConsumableItems consumableItemsDatabase;
+    [SerializeField] private Enemy enemyDatabase;
 
     private readonly WorldHandler worldDataHandler = new();
     private WorldData worldData = null;
@@ -65,6 +66,9 @@ public class DataPersistenceManagerSO : ScriptableObject {
         }
 
         worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
+        if (enemyDatabase != null) {
+            worldData.enemies = enemyDatabase.GetAllEnemies();
+        }
 
         worldDataHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
@@ -90,6 +94,10 @@ public class DataPersistenceManagerSO : ScriptableObject {
             }
 
             consumableItemsDatabase.LoadConsumableItems(worldData.consumableItems);
+
+            if (enemyDatabase != null) {
+                enemyDatabase.LoadEnemies(worldData.enemies);
+            }
 
             logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
         } catch (System.Exception) {
