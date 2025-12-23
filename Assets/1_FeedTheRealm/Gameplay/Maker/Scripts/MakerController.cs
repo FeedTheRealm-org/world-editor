@@ -7,7 +7,6 @@ public class MakerController : MonoBehaviour {
     [SerializeField] public MovementController movementController;
 
     [SerializeField] public CameraController cameraController;
-    public InteractionController interactionController;
 
     [SerializeField]
     private Logging.Logger logger;
