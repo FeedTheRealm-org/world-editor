@@ -968,7 +968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ViewInfoManager
   mainCamera: {fileID: 623825321}
-  placementLayerMask:
+  enemySpawnMask:
     serializedVersion: 2
     m_Bits: 8
 --- !u!114 &1916555103 stripped

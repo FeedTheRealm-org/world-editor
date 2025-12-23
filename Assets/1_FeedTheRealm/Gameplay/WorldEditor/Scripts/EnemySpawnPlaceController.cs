@@ -1,11 +1,38 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
+using Models;
 
-public class EnemySpawnPlaceController : MonoBehaviour {
-    public UnityEvent OnSelected;
+public class EnemySpawnPlace : MonoBehaviour {
+    [SerializeField] Renderer[] renderers;
+    [SerializeField] Color highlightColor = Color.blue;
 
-    public void Select() {
-        Debug.Log("EnemySpawnPlace selected");
-        OnSelected?.Invoke();
+    [SerializeField] GameObject enemySpawnHUD;
+
+    [SerializeField] EnemySpawnAreaData spawnData;
+
+    Color[] originalColors;
+
+    void Awake() {
+        if (renderers == null || renderers.Length == 0)
+            renderers = GetComponentsInChildren<Renderer>();
+
+        originalColors = new Color[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+            originalColors[i] = renderers[i].material.color;
+    }
+
+    public void Highlight(bool value) {
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].material.color =
+                value ? highlightColor : originalColors[i];
+        }
+    }
+
+    public void OpenHUD() {
+        if (enemySpawnHUD != null) {
+            enemySpawnHUD.SetActive(true);
+            enemySpawnHUD.GetComponent<EnemySpawnAreaHUDController>().Show(spawnData);
+        }
     }
 }
