@@ -8,6 +8,7 @@ public static class GltfHandler
     private const string MODELS_FOLDER = "Models";
     private const string GLTF_EXTENSION = ".glb";
     private const string FILE_PROTOCOL = "file://";
+    private const string FALLBACK_OBJECT_NAME = "MissingObject";
 
     /// <summary>
     /// Loads a GLTF model asynchronously from the specified path.
@@ -15,13 +16,12 @@ public static class GltfHandler
     public static async Task Load(
         string modelUrl,
         GameObject parentRef,
-        GameObject fallbackPrefab = null,
         bool useFileProtocol = true
     )
     {
         if (string.IsNullOrEmpty(modelUrl))
         {
-            SpawnFallback(parentRef.transform, fallbackPrefab);
+            SpawnFallback(parentRef.transform);
             return;
         }
 
@@ -42,7 +42,7 @@ public static class GltfHandler
         if (!success)
         {
             Debug.LogWarning($"GLTF load failed: {modelUrl}");
-            SpawnFallback(parentRef.transform, fallbackPrefab);
+            SpawnFallback(parentRef.transform);
             return;
         }
 
@@ -56,15 +56,13 @@ public static class GltfHandler
     /// <summary>
     /// Spawns a fallback prefab if the GLTF load fails.
     /// </summary>
-    private static void SpawnFallback(Transform parent, GameObject fallbackPrefab)
+    private static void SpawnFallback(Transform parent)
     {
-        if (fallbackPrefab == null)
-            return;
-
-        var go = Object.Instantiate(fallbackPrefab, parent);
-        go.name = "MissingObject";
-        go.transform.localPosition = Vector3.zero;
-        go.transform.localRotation = Quaternion.identity;
-        go.transform.localScale = Vector3.one;
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.SetParent(parent);
+        cube.name = FALLBACK_OBJECT_NAME;
+        cube.transform.localPosition = Vector3.zero;
+        cube.transform.localRotation = Quaternion.identity;
+        cube.transform.localScale = Vector3.one;
     }
 }

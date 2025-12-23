@@ -5,22 +5,27 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UIDocument))]
 public class LibraryHudController : MonoBehaviour
 {
+    [SerializeField]
+    private CreatorLibraryController creatorLibrary;
     private ScrollView assetContainer;
 
-    void Awake()
+    public void Initialize()
     {
+        creatorLibrary.Initialize();
         var root = GetComponent<UIDocument>();
         assetContainer = root.rootVisualElement.Q<ScrollView>("LibraryHUD");
         RemoveTemplate();
+        RenderObjectButtons();
     }
 
-    public void RenderObjectButtons(List<WorldObjectController> worldObjects)
+    private void RenderObjectButtons()
     {
+        List<WorldObjectReference> worldObjects = creatorLibrary.GetObjects();
         foreach (var worldObject in worldObjects)
         {
             var assetButton = new Button(() =>
             {
-                Debug.Log($"Selected asset: {worldObject.name}");
+                Debug.Log($"Selected asset: {worldObject}");
             })
             {
                 text = worldObject.DisplayName,

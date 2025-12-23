@@ -40,9 +40,12 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
-    height: 25%;
-    min-height: auto;
-    max-height: 100%;
+    height: auto;
+    min-height: 30px;
+    max-height: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .menuButtons {
