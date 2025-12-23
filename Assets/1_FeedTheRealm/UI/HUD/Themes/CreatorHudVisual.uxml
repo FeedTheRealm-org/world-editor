@@ -10,9 +10,7 @@
                 <ui:Button text="Consumable Items" name="ConsumableItemsButton" class="hud_buttons" style="background-color: rgb(217, 105, 0);"/>
                 <ui:Button text="Edit Enemies" name="EnemiesButton" class="hud_buttons" style="background-color: rgb(217, 105, 0);"/>
             </ui:VisualElement>
-            <ui:VisualElement name="RightButtons" style="flex-grow: 1; height: 130px; position: relative; top: 42%; left: 35%; align-content: center; justify-content: space-between; align-self: center; flex-direction: column; translate: 0% 0%; align-items: center; right: 0%; width: 25%; background-size: 10% 100%; min-width: 25%; max-width: 25%; bottom: 6%;">
-                <ui:Button text="Add Enemy spawn" name="AddEnemySpawn" class="hud_buttons" style="background-color: rgb(0, 150, 0); position: absolute; right: 8px; bottom: 8px; width: 100%; height: auto;"/>
-            </ui:VisualElement>
+            <ui:ListView name="SpawnerListView" enabled="true" class="item_list" style="max-width: 100%; min-width: 10%; width: 15%; height: 351px; align-self: center; justify-content: center; align-content: center; padding: 5px; -unity-text-align: upper-center; position: relative; left: 42%; bottom: -30%;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

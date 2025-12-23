@@ -31,7 +31,10 @@ public class PlacementManager {
     }
 
     private List<Vector3Int> CalculatePositions(Asset assetData, Vector3Int gridPosition) {
-        Vector2Int size = assetData.Size;
+        Vector2Int size = new Vector2Int(
+            Mathf.RoundToInt(assetData.Size.x),
+            Mathf.RoundToInt(assetData.Size.z)
+        );
         var positions = new List<Vector3Int>(size.x * size.y);
         // Calculate offsets from center
         int halfWidth = size.x / 2;
