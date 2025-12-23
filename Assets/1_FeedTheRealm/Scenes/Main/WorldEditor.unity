@@ -705,6 +705,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3657537774566351166, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1889743594}
+    - targetCorrespondingSourceObject: {fileID: 3657537774566351166, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1889743597}
     - targetCorrespondingSourceObject: {fileID: 128852270443363891, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 528598229}
@@ -952,6 +955,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   fpController: {fileID: 1889743590}
+--- !u!114 &1889743597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889743589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e486c59bee4c6645b64d54785a848da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ViewInfoManager
+  mainCamera: {fileID: 623825321}
+  placementLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &1916555103 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
