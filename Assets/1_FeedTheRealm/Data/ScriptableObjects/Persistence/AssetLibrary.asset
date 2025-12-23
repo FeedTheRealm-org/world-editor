@@ -15,3 +15,10 @@ MonoBehaviour:
   assetsDirectory: Assets
   assetsFileName: models.json
   logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
+  spawners:
+  - assetType: enemy
+    spawnerPrefab: {fileID: 5537282333109391366, guid: eb253cc0ad330bb6c8999ccf918cff0d, type: 3}
+    size: 3
+  - assetType: player
+    spawnerPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
+    size: 3
