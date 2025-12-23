@@ -1,62 +1,85 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
 
 [CreateAssetMenu(fileName = "MakerInputReader", menuName = "Scriptable Objects/MakerInputReader")]
-public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions {
+public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
+{
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
-    public event Action<Vector2> SelectEvent;
+
+    //public event Action<Vector2> SelectEvent;
     public event Action<float> MoveVerticalEvent;
     public event Action InteractEvent;
     private MakerControls controls;
 
-    private void OnEnable() {
-        if (controls == null) {
+    private void OnEnable()
+    {
+        if (controls == null)
+        {
             controls = new MakerControls();
             controls.Player.SetCallbacks(this);
         }
         controls.Player.Enable();
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         controls.Player.Disable();
     }
 
-    public void OnMove(InputAction.CallbackContext context) {
-        if (context.performed) {
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
             MoveEvent?.Invoke(context.ReadValue<Vector2>());
-        } else if (context.canceled) {
+        }
+        else if (context.canceled)
+        {
             MoveEvent?.Invoke(Vector2.zero);
         }
     }
 
-    public void OnLook(InputAction.CallbackContext context) {
-        if (context.performed) {
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
             LookEvent?.Invoke(context.ReadValue<Vector2>());
-        } else if (context.canceled) {
+        }
+        else if (context.canceled)
+        {
             LookEvent?.Invoke(Vector2.zero);
         }
     }
 
-    public void OnInteract(InputAction.CallbackContext context) {
-        if (context.performed) {
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
             InteractEvent?.Invoke();
         }
     }
 
-    public void OnMoveUp(InputAction.CallbackContext context) {
-        if (context.performed) {
+    public void OnMoveUp(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
             MoveVerticalEvent?.Invoke(context.ReadValue<float>());
-        } else if (context.canceled) {
+        }
+        else if (context.canceled)
+        {
             MoveVerticalEvent?.Invoke(0f);
         }
     }
 
-    public void OnMoveDown(InputAction.CallbackContext context) {
-        if (context.performed) {
+    public void OnMoveDown(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
             MoveVerticalEvent?.Invoke(context.ReadValue<float>());
-        } else if (context.canceled) {
+        }
+        else if (context.canceled)
+        {
             MoveVerticalEvent?.Invoke(0f);
         }
     }

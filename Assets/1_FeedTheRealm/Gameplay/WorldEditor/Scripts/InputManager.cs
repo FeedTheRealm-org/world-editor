@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class InputManager : MonoBehaviour
 {
     [SerializeField]
@@ -12,24 +13,28 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private LayerMask placementLayerMask;
 
+    public event Action OnClicked,
+        OnExit;
 
-    public event Action OnClicked, OnExit;
-
-    void Update() {
-        if (Mouse.current.leftButton.wasPressedThisFrame) {
+    void Update()
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
             OnClicked?.Invoke();
         }
-        if (Keyboard.current.escapeKey.wasPressedThisFrame) {
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
             OnExit?.Invoke();
         }
     }
 
-    public Vector3 GetSelectedMapPosition() {
-
+    public Vector3 GetSelectedMapPosition()
+    {
         Vector3 mousePosition = Mouse.current.position.ReadValue();
         mousePosition.z = mainCamera.nearClipPlane;
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, placementLayerMask)) {
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, placementLayerMask))
+        {
             lastMousePosition = hitInfo.point;
         }
         return lastMousePosition;

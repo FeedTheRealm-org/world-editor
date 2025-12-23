@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1c0c1a3b3b900413ab2474653acedec, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PublishMenuController
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   assetLibrary: {fileID: 11400000, guid: 46617b3f0559eb37d8b4aab826dfcc02, type: 2}
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
   ShowDebugText: 0
   ShowCameraFrustum: 1
@@ -337,7 +337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 243276679178654787, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: sourceAsset
-      value: 
+      value:
       objectReference: {fileID: 9197481963319205126, guid: 184af544ea2a63de38ceafe3eb730574, type: 3}
     - target: {fileID: 243276679178654787, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_SortingOrder
@@ -349,15 +349,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: logger
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
     - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: player
-      value: 
+      value:
       objectReference: {fileID: 1889743594}
     - target: {fileID: 796032606412773257, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: consumableItemsDatabase
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 2470528793478854222, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive
@@ -365,7 +365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2509669352399580969, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: player
-      value: 
+      value:
       objectReference: {fileID: 1889743594}
     - target: {fileID: 3550725247831493268, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_IsActive
@@ -385,11 +385,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3701420702172498568, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: player
-      value: 
+      value:
       objectReference: {fileID: 1889743594}
     - target: {fileID: 3701420702172498568, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: consumableItemsDatabase
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 3972978763712568489, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Enabled
@@ -401,7 +401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4604827372655617457, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_DefaultActionMap
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 4604827372655617457, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_NotificationBehavior
@@ -565,19 +565,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5361051829409678914, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_ParentUI
-      value: 
+      value:
       objectReference: {fileID: 1208954295}
     - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: logger
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
     - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: player
-      value: 
+      value:
       objectReference: {fileID: 1889743594}
     - target: {fileID: 6000018680809538269, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: consumableItemsDatabase
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 6024777782553604111, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Position
@@ -589,23 +589,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: logger
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: player
-      value: 
+      value:
       objectReference: {fileID: 1889743594}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: CreatorHUD
-      value: 
+      value:
       objectReference: {fileID: 8724705}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: addItemMenu
-      value: 
+      value:
       objectReference: {fileID: 1079842195}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: listItemsMenu
-      value: 
+      value:
       objectReference: {fileID: 356274100}
     - target: {fileID: 6535934248912987449, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -613,27 +613,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8072287528335950566, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: sourceAsset
-      value: 
+      value:
       objectReference: {fileID: 9197481963319205126, guid: 23a79520e84082d42a5c8be34996fbfd, type: 3}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: saveMenu
-      value: 
+      value:
       objectReference: {fileID: 908202269}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: addItemMenu
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: publishMenu
-      value: 
+      value:
       objectReference: {fileID: 528598227}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: placementSystem
-      value: 
+      value:
       objectReference: {fileID: 1916555103}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: consumableItemsHUD
-      value: 
+      value:
       objectReference: {fileID: 1208954293}
     - target: {fileID: 9034260611365248368, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalScale.x
@@ -742,7 +742,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
@@ -865,7 +865,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
 --- !u!114 &1644542925 stripped
 MonoBehaviour:
@@ -876,7 +876,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &1889743589 stripped
 GameObject:
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a51060c9aa220977f8e087e82e0a2185, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FPController
   maxSpeed: 10
   acceleration: 50
@@ -919,7 +919,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
   m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_NotificationBehavior: 0
@@ -949,7 +949,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6f83c8640c8dd7b8a843b0c01b680d7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   fpController: {fileID: 1889743590}
 --- !u!114 &1916555103 stripped
@@ -961,7 +961,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
 --- !u!1 &2090873056 stripped
 GameObject:
@@ -982,47 +982,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: grid
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: logger
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 513993f93790b37098ee65c493403135, type: 2}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: assetLibrary
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 46617b3f0559eb37d8b4aab826dfcc02, type: 2}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: assetDatabase
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 46617b3f0559eb37d8b4aab826dfcc02, type: 2}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: cellIndicator
-      value: 
+      value:
       objectReference: {fileID: 1091362780}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: worldController
-      value: 
+      value:
       objectReference: {fileID: 6893581791610814835}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: gridVisualization
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: enemySpawnIndicator
-      value: 
+      value:
       objectReference: {fileID: 2090873056}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: enemySpawnPlacePrefab
-      value: 
+      value:
       objectReference: {fileID: 5304767882133849496, guid: b3d2b2e667f129e4d843c2be8c439c63, type: 3}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementGridMaterial
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
     - target: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: dataPersistenceManager
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
     - target: {fileID: 1563248125848677339, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Name
@@ -1074,11 +1074,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3037383106014469897, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: d5f09047f4a3ca407985bde260eeb86e, type: 2}
     - target: {fileID: 3037383106014469897, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
     - target: {fileID: 3491019444070359265, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: cellSize
@@ -1142,7 +1142,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: grid
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: cellSize
@@ -1158,7 +1158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: worldPlane
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: totalWorldSize
@@ -1166,7 +1166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementGridMaterial
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 5247707771744059407, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: showGridVisualization
@@ -1238,7 +1238,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6853865918570880066, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: mainCamera
-      value: 
+      value:
       objectReference: {fileID: 623825321}
     - target: {fileID: 6853865918570880066, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: placementLayerMask.m_Bits
@@ -1306,7 +1306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9024741163609741906, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Mesh
-      value: 
+      value:
       objectReference: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 9146049947586083225, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: m_Materials.Array.size
@@ -1314,11 +1314,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9146049947586083225, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: f9a94780aa94b7c4985400ab0bedcdbb, type: 2}
     - target: {fileID: 9146049947586083225, guid: b8d8224b901583cee973a24582738043, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
     m_RemovedComponents:
     - {fileID: 6327020185403487318, guid: b8d8224b901583cee973a24582738043, type: 3}
@@ -1401,7 +1401,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa8c4e3a25bc91045a343fb7aa2ae4a0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: FeedTheRealm_Shared::World.WorldController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

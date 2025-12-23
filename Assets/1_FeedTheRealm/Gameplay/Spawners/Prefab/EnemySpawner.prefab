@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07680df8cd483d99c8843cc6db9477dd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SpawnerController
   spawnerMaterialTemplate: {fileID: 2100000, guid: 9e119c9f813b3d999a32c1e1f2cec4b6, type: 2}
   spawnerColor: {r: 0.17478752, g: 1, b: 0, a: 0.5019608}

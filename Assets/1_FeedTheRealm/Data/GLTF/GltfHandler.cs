@@ -1,10 +1,10 @@
-using GLTFast;
-using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
+using GLTFast;
+using UnityEngine;
 
-public static class GltfHandler {
-
+public static class GltfHandler
+{
     private const string MODELS_FOLDER = "Models";
     private const string GLTF_EXTENSION = ".glb";
     private const string FILE_PROTOCOL = "file://";
@@ -17,23 +17,30 @@ public static class GltfHandler {
         GameObject parentRef,
         GameObject fallbackPrefab = null,
         bool useFileProtocol = true
-    ) {
-        if (string.IsNullOrEmpty(modelUrl)) {
+    )
+    {
+        if (string.IsNullOrEmpty(modelUrl))
+        {
             SpawnFallback(parentRef.transform, fallbackPrefab);
             return;
         }
 
-        if (useFileProtocol) {
-            modelUrl = FILE_PROTOCOL + Path.Combine(
-            Application.streamingAssetsPath,
-            MODELS_FOLDER,
-            modelUrl + GLTF_EXTENSION);
+        if (useFileProtocol)
+        {
+            modelUrl =
+                FILE_PROTOCOL
+                + Path.Combine(
+                    Application.streamingAssetsPath,
+                    MODELS_FOLDER,
+                    modelUrl + GLTF_EXTENSION
+                );
         }
 
         var gltf = new GltfImport();
         bool success = await gltf.Load(modelUrl);
 
-        if (!success) {
+        if (!success)
+        {
             Debug.LogWarning($"GLTF load failed: {modelUrl}");
             SpawnFallback(parentRef.transform, fallbackPrefab);
             return;
@@ -49,11 +56,10 @@ public static class GltfHandler {
     /// <summary>
     /// Spawns a fallback prefab if the GLTF load fails.
     /// </summary>
-    private static void SpawnFallback(
-        Transform parent,
-        GameObject fallbackPrefab
-    ) {
-        if (fallbackPrefab == null) return;
+    private static void SpawnFallback(Transform parent, GameObject fallbackPrefab)
+    {
+        if (fallbackPrefab == null)
+            return;
 
         var go = Object.Instantiate(fallbackPrefab, parent);
         go.name = "MissingObject";

@@ -1,9 +1,9 @@
-using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class FPController : MonoBehaviour {
-
+public class FPController : MonoBehaviour
+{
     [Header("Move Params")]
     public float maxSpeed = 30f;
     public float acceleration = 100f;
@@ -14,39 +14,44 @@ public class FPController : MonoBehaviour {
     [Header("Looking")]
     public Vector2 lookSensitivity = new Vector2(1f, 1f);
     public float pitchLimit = 85f;
-    [SerializeField] float currentPitch = 0f;
+
+    [SerializeField]
+    float currentPitch = 0f;
 
     [Header("Inputs")]
     public Vector3 MoveInput;
     public Vector2 LookInput;
 
-    public float CurrentPitch {
+    public float CurrentPitch
+    {
         get { return currentPitch; }
-        set {
-            currentPitch = Mathf.Clamp(value, -pitchLimit, pitchLimit);
-        }
+        set { currentPitch = Mathf.Clamp(value, -pitchLimit, pitchLimit); }
     }
-
 
     [Header("Components")]
-    [SerializeField] CinemachineCamera fpCam;
-    [SerializeField] CharacterController controller;
+    [SerializeField]
+    CinemachineCamera fpCam;
+
+    [SerializeField]
+    CharacterController controller;
 
     #region Unity Methods
-    private void OnValidate() {
+    private void OnValidate()
+    {
         if (controller == null)
             controller = GetComponent<CharacterController>();
-
     }
 
-    private void Update() {
+    private void Update()
+    {
         MoveUpdate();
         LookUpdate();
     }
 
     #region Controller Methods
 
-    void MoveUpdate() {
+    void MoveUpdate()
+    {
         // Get the forward and right directions from the camera, not from the player body
         Vector3 camForward = fpCam.transform.forward;
         Vector3 camRight = fpCam.transform.right;
@@ -60,10 +65,21 @@ public class FPController : MonoBehaviour {
             motion.Normalize();
 
         // Apply acceleration and max speed
-        if (motion.sqrMagnitude >= 0.01f) {
-            CurrentVelocity = Vector3.MoveTowards(CurrentVelocity, motion * maxSpeed, acceleration * Time.deltaTime);
-        } else {
-            CurrentVelocity = Vector3.MoveTowards(CurrentVelocity, Vector3.zero, acceleration * Time.deltaTime);
+        if (motion.sqrMagnitude >= 0.01f)
+        {
+            CurrentVelocity = Vector3.MoveTowards(
+                CurrentVelocity,
+                motion * maxSpeed,
+                acceleration * Time.deltaTime
+            );
+        }
+        else
+        {
+            CurrentVelocity = Vector3.MoveTowards(
+                CurrentVelocity,
+                Vector3.zero,
+                acceleration * Time.deltaTime
+            );
         }
 
         // Move the controller
@@ -72,7 +88,8 @@ public class FPController : MonoBehaviour {
         currentSpeed = CurrentVelocity.magnitude;
     }
 
-    void LookUpdate() {
+    void LookUpdate()
+    {
         Vector2 input = new Vector2(
             LookInput.x * lookSensitivity.x,
             LookInput.y * lookSensitivity.y
@@ -88,6 +105,4 @@ public class FPController : MonoBehaviour {
 
 
     #endregion
-
-
 }

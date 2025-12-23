@@ -15,7 +15,7 @@ MonoBehaviour:
   logger: {fileID: 11400000, guid: 02fe23176616c5fe2910ac0728211e26, type: 2}
   consumableItems:
   - name: proof
-    description: 
+    description:
     effectType: Heal
     value: 0
     duration: 0

@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class MainMenu : MonoBehaviour {
-
+public class MainMenu : MonoBehaviour
+{
     public VisualElement ui;
     public Button _startButton;
     public Button _browseButton;
@@ -15,14 +15,17 @@ public class MainMenu : MonoBehaviour {
 
     [SerializeField]
     private SceneReference loadWorldScene;
+
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
-    private void Awake() {
+    private void Awake()
+    {
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         _startButton = ui.Q<Button>("Start");
         _startButton.clicked += OnStartClicked;
 
@@ -33,22 +36,24 @@ public class MainMenu : MonoBehaviour {
         _quitButton.clicked += OnQuitClicked;
     }
 
-    private void OnStartClicked() {
+    private void OnStartClicked()
+    {
         // TODO: in the future, this should be a new scene that lets
         // makers set preset values for their new world
         dataPersistenceManager.NewWorld();
         SceneManager.LoadScene(newWorldScene.SceneName);
     }
 
-    private void OnBrowseClicked() {
+    private void OnBrowseClicked()
+    {
         SceneManager.LoadScene(loadWorldScene.SceneName);
     }
 
-    private void OnQuitClicked() {
+    private void OnQuitClicked()
+    {
         Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-
 }

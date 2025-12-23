@@ -1,16 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class HudControllerV2 : MonoBehaviour
+{
+    [SerializeField]
+    private CreatorLibrary creatorLibrary;
 
-public class HudControllerV2 : MonoBehaviour {
-    [SerializeField] private CreatorLibrary creatorLibrary;
-    [SerializeField] private LibraryHudController libraryHudController;
+    [SerializeField]
+    private LibraryHudController libraryHudController;
 
-    void Awake() {
+    void Awake()
+    {
         InitializeHUD();
     }
 
-    private void InitializeHUD() {
+    private void InitializeHUD()
+    {
         creatorLibrary.InitializeLibrary();
         List<WorldObjectController> worldObjects = creatorLibrary.GetObjects();
         libraryHudController.RenderObjectButtons(worldObjects);

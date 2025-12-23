@@ -1,22 +1,32 @@
+using System.Collections.Generic;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(UIDocument))]
-public class HUDController : MonoBehaviour {
-    [SerializeField] private AssetLibrarySO assetDatabase;
-    [SerializeField] private PlacementSystem placementSystem;
+public class HUDController : MonoBehaviour
+{
+    [SerializeField]
+    private AssetLibrarySO assetDatabase;
+
+    [SerializeField]
+    private PlacementSystem placementSystem;
 
     [Header("Menus")]
-    [SerializeField] private GameObject saveMenu;
-    [SerializeField] private GameObject publishMenu;
-    [SerializeField] private GameObject consumableItemsHUD;
+    [SerializeField]
+    private GameObject saveMenu;
+
+    [SerializeField]
+    private GameObject publishMenu;
+
+    [SerializeField]
+    private GameObject consumableItemsHUD;
 
     private ListView itemListView;
     private ListView spawnerListView;
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         // Get the UIDocument attached to this GameObject
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
@@ -32,19 +42,21 @@ public class HUDController : MonoBehaviour {
 
         // var addEnemySpawnButton = root.Q<Button>("AddEnemySpawn");
         // addEnemySpawnButton.clicked += OnAddEnemySpawn;
-        
+
         var consumableItemsButton = root.Q<Button>("ConsumableItemsButton");
         consumableItemsButton.clicked += OpenConsumableItemsMenu;
 
         // Find the ListView from the UXML
         itemListView = root.Q<ListView>("ItemListView");
-        if (itemListView == null) {
+        if (itemListView == null)
+        {
             Debug.LogError("HUDController: ItemListView not found in UXML");
             return;
         }
 
         spawnerListView = root.Q<ListView>("SpawnerListView");
-        if (spawnerListView == null) {
+        if (spawnerListView == null)
+        {
             Debug.LogError("HUDController: SpawnerListView not found in UXML");
             return;
         }
@@ -53,17 +65,20 @@ public class HUDController : MonoBehaviour {
         SetupSpawnerListView();
     }
 
-    private void SetupItemListView() {
+    private void SetupItemListView()
+    {
         var assetList = new List<Asset>(assetDatabase.GetAllAssets());
 
-        if (assetList == null || assetList.Count == 0) {
+        if (assetList == null || assetList.Count == 0)
+        {
             Debug.LogWarning("HUDController: No assets found in database");
             return;
         }
 
         itemListView.itemsSource = assetList;
 
-        itemListView.makeItem = () => {
+        itemListView.makeItem = () =>
+        {
             var button = new Button();
             button.AddToClassList("item_box");
             button.style.marginBottom = 12;
@@ -72,7 +87,8 @@ public class HUDController : MonoBehaviour {
             return button;
         };
 
-        itemListView.bindItem = (element, index) => {
+        itemListView.bindItem = (element, index) =>
+        {
             var button = element as Button;
             var asset = assetList[index];
 
@@ -83,26 +99,30 @@ public class HUDController : MonoBehaviour {
         itemListView.fixedItemHeight = 150;
     }
 
-    private void SetupSpawnerListView() {
+    private void SetupSpawnerListView()
+    {
         var spawnerList = new List<Asset>(assetDatabase.GetAllSpawners());
 
-        if (spawnerList == null || spawnerList.Count == 0) {
+        if (spawnerList == null || spawnerList.Count == 0)
+        {
             Debug.LogWarning("HUDController: No spawner assets found in database");
             return;
         }
 
         spawnerListView.itemsSource = spawnerList;
 
-        spawnerListView.makeItem = () => {
+        spawnerListView.makeItem = () =>
+        {
             var button = new Button();
             button.AddToClassList("item_box");
             button.style.marginBottom = 12;
             button.style.marginTop = 12;
-            button.style.width = Length.Percent(100);  // Add this line
+            button.style.width = Length.Percent(100); // Add this line
             return button;
         };
 
-        spawnerListView.bindItem = (element, index) => {
+        spawnerListView.bindItem = (element, index) =>
+        {
             var button = element as Button;
             var asset = spawnerList[index];
 
@@ -113,38 +133,52 @@ public class HUDController : MonoBehaviour {
         spawnerListView.fixedItemHeight = 150;
     }
 
-    private void OnItemSelected(Asset obj) {
+    private void OnItemSelected(Asset obj)
+    {
         Debug.Log($"Selected object: {obj.Name} (ID: {obj.Id})");
         placementSystem.StartPlacement(obj);
     }
 
-    private void OnAddEnemySpawn() {
+    private void OnAddEnemySpawn()
+    {
         Debug.Log("HUDController: Starting Enemy Spawn placement");
         placementSystem.StartEnemySpawnPlacement();
     }
 
     // TODO: refactor to a MenuManager
-    private void OpenSaveMenu() {
-        if (saveMenu != null) {
+    private void OpenSaveMenu()
+    {
+        if (saveMenu != null)
+        {
             saveMenu.SetActive(true);
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("HUDController: Save menu reference is not set.");
         }
     }
 
-    private void OpenPublishMenu() {
-        if (publishMenu != null) {
+    private void OpenPublishMenu()
+    {
+        if (publishMenu != null)
+        {
             publishMenu.SetActive(true);
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("HUDController: Publish menu reference is not set.");
         }
     }
 
-    private void OpenConsumableItemsMenu() {
-        if (consumableItemsHUD != null) {
+    private void OpenConsumableItemsMenu()
+    {
+        if (consumableItemsHUD != null)
+        {
             consumableItemsHUD.SetActive(true);
             gameObject.SetActive(false);
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("HUDController: Consumable Items menu reference is not set.");
         }
     }
