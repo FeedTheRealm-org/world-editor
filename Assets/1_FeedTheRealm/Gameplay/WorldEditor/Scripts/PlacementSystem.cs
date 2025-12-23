@@ -2,6 +2,7 @@ using Models;
 using UnityEngine;
 using World;
 using System.Collections.Generic;
+using Enums;
 
 
 public class PlacementSystem : MonoBehaviour, IDataPersistence {
@@ -51,17 +52,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         inputManager.OnExit += StopPlacement;
     }
 
-    public void StartEnemySpawnPlacement() {
-        logger.Log($"Started placement of Enemy Spawn Point", this, Logging.LogType.Info);
-        worldController.ToggleGridVisualization(true);
-
-        if (cellIndicator != null) cellIndicator.SetActive(false);
-        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(true);
-
-        isPlacingEnemySpawn = true;
-        inputManager.OnClicked += PlaceEnemySpawn;
-        inputManager.OnExit += StopEnemySpawnPlacement;
-    }
 
     private void StopPlacement() {
         selectedObjectData = null;
@@ -71,15 +61,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         isPlacingEnemySpawn = false;
         inputManager.OnClicked -= PlaceObject;
         inputManager.OnExit -= StopPlacement;
-    }
-
-    private void StopEnemySpawnPlacement() {
-        worldController.ToggleGridVisualization(false);
-        if (cellIndicator != null) cellIndicator.SetActive(false);
-        if (enemySpawnIndicator != null) enemySpawnIndicator.SetActive(false);
-        isPlacingEnemySpawn = false;
-        inputManager.OnClicked -= PlaceEnemySpawn;
-        inputManager.OnExit -= StopEnemySpawnPlacement;
     }
 
     private void PlaceObject() {
@@ -95,27 +76,6 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
 
         if (!canBePlaced) {
             logger.Log($"Placement failed for object ID: {selectedObjectData.Id}", this, Logging.LogType.Warning);
-            return;
-        }
-    }
-
-    private void PlaceEnemySpawn() {
-        Vector3Int gridPosition = worldController.GetSelectedPosition(inputManager.GetSelectedMapPosition());
-
-        Asset enemySpawnAsset = new Asset(
-                "enemy_spawn",
-                "Enemy Spawn Point",
-                new Vector2Int(1, 1),
-                enemySpawnPlacePrefab
-            );
-
-        bool canBePlaced = TryPlaceObjectAt(
-            enemySpawnAsset,
-            gridPosition
-        );
-
-        if (!canBePlaced) {
-            logger.Log("Placement failed for Enemy Spawn Point", this, Logging.LogType.Warning);
             return;
         }
     }
@@ -219,7 +179,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         foreach (EnemySpawnAreaData enemySpawnAreaData in data.enemySpawnAreas) {
 
             Vector3Int gridPosition = Vector3Int.FloorToInt(enemySpawnAreaData.Position);
-            Asset enemySpawnAsset = assetLibrary.GetSpawnerByName("enemy_spawn");
+            Asset enemySpawnAsset = assetLibrary.GetSpawnerByName(SpawnerTypes.EnemySpawn);
             bool canBePlaced = TryPlaceObjectAt(enemySpawnAsset, gridPosition);
             if (!canBePlaced) {
                 logger.Log("Failed to load placed Enemy Spawn Point", this, Logging.LogType.Error);
@@ -229,7 +189,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         foreach (PlayerSpawnAreaData playerSpawnAreaData in data.playerSpawnAreas) {
 
             Vector3Int gridPosition = Vector3Int.FloorToInt(playerSpawnAreaData.Position);
-            Asset playerSpawnAsset = assetLibrary.GetSpawnerByName("player_spawn");
+            Asset playerSpawnAsset = assetLibrary.GetSpawnerByName(SpawnerTypes.PlayerSpawn);
             bool canBePlaced = TryPlaceObjectAt(playerSpawnAsset, gridPosition);
             if (!canBePlaced) {
                 logger.Log("Failed to load placed Player Spawn Point", this, Logging.LogType.Error);
@@ -243,13 +203,14 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
     public void SaveData(ref WorldData data) {
         data.objectPlacementData = new List<PlacedAsset>();
         data.enemySpawnAreas = new List<EnemySpawnAreaData>();
+        data.playerSpawnAreas = new List<PlayerSpawnAreaData>();
 
         foreach (PlacedAsset placementData in placementManager.GetAllPlacedObjects()) {
             switch (placementData.AssetDataId) {
-                case "enemy_spawn":
+                case SpawnerTypes.EnemySpawn:
                     data.enemySpawnAreas.Add(new EnemySpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));
                     break;
-                case "player_spawn":
+                case SpawnerTypes.PlayerSpawn:
                     data.playerSpawnAreas.Add(new PlayerSpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));
                     break;
                 default:
