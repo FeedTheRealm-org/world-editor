@@ -10,6 +10,7 @@ using UnityEngine.UIElements;
 public class AddEnemyMenuController : MonoBehaviour {
     [SerializeField] private Maker player;
     [SerializeField] private Enemy enemyDatabase;
+    [SerializeField] private ConsumableItems consumableItemsDatabase;
     [SerializeField] private Logging.Logger logger;
 
     private Button addButton;
@@ -30,6 +31,18 @@ public class AddEnemyMenuController : MonoBehaviour {
     private VisualElement enemyLootContent;
     private Button settingsTab;
     private Button lootTab;
+
+    // Loot UI
+    private DropdownField itemListDropdown;
+    private FloatField itemMaxAmountField;
+    private SliderInt dropChanceSlider;
+    private FloatField goldAmountField;
+    private Button addItemToEnemyButton;
+    private Foldout itemsAddedFoldout;
+    private Image lootSpritePreview;
+
+    // Temporary loot data while editing
+    private List<EnemyLootItem> currentLootItems = new List<EnemyLootItem>();
 
     private void OnEnable() {
         var uiDocument = GetComponent<UIDocument>();
@@ -55,10 +68,26 @@ public class AddEnemyMenuController : MonoBehaviour {
         canMoveDropdown = root.Q<DropdownField>("CanMove");
         rangeField = root.Q<IntegerField>("Range");
         spritePathInput = root.Q<TextField>("SpritePath");
-        spritePreview = root.Q<Image>("SpritePreview");
 
+        // Re-query tab contents every time, to avoid stale references
         enemySettingsContent = root.Q<VisualElement>("EnemySettingsContent");
         enemyLootContent = root.Q<VisualElement>("EnemyLootContent");
+
+        // Sprite preview for base settings
+        spritePreview = enemySettingsContent != null
+            ? enemySettingsContent.Q<Image>("SpritePreview")
+            : root.Q<Image>("SpritePreview");
+
+        // Loot UI references (inside EnemyLootContent)
+        if (enemyLootContent != null) {
+            itemListDropdown = enemyLootContent.Q<DropdownField>("ItemList");
+            itemMaxAmountField = enemyLootContent.Q<FloatField>("MaxDropAmount");
+            dropChanceSlider = enemyLootContent.Q<SliderInt>("DropChance");
+            goldAmountField = enemyLootContent.Q<FloatField>("GoldAmount");
+            addItemToEnemyButton = enemyLootContent.Q<Button>("AddItem");
+            itemsAddedFoldout = enemyLootContent.Q<Foldout>("ItemsAdded");
+            lootSpritePreview = enemyLootContent.Q<Image>("SpritePreview");
+        }
 
         settingsTab = root.Q<Button>("SettingsTab");
         lootTab = root.Q<Button>("LootTab");
@@ -66,13 +95,15 @@ public class AddEnemyMenuController : MonoBehaviour {
         if (settingsTab != null) settingsTab.clicked += ShowSettingsTab;
         if (lootTab != null) lootTab.clicked += ShowLootTab;
 
-        ShowSettingsTab(); // por defecto
+        ShowSettingsTab();
 
         if (canMoveDropdown != null) {
             canMoveDropdown.choices = new List<string> { "true", "false" };
             if (string.IsNullOrEmpty(canMoveDropdown.value))
                 canMoveDropdown.value = "true";
         }
+
+        SetupLootUI();
 
         if (addButton != null) addButton.clicked += OnAddClicked;
         if (closeButton != null) closeButton.clicked += OnCloseClicked;
@@ -85,6 +116,41 @@ public class AddEnemyMenuController : MonoBehaviour {
         if (loadSpriteButton != null) loadSpriteButton.clicked -= OnLoadSpriteClicked;
         if (settingsTab != null) settingsTab.clicked -= ShowSettingsTab;
         if (lootTab != null) lootTab.clicked -= ShowLootTab;
+        if (addItemToEnemyButton != null) addItemToEnemyButton.clicked -= OnAddLootItemClicked;
+    }
+
+    private void SetupLootUI() {
+        // Slider: show numeric value
+        if (dropChanceSlider != null) {
+            dropChanceSlider.showInputField = true;
+        }
+
+        // Populate item dropdown from ConsumableItems database
+        if (itemListDropdown != null && consumableItemsDatabase != null) {
+            var allItems = consumableItemsDatabase.GetAllConsumableItems();
+            var names = new List<string>();
+            foreach (var item in allItems) {
+                if (item != null && !string.IsNullOrEmpty(item.name))
+                    names.Add(item.name);
+            }
+            itemListDropdown.choices = names;
+            if (names.Count > 0 && string.IsNullOrEmpty(itemListDropdown.value)) {
+                itemListDropdown.value = names[0];
+            }
+
+            itemListDropdown.RegisterValueChangedCallback(evt => UpdateLootPreviewSprite(evt.newValue));
+            if (!string.IsNullOrEmpty(itemListDropdown.value)) {
+                UpdateLootPreviewSprite(itemListDropdown.value);
+            }
+        }
+
+        if (addItemToEnemyButton != null) {
+            addItemToEnemyButton.clicked += OnAddLootItemClicked;
+        }
+
+        if (itemsAddedFoldout != null) {
+            itemsAddedFoldout.text = "Items added";
+        }
     }
 
     private void OnAddClicked() {
@@ -222,7 +288,71 @@ public class AddEnemyMenuController : MonoBehaviour {
         if (sprite != null) Debug.Log($"Try add Enemy with Sprite='{sprite.name}'");
         else Debug.LogWarning($"Try add Enemy with Sprite null for id/path '{spriteId}'");
 
-        return new EnemyData(itemName, desc, hp, dmg, spd, canMove, rng, spriteId);
+        float gold = goldAmountField != null ? goldAmountField.value : 0f;
+
+        // Build EnemyData with current loot items and gold amount
+        return new EnemyData(itemName, desc, hp, dmg, spd, canMove, rng, spriteId,
+            new List<EnemyLootItem>(currentLootItems), gold);
+    }
+
+    private void UpdateLootPreviewSprite(string itemName) {
+        if (consumableItemsDatabase == null || lootSpritePreview == null || string.IsNullOrEmpty(itemName)) return;
+
+        var allItems = consumableItemsDatabase.GetAllConsumableItems();
+        var selected = allItems.Find(i => i != null && i.name == itemName);
+        if (selected == null) return;
+
+        string spriteId = selected.spriteId;
+        if (string.IsNullOrEmpty(spriteId)) return;
+
+        string resolved = SpriteStorage.GetFilePathFromIdOrPath(spriteId);
+        Sprite sprite = null;
+        if (!string.IsNullOrEmpty(resolved) && (Path.IsPathRooted(resolved) || File.Exists(resolved))) {
+            sprite = LoadSpriteFromAbsoluteFile(resolved);
+        } else {
+            sprite = Resources.Load<Sprite>(spriteId);
+        }
+
+        if (sprite != null) {
+            lootSpritePreview.sprite = sprite;
+            lootSpritePreview.image = sprite.texture;
+        }
+    }
+
+    private void OnAddLootItemClicked() {
+        if (itemListDropdown == null || consumableItemsDatabase == null) return;
+
+        string itemName = itemListDropdown.value;
+        if (string.IsNullOrEmpty(itemName)) return;
+
+        var allItems = consumableItemsDatabase.GetAllConsumableItems();
+        var selected = allItems.Find(i => i != null && i.name == itemName);
+        if (selected == null) return;
+
+        float maxAmount = itemMaxAmountField != null ? itemMaxAmountField.value : 1f;
+        int chance = dropChanceSlider != null ? dropChanceSlider.value : 0;
+
+        var lootItem = new EnemyLootItem(selected.name, selected.spriteId, maxAmount, chance);
+        currentLootItems.Add(lootItem);
+
+        // Update foldout list
+        if (itemsAddedFoldout != null) {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.justifyContent = Justify.SpaceBetween;
+            row.style.alignItems = Align.Center;
+
+            var label = new Label($"{lootItem.itemName} x{lootItem.maxAmount} ({lootItem.dropChance}%)");
+            var removeButton = new Button { text = "Remove" };
+            removeButton.clicked += () => {
+                currentLootItems.Remove(lootItem);
+                itemsAddedFoldout.Remove(row);
+            };
+
+            row.Add(label);
+            row.Add(removeButton);
+            itemsAddedFoldout.Add(row);
+        }
     }
 
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath) {

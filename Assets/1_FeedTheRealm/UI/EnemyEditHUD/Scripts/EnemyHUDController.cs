@@ -34,11 +34,11 @@ public class EnemyHUDController : MonoBehaviour {
     if (canMoveDropdown != null) {
         canMoveDropdown.choices = new List<string> { "true", "false" };
         if (string.IsNullOrEmpty(canMoveDropdown.value))
-            canMoveDropdown.value = "true"; // valor por defecto
+            canMoveDropdown.value = "true";
     }
 
     addEnemyButton = root.Q<Button>("AddEnemyButton");
-    listEnemyButton = root.Q<Button>("ListEnemyButton");
+    listEnemyButton = root.Q<Button>("EnemyListButton");
     enemyListView = root.Q<ListView>("EnemyListView");
     closeEnemyButton = root.Q<Button>("CloseEnemyHUDButton");
 

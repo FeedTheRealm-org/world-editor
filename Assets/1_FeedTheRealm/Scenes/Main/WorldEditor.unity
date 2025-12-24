@@ -324,6 +324,11 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!1 &647052700 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5945799651180993230, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  m_PrefabInstance: {fileID: 732672093}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &732672093
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -416,6 +421,10 @@ PrefabInstance:
       propertyPath: enemyDatabase
       value: 
       objectReference: {fileID: 11400000, guid: 7a4964f205eeec471b4c45901aba0f21, type: 2}
+    - target: {fileID: 3909328957957033965, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 3972978763712568489, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -636,6 +645,10 @@ PrefabInstance:
       propertyPath: enemyDatabase
       value: 
       objectReference: {fileID: 11400000, guid: 7a4964f205eeec471b4c45901aba0f21, type: 2}
+    - target: {fileID: 6172885606612570316, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: listEnemyMenu
+      value: 
+      objectReference: {fileID: 647052700}
     - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: logger
       value: 
@@ -664,6 +677,10 @@ PrefabInstance:
       propertyPath: sourceAsset
       value: 
       objectReference: {fileID: 9197481963319205126, guid: 23a79520e84082d42a5c8be34996fbfd, type: 3}
+    - target: {fileID: 8335157550678705167, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1889743594}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: saveMenu
       value: 
