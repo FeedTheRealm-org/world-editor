@@ -8,7 +8,9 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
 
-    //public event Action<Vector2> SelectEvent;
+    public event Action PrimaryInteractionEvent;
+    public event Action SecondaryInteractionEvent;
+
     public event Action<float> MoveVerticalEvent;
     public event Action InteractEvent;
     private MakerControls controls;
@@ -81,6 +83,22 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
         else if (context.canceled)
         {
             MoveVerticalEvent?.Invoke(0f);
+        }
+    }
+
+    public void OnPrimaryInteraction(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            PrimaryInteractionEvent?.Invoke();
+        }
+    }
+
+    public void OnSecondaryInteraction(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            SecondaryInteractionEvent?.Invoke();
         }
     }
 }

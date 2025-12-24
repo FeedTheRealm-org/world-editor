@@ -111,15 +111,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Interact"",
-                    ""type"": ""Button"",
-                    ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": ""Hold"",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""MoveUp"",
                     ""type"": ""Value"",
                     ""id"": ""3789c965-243e-49d6-a89e-068e14cef882"",
@@ -136,6 +127,24 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": ""Scale(factor=-1)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PrimaryInteraction"",
+                    ""type"": ""Button"",
+                    ""id"": ""93435a56-6bf7-48d3-b2d1-5732cd6f5808"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SecondaryInteraction"",
+                    ""type"": ""Button"",
+                    ""id"": ""86eae008-0164-4e96-9a01-dd84ebb22775"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -273,28 +282,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""1c04ea5f-b012-41d1-a6f7-02e963b52893"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b3f66d0b-7751-423f-908b-a11c5bd95930"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""ad8183b8-1fa9-4614-91b4-2294d7808d0b"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
@@ -347,6 +334,28 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""243a950a-9bd2-4fb6-b6d7-60611421a868"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PrimaryInteraction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c291c1c4-3363-44ae-b3a6-7a97875959ac"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondaryInteraction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -934,9 +943,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_MoveUp = m_Player.FindAction("MoveUp", throwIfNotFound: true);
         m_Player_MoveDown = m_Player.FindAction("MoveDown", throwIfNotFound: true);
+        m_Player_PrimaryInteraction = m_Player.FindAction("PrimaryInteraction", throwIfNotFound: true);
+        m_Player_SecondaryInteraction = m_Player.FindAction("SecondaryInteraction", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1032,9 +1042,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
-    private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_MoveUp;
     private readonly InputAction m_Player_MoveDown;
+    private readonly InputAction m_Player_PrimaryInteraction;
+    private readonly InputAction m_Player_SecondaryInteraction;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1055,10 +1066,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Look => m_Wrapper.m_Player_Look;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Interact".
-        /// </summary>
-        public InputAction @Interact => m_Wrapper.m_Player_Interact;
-        /// <summary>
         /// Provides access to the underlying input action "Player/MoveUp".
         /// </summary>
         public InputAction @MoveUp => m_Wrapper.m_Player_MoveUp;
@@ -1066,6 +1073,14 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/MoveDown".
         /// </summary>
         public InputAction @MoveDown => m_Wrapper.m_Player_MoveDown;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/PrimaryInteraction".
+        /// </summary>
+        public InputAction @PrimaryInteraction => m_Wrapper.m_Player_PrimaryInteraction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SecondaryInteraction".
+        /// </summary>
+        public InputAction @SecondaryInteraction => m_Wrapper.m_Player_SecondaryInteraction;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1098,15 +1113,18 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
-            @Interact.started += instance.OnInteract;
-            @Interact.performed += instance.OnInteract;
-            @Interact.canceled += instance.OnInteract;
             @MoveUp.started += instance.OnMoveUp;
             @MoveUp.performed += instance.OnMoveUp;
             @MoveUp.canceled += instance.OnMoveUp;
             @MoveDown.started += instance.OnMoveDown;
             @MoveDown.performed += instance.OnMoveDown;
             @MoveDown.canceled += instance.OnMoveDown;
+            @PrimaryInteraction.started += instance.OnPrimaryInteraction;
+            @PrimaryInteraction.performed += instance.OnPrimaryInteraction;
+            @PrimaryInteraction.canceled += instance.OnPrimaryInteraction;
+            @SecondaryInteraction.started += instance.OnSecondaryInteraction;
+            @SecondaryInteraction.performed += instance.OnSecondaryInteraction;
+            @SecondaryInteraction.canceled += instance.OnSecondaryInteraction;
         }
 
         /// <summary>
@@ -1124,15 +1142,18 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
-            @Interact.started -= instance.OnInteract;
-            @Interact.performed -= instance.OnInteract;
-            @Interact.canceled -= instance.OnInteract;
             @MoveUp.started -= instance.OnMoveUp;
             @MoveUp.performed -= instance.OnMoveUp;
             @MoveUp.canceled -= instance.OnMoveUp;
             @MoveDown.started -= instance.OnMoveDown;
             @MoveDown.performed -= instance.OnMoveDown;
             @MoveDown.canceled -= instance.OnMoveDown;
+            @PrimaryInteraction.started -= instance.OnPrimaryInteraction;
+            @PrimaryInteraction.performed -= instance.OnPrimaryInteraction;
+            @PrimaryInteraction.canceled -= instance.OnPrimaryInteraction;
+            @SecondaryInteraction.started -= instance.OnSecondaryInteraction;
+            @SecondaryInteraction.performed -= instance.OnSecondaryInteraction;
+            @SecondaryInteraction.canceled -= instance.OnSecondaryInteraction;
         }
 
         /// <summary>
@@ -1448,13 +1469,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLook(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnInteract(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "MoveUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1468,6 +1482,20 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMoveDown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PrimaryInteraction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPrimaryInteraction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SecondaryInteraction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondaryInteraction(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

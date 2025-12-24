@@ -11,18 +11,13 @@ public static class GltfHandler
     private const string FALLBACK_OBJECT_NAME = "MissingObject";
 
     /// <summary>
-    /// Loads a GLTF model asynchronously from the specified path.
+    /// Loads a GLTF model asynchronously and returns it without instantiating in the scene.
     /// </summary>
-    public static async Task Load(
-        string modelUrl,
-        GameObject parentRef,
-        bool useFileProtocol = true
-    )
+    public static async Task<GameObject> Load(string modelUrl, bool useFileProtocol = true)
     {
         if (string.IsNullOrEmpty(modelUrl))
         {
-            SpawnFallback(parentRef.transform);
-            return;
+            return CreateFallback();
         }
 
         if (useFileProtocol)
@@ -42,27 +37,36 @@ public static class GltfHandler
         if (!success)
         {
             Debug.LogWarning($"GLTF load failed: {modelUrl}");
-            SpawnFallback(parentRef.transform);
-            return;
+            return CreateFallback();
         }
 
-        await gltf.InstantiateMainSceneAsync(parentRef.transform);
-        var child = parentRef.transform.GetChild(0);
-        child.localScale = Vector3.one;
-        child.localPosition = Vector3.zero;
-        child.localRotation = Quaternion.identity;
+        // Create a temporary parent, instantiate into it, then detach
+        GameObject tempParent = new GameObject("_TempParent");
+        await gltf.InstantiateMainSceneAsync(tempParent.transform);
+
+        GameObject loadedObject = tempParent.transform.GetChild(0).gameObject;
+        loadedObject.transform.SetParent(null); // Detach from temp parent
+
+        Object.Destroy(tempParent); // Clean up temp parent
+
+        // Reset transforms
+        loadedObject.transform.localScale = Vector3.one;
+        loadedObject.transform.localPosition = Vector3.zero;
+        loadedObject.transform.localRotation = Quaternion.identity;
+
+        return loadedObject;
     }
 
     /// <summary>
-    /// Spawns a fallback prefab if the GLTF load fails.
+    /// Creates a fallback object without instantiating in the scene.
     /// </summary>
-    private static void SpawnFallback(Transform parent)
+    private static GameObject CreateFallback()
     {
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.SetParent(parent);
         cube.name = FALLBACK_OBJECT_NAME;
         cube.transform.localPosition = Vector3.zero;
         cube.transform.localRotation = Quaternion.identity;
         cube.transform.localScale = Vector3.one;
+        return cube;
     }
 }

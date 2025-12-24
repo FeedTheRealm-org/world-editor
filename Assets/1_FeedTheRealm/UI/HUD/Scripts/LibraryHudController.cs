@@ -23,12 +23,10 @@ public class LibraryHudController : MonoBehaviour
         List<WorldObjectReference> worldObjects = creatorLibrary.GetObjects();
         foreach (var worldObject in worldObjects)
         {
-            var assetButton = new Button(() =>
+            var assetButton = new Button() { text = worldObject.DisplayName };
+            assetButton.clicked += () =>
             {
-                Debug.Log($"Selected asset: {worldObject}");
-            })
-            {
-                text = worldObject.DisplayName,
+                WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
             };
             assetButton.AddToClassList("assetListButtons");
             assetContainer.Add(assetButton);

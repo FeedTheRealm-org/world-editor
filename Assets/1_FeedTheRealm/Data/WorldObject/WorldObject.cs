@@ -9,6 +9,8 @@ public class WorldObjectReference
     public Vector3 rotation;
     public Vector3 offset;
     public string objectUrl;
+
+    // MOVE THIS TO ANOTHER COMPONENT
     public bool isLocalAsset = true;
 
     private bool isObjectLoaded = false;
@@ -56,12 +58,30 @@ public class WorldObjectReference
 
     public string DisplayName
     {
-        get => objectUrl;
+        get
+        {
+            var name = objectUrl.Replace("_", " ");
+            var textInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(name);
+        }
     }
 
-    public async Task<GameObject> GetWorldObject()
+    public string ObjectUrl
     {
-        await LoadModel();
+        get => objectUrl;
+        set => objectUrl = value;
+    }
+
+    /// <summary>
+    /// Asynchronously gets the world object instance with the applied transform.
+    /// </summary>
+    public async Task<GameObject> GetWorldObjectInstance()
+    {
+        if (!isObjectLoaded)
+        {
+            worldObject = await GltfHandler.Load(objectUrl, isLocalAsset);
+            isObjectLoaded = true;
+        }
         ApplyTransform(worldObject);
         return worldObject;
     }
@@ -77,13 +97,5 @@ public class WorldObjectReference
         visualRoot.localPosition = offset;
         visualRoot.localEulerAngles = rotation;
         visualRoot.localScale = Vector3.one;
-    }
-
-    private async Task LoadModel()
-    {
-        if (isObjectLoaded)
-            return;
-        await GltfHandler.Load(objectUrl, worldObject, isLocalAsset);
-        isObjectLoaded = true;
     }
 }
