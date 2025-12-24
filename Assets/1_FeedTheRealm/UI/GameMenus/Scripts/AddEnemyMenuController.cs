@@ -26,6 +26,10 @@ public class AddEnemyMenuController : MonoBehaviour {
     private Image spritePreview;
     private VisualElement root;
     private Label nameErrorLabel;
+    private VisualElement enemySettingsContent;
+    private VisualElement enemyLootContent;
+    private Button settingsTab;
+    private Button lootTab;
 
     private void OnEnable() {
         var uiDocument = GetComponent<UIDocument>();
@@ -53,6 +57,17 @@ public class AddEnemyMenuController : MonoBehaviour {
         spritePathInput = root.Q<TextField>("SpritePath");
         spritePreview = root.Q<Image>("SpritePreview");
 
+        enemySettingsContent = root.Q<VisualElement>("EnemySettingsContent");
+        enemyLootContent = root.Q<VisualElement>("EnemyLootContent");
+
+        settingsTab = root.Q<Button>("SettingsTab");
+        lootTab = root.Q<Button>("LootTab");
+
+        if (settingsTab != null) settingsTab.clicked += ShowSettingsTab;
+        if (lootTab != null) lootTab.clicked += ShowLootTab;
+
+        ShowSettingsTab(); // por defecto
+
         if (canMoveDropdown != null) {
             canMoveDropdown.choices = new List<string> { "true", "false" };
             if (string.IsNullOrEmpty(canMoveDropdown.value))
@@ -68,6 +83,8 @@ public class AddEnemyMenuController : MonoBehaviour {
         if (addButton != null) addButton.clicked -= OnAddClicked;
         if (closeButton != null) closeButton.clicked -= OnCloseClicked;
         if (loadSpriteButton != null) loadSpriteButton.clicked -= OnLoadSpriteClicked;
+        if (settingsTab != null) settingsTab.clicked -= ShowSettingsTab;
+        if (lootTab != null) lootTab.clicked -= ShowLootTab;
     }
 
     private void OnAddClicked() {
@@ -91,6 +108,20 @@ public class AddEnemyMenuController : MonoBehaviour {
         }
 
         CloseMenu();
+    }
+
+    private void ShowSettingsTab() {
+        if (enemySettingsContent != null)
+            enemySettingsContent.style.display = DisplayStyle.Flex;
+        if (enemyLootContent != null)
+            enemyLootContent.style.display = DisplayStyle.None;
+    }
+
+    private void ShowLootTab() {
+        if (enemySettingsContent != null)
+            enemySettingsContent.style.display = DisplayStyle.None;
+        if (enemyLootContent != null)
+            enemyLootContent.style.display = DisplayStyle.Flex;
     }
 
     private bool ValidateName() {
