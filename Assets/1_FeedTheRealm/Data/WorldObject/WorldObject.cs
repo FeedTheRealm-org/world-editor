@@ -84,6 +84,7 @@ public class WorldObjectReference
             return worldObject;
         }
         GameObject instance = Object.Instantiate(worldObject);
+        instance.layer = LayerMask.NameToLayer("WorldObject");
         ApplyTransform(instance);
         return instance;
     }

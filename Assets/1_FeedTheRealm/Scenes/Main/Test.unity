@@ -486,7 +486,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ff2134fdf0fc727fb6cd71084515ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MakerStateMachine
+  inputReader: {fileID: 0}
   playerCamera: {fileID: 961739752}
+  logger: {fileID: 0}
 --- !u!1 &695824696
 GameObject:
   m_ObjectHideFlags: 0
@@ -500,7 +502,7 @@ GameObject:
   - component: {fileID: 695824698}
   - component: {fileID: 695824697}
   - component: {fileID: 695824701}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: WorldV2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -553,7 +555,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 929004790}
+  - {fileID: 857118857}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -615,14 +617,15 @@ MonoBehaviour:
   worldSize: 100
   worldHeight: 2
   textureGranularity: 200
---- !u!21 &929004790
+--- !u!21 &857118857
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Grass_Dense_Tint_01_Base_A (Instance) (Instance) (Instance)
+  m_Name: Grass_Dense_Tint_01_Base_A (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance)
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -914,6 +917,92 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!1 &1723217777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1723217782}
+  - component: {fileID: 1723217781}
+  - component: {fileID: 1723217780}
+  - component: {fileID: 1723217779}
+  - component: {fileID: 1723217778}
+  m_Layer: 0
+  m_Name: WorldEditor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1723217778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723217777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4cc057919aa97e9eb2753ed14b1bf84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SelectingState
+--- !u!114 &1723217779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723217777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc008a50bfa9f55aebcc50d88200b581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemovingState
+--- !u!114 &1723217780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723217777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce50b0b962521b641863ec4c5434f9b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlacingState
+--- !u!114 &1723217781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723217777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff2134fdf0fc727fb6cd71084515ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldEditorStateMachine
+  inputReader: {fileID: 0}
+  playerCamera: {fileID: 0}
+  logger: {fileID: 0}
+--- !u!4 &1723217782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723217777}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.01302, y: -5.86867, z: -16.6757}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -923,3 +1012,4 @@ SceneRoots:
   - {fileID: 604734594}
   - {fileID: 695824700}
   - {fileID: 271180945}
+  - {fileID: 1723217782}

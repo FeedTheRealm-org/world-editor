@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class SelectingState : IMakerState
+public class SelectingState : MonoBehaviour, IMakerState
 {
-    private readonly MakerStateMachine maker;
+    private readonly WorldEditorStateMachine maker;
 
-    public SelectingState(MakerStateMachine maker)
+    public SelectingState(WorldEditorStateMachine maker)
     {
         this.maker = maker;
     }
