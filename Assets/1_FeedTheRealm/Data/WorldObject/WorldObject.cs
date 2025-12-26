@@ -75,44 +75,44 @@ public class WorldObjectReference
     /// <summary>
     /// Asynchronously gets the world object instance with the applied transform.
     /// </summary>
-    public async Task<GameObject> GetWorldObjectInstance()
+    public async Task<GameObject> CreateWorldObjectInstance(int layerMask)
     {
+        GameObject instance;
         if (!isObjectLoaded)
         {
             Debug.Log("World object not loaded yet. Loading object...");
             await LoadWorldObject();
-            return worldObject;
         }
-        GameObject instance = Object.Instantiate(worldObject);
-        instance.layer = LayerMask.NameToLayer("WorldObject");
-        ApplyTransform(instance);
+        instance = Object.Instantiate(worldObject);
+        instance.SetActive(true);
+        ApplyTransform(instance, layerMask);
         return instance;
     }
 
     private async Task LoadWorldObject()
     {
-        if (!isObjectLoaded)
+        worldObject = new GameObject($"Loaded_{DisplayName}");
+        await GltfHandler.Load(worldObject, objectUrl, isLocalAsset);
+        isObjectLoaded = true;
+
+        foreach (Transform child in worldObject.transform)
         {
-            GameObject instance = new GameObject();
-            await GltfHandler.Load(instance, objectUrl, isLocalAsset);
-            isObjectLoaded = true;
-            Debug.Log($"World object loaded: {objectUrl}");
-            worldObject = instance;
-            ApplyTransform(instance);
+            child.gameObject.AddComponent<BoxCollider>();
         }
+        worldObject.name = DisplayName;
+        worldObject.SetActive(false);
     }
 
     /// <summary>
     /// Applies the transform (size, position, rotation) to the instance of the world object.
     /// </summary>
-    private void ApplyTransform(GameObject instance = null)
+    private void ApplyTransform(GameObject instance, int layerMask)
     {
         if (instance == null)
         {
             Debug.LogError("Instance is null in ApplyTransform");
             return;
         }
-        instance.name = DisplayName;
         instance.transform.localScale = size;
         instance.transform.localRotation = Quaternion.identity;
         if (instance.transform.childCount > 0)
@@ -121,6 +121,25 @@ public class WorldObjectReference
             visualRoot.localPosition = offset;
             visualRoot.localEulerAngles = rotation;
             visualRoot.localScale = Vector3.one;
+        }
+        SetLayerRecursively(instance, layerMask); //TODO: check if this can be set in the loader insted
+    }
+
+    private void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, layer);
+        }
+    }
+
+    private void AddCollidersRecursively(GameObject obj)
+    {
+        obj.AddComponent<BoxCollider>();
+        foreach (Transform child in obj.transform)
+        {
+            AddCollidersRecursively(child.gameObject);
         }
     }
 }

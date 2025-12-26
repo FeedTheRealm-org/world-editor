@@ -1,20 +1,21 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class PlacingState : MonoBehaviour, IMakerState
+public class PlacingState : IMakerState
 {
-    private readonly WorldEditorStateMachine maker;
+    private WorldEditorStateMachine worldEditor;
 
-    private readonly LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
+    private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
+    private int objectLayerMask = LayerMask.NameToLayer("WorldObject"); // TODO: review to move this to a world editor config
 
-    public PlacingState(WorldEditorStateMachine maker)
+    public PlacingState(WorldEditorStateMachine worldEditor)
     {
-        this.maker = maker;
+        this.worldEditor = worldEditor;
     }
 
     public void Enter()
     {
-        Debug.Log($"Placing mode: {maker.SelectedObject.DisplayName}");
+        worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.DisplayName}");
     }
 
     public void Exit() { }
@@ -31,19 +32,20 @@ public class PlacingState : MonoBehaviour, IMakerState
 
     private async Task OnPrimaryActionAsync()
     {
-        if (!Raycaster.TryGetPlacementPoint(maker, placementLayerMask, out RaycastHit hit))
+        if (!Raycaster.TryGetPlacementPoint(worldEditor, placementLayerMask, out RaycastHit hit))
         {
-            Debug.LogWarning("No valid placement point found.");
+            worldEditor.Log("No valid placement point found.", Logging.LogType.Warning);
             return;
         }
-        var instance = await maker.SelectedObject.GetWorldObjectInstance();
+        var instance = await worldEditor.SelectedObject.CreateWorldObjectInstance(objectLayerMask);
         instance.transform.position = hit.point;
+        instance.layer = objectLayerMask;
         instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
     }
 
     public void OnSecondaryAction()
     {
-        Debug.Log("Cancel placement");
-        maker.SetState(new SelectingState(maker));
+        worldEditor.Log("Cancel placement");
+        worldEditor.SetState(new SelectingState(worldEditor));
     }
 }

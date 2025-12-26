@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SelectingState : MonoBehaviour, IMakerState
+public class SelectingState : IMakerState
 {
     private readonly WorldEditorStateMachine maker;
 
@@ -11,7 +11,7 @@ public class SelectingState : MonoBehaviour, IMakerState
 
     public void Enter()
     {
-        Debug.Log("Selecting objects");
+        maker.Log("Selecting objects");
     }
 
     public void Exit() { }
@@ -20,7 +20,7 @@ public class SelectingState : MonoBehaviour, IMakerState
 
     public void OnPrimaryAction()
     {
-        Debug.Log("Select object in world");
+        maker.Log("Select object in world");
     }
 
     public void OnSecondaryAction() { }

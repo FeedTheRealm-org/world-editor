@@ -145,6 +145,15 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RemoveAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""67effc39-7399-414c-8fa8-f054d2e07944"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -354,6 +363,17 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SecondaryInteraction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67cb42d0-c223-4ba1-8ab4-b1c9dcd29f69"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RemoveAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -947,6 +967,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player_MoveDown = m_Player.FindAction("MoveDown", throwIfNotFound: true);
         m_Player_PrimaryInteraction = m_Player.FindAction("PrimaryInteraction", throwIfNotFound: true);
         m_Player_SecondaryInteraction = m_Player.FindAction("SecondaryInteraction", throwIfNotFound: true);
+        m_Player_RemoveAction = m_Player.FindAction("RemoveAction", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1046,6 +1067,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MoveDown;
     private readonly InputAction m_Player_PrimaryInteraction;
     private readonly InputAction m_Player_SecondaryInteraction;
+    private readonly InputAction m_Player_RemoveAction;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1081,6 +1103,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/SecondaryInteraction".
         /// </summary>
         public InputAction @SecondaryInteraction => m_Wrapper.m_Player_SecondaryInteraction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/RemoveAction".
+        /// </summary>
+        public InputAction @RemoveAction => m_Wrapper.m_Player_RemoveAction;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1125,6 +1151,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @SecondaryInteraction.started += instance.OnSecondaryInteraction;
             @SecondaryInteraction.performed += instance.OnSecondaryInteraction;
             @SecondaryInteraction.canceled += instance.OnSecondaryInteraction;
+            @RemoveAction.started += instance.OnRemoveAction;
+            @RemoveAction.performed += instance.OnRemoveAction;
+            @RemoveAction.canceled += instance.OnRemoveAction;
         }
 
         /// <summary>
@@ -1154,6 +1183,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @SecondaryInteraction.started -= instance.OnSecondaryInteraction;
             @SecondaryInteraction.performed -= instance.OnSecondaryInteraction;
             @SecondaryInteraction.canceled -= instance.OnSecondaryInteraction;
+            @RemoveAction.started -= instance.OnRemoveAction;
+            @RemoveAction.performed -= instance.OnRemoveAction;
+            @RemoveAction.canceled -= instance.OnRemoveAction;
         }
 
         /// <summary>
@@ -1496,6 +1528,13 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSecondaryInteraction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RemoveAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRemoveAction(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

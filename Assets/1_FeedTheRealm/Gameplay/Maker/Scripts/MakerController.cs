@@ -16,7 +16,6 @@ public class MakerController : MonoBehaviour
 
     private void OnEnable()
     {
-        // Register callbacks
         if (inputReader != null)
         {
             inputReader.MoveEvent += OnMoveInput;

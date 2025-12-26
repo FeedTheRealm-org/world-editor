@@ -38,6 +38,7 @@ public static class GltfHandler
             return;
         }
         await gltf.InstantiateMainSceneAsync(parent.transform);
+        FlattenHierarchy(parent);
     }
 
     private static void CreateFallback(GameObject parent)
@@ -45,5 +46,22 @@ public static class GltfHandler
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.SetParent(parent.transform);
         cube.name = "Fallback";
+    }
+
+    // TODO: review this method to improve performance, this seems more like an unecesary edge case solution
+    private static void FlattenHierarchy(GameObject parent)
+    {
+        Transform[] children = parent.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
+        {
+            if (child != parent.transform && child.childCount == 0)
+            {
+                // Move renderers to parent if they have no children
+                if (child.GetComponent<Renderer>() != null)
+                {
+                    child.SetParent(parent.transform);
+                }
+            }
+        }
     }
 }

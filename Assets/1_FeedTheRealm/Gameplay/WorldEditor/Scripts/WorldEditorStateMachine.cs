@@ -23,6 +23,7 @@ public class WorldEditorStateMachine : MonoBehaviour
     {
         inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
+        inputReader.RemoveEvent += OnRemoveAction;
         Utils.WorldObjectSelectionEvents.ObjectSelected += OnWorldObjectSelected;
     }
 
@@ -54,6 +55,16 @@ public class WorldEditorStateMachine : MonoBehaviour
     public void OnSecondaryInteraction()
     {
         currentState?.OnSecondaryAction();
+    }
+
+    public void OnRemoveAction()
+    {
+        SetState(new RemovingState(this));
+    }
+
+    public void Log(string message, Logging.LogType type = Logging.LogType.Info)
+    {
+        logger.Log(message, this, type);
     }
 
     private void Update()
