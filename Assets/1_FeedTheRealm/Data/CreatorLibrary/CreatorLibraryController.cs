@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class CreatorLibraryController : MonoBehaviour
@@ -67,14 +68,14 @@ public class CreatorLibraryController : MonoBehaviour
         foreach (string objectFile in objectFiles)
         {
             string fileName = System.IO.Path.GetFileNameWithoutExtension(objectFile);
-            WorldObjectReference data = new(
+            WorldObjectReference worldRef = new(
                 System.Guid.NewGuid().ToString(),
                 fileName,
                 Vector3.one,
                 Vector3.zero,
                 Vector3.zero
             );
-            objectDataReferences.Add(data);
+            objectDataReferences.Add(worldRef);
             logger.Log($"Added asset: {fileName}", this, Logging.LogType.Info);
         }
         string json = JsonUtility.ToJson(

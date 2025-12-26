@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlacingState : IMakerState
 {
@@ -21,14 +23,27 @@ public class PlacingState : IMakerState
         // Preview ghost, raycast cursor, snap grid, etc (later)
     }
 
-    public async void OnPrimaryAction()
+    public void OnPrimaryAction()
     {
-        Debug.Log("Place object");
+        _ = OnPrimaryActionAsync();
+    }
+
+    private async Task OnPrimaryActionAsync()
+    {
+        Debug.Log("Attempting to place object...");
+
+        if (!TryGetPlacementPoint(out RaycastHit hit, 10000000f))
+        {
+            Debug.LogWarning("No valid placement point found.");
+            return;
+        }
 
         var instance = await maker.SelectedObject.GetWorldObjectInstance();
-        instance.transform.position = GetPlacementPosition();
 
-        maker.SetState(new SelectingState(maker));
+        instance.transform.position = hit.point;
+        instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+
+        Debug.Log($"Placed object: {maker.SelectedObject.DisplayName}");
     }
 
     public void OnSecondaryAction()
@@ -37,9 +52,11 @@ public class PlacingState : IMakerState
         maker.SetState(new SelectingState(maker));
     }
 
-    private Vector3 GetPlacementPosition()
+    private bool TryGetPlacementPoint(out RaycastHit hit, float maxDistance = 10000f)
     {
-        // Temporary placeholder
-        return Vector3.zero;
+        int placementMask = LayerMask.GetMask("Placement");
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        Ray ray = maker.playerCamera.ScreenPointToRay(mousePos);
+        return Physics.Raycast(ray, out hit, maxDistance, placementMask);
     }
 }

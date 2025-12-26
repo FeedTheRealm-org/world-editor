@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class LibraryHudController : MonoBehaviour
+public class LibraryController : MonoBehaviour
 {
     [SerializeField]
     private CreatorLibraryController creatorLibrary;
@@ -26,7 +27,7 @@ public class LibraryHudController : MonoBehaviour
             var assetButton = new Button() { text = worldObject.DisplayName };
             assetButton.clicked += () =>
             {
-                WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
+                Utils.WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
             };
             assetButton.AddToClassList("assetListButtons");
             assetContainer.Add(assetButton);

@@ -79,11 +79,26 @@ public class WorldObjectReference
     {
         if (!isObjectLoaded)
         {
-            worldObject = await GltfHandler.Load(objectUrl, isLocalAsset);
-            isObjectLoaded = true;
+            Debug.Log("World object not loaded yet. Loading object...");
+            await LoadWorldObject();
+            return worldObject;
         }
-        ApplyTransform(worldObject);
-        return worldObject;
+        GameObject instance = Object.Instantiate(worldObject);
+        ApplyTransform(instance);
+        return instance;
+    }
+
+    private async Task LoadWorldObject()
+    {
+        if (!isObjectLoaded)
+        {
+            GameObject instance = new GameObject();
+            await GltfHandler.Load(instance, objectUrl, isLocalAsset);
+            isObjectLoaded = true;
+            Debug.Log($"World object loaded: {objectUrl}");
+            worldObject = instance;
+            ApplyTransform(instance);
+        }
     }
 
     /// <summary>
@@ -91,11 +106,20 @@ public class WorldObjectReference
     /// </summary>
     private void ApplyTransform(GameObject instance = null)
     {
+        if (instance == null)
+        {
+            Debug.LogError("Instance is null in ApplyTransform");
+            return;
+        }
+        instance.name = DisplayName;
         instance.transform.localScale = size;
         instance.transform.localRotation = Quaternion.identity;
-        visualRoot = instance.transform.GetChild(0);
-        visualRoot.localPosition = offset;
-        visualRoot.localEulerAngles = rotation;
-        visualRoot.localScale = Vector3.one;
+        if (instance.transform.childCount > 0)
+        {
+            visualRoot = instance.transform.GetChild(0);
+            visualRoot.localPosition = offset;
+            visualRoot.localEulerAngles = rotation;
+            visualRoot.localScale = Vector3.one;
+        }
     }
 }

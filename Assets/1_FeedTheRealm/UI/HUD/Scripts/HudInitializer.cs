@@ -1,9 +1,10 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
-public class HudControllerV2 : MonoBehaviour
+public class HudInitializer : MonoBehaviour
 {
     [SerializeField]
-    private LibraryHudController libraryHudController;
+    private LibraryController libraryController;
 
     void Start()
     {
@@ -12,7 +13,7 @@ public class HudControllerV2 : MonoBehaviour
 
     private void InitializeHUD()
     {
-        libraryHudController.Initialize();
+        libraryController.Initialize();
     }
 }
 

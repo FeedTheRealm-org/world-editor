@@ -3,8 +3,7 @@ using UnityEngine;
 public class MakerStateMachine : MonoBehaviour
 {
     [SerializeField]
-    private MakerInputReader inputReader;
-
+    public Camera playerCamera;
     private IMakerState currentState;
 
     public WorldObjectReference SelectedObject { get; private set; }
@@ -16,24 +15,12 @@ public class MakerStateMachine : MonoBehaviour
 
     private void OnEnable()
     {
-        if (inputReader != null)
-        {
-            inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
-            inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
-        }
-
-        WorldObjectSelectionEvents.ObjectSelected += OnWorldObjectSelected;
+        Utils.WorldObjectSelectionEvents.ObjectSelected += OnWorldObjectSelected;
     }
 
     private void OnDisable()
     {
-        if (inputReader != null)
-        {
-            inputReader.PrimaryInteractionEvent -= OnPrimaryInteraction;
-            inputReader.SecondaryInteractionEvent -= OnSecondaryInteraction;
-        }
-
-        WorldObjectSelectionEvents.ObjectSelected -= OnWorldObjectSelected;
+        Utils.WorldObjectSelectionEvents.ObjectSelected -= OnWorldObjectSelected;
     }
 
     private void OnWorldObjectSelected(WorldObjectReference reference)
@@ -49,12 +36,12 @@ public class MakerStateMachine : MonoBehaviour
         currentState?.Enter();
     }
 
-    private void OnPrimaryInteraction()
+    public void HandlePrimaryInteraction()
     {
         currentState?.OnPrimaryAction();
     }
 
-    private void OnSecondaryInteraction()
+    public void HandleSecondaryInteraction()
     {
         currentState?.OnSecondaryAction();
     }

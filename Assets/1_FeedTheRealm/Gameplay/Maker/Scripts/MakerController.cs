@@ -12,6 +12,9 @@ public class MakerController : MonoBehaviour
     public CameraController cameraController;
 
     [SerializeField]
+    public MakerStateMachine stateMachine;
+
+    [SerializeField]
     private Logging.Logger logger;
 
     private void OnEnable()
@@ -23,6 +26,8 @@ public class MakerController : MonoBehaviour
             inputReader.LookEvent += OnLookInput;
             inputReader.MoveVerticalEvent += OnMoveVertical;
             logger.Log("MakerController subscribed from events.", this);
+            inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
+            inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
         }
     }
 
@@ -34,6 +39,8 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent -= OnMoveInput;
             inputReader.LookEvent -= OnLookInput;
             inputReader.MoveVerticalEvent -= OnMoveVertical;
+            inputReader.PrimaryInteractionEvent -= OnPrimaryInteraction;
+            inputReader.SecondaryInteractionEvent -= OnSecondaryInteraction;
             logger.Log("MakerController unsubscribed from events.", this);
         }
     }
@@ -51,5 +58,15 @@ public class MakerController : MonoBehaviour
     private void OnMoveVertical(float value)
     {
         movementController.MoveVertical(value);
+    }
+
+    private void OnPrimaryInteraction()
+    {
+        stateMachine.HandlePrimaryInteraction();
+    }
+
+    private void OnSecondaryInteraction()
+    {
+        stateMachine.HandleSecondaryInteraction();
     }
 }
