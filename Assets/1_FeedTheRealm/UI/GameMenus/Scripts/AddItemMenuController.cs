@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Models;
 using UnityEngine.UIElements;
+using FeedTheRealm.Utils;
 
 [RequireComponent(typeof(UIDocument))]
 public class AddItemMenuController : MonoBehaviour {
@@ -133,27 +134,25 @@ public class AddItemMenuController : MonoBehaviour {
     }
 
     private void OnLoadSpriteClicked() {
-#if UNITY_EDITOR
-        string startDir = Application.dataPath;
-        string selected = UnityEditor.EditorUtility.OpenFilePanel("Select Sprite", startDir, "png,jpg,jpeg");
-        if (!string.IsNullOrEmpty(selected)) {
+        StartCoroutine(SpriteFilePicker.WaitForSpriteFilePanel("Select Sprite", selected => {
+            if (string.IsNullOrEmpty(selected) || spritePathInput == null)
+                return;
+
             Debug.Log($"AddItemMenuController: Selected sprite file '{selected}'");
-            if (!string.IsNullOrEmpty(selected) && spritePathInput != null) {
-                // Save file into persistent storage and get generated UUID
-                string id = SpriteStorage.SaveFileReturnId(selected);
-                if (!string.IsNullOrEmpty(id)) spritePathInput.value = id;
-                else spritePathInput.value = selected;
-                // Preview from resolved id or from the source file
-                string resolved = SpriteStorage.GetFilePathFromIdOrPath(!string.IsNullOrEmpty(id) ? id : selected);
-                var previewSprite = LoadSpriteFromAbsoluteFile(!string.IsNullOrEmpty(resolved) ? resolved : selected);
-                if (previewSprite != null) {
-                    spritePreview.sprite = previewSprite;
-                    spritePreview.image = previewSprite.texture;
-                    return;
-                }
+
+            // Save file into persistent storage and get generated UUID
+            string id = SpriteStorage.SaveFileReturnId(selected);
+            if (!string.IsNullOrEmpty(id)) spritePathInput.value = id;
+            else spritePathInput.value = selected;
+
+            // Preview from resolved id or from the source file
+            string resolved = SpriteStorage.GetFilePathFromIdOrPath(!string.IsNullOrEmpty(id) ? id : selected);
+            var previewSprite = LoadSpriteFromAbsoluteFile(!string.IsNullOrEmpty(resolved) ? resolved : selected);
+            if (previewSprite != null) {
+                spritePreview.sprite = previewSprite;
+                spritePreview.image = previewSprite.texture;
             }
-        }
-#endif
+        }));
     }
 
     private ConsumableItem BuildConsumableFromUI() {
