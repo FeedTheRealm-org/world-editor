@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a92761b8f46913bb92ddc6bd0d4bb7, type: 3}
+  m_Name: EnemiesService
+  m_EditorClassIdentifier: FeedTheRealm_Shared::API.EnemiesService
+  Hostname: localhost
+  Port: 8000
+  logger: {fileID: 11400000, guid: e6c37227e7537111a959a856a05f1622, type: 2}
+  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}

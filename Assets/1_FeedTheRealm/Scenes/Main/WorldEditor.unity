@@ -151,7 +151,7 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   modelUploadService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
   itemsService: {fileID: 11400000, guid: 17f57e963fa180443986afad2ea382b5, type: 2}
-  enemiesService: {fileID: 0}
+  enemiesService: {fileID: 11400000, guid: 420e4cd20b1c6a3f79848882f365c113, type: 2}
   player: {fileID: 1889743594}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
 --- !u!1 &623825318
@@ -669,6 +669,10 @@ PrefabInstance:
       propertyPath: listItemsMenu
       value: 
       objectReference: {fileID: 356274100}
+    - target: {fileID: 6418015312350837979, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: consumableItemsDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
     - target: {fileID: 6535934248912987449, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
