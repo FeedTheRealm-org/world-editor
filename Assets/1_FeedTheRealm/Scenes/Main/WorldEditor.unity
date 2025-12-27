@@ -685,6 +685,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1889743594}
+    - target: {fileID: 8335157550678705167, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+      propertyPath: addEnemyMenu
+      value: 
+      objectReference: {fileID: 732672094}
     - target: {fileID: 8451712800245568711, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
       propertyPath: saveMenu
       value: 

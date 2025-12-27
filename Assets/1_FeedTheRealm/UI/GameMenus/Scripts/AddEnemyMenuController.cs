@@ -6,6 +6,9 @@ using UnityEngine.Events;
 using Models;
 using UnityEngine.UIElements;
 using FeedTheRealm.Utils;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [RequireComponent(typeof(UIDocument))]
 public class AddEnemyMenuController : MonoBehaviour {
@@ -44,6 +47,9 @@ public class AddEnemyMenuController : MonoBehaviour {
 
     // Temporary loot data while editing
     private List<EnemyLootItem> currentLootItems = new List<EnemyLootItem>();
+
+    // When >= 0, we are editing an existing enemy in the database at this index
+    private int editingIndex = -1;
 
     private void OnEnable() {
         var uiDocument = GetComponent<UIDocument>();
@@ -109,6 +115,11 @@ public class AddEnemyMenuController : MonoBehaviour {
         if (addButton != null) addButton.clicked += OnAddClicked;
         if (closeButton != null) closeButton.clicked += OnCloseClicked;
         if (loadSpriteButton != null) loadSpriteButton.clicked += OnLoadSpriteClicked;
+
+        // Default to add mode when menu is opened
+        editingIndex = -1;
+        currentLootItems.Clear();
+        if (addButton != null) addButton.text = "Add Enemy";
     }
 
     private void OnDisable() {
@@ -154,6 +165,69 @@ public class AddEnemyMenuController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Initializes the form for editing an existing enemy at the given index.
+    /// </summary>
+    public void BeginEditEnemy(int index) {
+        if (enemyDatabase == null) {
+            logger.Log("AddEnemyMenuController.BeginEditEnemy: enemyDatabase is not assigned.", this, Logging.LogType.Error);
+            return;
+        }
+
+        var list = enemyDatabase.GetAllEnemies();
+        if (list == null || index < 0 || index >= list.Count) {
+            logger.Log($"AddEnemyMenuController.BeginEditEnemy: index {index} is out of range.", this, Logging.LogType.Warning);
+            return;
+        }
+
+        editingIndex = index;
+        var enemy = list[index];
+        if (enemy == null) {
+            logger.Log($"AddEnemyMenuController.BeginEditEnemy: enemy at index {index} is null.", this, Logging.LogType.Warning);
+            return;
+        }
+
+        // Fill basic fields
+        if (nameInput != null) nameInput.value = enemy.name;
+        if (descriptionInput != null) descriptionInput.value = enemy.description;
+        if (healthPointsField != null) healthPointsField.value = enemy.healthPoints;
+        if (damageField != null) damageField.value = enemy.damage;
+        if (speedField != null) speedField.value = enemy.speed;
+        if (canMoveDropdown != null) canMoveDropdown.value = enemy.canMove ? "true" : "false";
+        if (rangeField != null) rangeField.value = enemy.range;
+
+        // Sprite id + preview
+        string spriteId = enemy.spriteId ?? string.Empty;
+        if (spritePathInput != null) spritePathInput.value = spriteId;
+
+        if (!string.IsNullOrEmpty(spriteId)) {
+            string resolved = SpriteStorage.GetFilePathFromIdOrPath(spriteId);
+            Sprite sprite = null;
+            if (!string.IsNullOrEmpty(resolved) && (Path.IsPathRooted(resolved) || File.Exists(resolved))) {
+                sprite = LoadSpriteFromAbsoluteFile(resolved);
+            } else {
+                sprite = Resources.Load<Sprite>(spriteId);
+            }
+
+            if (sprite != null && spritePreview != null) {
+                spritePreview.sprite = sprite;
+                spritePreview.image = sprite.texture;
+            }
+        }
+
+        // Loot + gold
+        currentLootItems = enemy.lootItems != null
+            ? new List<EnemyLootItem>(enemy.lootItems)
+            : new List<EnemyLootItem>();
+
+        if (goldAmountField != null) goldAmountField.value = enemy.goldAmount;
+
+        RefreshItemsAddedFoldoutUI();
+
+        if (addButton != null) addButton.text = "Update Enemy";
+        ShowSettingsTab();
+    }
+
     private void OnAddClicked() {
         if (enemyDatabase == null) {
             logger.Log("AddEnemyMenuController: enemyDatabase is not assigned. Assign it in the Inspector.", this, Logging.LogType.Error);
@@ -165,15 +239,33 @@ public class AddEnemyMenuController : MonoBehaviour {
         var enemyData = BuildEnemyFromUI();
         if (enemyData == null) return;
 
-        logger.Log($"AddEnemyMenuController: Adding enemy '{enemyData.name}' (HP {enemyData.healthPoints}, Damage {enemyData.damage})", this);
+        var list = enemyDatabase.GetAllEnemies();
 
-        try {
-            enemyDatabase.AddEnemy(enemyData);
-        } catch (Exception ex) {
-            logger.Log($"AddEnemyMenuController: Failed to add enemy to database: {ex.Message}", this, Logging.LogType.Error);
-            return;
+        // If editingIndex is set, update the existing enemy instead of adding a new one
+        if (editingIndex >= 0 && list != null && editingIndex < list.Count) {
+            list[editingIndex] = enemyData;
+
+#if UNITY_EDITOR
+            if (enemyDatabase != null) {
+                EditorUtility.SetDirty(enemyDatabase);
+                AssetDatabase.SaveAssets();
+            }
+#endif
+
+            logger.Log($"AddEnemyMenuController: Updated enemy '{enemyData.name}' at index {editingIndex}.", this);
+        } else {
+            logger.Log($"AddEnemyMenuController: Adding enemy '{enemyData.name}' (HP {enemyData.healthPoints}, Damage {enemyData.damage})", this);
+
+            try {
+                enemyDatabase.AddEnemy(enemyData);
+            } catch (Exception ex) {
+                logger.Log($"AddEnemyMenuController: Failed to add enemy to database: {ex.Message}", this, Logging.LogType.Error);
+                return;
+            }
         }
 
+        editingIndex = -1;
+        currentLootItems.Clear();
         CloseMenu();
     }
 
@@ -334,8 +426,21 @@ public class AddEnemyMenuController : MonoBehaviour {
         var lootItem = new EnemyLootItem(selected.name, selected.spriteId, maxAmount, chance);
         currentLootItems.Add(lootItem);
 
-        // Update foldout list
-        if (itemsAddedFoldout != null) {
+        RefreshItemsAddedFoldoutUI();
+    }
+
+    /// <summary>
+    /// Rebuilds the visual list of loot items inside the foldout based on currentLootItems.
+    /// </summary>
+    private void RefreshItemsAddedFoldoutUI() {
+        if (itemsAddedFoldout == null) return;
+
+        itemsAddedFoldout.Clear();
+        itemsAddedFoldout.text = "Items added";
+
+        foreach (var lootItem in currentLootItems) {
+            if (lootItem == null) continue;
+
             var row = new VisualElement();
             row.style.flexDirection = FlexDirection.Row;
             row.style.justifyContent = Justify.SpaceBetween;

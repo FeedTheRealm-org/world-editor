@@ -10,6 +10,10 @@ public class EnemyListMenuController : MonoBehaviour {
   [SerializeField] private Maker player;
   [SerializeField] private Logging.Logger logger;
 
+  // Reference to the Add Enemy menu so we can open it for editing
+  [SerializeField] private GameObject addEnemyMenu;
+  private AddEnemyMenuController addEnemyMenuController;
+
   private VisualElement root;
   private ListView listView;
   private Button closeButton;
@@ -32,6 +36,13 @@ public class EnemyListMenuController : MonoBehaviour {
 
     closeButton = root.Q<Button>("Close");
     if (closeButton != null) closeButton.clicked += CloseMenu;
+
+    if (addEnemyMenu != null && addEnemyMenuController == null) {
+      addEnemyMenuController = addEnemyMenu.GetComponent<AddEnemyMenuController>();
+      if (addEnemyMenuController == null && logger != null) {
+        logger.Log("EnemyListMenuController: addEnemyMenu does not have an AddEnemyMenuController component.", this, Logging.LogType.Warning);
+      }
+    }
 
     if (player != null) player.ToggleMovement(false);
 
@@ -83,9 +94,19 @@ public class EnemyListMenuController : MonoBehaviour {
     textCol.Add(nameLabel);
     textCol.Add(infoLabel);
 
+    var editBtn = new Button { name = "editBtn", text = "Edit" };
+    editBtn.style.width = 80;
+    editBtn.style.height = 30;
+    editBtn.style.marginRight = 4;
+
     var deleteBtn = new Button { name = "deleteBtn", text = "Delete" };
     deleteBtn.style.width = 80;
     deleteBtn.style.height = 30;
+
+    editBtn.clicked += () => {
+      int idx = rootElem.userData is int index ? index : -1;
+      if (idx >= 0) EditEnemyAtIndex(idx);
+    };
 
     deleteBtn.clicked += () => {
       int idx = rootElem.userData is int index ? index : -1;
@@ -94,6 +115,7 @@ public class EnemyListMenuController : MonoBehaviour {
 
     rootElem.Add(img);
     rootElem.Add(textCol);
+    rootElem.Add(editBtn);
     rootElem.Add(deleteBtn);
 
     return rootElem;
@@ -175,6 +197,35 @@ public class EnemyListMenuController : MonoBehaviour {
       logger.Log($"EnemyListMenuController: Removed enemy '{removed.name}' at index {index}.", this);
 
     RefreshEnemies();
+  }
+
+  private void EditEnemyAtIndex(int index) {
+    if (enemyDatabase == null) return;
+
+    var list = enemyDatabase.GetAllEnemies();
+    if (list == null || index < 0 || index >= list.Count) return;
+
+    if (addEnemyMenu == null) {
+      if (logger != null)
+        logger.Log("EnemyListMenuController: addEnemyMenu reference is not assigned.", this, Logging.LogType.Warning);
+      return;
+    }
+
+    if (addEnemyMenuController == null) {
+      addEnemyMenuController = addEnemyMenu.GetComponent<AddEnemyMenuController>();
+      if (addEnemyMenuController == null) {
+        if (logger != null)
+          logger.Log("EnemyListMenuController: Could not find AddEnemyMenuController on addEnemyMenu GameObject.", this, Logging.LogType.Error);
+        return;
+      }
+    }
+
+    // Open the Add Enemy menu and initialize it for editing the selected enemy
+    addEnemyMenu.SetActive(true);
+    addEnemyMenuController.BeginEditEnemy(index);
+
+    // Close this list menu while editing
+    gameObject.SetActive(false);
   }
 
   private void CloseMenu() {
