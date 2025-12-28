@@ -4,7 +4,7 @@ using UnityEngine;
 public class HudInitializer : MonoBehaviour
 {
     [SerializeField]
-    private LibraryController libraryController;
+    private HudLibraryController libraryController;
 
     void Start()
     {

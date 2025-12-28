@@ -1,21 +1,20 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class LibraryController : MonoBehaviour
+public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
     private CreatorLibraryController creatorLibrary;
+
+    [SerializeField]
+    private UIDocument HudLibraryDocument;
     private ScrollView assetContainer;
 
     public void Initialize()
     {
         creatorLibrary.Initialize();
-        var root = GetComponent<UIDocument>();
-        assetContainer = root.rootVisualElement.Q<ScrollView>("LibraryHUD");
-        RemoveTemplate();
+        assetContainer = HudLibraryDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
         RenderObjectButtons();
     }
 
@@ -31,15 +30,6 @@ public class LibraryController : MonoBehaviour
             };
             assetButton.AddToClassList("assetListButtons");
             assetContainer.Add(assetButton);
-        }
-    }
-
-    private void RemoveTemplate()
-    {
-        var buttons = assetContainer.Query<Button>().ToList();
-        foreach (var button in buttons)
-        {
-            button.RemoveFromHierarchy();
         }
     }
 }
