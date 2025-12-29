@@ -13,6 +13,7 @@ public class DataPersistenceManagerSO : ScriptableObject {
     [SerializeField] private Logging.Logger logger;
 
     [SerializeField] private ConsumableItems consumableItemsDatabase;
+    [SerializeField] private Enemy enemyDatabase;
 
     private readonly WorldHandler worldDataHandler = new();
     private WorldData worldData = null;
@@ -64,7 +65,25 @@ public class DataPersistenceManagerSO : ScriptableObject {
             dataPersistenceObj.SaveData(ref worldData);
         }
 
-        worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
+        // Copy consumable items from their ScriptableObject database into WorldData
+        if (consumableItemsDatabase != null) {
+            worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems() ?? new List<ConsumableItem>();
+            int consumableCount = worldData.consumableItems != null ? worldData.consumableItems.Count : 0;
+            logger.Log($"DataPersistenceManagerSO.SaveWorld: Saving {consumableCount} consumable items into world data.", this, Logging.LogType.Info);
+        } else {
+            if (worldData.consumableItems == null) worldData.consumableItems = new List<ConsumableItem>();
+            logger.Log("DataPersistenceManagerSO.SaveWorld: consumableItemsDatabase is null, consumable items will not be refreshed.", this, Logging.LogType.Warning);
+        }
+
+        // Copy enemies from their ScriptableObject database into WorldData
+        if (enemyDatabase != null) {
+            worldData.enemies = enemyDatabase.GetAllEnemies() ?? new List<EnemyData>();
+            int enemyCount = worldData.enemies != null ? worldData.enemies.Count : 0;
+            logger.Log($"DataPersistenceManagerSO.SaveWorld: Saving {enemyCount} enemies into world data.", this, Logging.LogType.Info);
+        } else {
+            if (worldData.enemies == null) worldData.enemies = new List<EnemyData>();
+            logger.Log("DataPersistenceManagerSO.SaveWorld: enemyDatabase is null, enemies will NOT be saved into world data. Check the DataPersistenceManagerSO inspector.", this, Logging.LogType.Warning);
+        }
 
         worldDataHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
@@ -90,6 +109,10 @@ public class DataPersistenceManagerSO : ScriptableObject {
             }
 
             consumableItemsDatabase.LoadConsumableItems(worldData.consumableItems);
+
+            if (enemyDatabase != null) {
+                enemyDatabase.LoadEnemies(worldData.enemies);
+            }
 
             logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
         } catch (System.Exception) {
