@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 182109470}
   - component: {fileID: 182109469}
   - component: {fileID: 182109468}
-  - component: {fileID: 182109467}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -139,18 +138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &182109467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 182109466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37cd5e58f2f18fc91b0736fe603e07a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnerControllerV2
 --- !u!136 &182109468
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -450,7 +437,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 271180940}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93aa3f2736cd146b1b1b97dcff91a15f, type: 3}
   m_Name: 
@@ -1046,9 +1033,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19b5a53bff232647b8c4b81644e781b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreatorLibraryController
-  libraryFilePath: Assets/models.json
-  modelsDirectory: Models
-  logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
 --- !u!4 &1404944958
 Transform:
   m_ObjectHideFlags: 0

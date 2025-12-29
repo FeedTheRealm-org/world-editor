@@ -2,25 +2,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+[RequireComponent(typeof(UIDocument))]
 public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
     private CreatorLibraryController creatorLibrary;
-
-    [SerializeField]
-    private UIDocument HudLibraryDocument;
     private ScrollView assetContainer;
 
-    public void Initialize()
+    void Start()
     {
         creatorLibrary.Initialize();
-        assetContainer = HudLibraryDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
+        UIDocument hudVisualDocument = GetComponent<UIDocument>();
+        assetContainer = hudVisualDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
         RenderObjectButtons();
     }
 
     private void RenderObjectButtons()
     {
-        List<WorldObjectReference> worldObjects = creatorLibrary.GetObjects();
+        List<WorldObjectDefinition> worldObjects = creatorLibrary.GetObjects(
+            WorldObjectCategories.Structure
+        );
         foreach (var worldObject in worldObjects)
         {
             var assetButton = new Button() { text = worldObject.DisplayName };
@@ -28,7 +29,7 @@ public class HudLibraryController : MonoBehaviour
             {
                 Utils.WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
             };
-            assetButton.AddToClassList("assetListButtons");
+            assetButton.AddToClassList("libraryListButtons");
             assetContainer.Add(assetButton);
         }
     }

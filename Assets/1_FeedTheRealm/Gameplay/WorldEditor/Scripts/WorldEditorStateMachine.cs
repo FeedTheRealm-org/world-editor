@@ -12,7 +12,7 @@ public class WorldEditorStateMachine : MonoBehaviour
     private Logging.Logger logger;
     private IMakerState currentState;
 
-    public WorldObjectReference SelectedObject { get; private set; }
+    public WorldObjectDefinition SelectedObject { get; private set; }
 
     void Start()
     {
@@ -34,7 +34,7 @@ public class WorldEditorStateMachine : MonoBehaviour
         Utils.WorldObjectSelectionEvents.ObjectSelected -= OnWorldObjectSelected;
     }
 
-    private void OnWorldObjectSelected(WorldObjectReference reference)
+    private void OnWorldObjectSelected(WorldObjectDefinition reference)
     {
         SelectedObject = reference;
         SetState(new PlacingState(this));

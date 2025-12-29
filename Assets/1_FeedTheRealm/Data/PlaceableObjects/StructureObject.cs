@@ -2,80 +2,28 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
-public class WorldObjectReference
+public class StructureObject : WorldObjectDefinition
 {
-    public string id;
-    public Vector3 size = Vector3.one;
-    public Vector3 rotation;
-    public Vector3 offset;
     public string objectUrl;
-
-    // MOVE THIS TO ANOTHER COMPONENT
-    public bool isLocalAsset = true;
-
     private bool isObjectLoaded = false;
     private GameObject worldObject;
     private Transform visualRoot;
 
-    /// <summary>
-    /// Sets up the world object with the given parameters.
-    /// This is destined to be called before GetObject().
-    /// </summary>
-    public WorldObjectReference(
+    public StructureObject(
         string id,
-        string objectUrl,
         Vector3 size,
         Vector3 rotation,
         Vector3 offset,
-        bool isLocalAsset = true
+        string objectUrl
     )
+        : base(id, size, rotation, offset)
     {
-        this.id = id;
         this.objectUrl = objectUrl;
-        this.size = size;
-        this.rotation = rotation;
-        this.offset = offset;
-        this.isLocalAsset = isLocalAsset;
     }
 
-    public string Id
-    {
-        get => id;
-        set => id = value;
-    }
+    public override string DisplayName => objectUrl.Replace("_", " ").Replace("-", " ").ToUpper();
 
-    public Vector3 Size
-    {
-        get => size;
-        set => size = value;
-    }
-
-    public Vector3 Rotation
-    {
-        get => rotation;
-        set => rotation = value;
-    }
-
-    public string DisplayName
-    {
-        get
-        {
-            var name = objectUrl.Replace("_", " ");
-            var textInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
-            return textInfo.ToTitleCase(name);
-        }
-    }
-
-    public string ObjectUrl
-    {
-        get => objectUrl;
-        set => objectUrl = value;
-    }
-
-    /// <summary>
-    /// Asynchronously gets the world object instance with the applied transform.
-    /// </summary>
-    public async Task<GameObject> CreateWorldObjectInstance(int layerMask)
+    public override async Task<GameObject> GetObject(int layerMask)
     {
         GameObject instance;
         if (!isObjectLoaded)
@@ -92,14 +40,14 @@ public class WorldObjectReference
     private async Task LoadWorldObject()
     {
         worldObject = new GameObject($"Loaded_{DisplayName}");
-        await GltfHandler.Load(worldObject, objectUrl, isLocalAsset);
+        await GltfHandler.Load(worldObject, objectUrl);
         isObjectLoaded = true;
 
         foreach (Transform child in worldObject.transform)
         {
             child.gameObject.AddComponent<BoxCollider>();
         }
-        worldObject.name = DisplayName;
+        worldObject.name = id;
         worldObject.SetActive(false);
     }
 
@@ -122,7 +70,7 @@ public class WorldObjectReference
             visualRoot.localEulerAngles = rotation;
             visualRoot.localScale = Vector3.one;
         }
-        SetLayerRecursively(instance, layerMask); //TODO: check if this can be set in the loader insted
+        SetLayerRecursively(instance, layerMask);
     }
 
     private void SetLayerRecursively(GameObject obj, int layer)
