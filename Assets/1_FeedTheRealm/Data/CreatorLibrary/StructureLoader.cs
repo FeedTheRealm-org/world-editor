@@ -7,13 +7,21 @@ public class StructureLoader : ILoadable
     // TODO: make these configurable
     private string libraryFilePath = "Assets/models.json";
     private string modelsDirectory = "Models";
+    private Logging.Logger logger;
+    private List<WorldObject> objectDataReferences = new();
 
-    private List<WorldObjectDefinition> objectDataReferences = new();
+    public StructureLoader(Logging.Logger logger)
+    {
+        this.logger = logger;
+    }
 
     public void LoadLibrary()
     {
         libraryFilePath = System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
-        if (System.IO.File.Exists(libraryFilePath))
+        if (
+            System.IO.File.Exists(libraryFilePath)
+            && new System.IO.FileInfo(libraryFilePath).Length > 0
+        )
         {
             LoadStructureLibrary();
         }
@@ -23,21 +31,31 @@ public class StructureLoader : ILoadable
         }
     }
 
-    public List<WorldObjectDefinition> GetObjects()
+    public List<IPlaceable> GetObjects()
     {
-        Debug.Log("Retrieving structure objects: count = " + objectDataReferences.Count);
-        return objectDataReferences;
+        logger.Log(
+            "Retrieving structure objects: count = " + objectDataReferences.Count,
+            null,
+            Logging.LogType.Info
+        );
+        return objectDataReferences.Cast<IPlaceable>().ToList();
     }
 
     private void LoadStructureLibrary()
     {
-        Debug.Log("Loading structure library from: " + libraryFilePath);
+        logger.Log(
+            "Loading structure library from: " + libraryFilePath,
+            null,
+            Logging.LogType.Info
+        );
         string json = System.IO.File.ReadAllText(libraryFilePath);
-        List<WorldObjectDefinition> objects = JsonUtility
-            .FromJson<WorldObjectReferenceList>(json)
-            .objects;
+        List<WorldObject> objects = JsonUtility.FromJson<WorldObjectReferenceList>(json).objects;
         objectDataReferences = objects;
-        Debug.Log("Loaded structure objects: count = " + objectDataReferences.Count);
+        logger.Log(
+            "Loaded structure objects: count = " + objectDataReferences.Count,
+            null,
+            Logging.LogType.Info
+        );
     }
 
     private void GenerateLibrary(string outputPath)
@@ -48,7 +66,7 @@ public class StructureLoader : ILoadable
         );
         if (!System.IO.Directory.Exists(modelsPath))
         {
-            Debug.LogError($"Models directory not found at: {modelsPath}");
+            logger.Log($"Models directory not found at: {modelsPath}", null, Logging.LogType.Error);
             return;
         }
         string[] objectFiles = System
@@ -58,7 +76,7 @@ public class StructureLoader : ILoadable
         foreach (string objectFile in objectFiles)
         {
             string fileName = System.IO.Path.GetFileNameWithoutExtension(objectFile);
-            StructureObject worldRef = new(
+            WorldObject worldRef = new(
                 System.Guid.NewGuid().ToString(),
                 Vector3.one,
                 Vector3.zero,
@@ -78,5 +96,5 @@ public class StructureLoader : ILoadable
 [System.Serializable]
 public class WorldObjectReferenceList
 {
-    public List<WorldObjectDefinition> objects;
+    public List<WorldObject> objects;
 }

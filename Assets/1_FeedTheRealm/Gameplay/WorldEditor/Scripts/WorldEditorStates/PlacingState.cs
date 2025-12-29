@@ -37,7 +37,7 @@ public class PlacingState : IMakerState
             worldEditor.Log("No valid placement point found.", Logging.LogType.Warning);
             return;
         }
-        var instance = await worldEditor.SelectedObject.GetObject(objectLayerMask);
+        var instance = await worldEditor.SelectedObject.PlaceObject(objectLayerMask);
         instance.transform.position = hit.point;
         instance.layer = objectLayerMask;
         instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);

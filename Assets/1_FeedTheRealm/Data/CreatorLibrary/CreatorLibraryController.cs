@@ -1,26 +1,37 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 // TODO: refactor this to be a ScriptableObject-based library
 public class CreatorLibraryController : MonoBehaviour
 {
-    public StructureLoader structureLoader = new();
+    [SerializeField]
+    private List<SpawnerTypeGameObject> spawnerTypes;
+
+    [SerializeField]
+    private Logging.Logger logger;
+
+    private SpawnerLoader spawnerLoader;
+
+    public StructureLoader structureLoader;
 
     public void Initialize()
     {
+        spawnerLoader = new SpawnerLoader(logger, spawnerTypes);
+        spawnerLoader.LoadLibrary();
+
+        structureLoader = new StructureLoader(logger);
         structureLoader.LoadLibrary();
-        Debug.Log("Library loaded");
+        logger.Log("Library loaded", this, Logging.LogType.Info);
     }
 
-    public List<WorldObjectDefinition> GetObjects(WorldObjectCategories category)
+    public List<IPlaceable> GetObjects(WorldObjectCategories category)
     {
-        switch (category)
+        return category switch
         {
-            case WorldObjectCategories.Structure:
-                Debug.Log("Retrieving structure objects");
-                return structureLoader.GetObjects();
-            default:
-                return new List<WorldObjectDefinition>();
-        }
+            WorldObjectCategories.Structure => structureLoader.GetObjects(),
+            WorldObjectCategories.Spawner => spawnerLoader.GetObjects(),
+            _ => new List<IPlaceable>(),
+        };
     }
 }

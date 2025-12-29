@@ -4,9 +4,9 @@ namespace Utils
 {
     public static class WorldObjectSelectionEvents
     {
-        public static event Action<WorldObjectDefinition> ObjectSelected;
+        public static event Action<IPlaceable> ObjectSelected;
 
-        public static void RaiseObjectSelected(WorldObjectDefinition reference)
+        public static void RaiseObjectSelected(IPlaceable reference)
         {
             ObjectSelected?.Invoke(reference);
         }

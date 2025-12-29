@@ -2,28 +2,29 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
-public class StructureObject : WorldObjectDefinition
+public class WorldObject : IPlaceable
 {
+    public string id;
+    public Vector3 size = Vector3.one;
+    public Vector3 rotation;
+    public Vector3 offset;
     public string objectUrl;
     private bool isObjectLoaded = false;
     private GameObject worldObject;
     private Transform visualRoot;
 
-    public StructureObject(
-        string id,
-        Vector3 size,
-        Vector3 rotation,
-        Vector3 offset,
-        string objectUrl
-    )
-        : base(id, size, rotation, offset)
+    public WorldObject(string id, Vector3 size, Vector3 rotation, Vector3 offset, string objectUrl)
     {
+        this.id = id;
+        this.size = size;
+        this.rotation = rotation;
+        this.offset = offset;
         this.objectUrl = objectUrl;
     }
 
-    public override string DisplayName => objectUrl.Replace("_", " ").Replace("-", " ").ToUpper();
+    public string DisplayName => objectUrl.Replace("_", " ").Replace("-", " ").ToUpper();
 
-    public override async Task<GameObject> GetObject(int layerMask)
+    public async Task<GameObject> PlaceObject(int layerMask)
     {
         GameObject instance;
         if (!isObjectLoaded)

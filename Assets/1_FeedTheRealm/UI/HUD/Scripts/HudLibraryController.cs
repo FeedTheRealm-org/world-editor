@@ -7,21 +7,44 @@ public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
     private CreatorLibraryController creatorLibrary;
-    private ScrollView assetContainer;
+    private ScrollView libraryHUD;
+
+    private DropdownField libraryOptions;
 
     void Start()
     {
         creatorLibrary.Initialize();
         UIDocument hudVisualDocument = GetComponent<UIDocument>();
-        assetContainer = hudVisualDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
-        RenderObjectButtons();
+        libraryHUD = hudVisualDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
+        RenderDropDown();
+        RenderObjectButtons(WorldObjectCategories.Structure);
     }
 
-    private void RenderObjectButtons()
+    private void RenderDropDown()
     {
-        List<WorldObjectDefinition> worldObjects = creatorLibrary.GetObjects(
-            WorldObjectCategories.Structure
-        );
+        libraryOptions = GetComponent<UIDocument>()
+            .rootVisualElement.Q<DropdownField>("LibraryOptions");
+
+        libraryOptions.choices = new List<string>();
+        foreach (var category in System.Enum.GetValues(typeof(WorldObjectCategories)))
+        {
+            libraryOptions.choices.Add(category.ToString());
+        }
+
+        libraryOptions.RegisterValueChangedCallback(evt =>
+        {
+            Debug.Log("Category changed to: " + evt.newValue);
+            RenderObjectButtons(
+                (WorldObjectCategories)
+                    System.Enum.Parse(typeof(WorldObjectCategories), evt.newValue)
+            );
+        });
+    }
+
+    private void RenderObjectButtons(WorldObjectCategories category)
+    {
+        libraryHUD.Clear();
+        List<IPlaceable> worldObjects = creatorLibrary.GetObjects(category);
         foreach (var worldObject in worldObjects)
         {
             var assetButton = new Button() { text = worldObject.DisplayName };
@@ -30,7 +53,7 @@ public class HudLibraryController : MonoBehaviour
                 Utils.WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
             };
             assetButton.AddToClassList("libraryListButtons");
-            assetContainer.Add(assetButton);
+            libraryHUD.Add(assetButton);
         }
     }
 }
