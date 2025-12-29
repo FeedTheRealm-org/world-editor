@@ -23,11 +23,6 @@ public class SaveMenuController : MonoBehaviour
 
         WorldData worldData = dataPersistenceManager.CurrentWorldData;
 
-        if (player != null)
-        {
-            player.ToggleMovement(false);
-        }
-
         saveButton = root.Q<Button>("Save");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
@@ -37,21 +32,14 @@ public class SaveMenuController : MonoBehaviour
             nameInput.value = worldData.worldName;
         }
 
-        if (saveButton != null)
-            saveButton.clicked += OnSaveClicked;
-
-        if (closeButton != null)
-            closeButton.clicked += OnCloseClicked;
+        saveButton.clicked += OnSaveClicked;
+        closeButton.clicked += OnCloseClicked;
     }
 
     private void OnDisable()
     {
-        // Unhook to avoid leaks / duplicates
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-
-        if (closeButton != null)
-            closeButton.clicked -= OnCloseClicked;
+        saveButton.clicked -= OnSaveClicked;
+        closeButton.clicked -= OnCloseClicked;
     }
 
     private void OnSaveClicked()

@@ -1,6 +1,12 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
+public enum SpawnerType
+{
+    EnemySpawner,
+    PlayerSpawner,
+}
+
 [System.Serializable]
 public class SpawnerObject : IPlaceable
 {
@@ -26,10 +32,4 @@ public class SpawnerObject : IPlaceable
         instance.name = spawnerType.ToString();
         return instance;
     }
-}
-
-public enum SpawnerType
-{
-    EnemySpawner,
-    PlayerSpawner,
 }

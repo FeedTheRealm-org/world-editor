@@ -57,20 +57,14 @@ public class PublishMenuController : MonoBehaviour
             nameInput.value = worldData.worldName;
         }
 
-        if (publishButton != null)
-            publishButton.clicked += OnPublishClicked;
-
-        if (closeButton != null)
-            closeButton.clicked += OnCloseClicked;
+        publishButton.clicked += OnPublishClicked;
+        closeButton.clicked += OnCloseClicked;
     }
 
     private void OnDisable()
     {
-        if (publishButton != null)
-            publishButton.clicked -= OnPublishClicked;
-
-        if (closeButton != null)
-            closeButton.clicked -= OnCloseClicked;
+        publishButton.clicked -= OnPublishClicked;
+        closeButton.clicked -= OnCloseClicked;
     }
 
     private void OnPublishClicked()
