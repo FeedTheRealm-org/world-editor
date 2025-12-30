@@ -13,7 +13,7 @@
                         <ui:IntegerField name="ResetAfterKillsInput" label="Reset After Kills" value="1" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
                         <ui:FloatField name="ResetDelayInput" label="Reset Delay" value="1" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
                     </ui:VisualElement>
-                    <ui:Button text="Edit spawn" name="Add" class="cool-button" style="align-self: flex-end; margin-top: 10px; margin-bottom: 15px; padding: 10px 30px; font-size: 16px; max-height: 100px; max-width: 134px; width: 200px;"/>
+                    <ui:Button text="Edit spawn" name="Edit" class="cool-button" style="align-self: flex-end; margin-top: 10px; margin-bottom: 15px; padding: 10px 30px; font-size: 16px; max-height: 100px; max-width: 134px; width: 200px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

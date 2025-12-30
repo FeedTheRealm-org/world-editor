@@ -11,6 +11,9 @@ public class EnemySpawnAreaHUDController : MonoBehaviour {
     IntegerField resetKills;
     FloatField resetDelay;
     Button closeButton;
+    Button editButton;
+
+    EnemySpawnPlace spawnerPlace;
 
     void OnEnable() {
         document = GetComponent<UIDocument>();
@@ -21,20 +24,31 @@ public class EnemySpawnAreaHUDController : MonoBehaviour {
         resetKills = root.Q<IntegerField>("ResetAfterKillsInput");
         resetDelay = root.Q<FloatField>("ResetDelayInput");
         closeButton = root.Q<Button>("Close");
+        editButton = root.Q<Button>("Edit");
 
         closeButton.clicked += Hide;
+        editButton.clicked += Edit;
     }
 
-    public void Show(EnemySpawnAreaData spawnData) {
-        maxEnemies.value = spawnData.MaxEnemies;
-        spawnRate.value = spawnData.SpawnRate;
-        resetKills.value = spawnData.ResetAfterKills;
-        resetDelay.value = spawnData.ResetDelay;
+    public void Show(EnemySpawnPlace spawnerPlace) {
+        this.spawnerPlace = spawnerPlace;
 
-        maxEnemies.RegisterValueChangedCallback(e => spawnData.MaxEnemies = e.newValue);
-        spawnRate.RegisterValueChangedCallback(e => spawnData.SpawnRate = e.newValue);
-        resetKills.RegisterValueChangedCallback(e => spawnData.ResetAfterKills = e.newValue);
-        resetDelay.RegisterValueChangedCallback(e => spawnData.ResetDelay = e.newValue);
+        maxEnemies.value = this.spawnerPlace.spawnData.MaxEnemies;
+        spawnRate.value = this.spawnerPlace.spawnData.SpawnRate;
+        resetKills.value = this.spawnerPlace.spawnData.ResetAfterKills;
+        resetDelay.value = this.spawnerPlace.spawnData.ResetDelay;
+    }
+
+    public void Edit() {
+        spawnerPlace.NotifyChanges(new EnemySpawnAreaData(
+            spawnerPlace.transform.position,
+            1,
+            maxEnemies.value,
+            spawnRate.value,
+            resetKills.value,
+            resetDelay.value
+        ));
+        Hide();
     }
 
     public void Hide() {

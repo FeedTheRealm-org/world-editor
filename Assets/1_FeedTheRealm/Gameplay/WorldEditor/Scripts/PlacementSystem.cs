@@ -205,10 +205,20 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
         data.enemySpawnAreas = new List<EnemySpawnAreaData>();
         data.playerSpawnAreas = new List<PlayerSpawnAreaData>();
 
+
         foreach (PlacedAsset placementData in placementManager.GetAllPlacedObjects()) {
             switch (placementData.AssetDataId) {
                 case SpawnerTypes.EnemySpawn:
-                    data.enemySpawnAreas.Add(new EnemySpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));
+                    EnemySpawnAreaData enemySpawnDataFromSpawner = placementData.InstancedGameObject.GetComponent<EnemySpawnPlace>().GetData();
+                    data.enemySpawnAreas.Add(new EnemySpawnAreaData(
+                            placementData.Position,
+                            placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt(),
+                            enemySpawnDataFromSpawner.MaxEnemies,
+                            enemySpawnDataFromSpawner.SpawnRate,
+                            enemySpawnDataFromSpawner.ResetAfterKills,
+                            enemySpawnDataFromSpawner.ResetDelay
+                        )
+                    );
                     break;
                 case SpawnerTypes.PlayerSpawn:
                     data.playerSpawnAreas.Add(new PlayerSpawnAreaData(placementData.Position, placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt()));

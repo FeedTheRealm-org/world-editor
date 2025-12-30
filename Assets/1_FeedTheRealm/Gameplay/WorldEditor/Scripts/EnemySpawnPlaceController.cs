@@ -9,7 +9,7 @@ public class EnemySpawnPlace : MonoBehaviour {
 
     [SerializeField] GameObject enemySpawnHUD;
 
-    [SerializeField] EnemySpawnAreaData spawnData;
+    [SerializeField] public EnemySpawnAreaData spawnData;
 
     Color[] originalColors;
 
@@ -32,7 +32,15 @@ public class EnemySpawnPlace : MonoBehaviour {
     public void OpenHUD() {
         if (enemySpawnHUD != null) {
             enemySpawnHUD.SetActive(true);
-            enemySpawnHUD.GetComponent<EnemySpawnAreaHUDController>().Show(spawnData);
+            enemySpawnHUD.GetComponent<EnemySpawnAreaHUDController>().Show(this);
         }
+    }
+
+    public void NotifyChanges(EnemySpawnAreaData newData) {
+        spawnData = newData;
+    }
+
+    public EnemySpawnAreaData GetData() {
+        return spawnData;
     }
 }

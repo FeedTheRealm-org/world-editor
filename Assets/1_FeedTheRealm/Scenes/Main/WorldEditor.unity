@@ -1059,12 +1059,33 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1279374258766115829, guid: b8d8224b901583cee973a24582738043, type: 3}
   m_PrefabInstance: {fileID: 1645386354960940949}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2013465657}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec91834e866d8ef35a15ec83be1b24dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlacementSystem
+--- !u!1 &2013465657 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1278964745274817439, guid: b8d8224b901583cee973a24582738043, type: 3}
+  m_PrefabInstance: {fileID: 1645386354960940949}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2013465660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013465657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fcd92597728d2443b7ec9046750aea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnInteraction
+  cam: {fileID: 623825321}
+  enemySpawnMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &2090873056 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5246051850371158027, guid: b8d8224b901583cee973a24582738043, type: 3}
@@ -1436,7 +1457,10 @@ PrefabInstance:
     - {fileID: 1563248125848677339, guid: b8d8224b901583cee973a24582738043, type: 3}
     - {fileID: 8374687285931370228, guid: b8d8224b901583cee973a24582738043, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1278964745274817439, guid: b8d8224b901583cee973a24582738043, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2013465660}
   m_SourcePrefab: {fileID: 100100000, guid: b8d8224b901583cee973a24582738043, type: 3}
 --- !u!1001 &2032860383755164763
 PrefabInstance:
