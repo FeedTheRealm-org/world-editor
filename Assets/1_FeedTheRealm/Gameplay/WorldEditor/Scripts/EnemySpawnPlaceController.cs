@@ -13,6 +13,10 @@ public class EnemySpawnPlace : MonoBehaviour {
 
     Color[] originalColors;
 
+    void Start() {
+        spawnData = new EnemySpawnAreaData(transform.position, 1);
+    }
+
     void Awake() {
         if (renderers == null || renderers.Length == 0)
             renderers = GetComponentsInChildren<Renderer>();
