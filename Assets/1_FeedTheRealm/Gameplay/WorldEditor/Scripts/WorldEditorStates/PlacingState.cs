@@ -6,7 +6,6 @@ public class PlacingState : IMakerState
     private WorldEditorStateMachine worldEditor;
 
     private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
-    private int objectLayerMask = LayerMask.NameToLayer("WorldObject"); // TODO: review to move this to a world editor config
 
     public PlacingState(WorldEditorStateMachine worldEditor)
     {
@@ -37,9 +36,10 @@ public class PlacingState : IMakerState
             worldEditor.Log("No valid placement point found.", Logging.LogType.Warning);
             return;
         }
-        var instance = await worldEditor.SelectedObject.GetPlaceableObject(objectLayerMask);
+        var instance = await worldEditor.SelectedObject.GetPlaceableObject(
+            WorldLayers.WorldObjectLayer
+        );
         instance.transform.position = hit.point;
-        instance.layer = objectLayerMask;
         instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
     }
 

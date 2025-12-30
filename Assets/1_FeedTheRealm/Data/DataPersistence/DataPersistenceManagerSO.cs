@@ -98,4 +98,22 @@ public class DataPersistenceManagerSO : ScriptableObject
             .OfType<IPersistent>();
         return new List<IPersistent>(found);
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(DataPersistenceManagerSO))]
+    public class DataPersistenceManagerSOEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            DataPersistenceManagerSO manager = (DataPersistenceManagerSO)target;
+
+            if (GUILayout.Button("Unset Active World"))
+            {
+                manager.NewWorld();
+            }
+        }
+    }
+#endif
 }

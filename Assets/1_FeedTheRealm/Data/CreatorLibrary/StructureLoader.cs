@@ -116,7 +116,7 @@ public class StructureLoader : ILoadable
             structureData.objectName
         );
         GameObject structureInstance = await structureObject.GetPlaceableObject(
-            LayerMask.NameToLayer("WorldObject") // TODO: move this to a config
+            WorldLayers.WorldObjectLayer
         );
         structureInstance.transform.position = structureData.position;
     }
