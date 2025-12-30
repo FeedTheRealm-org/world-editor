@@ -14,7 +14,7 @@ public class EnemySpawnPlace : MonoBehaviour {
     Color[] originalColors;
 
     void Start() {
-        spawnData = new EnemySpawnAreaData(transform.position, 1);
+        spawnData = new EnemySpawnAreaData(transform.position);
     }
 
     void Awake() {

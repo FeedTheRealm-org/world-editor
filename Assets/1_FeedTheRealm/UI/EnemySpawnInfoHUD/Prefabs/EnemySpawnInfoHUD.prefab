@@ -68,3 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea6b919db9c5b4845aca51550e15fb82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnHUDController
+  EnemyDatabase: {fileID: 11400000, guid: 7a4964f205eeec471b4c45901aba0f21, type: 2}

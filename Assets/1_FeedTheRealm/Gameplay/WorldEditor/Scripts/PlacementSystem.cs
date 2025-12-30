@@ -212,7 +212,7 @@ public class PlacementSystem : MonoBehaviour, IDataPersistence {
                     EnemySpawnAreaData enemySpawnDataFromSpawner = placementData.InstancedGameObject.GetComponent<EnemySpawnPlace>().GetData();
                     data.enemySpawnAreas.Add(new EnemySpawnAreaData(
                             placementData.Position,
-                            placementData.InstancedGameObject.GetComponent<SpawnerController>().GetSizeAsInt(),
+                            enemySpawnDataFromSpawner.Size,
                             enemySpawnDataFromSpawner.MaxEnemies,
                             enemySpawnDataFromSpawner.SpawnRate,
                             enemySpawnDataFromSpawner.ResetAfterKills,

@@ -8,10 +8,12 @@
             <ui:VisualElement name="ContentRow" style="flex-direction: row; align-items: flex-start; gap: 20px; padding-left: 3%; padding-right: 3%; flex-grow: 1; align-self: stretch;">
                 <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column;">
                     <ui:VisualElement name="EnemySpawnContainer" style="flex-direction: column; align-self: stretch; margin-bottom: 15px; align-content: auto;">
+                        <ui:FloatField name="SizeInput" label="Size" value="0" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
                         <ui:IntegerField name="MaxEnemiesInput" label="Max Enemies" value="0" style="flex: 1; flex-direction: column; color: rgb(0, 0, 0);"/>
                         <ui:FloatField name="SpawnRateInput" label="Spawn Rate" value="0" style="flex: 1; flex-direction: column; color: rgb(0, 0, 0);"/>
                         <ui:IntegerField name="ResetAfterKillsInput" label="Reset After Kills" value="1" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
                         <ui:FloatField name="ResetDelayInput" label="Reset Delay" value="1" style="flex: 1; align-content: auto; flex-direction: column; color: rgb(0, 0, 0);"/>
+                        <ui:DropdownField name="EnemyForSpawnDropdown" label="Enemy for spawn" choices="Random,Wave,Patrol" style="flex: 1; flex-direction: column; color: rgb(0, 0, 0);"/>
                     </ui:VisualElement>
                     <ui:Button text="Edit spawn" name="Edit" class="cool-button" style="align-self: flex-end; margin-top: 10px; margin-bottom: 15px; padding: 10px 30px; font-size: 16px; max-height: 100px; max-width: 134px; width: 200px;"/>
                 </ui:VisualElement>
