@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,12 +20,17 @@ public class MenuBarController : MonoBehaviour
     {
         foreach (var option in menuOptions)
         {
-            GameObject menupanel = Instantiate(option.panel);
-            menupanel.SetActive(false);
+            GameObject menuPanel = Instantiate(option.panel);
+            menuPanel.SetActive(false);
+            MenuController menuController =
+                menuPanel.GetComponent<MenuController>()
+                ?? throw new InvalidOperationException(
+                    $"MenuBarController: The panel for menu option '{option.Name}' is not a MenuObject component."
+                );
             var menuButton = new Button() { text = option.Name };
             menuButton.clicked += () =>
             {
-                menupanel.SetActive(true);
+                menuController.OpenMenu();
             };
             menuButton.AddToClassList("menuButtons");
             menuBar.Add(menuButton);

@@ -3,22 +3,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using Models;
 using UnityEngine;
+using Utils;
 
-public class StructureLoader : ILoadable
+[CreateAssetMenu(
+    fileName = "StructureLoader",
+    menuName = "Scriptable Objects/WorldEditor/StructureLoader"
+)]
+public class StructureLoaderSO : ScriptableObject, ILoadable
 {
-    // TODO: make these configurable
-    private string libraryFilePath = "Assets/models.json";
-    private string modelsDirectory = "Models";
+    [SerializeField]
     private Logging.Logger logger;
+
+    [SerializeField]
+    private string libraryFilePath = "Assets/models.json";
+
+    [SerializeField]
+    private string modelsDirectory = "Models";
     private List<StructureObject> structureObjects = new();
 
-    public StructureLoader(Logging.Logger logger)
+    void OnEnable()
     {
-        this.logger = logger;
+        SelectionRaiser.WorldSelected += LoadWorld;
+    }
+
+    void OnDisable()
+    {
+        SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
     public void LoadLibrary()
     {
+        logger.Log("Loading structure library...", this, Logging.LogType.Info);
+        structureObjects.Clear();
         libraryFilePath = System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
         if (
             System.IO.File.Exists(libraryFilePath)
@@ -29,37 +45,32 @@ public class StructureLoader : ILoadable
         }
         else
         {
+            logger.Log(
+                "Structure library file not found. Generating new library...",
+                this,
+                Logging.LogType.Warning
+            );
             GenerateLibrary(libraryFilePath);
         }
+        logger.Log(
+            "Structure library loaded. Count: " + structureObjects.Count,
+            this,
+            Logging.LogType.Info
+        );
     }
 
     public List<IPlaceable> GetObjects()
     {
-        logger.Log(
-            "Retrieving structure objects: count = " + structureObjects.Count,
-            null,
-            Logging.LogType.Info
-        );
         return structureObjects.Cast<IPlaceable>().ToList();
     }
 
     private void LoadStructureLibrary()
     {
-        logger.Log(
-            "Loading structure library from: " + libraryFilePath,
-            null,
-            Logging.LogType.Info
-        );
         string json = System.IO.File.ReadAllText(libraryFilePath);
         List<StructureObject> objects = JsonUtility
             .FromJson<WorldObjectReferenceList>(json)
             .objects;
         structureObjects = objects;
-        logger.Log(
-            "Loaded structure objects: count = " + structureObjects.Count,
-            null,
-            Logging.LogType.Info
-        );
     }
 
     private void GenerateLibrary(string outputPath)
@@ -96,7 +107,7 @@ public class StructureLoader : ILoadable
         System.IO.File.WriteAllText(outputPath, json);
     }
 
-    public static void LoadWorld(WorldData worldData)
+    public void LoadWorld(WorldData worldData)
     {
         if (worldData.objectPlacementData == null)
             return;
@@ -106,7 +117,7 @@ public class StructureLoader : ILoadable
         }
     }
 
-    private static async Task OnLoadAsync(StructureData structureData)
+    private async Task OnLoadAsync(StructureData structureData)
     {
         StructureObject structureObject = new(
             structureData.id,

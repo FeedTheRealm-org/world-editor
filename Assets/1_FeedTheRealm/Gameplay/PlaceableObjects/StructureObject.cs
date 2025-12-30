@@ -36,7 +36,6 @@ public class StructureObject : IPlaceable
         GameObject instance;
         if (!isObjectLoaded)
         {
-            Debug.Log("World object not loaded yet. Loading object...");
             await LoadWorldObject();
         }
         instance = Object.Instantiate(worldObject);

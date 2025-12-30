@@ -1,18 +1,16 @@
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 using API;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class PublishMenuController : MonoBehaviour
+public class PublishMenuController : MenuController
 {
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
-
-    // [SerializeField]
-    // private AssetLibrarySO assetLibrary;
 
     [SerializeField]
     private WorldService worldService;
@@ -23,12 +21,9 @@ public class PublishMenuController : MonoBehaviour
     [SerializeField]
     private ItemsService itemsService;
 
-    // [SerializeField]
-    // private Maker player;
-
     [SerializeField]
     private Session.Session session;
-    private Models.WorldData worldData;
+    private WorldData worldData;
 
     private Button publishButton;
     private Button closeButton;
@@ -42,12 +37,7 @@ public class PublishMenuController : MonoBehaviour
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
 
-        worldData = dataPersistenceManager.CurrentWorldData;
-
-        // if (player != null)
-        // {
-        //     player.ToggleMovement(false);
-        // }
+        //worldData = dataPersistenceManager.CurrentWorldData;
 
         publishButton = root.Q<Button>("Publish");
         closeButton = root.Q<Button>("Close");
@@ -72,10 +62,10 @@ public class PublishMenuController : MonoBehaviour
     private void OnPublishClicked()
     {
         Debug.Log("PublishMenuController: Publishing world.");
-        StartCoroutine(PublishAll());
+        _ = PublishAll();
     }
 
-    private IEnumerator PublishAll()
+    private async Task PublishAll()
     {
         //Validate input
         WorldData worldData = dataPersistenceManager.CurrentWorldData;
@@ -85,42 +75,40 @@ public class PublishMenuController : MonoBehaviour
         {
             Debug.LogError("World name cannot be empty.");
             CloseMenu();
-            yield break;
+            return;
         }
         if (worldData.objectPlacementData == null || worldData.objectPlacementData.Count == 0)
         {
             Debug.LogError("World has no objects placed. Cannot publish an empty world.");
             CloseMenu();
-            yield break;
+            return;
         }
         if (string.IsNullOrEmpty(filePath))
         {
             Debug.LogWarning("World file path is empty. Saving world before publishing.");
             dataPersistenceManager.SaveWorld(worldData.worldName);
             CloseMenu();
-            yield break;
+            return;
         }
         if (string.IsNullOrEmpty(Token))
         {
             Debug.LogError("Session token is missing.");
             CloseMenu();
-            yield break;
+            return;
         }
 
         //Upload world and wait
         string worldId = null;
         string worldError = null;
 
-        yield return StartCoroutine(
-            worldService.CreateWorld(
-                worldData,
-                Token,
-                (id, error) =>
-                {
-                    worldId = id;
-                    worldError = error;
-                }
-            )
+        await worldService.PublishWorld(
+            worldData,
+            Token,
+            (id, error) =>
+            {
+                worldId = id;
+                worldError = error;
+            }
         );
 
         foreach (var sprite in worldData.consumableItems)
@@ -145,17 +133,15 @@ public class PublishMenuController : MonoBehaviour
 
             string type = Path.GetExtension(path).Replace(".", "").ToLower();
 
-            yield return StartCoroutine(
-                itemsService.UploadItemSprite(
-                    spriteBytes,
-                    $"{sprite.name}{Path.GetExtension(path)}",
-                    $"image/{type}",
-                    (data, error) =>
-                    {
-                        createdSprite = data;
-                        itemError = error;
-                    }
-                )
+            await itemsService.UploadItemSprite(
+                spriteBytes,
+                $"{sprite.name}{Path.GetExtension(path)}",
+                $"image/{type}",
+                (data, error) =>
+                {
+                    createdSprite = data;
+                    itemError = error;
+                }
             );
 
             if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
@@ -171,7 +157,7 @@ public class PublishMenuController : MonoBehaviour
         {
             Debug.LogError($"Failed to publish world: {worldError}");
             CloseMenu();
-            yield break;
+            return;
         }
 
         Debug.Log($"World published successfully! ID: {worldId}");
@@ -182,21 +168,19 @@ public class PublishMenuController : MonoBehaviour
         // {
         //     Debug.LogWarning("No assets found to upload for this world.");
         //     CloseMenu();
-        //     yield break;
+        //     return;
         // }
 
         string uploadError = null;
 
-        // yield return StartCoroutine(
-        //     modelUploadService.UploadAssets(
-        //         assets,
-        //         worldId,
-        //         Token,
-        //         (error) =>
-        //         {
-        //             uploadError = error;
-        //         }
-        //     )
+        // await modelUploadService.UploadAssets(
+        //     assets,
+        //     worldId,
+        //     Token,
+        //     (error) =>
+        //     {
+        //         uploadError = error;
+        //     }
         // );
 
         if (!string.IsNullOrEmpty(uploadError))
@@ -210,17 +194,12 @@ public class PublishMenuController : MonoBehaviour
 
         Debug.Log("Publishing complete. Closing menu.");
         CloseMenu();
+        CloseMenu();
     }
 
     private void OnCloseClicked()
     {
-        Debug.Log("SaveMenuController: Closing save menu.");
+        Debug.Log("PublishMenuController: Closing publish menu.");
         CloseMenu();
-    }
-
-    private void CloseMenu()
-    {
-        //player.ToggleMovement(true);
-        gameObject.SetActive(false);
     }
 }

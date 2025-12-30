@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using Models;
+using Utils;
 
 public interface ILoadable
 {
     void LoadLibrary();
     List<IPlaceable> GetObjects();
-    static void LoadWorld(WorldData worldData)
-    {
-        throw new System.NotImplementedException();
-    }
+    void LoadWorld(WorldData worldData);
 }

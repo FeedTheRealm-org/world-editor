@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19b5a53bff232647b8c4b81644e781b2, type: 3}
-  m_Name: CreatorLibrary
-  m_EditorClassIdentifier: Assembly-CSharp::CreatorLibrarySO
+  m_Script: {fileID: 11500000, guid: 05df18066466895098511e313c77c8cd, type: 3}
+  m_Name: StructureLoader
+  m_EditorClassIdentifier: Assembly-CSharp::StructureLoaderSO
   logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
-  spawnerLoader: {fileID: 11400000, guid: b46f0740f404ffe708e6c0ade9f4b0d6, type: 2}
-  structureLoader: {fileID: 11400000, guid: bc94fda36a29aca7dbe436f8c09b6035, type: 2}
+  libraryFilePath: Assets/models.json
+  modelsDirectory: Models

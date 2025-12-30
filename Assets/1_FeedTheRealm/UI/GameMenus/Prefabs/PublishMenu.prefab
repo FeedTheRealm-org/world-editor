@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2385784492049444227}
   - component: {fileID: 3577323213893295326}
-  m_Layer: 0
+  - component: {fileID: 1546281547035943485}
+  m_Layer: 5
   m_Name: PublishMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,3 +56,20 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &1546281547035943485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3678517506282993326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c0c1a3b3b900413ab2474653acedec, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PublishMenuController
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+  worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
+  modelUploadService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
+  itemsService: {fileID: 11400000, guid: 17f57e963fa180443986afad2ea382b5, type: 2}
+  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}

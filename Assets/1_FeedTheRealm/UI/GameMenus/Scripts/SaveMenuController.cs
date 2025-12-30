@@ -3,13 +3,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class SaveMenuController : MonoBehaviour
+public class SaveMenuController : MenuController
 {
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
-
-    [SerializeField]
-    public MakerInputReader inputReader;
 
     private Button saveButton;
     private Button closeButton;
@@ -20,26 +17,23 @@ public class SaveMenuController : MonoBehaviour
     {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
-
-        WorldData worldData = dataPersistenceManager.CurrentWorldData;
-
         saveButton = root.Q<Button>("Save");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
-
+        WorldData worldData = dataPersistenceManager.CurrentWorldData;
         if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
         {
             nameInput.value = worldData.worldName;
         }
 
         saveButton.clicked += OnSaveClicked;
-        closeButton.clicked += OnCloseClicked;
+        closeButton.clicked += CloseMenu;
     }
 
     private void OnDisable()
     {
         saveButton.clicked -= OnSaveClicked;
-        closeButton.clicked -= OnCloseClicked;
+        closeButton.clicked -= CloseMenu;
     }
 
     private void OnSaveClicked()
@@ -55,16 +49,5 @@ public class SaveMenuController : MonoBehaviour
         dataPersistenceManager.SaveWorld(worldName);
 
         CloseMenu();
-    }
-
-    private void OnCloseClicked()
-    {
-        Debug.Log("SaveMenuController: Closing save menu.");
-        CloseMenu();
-    }
-
-    private void CloseMenu()
-    {
-        gameObject.SetActive(false);
     }
 }

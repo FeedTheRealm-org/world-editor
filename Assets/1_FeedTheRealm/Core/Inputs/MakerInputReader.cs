@@ -28,6 +28,14 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
         controls.Player.Disable();
     }
 
+    public void ToggleInput(bool isEnabled)
+    {
+        if (isEnabled)
+            controls.Player.Enable();
+        else
+            controls.Player.Disable();
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.performed)

@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 370544900135714223}
   - component: {fileID: 1638142084274025338}
   - component: {fileID: 5062968973939956887}
-  - component: {fileID: 5339368182821717391}
-  - component: {fileID: 3222218628231360418}
+  - component: {fileID: -5073203916795117295}
+  - component: {fileID: 7579879578991499288}
   m_Layer: 11
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -92,7 +92,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5339368182821717391
+--- !u!114 &-5073203916795117295
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,12 +101,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5537282333109391366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07680df8cd483d99c8843cc6db9477dd, type: 3}
+  m_Script: {fileID: 11500000, guid: a3596f3b7762694a1920a0afbc26e356, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnerController
-  spawnerColor: {r: 0.28990862, g: 0.9428239, b: 0.14999805, a: 0.5019608}
---- !u!136 &3222218628231360418
-CapsuleCollider:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerController
+  spawnerColor: {r: 0.24781048, g: 1, b: 0, a: 1}
+--- !u!135 &7579879578991499288
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -123,8 +123,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
+  serializedVersion: 3
+  m_Radius: 0.5
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}

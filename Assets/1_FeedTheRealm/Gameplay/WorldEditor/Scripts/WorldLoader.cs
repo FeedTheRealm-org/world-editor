@@ -1,5 +1,6 @@
 using Models;
 using UnityEngine;
+using Utils;
 
 public class WorldLoader : MonoBehaviour
 {
@@ -11,18 +12,15 @@ public class WorldLoader : MonoBehaviour
 
     void Awake()
     {
-        LoadWorldData(dataPersistenceManager.CurrentWorldData);
+        WorldData worldData = dataPersistenceManager.CurrentWorldData;
+        LoadWorld(worldData);
     }
 
-    public void LoadWorldData(WorldData worldData)
+    // TODO: consider adding a loading screen or something to avoid having the user
+    // see how the world is being populated.
+    public void LoadWorld(WorldData worldData)
     {
-        if (worldData == null)
-        {
-            logger.Log("No world data to load.", this, Logging.LogType.Warning);
-            return;
-        }
-
-        StructureLoader.LoadWorld(worldData);
-        logger.Log("World data loaded", this, Logging.LogType.Info);
+        logger.Log("Raising world selected event...", this, Logging.LogType.Info);
+        SelectionRaiser.RaiseSelected(worldData);
     }
 }

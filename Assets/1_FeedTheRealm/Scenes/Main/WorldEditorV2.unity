@@ -331,6 +331,8 @@ MonoBehaviour:
   menuOptions:
   - Name: Save World
     panel: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}
+  - Name: Publish World
+    panel: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
 --- !u!1 &287809947
 GameObject:
   m_ObjectHideFlags: 0

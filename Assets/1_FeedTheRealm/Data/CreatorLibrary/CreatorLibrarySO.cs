@@ -11,18 +11,15 @@ public class CreatorLibrarySO : ScriptableObject
     private Logging.Logger logger;
 
     [SerializeField]
-    private List<SpawnerTypeGameObject> spawnerTypes;
+    private SpawnerLoaderSO spawnerLoader;
 
-    private SpawnerLoader spawnerLoader;
-
-    public StructureLoader structureLoader;
+    [SerializeField]
+    public StructureLoaderSO structureLoader;
 
     public void Initialize()
     {
-        spawnerLoader = new SpawnerLoader(logger, spawnerTypes);
+        logger.Log("Initializing Creator Library...", this, Logging.LogType.Info);
         spawnerLoader.LoadLibrary();
-
-        structureLoader = new StructureLoader(logger);
         structureLoader.LoadLibrary();
         logger.Log("Library loaded", this, Logging.LogType.Info);
     }

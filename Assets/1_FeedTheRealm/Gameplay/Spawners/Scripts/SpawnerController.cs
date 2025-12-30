@@ -1,7 +1,6 @@
 using Models;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 public class SpawnerController : MonoBehaviour, IPersistent
 {
     [SerializeField]
@@ -28,9 +27,8 @@ public class SpawnerController : MonoBehaviour, IPersistent
         }
     }
 
-    public void SaveData(ref WorldData worldData)
+    public virtual void SaveData(ref WorldData worldData)
     {
-        EnemySpawnAreaData spawnAreaData = new(transform.position, transform.localScale.x);
-        worldData.enemySpawnAreas.Add(spawnAreaData);
+        throw new System.NotImplementedException();
     }
 }
