@@ -20,23 +20,17 @@ public class DataPersistenceManagerSO : ScriptableObject
     [SerializeField]
     private Logging.Logger logger;
 
+    // [SerializeField]
+    // private CreatorLibrary creatorLibrary;
+
     [SerializeField]
     private ConsumableItems consumableItemsDatabase;
 
-    private readonly WorldHandler worldDataHandler = new();
     private WorldData worldData = null;
-    private List<IDataPersistence> dataPersistenceObjects = new();
+    private List<IPersistent> dataPersistenceObjects = new();
 
     public WorldData CurrentWorldData => worldData;
 
-    private List<IDataPersistence> FindAllDataPersistenceObjects()
-    {
-        var found = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .OfType<IDataPersistence>();
-        return new List<IDataPersistence>(found);
-    }
-
-    // --- Core Methods ---
     public void NewWorld()
     {
         worldData = new WorldData();
@@ -46,24 +40,6 @@ public class DataPersistenceManagerSO : ScriptableObject
     {
         worldData = null;
     }
-
-#if UNITY_EDITOR
-    [CustomEditor(typeof(DataPersistenceManagerSO))]
-    public class DataPersistenceManagerSOEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
-
-            DataPersistenceManagerSO manager = (DataPersistenceManagerSO)target;
-
-            if (GUILayout.Button("Unset Active World"))
-            {
-                manager.NewWorld();
-            }
-        }
-    }
-#endif
 
     public void SaveWorld(string worldName)
     {
@@ -80,62 +56,30 @@ public class DataPersistenceManagerSO : ScriptableObject
         worldData.worldName = worldName;
         logger.Log("Starting world save...", this, Logging.LogType.Info);
 
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        foreach (IPersistent dataPersistenceObj in dataPersistenceObjects)
         {
-            logger.Log(
-                $"Saving data from: {dataPersistenceObj.GetType().Name}",
-                this,
-                Logging.LogType.Info
-            );
             dataPersistenceObj.SaveData(ref worldData);
         }
+        logger.Log(
+            $"Saved {dataPersistenceObjects.Count} data persistence objects.",
+            this,
+            Logging.LogType.Info
+        );
 
         worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
 
-        worldDataHandler.Save(worldData, saveDirectory, fileExtension);
+        WorldFileHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
     }
 
     public void SetActiveWorld(string dataFileName)
     {
-        worldData = worldDataHandler.Load(dataFileName, saveDirectory);
-    }
-
-    public void LoadWorld()
-    {
-        if (worldData == null)
-        {
-            NewWorld();
-            logger.Log($"No world data set, creating new world.", this, Logging.LogType.Warning);
-            return;
-        }
-        try
-        {
-            logger.Log("Loading world data...", this, Logging.LogType.Info);
-            dataPersistenceObjects = FindAllDataPersistenceObjects();
-            foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-            {
-                dataPersistenceObj.LoadData(worldData);
-            }
-
-            consumableItemsDatabase.LoadConsumableItems(worldData.consumableItems);
-
-            logger.Log("World data loaded successfully!", this, Logging.LogType.Info);
-        }
-        catch (System.Exception)
-        {
-            logger.Log(
-                "Error loading world data, initiating a new world",
-                this,
-                Logging.LogType.Error
-            );
-            NewWorld();
-        }
+        worldData = WorldFileHandler.Load(dataFileName, saveDirectory);
     }
 
     public List<string> ListAllWorlds()
     {
-        return worldDataHandler.GetAllWorlds(saveDirectory, fileExtension);
+        return WorldFileHandler.GetAllWorlds(saveDirectory, fileExtension);
     }
 
     public string GetCurrentWorldFilePath()
@@ -145,6 +89,13 @@ public class DataPersistenceManagerSO : ScriptableObject
             logger.Log("No active world data found.", this, Logging.LogType.Warning);
             return null;
         }
-        return worldDataHandler.GetWorldFilePath(worldData.worldName, saveDirectory, fileExtension);
+        return WorldFileHandler.GetWorldFilePath(worldData.worldName, saveDirectory, fileExtension);
+    }
+
+    private List<IPersistent> FindAllDataPersistenceObjects()
+    {
+        var found = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            .OfType<IPersistent>();
+        return new List<IPersistent>(found);
     }
 }

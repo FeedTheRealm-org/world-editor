@@ -9,8 +9,8 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UIDocument))]
 public class AddItemMenuController : MonoBehaviour
 {
-    [SerializeField]
-    private Maker player;
+    // [SerializeField]
+    // private Maker player;
 
     [SerializeField]
     private ConsumableItems consumableItemsDatabase;
@@ -47,10 +47,10 @@ public class AddItemMenuController : MonoBehaviour
             return;
         }
 
-        if (player != null)
-        {
-            player.ToggleMovement(false);
-        }
+        // if (player != null)
+        // {
+        //     player.ToggleMovement(false);
+        // }
 
         addButton = root.Q<Button>("Add");
         closeButton = root.Q<Button>("Close");
@@ -379,10 +379,10 @@ public class AddItemMenuController : MonoBehaviour
 
     private void CloseMenu()
     {
-        if (player != null)
-        {
-            player.ToggleMovement(true);
-        }
+        // if (player != null)
+        // {
+        //     player.ToggleMovement(true);
+        // }
         gameObject.SetActive(false);
     }
 }

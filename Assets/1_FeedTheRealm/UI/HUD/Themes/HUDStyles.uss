@@ -64,11 +64,11 @@
     margin: 0;
     padding: 0;
     font-size: 100%;
-    border-right-width: 0.25px;
-    border-left-width: 0;
+    border-right-width: 0;
+    border-left-width: 0.5px;
     height: 100%;
     width: auto;
-    border-bottom-width: 1px;
+    border-bottom-width: 0;
     justify-content: flex-end;
     align-self: center;
     align-content: flex-end;
@@ -89,6 +89,7 @@
     background-color: rgba(0, 0, 0, 0.5);
     border-bottom-width: 0;
     align-self: end;
+    padding-left: 70%;
 }
 
 .libraryOptions {

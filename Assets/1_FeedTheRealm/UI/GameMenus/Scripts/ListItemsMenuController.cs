@@ -10,8 +10,8 @@ public class ListItemsMenuController : MonoBehaviour
     [SerializeField]
     private ConsumableItems consumableItemsDatabase;
 
-    [SerializeField]
-    private Maker player;
+    // [SerializeField]
+    // private Maker player;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -50,8 +50,8 @@ public class ListItemsMenuController : MonoBehaviour
         if (closeButton != null)
             closeButton.clicked += CloseMenu;
 
-        if (player != null)
-            player.ToggleMovement(false);
+        // if (player != null)
+        //     player.ToggleMovement(false);
 
         SetUpListView();
         container.Add(listView);
@@ -176,8 +176,8 @@ public class ListItemsMenuController : MonoBehaviour
     {
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
-        if (player != null)
-            player.ToggleMovement(true);
+        // if (player != null)
+        //     player.ToggleMovement(true);
     }
 
     private void RefreshItems()
@@ -224,8 +224,8 @@ public class ListItemsMenuController : MonoBehaviour
 
     private void CloseMenu()
     {
-        if (player != null)
-            player.ToggleMovement(true);
+        // if (player != null)
+        //     player.ToggleMovement(true);
         gameObject.SetActive(false);
     }
 

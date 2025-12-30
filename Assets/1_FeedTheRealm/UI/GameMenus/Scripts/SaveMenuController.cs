@@ -9,7 +9,7 @@ public class SaveMenuController : MonoBehaviour
     private DataPersistenceManagerSO dataPersistenceManager;
 
     [SerializeField]
-    private Maker player;
+    public MakerInputReader inputReader;
 
     private Button saveButton;
     private Button closeButton;
@@ -65,7 +65,6 @@ public class SaveMenuController : MonoBehaviour
 
     private void CloseMenu()
     {
-        player.ToggleMovement(true);
         gameObject.SetActive(false);
     }
 }

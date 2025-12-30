@@ -22,8 +22,8 @@ public class ConsumableItemHUDController : MonoBehaviour
     [SerializeField]
     private ConsumableItems consumableItemsDatabase;
 
-    [SerializeField]
-    private Maker player;
+    // [SerializeField]
+    // private Maker player;
 
     private ListView itemListView;
     private Button addItemButton;
@@ -57,8 +57,8 @@ public class ConsumableItemHUDController : MonoBehaviour
         if (closeConsumableButton != null)
             closeConsumableButton.clicked += CloseConsumableHUD;
 
-        if (player != null)
-            player.ToggleMovement(false);
+        // if (player != null)
+        //     player.ToggleMovement(false);
 
         if (itemListView != null)
             SetupListView();
@@ -73,8 +73,8 @@ public class ConsumableItemHUDController : MonoBehaviour
             listItemsButton.clicked -= OpenListItemsMenu;
         if (closeConsumableButton != null)
             closeConsumableButton.clicked -= CloseConsumableHUD;
-        if (player != null)
-            player.ToggleMovement(true);
+        // if (player != null)
+        //     player.ToggleMovement(true);
     }
 
     private void SetupListView()

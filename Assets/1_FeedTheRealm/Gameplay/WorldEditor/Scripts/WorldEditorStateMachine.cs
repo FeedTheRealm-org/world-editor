@@ -24,14 +24,14 @@ public class WorldEditorStateMachine : MonoBehaviour
         inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
         inputReader.RemoveEvent += OnRemoveAction;
-        Utils.WorldObjectSelectionEvents.ObjectSelected += OnWorldObjectSelected;
+        Utils.SelectionRaiser.ObjectSelected += OnWorldObjectSelected;
     }
 
     private void OnDisable()
     {
         inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
-        Utils.WorldObjectSelectionEvents.ObjectSelected -= OnWorldObjectSelected;
+        Utils.SelectionRaiser.ObjectSelected -= OnWorldObjectSelected;
     }
 
     private void OnWorldObjectSelected(IPlaceable reference)

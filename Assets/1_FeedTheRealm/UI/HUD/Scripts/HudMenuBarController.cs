@@ -19,13 +19,12 @@ public class MenuBarController : MonoBehaviour
     {
         foreach (var option in menuOptions)
         {
+            GameObject menupanel = Instantiate(option.panel);
+            menupanel.SetActive(false);
             var menuButton = new Button() { text = option.Name };
             menuButton.clicked += () =>
             {
-                if (option.panel != null)
-                {
-                    option.panel.SetActive(!option.panel.activeSelf);
-                }
+                menupanel.SetActive(true);
             };
             menuButton.AddToClassList("menuButtons");
             menuBar.Add(menuButton);

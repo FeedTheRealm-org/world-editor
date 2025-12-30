@@ -4,9 +4,9 @@ using System.IO;
 using Models;
 using UnityEngine;
 
-public class WorldHandler
+public class WorldFileHandler
 {
-    public void Save(WorldData worldData, string dataDirPath, string fileExtension)
+    public static void Save(WorldData worldData, string dataDirPath, string fileExtension)
     {
         string saveFilePath = Application.persistentDataPath;
         dataDirPath = Path.Combine(saveFilePath, dataDirPath);
@@ -18,7 +18,6 @@ public class WorldHandler
             {
                 Directory.CreateDirectory(dataDirPath);
             }
-
             if (string.IsNullOrEmpty(data) || data.Trim() == "{}")
             {
                 Debug.LogWarning("No data to save.");
@@ -26,8 +25,6 @@ public class WorldHandler
             }
             string dataFileName = CreateFileName(worldData.worldName, fileExtension);
             string fullPath = Path.Combine(dataDirPath, dataFileName);
-            // using statement implements proper cleanup for resources,
-            // this is used here to properly write and close the file
             using FileStream fs = new(fullPath, FileMode.Create);
             using StreamWriter writer = new(fs);
             writer.Write(data);
@@ -38,7 +35,7 @@ public class WorldHandler
         }
     }
 
-    public WorldData Load(string dataFileName, string dataDirPath)
+    public static WorldData Load(string dataFileName, string dataDirPath)
     {
         try
         {
@@ -62,7 +59,11 @@ public class WorldHandler
         }
     }
 
-    public string GetWorldFilePath(string worldName, string dataDirPath, string fileExtension)
+    public static string GetWorldFilePath(
+        string worldName,
+        string dataDirPath,
+        string fileExtension
+    )
     {
         string saveFilePath = Application.persistentDataPath;
         string dataFileName = CreateFileName(worldName, fileExtension);
@@ -70,7 +71,7 @@ public class WorldHandler
         return Path.Combine(fullDataDirPath, dataFileName);
     }
 
-    public List<string> GetAllWorlds(string dataDirPath, string fileExtension)
+    public static List<string> GetAllWorlds(string dataDirPath, string fileExtension)
     {
         List<string> worldFiles = new();
         dataDirPath = Path.Combine(Application.persistentDataPath, dataDirPath);
@@ -97,7 +98,7 @@ public class WorldHandler
         return worldFiles;
     }
 
-    private string CreateFileName(string worldName, string fileExtension)
+    private static string CreateFileName(string worldName, string fileExtension)
     {
         if (string.IsNullOrWhiteSpace(worldName))
         {

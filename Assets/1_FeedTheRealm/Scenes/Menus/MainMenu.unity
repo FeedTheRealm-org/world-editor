@@ -177,15 +177,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: gameScene.sceneAsset
-      value:
+      value: 
       objectReference: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: dataPersistenceManager
-      value:
+      value: 
       objectReference: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: newWorldScene.sceneName
-      value: WorldEditor
+      value: WorldEditorV2
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: loadWorldScene.sceneName
@@ -193,11 +193,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: newWorldScene.sceneAsset
-      value:
-      objectReference: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
+      value: 
+      objectReference: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
     - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: loadWorldScene.sceneAsset
-      value:
+      value: 
       objectReference: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2

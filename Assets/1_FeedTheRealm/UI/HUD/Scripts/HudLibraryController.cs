@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
-    private CreatorLibraryController creatorLibrary;
+    private CreatorLibrarySO creatorLibrary;
     private ScrollView libraryHUD;
 
     private DropdownField libraryOptions;
@@ -50,7 +50,7 @@ public class HudLibraryController : MonoBehaviour
             var assetButton = new Button() { text = worldObject.DisplayName };
             assetButton.clicked += () =>
             {
-                Utils.WorldObjectSelectionEvents.RaiseObjectSelected(worldObject);
+                Utils.SelectionRaiser.RaiseSelected(worldObject);
             };
             assetButton.AddToClassList("libraryListButtons");
             libraryHUD.Add(assetButton);

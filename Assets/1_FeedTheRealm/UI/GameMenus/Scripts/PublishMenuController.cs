@@ -11,8 +11,8 @@ public class PublishMenuController : MonoBehaviour
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
-    [SerializeField]
-    private AssetLibrarySO assetLibrary;
+    // [SerializeField]
+    // private AssetLibrarySO assetLibrary;
 
     [SerializeField]
     private WorldService worldService;
@@ -23,8 +23,8 @@ public class PublishMenuController : MonoBehaviour
     [SerializeField]
     private ItemsService itemsService;
 
-    [SerializeField]
-    private Maker player;
+    // [SerializeField]
+    // private Maker player;
 
     [SerializeField]
     private Session.Session session;
@@ -43,10 +43,10 @@ public class PublishMenuController : MonoBehaviour
 
         worldData = dataPersistenceManager.CurrentWorldData;
 
-        if (player != null)
-        {
-            player.ToggleMovement(false);
-        }
+        // if (player != null)
+        // {
+        //     player.ToggleMovement(false);
+        // }
 
         publishButton = root.Q<Button>("Publish");
         closeButton = root.Q<Button>("Close");
@@ -175,27 +175,27 @@ public class PublishMenuController : MonoBehaviour
         Debug.Log($"World published successfully! ID: {worldId}");
 
         //Upload assets and wait
-        var assets = assetLibrary.GetAssetsFromWorld(worldData);
-        if (assets == null || assets.Count == 0)
-        {
-            Debug.LogWarning("No assets found to upload for this world.");
-            CloseMenu();
-            yield break;
-        }
+        // var assets = null //= assetLibrary.GetAssetsFromWorld(worldData);
+        // if (assets == null || assets.Count == 0)
+        // {
+        //     Debug.LogWarning("No assets found to upload for this world.");
+        //     CloseMenu();
+        //     yield break;
+        // }
 
         string uploadError = null;
 
-        yield return StartCoroutine(
-            modelUploadService.UploadAssets(
-                assets,
-                worldId,
-                Token,
-                (error) =>
-                {
-                    uploadError = error;
-                }
-            )
-        );
+        // yield return StartCoroutine(
+        //     modelUploadService.UploadAssets(
+        //         assets,
+        //         worldId,
+        //         Token,
+        //         (error) =>
+        //         {
+        //             uploadError = error;
+        //         }
+        //     )
+        // );
 
         if (!string.IsNullOrEmpty(uploadError))
         {
@@ -218,7 +218,7 @@ public class PublishMenuController : MonoBehaviour
 
     private void CloseMenu()
     {
-        player.ToggleMovement(true);
+        //player.ToggleMovement(true);
         gameObject.SetActive(false);
     }
 }

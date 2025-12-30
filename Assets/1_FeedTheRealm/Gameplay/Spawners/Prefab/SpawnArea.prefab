@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 370544900135714223}
   - component: {fileID: 1638142084274025338}
   - component: {fileID: 5062968973939956887}
-  - component: {fileID: 5205082054473666131}
   - component: {fileID: 5339368182821717391}
+  - component: {fileID: -9068374517711402304}
   m_Layer: 0
   m_Name: SpawnArea
   m_TagString: Untagged
@@ -91,7 +91,20 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &5205082054473666131
+--- !u!114 &5339368182821717391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5537282333109391366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07680df8cd483d99c8843cc6db9477dd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnerController
+  spawnerColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!136 &-9068374517711402304
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,17 +127,3 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &5339368182821717391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5537282333109391366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07680df8cd483d99c8843cc6db9477dd, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnerController
-  spawnerMaterialTemplate: {fileID: 2100000, guid: 9e119c9f813b3d999a32c1e1f2cec4b6, type: 2}
-  spawnerSize: 1

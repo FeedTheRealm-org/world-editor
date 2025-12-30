@@ -11,7 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19b5a53bff232647b8c4b81644e781b2, type: 3}
   m_Name: CreatorLibrary
-  m_EditorClassIdentifier: Assembly-CSharp::CreatorLibrary
-  libraryFilePath: Assets/models.json
-  modelsDirectory: Models
-  logger: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::CreatorLibrarySO
+  logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
+  spawnerTypes:
+  - spawnerType: 0
+    spawnRadius: 3
+    spawnerPrefab: {fileID: 5537282333109391366, guid: eb253cc0ad330bb6c8999ccf918cff0d, type: 3}
+  - spawnerType: 1
+    spawnRadius: 2
+    spawnerPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}

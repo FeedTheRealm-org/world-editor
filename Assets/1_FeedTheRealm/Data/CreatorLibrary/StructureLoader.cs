@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Models;
 using UnityEngine;
 
 public class StructureLoader : ILoadable
@@ -8,7 +10,7 @@ public class StructureLoader : ILoadable
     private string libraryFilePath = "Assets/models.json";
     private string modelsDirectory = "Models";
     private Logging.Logger logger;
-    private List<WorldObject> objectDataReferences = new();
+    private List<StructureObject> structureObjects = new();
 
     public StructureLoader(Logging.Logger logger)
     {
@@ -34,11 +36,11 @@ public class StructureLoader : ILoadable
     public List<IPlaceable> GetObjects()
     {
         logger.Log(
-            "Retrieving structure objects: count = " + objectDataReferences.Count,
+            "Retrieving structure objects: count = " + structureObjects.Count,
             null,
             Logging.LogType.Info
         );
-        return objectDataReferences.Cast<IPlaceable>().ToList();
+        return structureObjects.Cast<IPlaceable>().ToList();
     }
 
     private void LoadStructureLibrary()
@@ -49,10 +51,12 @@ public class StructureLoader : ILoadable
             Logging.LogType.Info
         );
         string json = System.IO.File.ReadAllText(libraryFilePath);
-        List<WorldObject> objects = JsonUtility.FromJson<WorldObjectReferenceList>(json).objects;
-        objectDataReferences = objects;
+        List<StructureObject> objects = JsonUtility
+            .FromJson<WorldObjectReferenceList>(json)
+            .objects;
+        structureObjects = objects;
         logger.Log(
-            "Loaded structure objects: count = " + objectDataReferences.Count,
+            "Loaded structure objects: count = " + structureObjects.Count,
             null,
             Logging.LogType.Info
         );
@@ -76,25 +80,50 @@ public class StructureLoader : ILoadable
         foreach (string objectFile in objectFiles)
         {
             string fileName = System.IO.Path.GetFileNameWithoutExtension(objectFile);
-            WorldObject worldRef = new(
+            StructureObject structureObject = new(
                 System.Guid.NewGuid().ToString(),
                 Vector3.one,
                 Vector3.zero,
                 Vector3.zero,
                 fileName
             );
-            objectDataReferences.Add(worldRef);
+            structureObjects.Add(structureObject);
         }
         string json = JsonUtility.ToJson(
-            new WorldObjectReferenceList { objects = objectDataReferences },
+            new WorldObjectReferenceList { objects = structureObjects },
             true
         );
         System.IO.File.WriteAllText(outputPath, json);
+    }
+
+    public static void LoadWorld(WorldData worldData)
+    {
+        if (worldData.objectPlacementData == null)
+            return;
+        foreach (var structureData in worldData.objectPlacementData)
+        {
+            _ = OnLoadAsync(structureData);
+        }
+    }
+
+    private static async Task OnLoadAsync(StructureData structureData)
+    {
+        StructureObject structureObject = new(
+            structureData.id,
+            structureData.size,
+            structureData.rotation,
+            structureData.offset,
+            structureData.objectName
+        );
+        GameObject structureInstance = await structureObject.GetPlaceableObject(
+            LayerMask.NameToLayer("WorldObject") // TODO: move this to a config
+        );
+        structureInstance.transform.position = structureData.position;
     }
 }
 
 [System.Serializable]
 public class WorldObjectReferenceList
 {
-    public List<WorldObject> objects;
+    public List<StructureObject> objects;
 }
