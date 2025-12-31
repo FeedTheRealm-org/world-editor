@@ -83,13 +83,31 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
         );
         if (!System.IO.Directory.Exists(modelsPath))
         {
-            logger.Log($"Models directory not found at: {modelsPath}", null, Logging.LogType.Error);
+            System.IO.Directory.CreateDirectory(modelsPath);
+            logger.Log(
+                "Models directory not found. Created new directory at: "
+                    + modelsPath
+                    + " make sure to add model files here. and regenerate the library.",
+                this,
+                Logging.LogType.Warning
+            );
             return;
         }
         string[] objectFiles = System
             .IO.Directory.GetFiles(modelsPath, "*.*")
             .Where(f => !f.EndsWith(".meta"))
             .ToArray();
+        if (objectFiles.Length == 0)
+        {
+            logger.Log(
+                "No model files found in models directory: "
+                    + modelsPath
+                    + " make sure to add model files here. and regenerate the library.",
+                this,
+                Logging.LogType.Warning
+            );
+            return;
+        }
         foreach (string objectFile in objectFiles)
         {
             string fileName = System.IO.Path.GetFileNameWithoutExtension(objectFile);
@@ -106,6 +124,11 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
             new WorldObjectReferenceList { objects = structureObjects },
             true
         );
+        string outputDirectory = System.IO.Path.GetDirectoryName(outputPath);
+        if (!System.IO.Directory.Exists(outputDirectory))
+        {
+            System.IO.Directory.CreateDirectory(outputDirectory);
+        }
         System.IO.File.WriteAllText(outputPath, json);
     }
 
