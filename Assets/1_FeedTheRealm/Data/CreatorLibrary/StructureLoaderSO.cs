@@ -107,25 +107,43 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
         System.IO.File.WriteAllText(outputPath, json);
     }
 
+    public string GetModelFilePath(string structureName)
+    {
+        return System.IO.Path.Combine(
+            Application.streamingAssetsPath,
+            modelsDirectory,
+            structureName + ".glb"
+        );
+    }
+
+    public bool IsModelPresent(string structureName)
+    {
+        string modelPath = GetModelFilePath(structureName);
+        return System.IO.File.Exists(modelPath);
+    }
+
     public void LoadWorld(WorldData worldData)
     {
         if (worldData.objectPlacementData == null)
             return;
         foreach (var structureData in worldData.objectPlacementData)
         {
+            logger.Log(
+                $"Loading structure: {structureData.structureName} at position {structureData.position}",
+                this,
+                Logging.LogType.Info
+            );
             _ = OnLoadAsync(structureData);
         }
     }
 
     private async Task OnLoadAsync(StructureData structureData)
     {
-        StructureObject structureObject = new(
-            structureData.id,
-            structureData.size,
-            structureData.rotation,
-            structureData.offset,
-            structureData.objectName
-        );
+        StructureObject structureObject = structureObjects.Find(obj => obj.id == structureData.id);
+        structureObject.size = structureData.size;
+        structureObject.rotation = structureData.rotation;
+        structureObject.offset = structureData.offset;
+
         GameObject structureInstance = await structureObject.GetPlaceableObject(
             WorldLayers.WorldObjectLayer
         );

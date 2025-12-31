@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
-  m_Name: LibraryLogger
+  m_Name: MenuLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 0
-  _loggerPrefix: CreatorLibrary
-  _loggerColor: {r: 0.6279364, g: 0.9371856, b: 0.2708135, a: 0}
+  _showLogs: 1
+  _loggerPrefix: 'Menu '
+  _loggerColor: {r: 0.5559776, g: 0, b: 0.6087914, a: 0}

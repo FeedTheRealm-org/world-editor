@@ -52,6 +52,7 @@ public class DataPersistenceManagerSO : ScriptableObject
             );
             NewWorld();
         }
+        ClearWorld();
         dataPersistenceObjects = FindAllDataPersistenceObjects();
         worldData.worldName = worldName;
         logger.Log("Starting world save...", this, Logging.LogType.Info);
@@ -82,14 +83,14 @@ public class DataPersistenceManagerSO : ScriptableObject
         return WorldFileHandler.GetAllWorlds(saveDirectory, fileExtension);
     }
 
-    public string GetCurrentWorldFilePath()
+    public string GetWorldFile(string worldName)
     {
-        if (worldData == null)
-        {
-            logger.Log("No active world data found.", this, Logging.LogType.Warning);
-            return null;
-        }
-        return WorldFileHandler.GetWorldFilePath(worldData.worldName, saveDirectory, fileExtension);
+        return worldName + fileExtension;
+    }
+
+    public bool WorldFileExists(string worldName)
+    {
+        return WorldFileHandler.IsWorldFilePresent(worldName, saveDirectory, fileExtension);
     }
 
     private List<IPersistent> FindAllDataPersistenceObjects()
@@ -97,6 +98,16 @@ public class DataPersistenceManagerSO : ScriptableObject
         var found = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<IPersistent>();
         return new List<IPersistent>(found);
+    }
+
+    // this is due to when saving, the data gets duplicated, so we clear it first
+    // in the future we should figure a consistent saving mechanism to avoid this
+    private void ClearWorld()
+    {
+        worldData.enemySpawnAreas.Clear();
+        worldData.playerSpawnAreas.Clear();
+        worldData.objectPlacementData.Clear();
+        worldData.consumableItems.Clear();
     }
 
 #if UNITY_EDITOR

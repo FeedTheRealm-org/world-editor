@@ -59,7 +59,7 @@ public class StructureObject : IPlaceable
         worldObject.name = id;
 
         StructureController controller = worldObject.AddComponent<StructureController>();
-        controller.objectName = objectUrl;
+        controller.structureName = objectUrl;
         controller.id = id;
         controller.size = size;
         controller.rotation = rotation;

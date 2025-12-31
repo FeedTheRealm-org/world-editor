@@ -10,7 +10,13 @@ using UnityEngine.UIElements;
 public class PublishMenuController : MenuController
 {
     [SerializeField]
+    private Logging.Logger logger;
+
+    [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
+
+    [SerializeField]
+    private StructureLoaderSO structureLoader;
 
     [SerializeField]
     private WorldService worldService;
@@ -23,26 +29,27 @@ public class PublishMenuController : MenuController
 
     [SerializeField]
     private Session.Session session;
-    private WorldData worldData;
 
+    // -------- Ui related elements --------
     private Button publishButton;
     private Button closeButton;
     private TextField nameInput;
     private TextField descriptionInput;
     private VisualElement root;
-    private string Token => session != null ? session.APIToken : "";
+    private WorldData worldData;
+    private string fileName;
 
     private void OnEnable()
     {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
 
-        //worldData = dataPersistenceManager.CurrentWorldData;
-
         publishButton = root.Q<Button>("Publish");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
         descriptionInput = root.Q<TextField>("DescriptionInput");
+
+        worldData = dataPersistenceManager.CurrentWorldData;
 
         if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
         {
@@ -50,86 +57,146 @@ public class PublishMenuController : MenuController
         }
 
         publishButton.clicked += OnPublishClicked;
-        closeButton.clicked += OnCloseClicked;
+        closeButton.clicked += CloseMenu;
     }
 
     private void OnDisable()
     {
         publishButton.clicked -= OnPublishClicked;
-        closeButton.clicked -= OnCloseClicked;
+        closeButton.clicked -= CloseMenu;
     }
 
-    private void OnPublishClicked()
+    private async void OnPublishClicked()
     {
-        Debug.Log("PublishMenuController: Publishing world.");
-        _ = PublishAll();
+        logger.Log("PublishMenuController: Publishing world.", this, Logging.LogType.Info);
+        await PublishAll();
     }
 
     private async Task PublishAll()
     {
-        //Validate input
-        WorldData worldData = dataPersistenceManager.CurrentWorldData;
-        string filePath = dataPersistenceManager.GetCurrentWorldFilePath();
+        if (!ValidatePublish() || !ValidateModels())
+        {
+            logger.Log(
+                "PublishMenuController: Cannot publish world, validation failed: ",
+                this,
+                Logging.LogType.Warning
+            );
+            return;
+        }
+        (string worldId, string worldError) = await PublishWorld();
+        if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId))
+        {
+            logger.Log($"Failed to publish world: {worldError}", this, Logging.LogType.Warning);
+            CloseMenu();
+            return;
+        }
+        string uploadError = await PublishModels(worldId);
+        if (!string.IsNullOrEmpty(uploadError))
+        {
+            logger.Log($"Failed to publish models: {uploadError}", this, Logging.LogType.Warning);
+            CloseMenu();
+            return;
+        }
+        logger.Log("World published successfully!", this, Logging.LogType.Info);
 
+        // we save the world id to the local world data for future reference
+        worldData.id = worldId;
+        dataPersistenceManager.SaveWorld(worldData.worldName);
+
+        CloseMenu();
+    }
+
+    private bool ValidatePublish()
+    {
         if (string.IsNullOrEmpty(worldData?.worldName))
         {
-            Debug.LogError("World name cannot be empty.");
-            CloseMenu();
-            return;
+            logger.Log("World name cannot be empty.", this, Logging.LogType.Warning);
+            return false;
         }
+        if (string.IsNullOrEmpty(session?.APIToken))
+        {
+            logger.Log("Session token is missing.", this, Logging.LogType.Warning);
+            return false;
+        }
+        return true;
+    }
+
+    private bool ValidateModels()
+    {
         if (worldData.objectPlacementData == null || worldData.objectPlacementData.Count == 0)
         {
-            Debug.LogError("World has no objects placed. Cannot publish an empty world.");
-            CloseMenu();
-            return;
+            logger.Log(
+                "World has no objects placed. Cannot publish an empty world.",
+                this,
+                Logging.LogType.Warning
+            );
+            return false;
         }
-        if (string.IsNullOrEmpty(filePath))
+        foreach (var structure in worldData.objectPlacementData)
         {
-            Debug.LogWarning("World file path is empty. Saving world before publishing.");
-            dataPersistenceManager.SaveWorld(worldData.worldName);
-            CloseMenu();
-            return;
-        }
-        if (string.IsNullOrEmpty(Token))
-        {
-            Debug.LogError("Session token is missing.");
-            CloseMenu();
-            return;
-        }
-
-        //Upload world and wait
-        string worldId = null;
-        string worldError = null;
-
-        await worldService.PublishWorld(
-            worldData,
-            Token,
-            (id, error) =>
+            if (!structureLoader.IsModelPresent(structure.structureName))
             {
-                worldId = id;
-                worldError = error;
+                logger.Log(
+                    $"Model '{structure.structureName}' is missing. Cannot publish world.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return false;
             }
-        );
+        }
+        return true;
+    }
 
+    private async Task<(string, string)> PublishWorld()
+    {
+        dataPersistenceManager.SaveWorld(worldData.worldName);
+        fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
+        (string worldId, string worldError) = await worldService.PublishWorld(
+            worldData,
+            fileName,
+            descriptionInput.value,
+            session.APIToken
+        );
+        return (worldId, worldError);
+    }
+
+    private async Task<string> PublishModels(string worldId)
+    {
+        foreach (var structure in worldData.objectPlacementData)
+        {
+            structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
+        }
+        return await modelUploadService.UploadModels(
+            worldData.objectPlacementData,
+            worldId,
+            session.APIToken
+        );
+    }
+
+    // TODO: re-implement item publishing
+    private async Task PublishItems()
+    {
         foreach (var sprite in worldData.consumableItems)
         {
-            Debug.Log($"Uploading sprite for consumable item '{sprite.name}'");
+            logger.Log(
+                $"Uploading sprite for consumable item '{sprite.name}'",
+                this,
+                Logging.LogType.Info
+            );
             string path = SpriteStorage.GetFilePathFromIdOrPath(sprite.spriteId);
             byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
             if (spriteBytes == null || spriteBytes.Length == 0)
             {
-                Debug.LogWarning(
-                    $"Sprite bytes for asset ID '{sprite.spriteId}' are null or empty. Skipping upload."
+                logger.Log(
+                    $"Sprite bytes for asset ID '{sprite.spriteId}' are null or empty. Skipping upload.",
+                    this,
+                    Logging.LogType.Warning
                 );
                 continue;
             }
 
             string itemError = null;
             SpriteCreatedData createdSprite = null;
-
-            Debug.Log($"Sprite name: {path}");
-            Debug.Log($"Sprite path: {spriteBytes.Length}");
-            Debug.Log($"Uploading sprite from path: {Path.GetExtension(path)}");
 
             string type = Path.GetExtension(path).Replace(".", "").ToLower();
 
@@ -146,60 +213,18 @@ public class PublishMenuController : MenuController
 
             if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
             {
-                Debug.LogError($"Failed to upload sprite for item '{sprite.name}': {itemError}");
+                logger.Log(
+                    $"Failed to upload sprite for item '{sprite.name}': {itemError}",
+                    this,
+                    Logging.LogType.Warning
+                );
                 continue;
             }
-
-            Debug.Log($"Sprite uploaded successfully for item '{sprite.name}'");
+            logger.Log(
+                $"Sprite uploaded successfully for item '{sprite.name}'",
+                this,
+                Logging.LogType.Info
+            );
         }
-
-        if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId))
-        {
-            Debug.LogError($"Failed to publish world: {worldError}");
-            CloseMenu();
-            return;
-        }
-
-        Debug.Log($"World published successfully! ID: {worldId}");
-
-        //Upload assets and wait
-        // var assets = null //= assetLibrary.GetAssetsFromWorld(worldData);
-        // if (assets == null || assets.Count == 0)
-        // {
-        //     Debug.LogWarning("No assets found to upload for this world.");
-        //     CloseMenu();
-        //     return;
-        // }
-
-        string uploadError = null;
-
-        // await modelUploadService.UploadAssets(
-        //     assets,
-        //     worldId,
-        //     Token,
-        //     (error) =>
-        //     {
-        //         uploadError = error;
-        //     }
-        // );
-
-        if (!string.IsNullOrEmpty(uploadError))
-        {
-            Debug.LogError($"Failed to upload assets: {uploadError}");
-        }
-        else
-        {
-            Debug.Log("All assets uploaded successfully!");
-        }
-
-        Debug.Log("Publishing complete. Closing menu.");
-        CloseMenu();
-        CloseMenu();
-    }
-
-    private void OnCloseClicked()
-    {
-        Debug.Log("PublishMenuController: Closing publish menu.");
-        CloseMenu();
     }
 }

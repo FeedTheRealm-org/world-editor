@@ -18,6 +18,7 @@ public class CreatorLibrarySO : ScriptableObject
 
     public void Initialize()
     {
+        // TODO: consider using an event based system like in the loader
         logger.Log("Initializing Creator Library...", this, Logging.LogType.Info);
         spawnerLoader.LoadLibrary();
         structureLoader.LoadLibrary();

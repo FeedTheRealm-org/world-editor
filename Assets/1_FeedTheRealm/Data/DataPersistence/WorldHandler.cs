@@ -4,7 +4,7 @@ using System.IO;
 using Models;
 using UnityEngine;
 
-public class WorldFileHandler
+public static class WorldFileHandler
 {
     public static void Save(WorldData worldData, string dataDirPath, string fileExtension)
     {
@@ -59,16 +59,15 @@ public class WorldFileHandler
         }
     }
 
-    public static string GetWorldFilePath(
+    public static bool IsWorldFilePresent(
         string worldName,
         string dataDirPath,
         string fileExtension
     )
     {
-        string saveFilePath = Application.persistentDataPath;
-        string dataFileName = CreateFileName(worldName, fileExtension);
-        string fullDataDirPath = Path.Combine(saveFilePath, dataDirPath);
-        return Path.Combine(fullDataDirPath, dataFileName);
+        string fileName = CreateFileName(worldName, fileExtension);
+        string fullPath = Path.Combine(Application.persistentDataPath, dataDirPath, fileName);
+        return File.Exists(fullPath);
     }
 
     public static List<string> GetAllWorlds(string dataDirPath, string fileExtension)

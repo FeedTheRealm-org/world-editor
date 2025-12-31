@@ -79,10 +79,10 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable
 
     private async Task LoadSpawnerAsync(SpawnerType type, float radius, Vector3 position)
     {
-        GameObject spawnerPrefab = spawnerDefinitions
-            .FirstOrDefault(s => s.spawnerType == type)
-            ?.spawnerPrefab;
-        SpawnerObject spawnerObject = new(type, spawnRadius: radius, spawnerPrefab);
+        SpawnerObject spawnerObject = spawnerObjects.FirstOrDefault(s => s.spawnerType == type);
+
+        spawnerObject.spawnRadius = radius;
+
         GameObject spawnerInstance = await spawnerObject.GetPlaceableObject(
             WorldLayers.WorldObjectLayer
         );

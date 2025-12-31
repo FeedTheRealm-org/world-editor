@@ -10,7 +10,7 @@ public class WorldLoader : MonoBehaviour
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
-    void Awake()
+    void Start()
     {
         WorldData worldData = dataPersistenceManager.CurrentWorldData;
         LoadWorld(worldData);

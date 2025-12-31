@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05df18066466895098511e313c77c8cd, type: 3}
   m_Name: StructureLoader
   m_EditorClassIdentifier: Assembly-CSharp::StructureLoaderSO
-  logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
-  libraryFilePath: Assets/models.json
+  logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  libraryFilePath: /home/sev/.config/unity3d/AtusGames/World creator/Assets/models.json
   modelsDirectory: Models
