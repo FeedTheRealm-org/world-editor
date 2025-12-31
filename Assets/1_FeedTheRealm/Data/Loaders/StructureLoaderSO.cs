@@ -126,28 +126,27 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
     {
         if (worldData.objectPlacementData == null)
             return;
-        foreach (var structureData in worldData.objectPlacementData)
-        {
-            logger.Log(
-                $"Loading structure: {structureData.structureName} at position {structureData.position}",
-                this,
-                Logging.LogType.Info
-            );
-            _ = OnLoadAsync(structureData);
-        }
+        LoadLibrary(); // we make sure the library is loaded before placing objects
+        _ = OnLoadAsync(worldData.objectPlacementData);
     }
 
-    private async Task OnLoadAsync(StructureData structureData)
+    private async Task OnLoadAsync(List<StructureData> structureDatas)
     {
-        StructureObject structureObject = structureObjects.Find(obj => obj.id == structureData.id);
-        structureObject.size = structureData.size;
-        structureObject.rotation = structureData.rotation;
-        structureObject.offset = structureData.offset;
-
-        GameObject structureInstance = await structureObject.GetPlaceableObject(
-            WorldLayers.WorldObjectLayer
-        );
-        structureInstance.transform.position = structureData.position;
+        foreach (var structureData in structureDatas)
+        {
+            StructureObject structureObject = structureObjects.Find(obj =>
+                obj.id == structureData.id
+            );
+            if (structureObject == null)
+                continue;
+            structureObject.size = structureData.size;
+            structureObject.rotation = structureData.rotation;
+            structureObject.offset = structureData.offset;
+            GameObject structureInstance = await structureObject.GetPlaceableObject(
+                WorldLayers.WorldObjectLayer
+            );
+            structureInstance.transform.position = structureData.position;
+        }
     }
 }
 
