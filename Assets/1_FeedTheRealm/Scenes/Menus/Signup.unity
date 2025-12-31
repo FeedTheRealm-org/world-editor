@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
       propertyPath: targetScene.sceneAsset
-      value: 
+      value:
       objectReference: {fileID: 102900000, guid: f37098309a5dfe64493d8f80366c4a51, type: 3}
     - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
       propertyPath: otherFormScene.sceneName
@@ -145,7 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2027004548986043206, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
       propertyPath: otherFormScene.sceneAsset
-      value: 
+      value:
       objectReference: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
     - target: {fileID: 9070586079720592906, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2

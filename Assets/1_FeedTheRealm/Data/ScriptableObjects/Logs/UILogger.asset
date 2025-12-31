@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: UILogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   _showLogs: 0
-  _loggerPrefix: 
+  _loggerPrefix:
   _loggerColor: {r: 0.24701849, g: 0.8584906, b: 0.5482986, a: 0}

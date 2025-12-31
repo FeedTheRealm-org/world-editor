@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d8ef747376caaea9bbfb5ca2023e129, type: 3}
+  m_Name: SpawnerLoader
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnerLoaderSO
+  logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  spawnerDefinitions:
+  - spawnerType: 0
+    spawnRadius: 3
+    spawnerPrefab: {fileID: 5537282333109391366, guid: eb253cc0ad330bb6c8999ccf918cff0d, type: 3}
+  - spawnerType: 1
+    spawnRadius: 3
+    spawnerPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
