@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: CreatorLibrary
   m_EditorClassIdentifier: Assembly-CSharp::CreatorLibrarySO
   logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}
-  spawnerLoader: {fileID: 11400000, guid: b46f0740f404ffe708e6c0ade9f4b0d6, type: 2}
-  structureLoader: {fileID: 11400000, guid: bc94fda36a29aca7dbe436f8c09b6035, type: 2}
+  loaders:
+  - category: 0
+    loader: {fileID: 11400000, guid: bc94fda36a29aca7dbe436f8c09b6035, type: 2}
+  - category: 1
+    loader: {fileID: 11400000, guid: b46f0740f404ffe708e6c0ade9f4b0d6, type: 2}
