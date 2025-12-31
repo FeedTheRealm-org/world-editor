@@ -31,14 +31,16 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
         SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
+    private string PersistentLibraryFilePath =>
+        System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
+
     public void LoadLibrary()
     {
         logger.Log("Loading structure library...", this, Logging.LogType.Info);
         structureObjects.Clear();
-        libraryFilePath = System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
         if (
-            System.IO.File.Exists(libraryFilePath)
-            && new System.IO.FileInfo(libraryFilePath).Length > 0
+            System.IO.File.Exists(PersistentLibraryFilePath)
+            && new System.IO.FileInfo(PersistentLibraryFilePath).Length > 0
         )
         {
             LoadStructureLibrary();
@@ -50,7 +52,7 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
                 this,
                 Logging.LogType.Warning
             );
-            GenerateLibrary(libraryFilePath);
+            GenerateLibrary(PersistentLibraryFilePath);
         }
         logger.Log(
             "Structure library loaded. Count: " + structureObjects.Count,
@@ -66,7 +68,7 @@ public class StructureLoaderSO : ScriptableObject, ILoadable
 
     private void LoadStructureLibrary()
     {
-        string json = System.IO.File.ReadAllText(libraryFilePath);
+        string json = System.IO.File.ReadAllText(PersistentLibraryFilePath);
         List<StructureObject> objects = JsonUtility
             .FromJson<WorldObjectReferenceList>(json)
             .objects;
