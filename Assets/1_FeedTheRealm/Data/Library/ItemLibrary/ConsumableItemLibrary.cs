@@ -3,10 +3,10 @@ using Models;
 using UnityEngine;
 
 [CreateAssetMenu(
-    fileName = "ConsumableItems",
-    menuName = "Scriptable Objects/Persistence/ConsumableItems"
+    fileName = "ConsumableItemLibrary",
+    menuName = "Scriptable Objects/Library/ConsumableItemLibrary"
 )]
-public class ConsumableItems : ScriptableObject
+public class ConsumableItemLibrarySO : ScriptableObject
 {
     [SerializeField]
     private Logging.Logger logger;

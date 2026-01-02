@@ -220,7 +220,7 @@ public class PublishMenuController : MenuController
             }
 
             string type = Path.GetExtension(path).Replace(".", "").ToLower();
-            var (createdSprite, itemError) = await itemsService.UploadItemSpriteAsync(
+            var (createdSprite, itemError) = await itemsService.UploadItemSprite(
                 spriteBytes,
                 $"{sprite.name}{Path.GetExtension(path)}",
                 $"image/{type}"
@@ -259,7 +259,10 @@ public class PublishMenuController : MenuController
                 fileBytes,
                 filename,
                 mimeType,
-                (data, error) => { tcs.SetResult((data, error)); }
+                (data, error) =>
+                {
+                    tcs.SetResult((data, error));
+                }
             )
         );
 
@@ -276,11 +279,7 @@ public class PublishMenuController : MenuController
             if (enemy == null || string.IsNullOrEmpty(enemy.spriteId))
                 continue;
 
-            logger.Log(
-                $"Uploading sprite for enemy '{enemy.name}'",
-                this,
-                Logging.LogType.Info
-            );
+            logger.Log($"Uploading sprite for enemy '{enemy.name}'", this, Logging.LogType.Info);
 
             string path = SpriteStorage.GetFilePathFromIdOrPath(enemy.spriteId);
             byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);

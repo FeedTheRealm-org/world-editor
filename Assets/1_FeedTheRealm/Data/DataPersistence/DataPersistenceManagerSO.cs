@@ -24,10 +24,10 @@ public class DataPersistenceManagerSO : ScriptableObject
     // private CreatorLibrary creatorLibrary;
 
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     [SerializeField]
-    private Enemy enemyDatabase;
+    private EnemyLibrarySO enemyDatabase;
 
     private WorldData worldData = null;
     private List<IPersistent> dataPersistenceObjects = new();

@@ -20,7 +20,7 @@ public class ConsumableItemHUDController : MonoBehaviour
     private Logging.Logger logger;
 
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     // [SerializeField]
     // private Maker player;

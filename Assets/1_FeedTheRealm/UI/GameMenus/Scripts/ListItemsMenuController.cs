@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class ListItemsMenuController : MonoBehaviour
 {
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     // [SerializeField]
     // private Maker player;

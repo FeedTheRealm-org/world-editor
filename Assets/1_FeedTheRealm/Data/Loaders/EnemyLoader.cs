@@ -3,17 +3,14 @@ using Models;
 using UnityEngine;
 using Utils;
 
-[CreateAssetMenu(
-    fileName = "EnemyLoader",
-    menuName = "Scriptable Objects/WorldEditor/EnemyLoader"
-)]
+[CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/WorldEditor/EnemyLoader")]
 public class EnemyLoader : ScriptableObject, ILoadable
 {
     [SerializeField]
     private Logging.Logger logger;
 
     [SerializeField]
-    private Enemy enemyDatabase;
+    private EnemyLibrarySO enemyDatabase;
 
     void OnEnable()
     {
@@ -26,9 +23,7 @@ public class EnemyLoader : ScriptableObject, ILoadable
     }
 
     // No separate shared enemy library for now – kept for interface symmetry.
-    public void LoadLibrary()
-    {
-    }
+    public void LoadLibrary() { }
 
     // Populate the Enemy ScriptableObject database from the world data
     // so that editor UIs (AddEnemyMenu, etc.) reflect the selected world.

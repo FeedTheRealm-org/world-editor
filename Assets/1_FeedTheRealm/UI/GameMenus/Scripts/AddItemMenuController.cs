@@ -13,11 +13,10 @@ public class AddItemMenuController : MenuController
     // private Maker player;
 
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     [SerializeField]
     private Logging.Logger logger;
-
     private Button addButton;
     private Button closeButton;
     private Button loadSpriteButton;
