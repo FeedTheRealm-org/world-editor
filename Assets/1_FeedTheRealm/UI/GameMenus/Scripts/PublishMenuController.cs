@@ -230,7 +230,7 @@ public class PublishMenuController : MenuController
             }
 
             string type = System.IO.Path.GetExtension(path).Replace(".", "").ToLower();
-            var (createdSprite, itemError) = await itemsService.UploadItemSpriteAsync(
+            var (createdSprite, itemError) = await itemsService.UploadItemSprite(
                 spriteBytes,
                 $"{item.name}{System.IO.Path.GetExtension(path)}",
                 $"image/{type}"
