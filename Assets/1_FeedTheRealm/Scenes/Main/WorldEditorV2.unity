@@ -838,16 +838,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
-      value: Edit Enemy
+      value: Add Item
       objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[3].Name
+      value: Add Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[1].panel
+      value: 
+      objectReference: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].panel
       value: 
-      objectReference: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
+      objectReference: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[3].panel
+      value: 
+      objectReference: {fileID: 6327905956454423737, guid: e4b1bf324fa1aef648bc1587f4e42aa5, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

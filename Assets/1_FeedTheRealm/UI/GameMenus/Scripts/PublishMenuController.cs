@@ -25,7 +25,10 @@ public class PublishMenuController : MenuController
     private ModelService modelUploadService;
 
     [SerializeField]
-    private ItemsService itemsService;
+    private ItemSpritesService itemsService;
+
+    [SerializeField]
+    private EnemiesService enemiesService;
 
     [SerializeField]
     private Session.Session session;
@@ -83,6 +86,16 @@ public class PublishMenuController : MenuController
             );
             return;
         }
+
+        // Debug summary of world contents before publish
+        int itemCount = worldData?.consumableItems != null ? worldData.consumableItems.Count : 0;
+        int enemyCount = worldData?.enemies != null ? worldData.enemies.Count : 0;
+        logger.Log(
+            $"PublishMenuController: About to publish world '{worldData.worldName}' with {itemCount} items and {enemyCount} enemies.",
+            this,
+            Logging.LogType.Info
+        );
+
         (string worldId, string worldError) = await PublishWorld();
         if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId))
         {
@@ -90,6 +103,10 @@ public class PublishMenuController : MenuController
             CloseMenu();
             return;
         }
+
+        await PublishItems();
+        await PublishEnemies();
+
         string uploadError = await PublishModels(worldId);
         if (!string.IsNullOrEmpty(uploadError))
         {
@@ -99,9 +116,9 @@ public class PublishMenuController : MenuController
         }
         logger.Log("World published successfully!", this, Logging.LogType.Info);
 
-        // we save the world id to the local world data for future reference
+        // Save worldId in memory; avoid an extra SaveWorld() here to
+        // prevent re-running ClearWorld/SaveData and confusing item/enemy databases.
         worldData.id = worldId;
-        dataPersistenceManager.SaveWorld(worldData.worldName);
 
         CloseMenu();
     }
@@ -149,7 +166,12 @@ public class PublishMenuController : MenuController
 
     private async Task<(string, string)> PublishWorld()
     {
+        // Ensure WorldData is fully up to date (including items/enemies)
         dataPersistenceManager.SaveWorld(worldData.worldName);
+
+        // Refresh local reference in case the manager recreated the WorldData instance
+        worldData = dataPersistenceManager.CurrentWorldData;
+
         fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
         (string worldId, string worldError) = await worldService.PublishWorld(
             worldData,
@@ -173,9 +195,11 @@ public class PublishMenuController : MenuController
         );
     }
 
-    // TODO: re-implement item publishing
     private async Task PublishItems()
     {
+        if (worldData == null || worldData.consumableItems == null || itemsService == null)
+            return;
+
         foreach (var sprite in worldData.consumableItems)
         {
             logger.Log(
@@ -195,20 +219,11 @@ public class PublishMenuController : MenuController
                 continue;
             }
 
-            string itemError = null;
-            SpriteCreatedData createdSprite = null;
-
             string type = Path.GetExtension(path).Replace(".", "").ToLower();
-
-            await itemsService.UploadItemSprite(
+            var (createdSprite, itemError) = await itemsService.UploadItemSpriteAsync(
                 spriteBytes,
                 $"{sprite.name}{Path.GetExtension(path)}",
-                $"image/{type}",
-                (data, error) =>
-                {
-                    createdSprite = data;
-                    itemError = error;
-                }
+                $"image/{type}"
             );
 
             if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
@@ -222,6 +237,82 @@ public class PublishMenuController : MenuController
             }
             logger.Log(
                 $"Sprite uploaded successfully for item '{sprite.name}'",
+                this,
+                Logging.LogType.Info
+            );
+        }
+    }
+
+    private Task<(SpriteCreatedData data, string error)> UploadEnemySpriteAsync(
+        byte[] fileBytes,
+        string filename,
+        string mimeType
+    )
+    {
+        var tcs = new System.Threading.Tasks.TaskCompletionSource<(
+            SpriteCreatedData data,
+            string error
+        )>();
+
+        StartCoroutine(
+            enemiesService.UploadEnemySprite(
+                fileBytes,
+                filename,
+                mimeType,
+                (data, error) => { tcs.SetResult((data, error)); }
+            )
+        );
+
+        return tcs.Task;
+    }
+
+    private async Task PublishEnemies()
+    {
+        if (worldData == null || worldData.enemies == null || enemiesService == null)
+            return;
+
+        foreach (var enemy in worldData.enemies)
+        {
+            if (enemy == null || string.IsNullOrEmpty(enemy.spriteId))
+                continue;
+
+            logger.Log(
+                $"Uploading sprite for enemy '{enemy.name}'",
+                this,
+                Logging.LogType.Info
+            );
+
+            string path = SpriteStorage.GetFilePathFromIdOrPath(enemy.spriteId);
+            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+            if (spriteBytes == null || spriteBytes.Length == 0)
+            {
+                logger.Log(
+                    $"Sprite bytes for enemy spriteId '{enemy.spriteId}' are null or empty. Skipping upload.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                continue;
+            }
+
+            string type = Path.GetExtension(path).Replace(".", "").ToLower();
+            var (createdSprite, enemyError) = await UploadEnemySpriteAsync(
+                spriteBytes,
+                $"{enemy.name}{Path.GetExtension(path)}",
+                $"image/{type}"
+            );
+
+            if (!string.IsNullOrEmpty(enemyError) || createdSprite == null)
+            {
+                logger.Log(
+                    $"Failed to upload sprite for enemy '{enemy.name}': {enemyError}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                continue;
+            }
+
+            logger.Log(
+                $"Sprite uploaded successfully for enemy '{enemy.name}'",
                 this,
                 Logging.LogType.Info
             );

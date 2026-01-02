@@ -26,6 +26,9 @@ public class DataPersistenceManagerSO : ScriptableObject
     [SerializeField]
     private ConsumableItems consumableItemsDatabase;
 
+    [SerializeField]
+    private Enemy enemyDatabase;
+
     private WorldData worldData = null;
     private List<IPersistent> dataPersistenceObjects = new();
 
@@ -67,7 +70,37 @@ public class DataPersistenceManagerSO : ScriptableObject
             Logging.LogType.Info
         );
 
-        worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
+        // Copy items from their persistence database
+        var itemsFromDb =
+            consumableItemsDatabase != null
+                ? consumableItemsDatabase.GetAllConsumableItems()
+                : new List<ConsumableItem>();
+        logger.Log(
+            $"DataPersistenceManagerSO.SaveWorld: copying {itemsFromDb.Count} consumable items from database.",
+            this,
+            Logging.LogType.Info
+        );
+        worldData.consumableItems = itemsFromDb;
+
+        // Copy enemies from their persistence database
+        if (enemyDatabase != null)
+        {
+            var enemiesFromDb = enemyDatabase.GetAllEnemies() ?? new List<EnemyData>();
+            logger.Log(
+                $"DataPersistenceManagerSO.SaveWorld: copying {enemiesFromDb.Count} enemies from database.",
+                this,
+                Logging.LogType.Info
+            );
+            worldData.enemies = enemiesFromDb;
+        }
+        else
+        {
+            logger.Log(
+                "DataPersistenceManagerSO: enemyDatabase is not assigned. Enemies will not be saved.",
+                this,
+                Logging.LogType.Warning
+            );
+        }
 
         WorldFileHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
@@ -107,7 +140,10 @@ public class DataPersistenceManagerSO : ScriptableObject
         worldData.enemySpawnAreas.Clear();
         worldData.playerSpawnAreas.Clear();
         worldData.objectPlacementData.Clear();
-        worldData.consumableItems.Clear();
+        // NOTE: we intentionally do NOT clear consumableItems or enemies here.
+        // Those are driven from the ScriptableObject databases (ConsumableItems, Enemy)
+        // and are explicitly overwritten in SaveWorld from those sources.
+        // Clearing them here caused item/enemy lists to appear "wiped" when saving/publishing.
     }
 
 #if UNITY_EDITOR

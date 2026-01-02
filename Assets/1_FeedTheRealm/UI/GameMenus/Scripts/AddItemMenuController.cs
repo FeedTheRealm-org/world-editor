@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class AddItemMenuController : MonoBehaviour
+public class AddItemMenuController : MenuController
 {
     // [SerializeField]
     // private Maker player;
@@ -377,12 +377,12 @@ public class AddItemMenuController : MonoBehaviour
         CloseMenu();
     }
 
-    private void CloseMenu()
+    /*private void CloseMenu()
     {
         // if (player != null)
         // {
         //     player.ToggleMovement(true);
         // }
         gameObject.SetActive(false);
-    }
+    }*/
 }
