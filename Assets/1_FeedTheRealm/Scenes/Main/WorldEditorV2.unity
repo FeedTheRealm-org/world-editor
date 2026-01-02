@@ -475,7 +475,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 819311b7a66a8f740b104cf9f9ffadf5, type: 3}
-        m_Scale: {x: 200, y: 200}
+        m_Scale: {x: 100, y: 100}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 2800000, guid: 8e04de8547435554b8c484ffb2af8cab, type: 3}
@@ -836,6 +836,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[2].Name
+      value: Edit Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[2].panel
+      value: 
+      objectReference: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

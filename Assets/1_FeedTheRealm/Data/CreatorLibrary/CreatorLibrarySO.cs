@@ -14,18 +14,21 @@ public class CreatorLibrarySO : ScriptableObject
     [SerializeField]
     private List<Loaders> loaders;
 
-    private Dictionary<WorldObjectCategories, ILoadable> loaderCache;
+    private Dictionary<WorldObjectCategories, IPlaceableLoader> loaderCache;
 
     public void Initialize()
     {
         logger.Log("Initializing Creator Library...", this, Logging.LogType.Info);
-        loaderCache = new Dictionary<WorldObjectCategories, ILoadable>();
+        loaderCache = new Dictionary<WorldObjectCategories, IPlaceableLoader>();
         foreach (var loader in loaders)
         {
-            if (loader.loader is ILoadable loadable)
+            if (
+                loader.loader is ILoadable loadable
+                && loader.loader is IPlaceableLoader placeableLoader
+            )
             {
                 loadable.LoadLibrary();
-                loaderCache[loader.category] = loadable;
+                loaderCache[loader.category] = placeableLoader;
             }
             else
             {

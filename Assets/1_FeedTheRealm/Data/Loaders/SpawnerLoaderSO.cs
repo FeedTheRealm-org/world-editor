@@ -10,7 +10,7 @@ using Utils;
     fileName = "SpawnerLoader",
     menuName = "Scriptable Objects/WorldEditor/SpawnerLoader"
 )]
-public class SpawnerLoaderSO : ScriptableObject, ILoadable
+public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 {
     [SerializeField]
     private Logging.Logger logger;

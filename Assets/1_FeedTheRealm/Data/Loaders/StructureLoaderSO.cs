@@ -9,7 +9,7 @@ using Utils;
     fileName = "StructureLoader",
     menuName = "Scriptable Objects/WorldEditor/StructureLoader"
 )]
-public class StructureLoaderSO : ScriptableObject, ILoadable
+public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 {
     [SerializeField]
     private Logging.Logger logger;
