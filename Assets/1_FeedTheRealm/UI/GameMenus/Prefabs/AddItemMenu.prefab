@@ -71,3 +71,4 @@ MonoBehaviour:
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   consumableItemsDatabase: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+  listItemsMenu: {fileID: 4598189756783925192, guid: c524a0b0ad7afa1438079a3f0bb67818, type: 3}

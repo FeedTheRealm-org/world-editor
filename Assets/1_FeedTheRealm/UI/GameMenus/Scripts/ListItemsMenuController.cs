@@ -78,6 +78,11 @@ public class ListItemsMenuController : MenuController
         RefreshItems();
     }
 
+    private void Update()
+    {
+        RefreshItems();
+    }
+
     private void SetUpListView()
     {
         listView = new ListView();
