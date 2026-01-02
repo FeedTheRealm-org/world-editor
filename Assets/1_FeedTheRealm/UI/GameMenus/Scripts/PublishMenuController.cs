@@ -108,7 +108,7 @@ public class PublishMenuController : MenuController
             return;
         }
 
-        await PublishItems();
+        // After world metadata is stored, upload enemy sprites (optional, best-effort).
         await PublishEnemies();
 
         string uploadError = await PublishModels(worldId);
@@ -191,54 +191,6 @@ public class PublishMenuController : MenuController
             worldId,
             session.APIToken
         );
-    }
-
-    private async Task PublishItems()
-    {
-        if (worldData == null || worldData.consumableItems == null || itemsService == null)
-            return;
-
-        foreach (var sprite in worldData.consumableItems)
-        {
-            logger.Log(
-                $"Uploading sprite for consumable item '{sprite.name}'",
-                this,
-                Logging.LogType.Info
-            );
-            string path = SpriteStorage.GetFilePathFromIdOrPath(sprite.spriteId);
-            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
-            if (spriteBytes == null || spriteBytes.Length == 0)
-            {
-                logger.Log(
-                    $"Sprite bytes for asset ID '{sprite.spriteId}' are null or empty. Skipping upload.",
-                    this,
-                    Logging.LogType.Warning
-                );
-                continue;
-            }
-
-            string type = Path.GetExtension(path).Replace(".", "").ToLower();
-            var (createdSprite, itemError) = await itemsService.UploadItemSprite(
-                spriteBytes,
-                $"{sprite.name}{Path.GetExtension(path)}",
-                $"image/{type}"
-            );
-
-            if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
-            {
-                logger.Log(
-                    $"Failed to upload sprite for item '{sprite.name}': {itemError}",
-                    this,
-                    Logging.LogType.Warning
-                );
-                continue;
-            }
-            logger.Log(
-                $"Sprite uploaded successfully for item '{sprite.name}'",
-                this,
-                Logging.LogType.Info
-            );
-        }
     }
 
     /// <summary>
