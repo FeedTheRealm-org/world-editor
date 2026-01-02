@@ -20,9 +20,6 @@ public class DataPersistenceManagerSO : ScriptableObject
     [SerializeField]
     private Logging.Logger logger;
 
-    // [SerializeField]
-    // private CreatorLibrary creatorLibrary;
-
     [SerializeField]
     private ConsumableItemLibrarySO consumableItemsDatabase;
 
@@ -55,7 +52,7 @@ public class DataPersistenceManagerSO : ScriptableObject
             );
             NewWorld();
         }
-        ClearWorld();
+        PrepWorld();
         dataPersistenceObjects = FindAllDataPersistenceObjects();
         worldData.worldName = worldName;
         logger.Log("Starting world save...", this, Logging.LogType.Info);
@@ -133,17 +130,13 @@ public class DataPersistenceManagerSO : ScriptableObject
         return new List<IPersistent>(found);
     }
 
-    // this is due to when saving, the data gets duplicated, so we clear it first
-    // in the future we should figure a consistent saving mechanism to avoid this
-    private void ClearWorld()
+    // TODO: this method preps the world to be saved but it's not scalable due to having to save ALL of the data
+    // instead of only the changes in the world.
+    private void PrepWorld()
     {
-        worldData.enemySpawnAreas.Clear();
-        worldData.playerSpawnAreas.Clear();
-        worldData.objectPlacementData.Clear();
-        // NOTE: we intentionally do NOT clear consumableItems or enemies here.
-        // Those are driven from the ScriptableObject databases (ConsumableItems, Enemy)
-        // and are explicitly overwritten in SaveWorld from those sources.
-        // Clearing them here caused item/enemy lists to appear "wiped" when saving/publishing.
+        string worldName = worldData.worldName;
+        string worldId = worldData.id;
+        worldData = new WorldData { worldName = worldName, id = worldId };
     }
 
 #if UNITY_EDITOR
