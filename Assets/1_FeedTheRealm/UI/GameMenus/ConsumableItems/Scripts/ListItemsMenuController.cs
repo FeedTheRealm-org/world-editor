@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class ListItemsMenuController : MonoBehaviour
+public class ListItemsMenuController : MenuController
 {
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     // [SerializeField]
     // private Maker player;
@@ -16,8 +16,12 @@ public class ListItemsMenuController : MonoBehaviour
     [SerializeField]
     private Logging.Logger logger;
 
+    [SerializeField]
+    public GameObject addItemMenu;
+
     private VisualElement root;
     private ListView listView;
+    private Button addButton;
     private Button closeButton;
 
     private void OnEnable()
@@ -46,15 +50,36 @@ public class ListItemsMenuController : MonoBehaviour
         }
 
         closeButton = root.Q<Button>("Close");
+        addButton = root.Q<Button>("AddItem");
 
         if (closeButton != null)
             closeButton.clicked += CloseMenu;
+
+        if (addButton != null)
+        {
+            GameObject addItemMenuInstance = Instantiate(addItemMenu);
+            addItemMenuInstance.SetActive(false);
+            var menuController =
+                addItemMenuInstance.GetComponent<MenuController>()
+                ?? throw new System.InvalidOperationException(
+                    "ListItemsMenuController: The addItemMenu prefab does not have a MenuController component."
+                );
+            addButton.clicked += () =>
+            {
+                menuController.OpenMenu();
+            };
+        }
 
         // if (player != null)
         //     player.ToggleMovement(false);
 
         SetUpListView();
         container.Add(listView);
+        RefreshItems();
+    }
+
+    private void Update()
+    {
         RefreshItems();
     }
 
@@ -172,10 +197,14 @@ public class ListItemsMenuController : MonoBehaviour
         return rootElem;
     }
 
+    private void AddItemMenu() { }
+
     private void OnDisable()
     {
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
+        if (addButton != null)
+            addButton.clicked -= AddItemMenu;
         // if (player != null)
         //     player.ToggleMovement(true);
     }
@@ -220,13 +249,6 @@ public class ListItemsMenuController : MonoBehaviour
             this
         );
         RefreshItems();
-    }
-
-    private void CloseMenu()
-    {
-        // if (player != null)
-        //     player.ToggleMovement(true);
-        gameObject.SetActive(false);
     }
 
     private Sprite LoadSpriteFromAbsoluteFile(string absolutePath)

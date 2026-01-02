@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(
-    fileName = "CreatorLibrary",
-    menuName = "Scriptable Objects/WorldEditor/CreatorLibrary"
+    fileName = "PlaceableObjectsLibrary",
+    menuName = "Scriptable Objects/Library/PlaceableObjectsLibrary"
 )]
-public class CreatorLibrarySO : ScriptableObject
+public class PlaceableObjectsLibrarySO : ScriptableObject
 {
     [SerializeField]
     private Logging.Logger logger;
@@ -14,12 +14,12 @@ public class CreatorLibrarySO : ScriptableObject
     [SerializeField]
     private List<Loaders> loaders;
 
-    private Dictionary<WorldObjectCategories, IPlaceableLoader> loaderCache;
+    private Dictionary<PlaceableObjectCategories, IPlaceableLoader> loaderCache;
 
     public void Initialize()
     {
         logger.Log("Initializing Creator Library...", this, Logging.LogType.Info);
-        loaderCache = new Dictionary<WorldObjectCategories, IPlaceableLoader>();
+        loaderCache = new Dictionary<PlaceableObjectCategories, IPlaceableLoader>();
         foreach (var loader in loaders)
         {
             if (
@@ -42,7 +42,7 @@ public class CreatorLibrarySO : ScriptableObject
         logger.Log("Library loaded", this, Logging.LogType.Info);
     }
 
-    public List<IPlaceable> GetObjects(WorldObjectCategories category)
+    public List<IPlaceable> GetObjects(PlaceableObjectCategories category)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
         {
@@ -59,7 +59,7 @@ public class CreatorLibrarySO : ScriptableObject
     [Serializable]
     public class Loaders
     {
-        public WorldObjectCategories category;
+        public PlaceableObjectCategories category;
         public ScriptableObject loader;
     }
 }

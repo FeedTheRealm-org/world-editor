@@ -6,17 +6,14 @@ using Models;
 using UnityEngine;
 using Utils;
 
-[CreateAssetMenu(
-    fileName = "ItemLoader",
-    menuName = "Scriptable Objects/WorldEditor/ItemLoader"
-)]
+[CreateAssetMenu(fileName = "ItemLoader", menuName = "Scriptable Objects/WorldEditor/ItemLoader")]
 public class ItemLoader : ScriptableObject, ILoadable
 {
     [SerializeField]
     private Logging.Logger logger;
 
     [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
+    private ConsumableItemLibrarySO consumableItemsDatabase;
 
     void OnEnable()
     {
@@ -30,9 +27,7 @@ public class ItemLoader : ScriptableObject, ILoadable
 
     // For items we currently don't have a separate shared library to load.
     // This method is kept to satisfy the ILoadable contract.
-    public void LoadLibrary()
-    {
-    }
+    public void LoadLibrary() { }
 
     // When a world is selected, populate the ConsumableItems database
     // from the world data so the editor UIs work with the correct items.
