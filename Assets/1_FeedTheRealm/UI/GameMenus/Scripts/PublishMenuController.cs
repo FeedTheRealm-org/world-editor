@@ -87,7 +87,10 @@ public class PublishMenuController : MenuController
             return;
         }
 
-        // Debug summary of world contents before publish
+        // 1) Upload item sprites first and update spriteIds with backend IDs.
+        await UploadItemSpritesAndUpdateIds();
+
+        // Debug summary of world contents before publish (after spriteId normalization)
         int itemCount = worldData?.consumableItems != null ? worldData.consumableItems.Count : 0;
         int enemyCount = worldData?.enemies != null ? worldData.enemies.Count : 0;
         logger.Log(
@@ -96,6 +99,7 @@ public class PublishMenuController : MenuController
             Logging.LogType.Info
         );
 
+        // 2) Save world (including new spriteIds) and publish it.
         (string worldId, string worldError) = await PublishWorld();
         if (!string.IsNullOrEmpty(worldError) || string.IsNullOrEmpty(worldId))
         {
@@ -166,12 +170,6 @@ public class PublishMenuController : MenuController
 
     private async Task<(string, string)> PublishWorld()
     {
-        // Ensure WorldData is fully up to date (including items/enemies)
-        dataPersistenceManager.SaveWorld(worldData.worldName);
-
-        // Refresh local reference in case the manager recreated the WorldData instance
-        worldData = dataPersistenceManager.CurrentWorldData;
-
         fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
         (string worldId, string worldError) = await worldService.PublishWorld(
             worldData,
@@ -240,6 +238,101 @@ public class PublishMenuController : MenuController
                 this,
                 Logging.LogType.Info
             );
+        }
+    }
+
+    /// <summary>
+    /// Upload item sprites and normalize spriteId to use the backend ID.
+    /// Also updates EnemyLootItem to those items.
+    /// </summary>
+    private async Task UploadItemSpritesAndUpdateIds()
+    {
+        if (worldData == null || worldData.consumableItems == null || itemsService == null)
+            return;
+
+        var nameToBackendSpriteId = new System.Collections.Generic.Dictionary<string, string>();
+
+        foreach (var item in worldData.consumableItems)
+        {
+            if (item == null || string.IsNullOrEmpty(item.spriteId))
+                continue;
+
+            logger.Log(
+                $"Uploading sprite for consumable item '{item.name}' (pre-publish spriteId='{item.spriteId}')",
+                this,
+                Logging.LogType.Info
+            );
+
+            string path = SpriteStorage.GetFilePathFromIdOrPath(item.spriteId);
+            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+            if (spriteBytes == null || spriteBytes.Length == 0)
+            {
+                logger.Log(
+                    $"Sprite bytes for asset ID '{item.spriteId}' are null or empty. Cancelling publish.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(
+                    $"Failed to load sprite bytes for item '{item.name}' (spriteId='{item.spriteId}')."
+                );
+            }
+
+            string type = System.IO.Path.GetExtension(path).Replace(".", "").ToLower();
+            var (createdSprite, itemError) = await itemsService.UploadItemSpriteAsync(
+                spriteBytes,
+                $"{item.name}{System.IO.Path.GetExtension(path)}",
+                $"image/{type}"
+            );
+
+            if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
+            {
+                logger.Log(
+                    $"Failed to upload sprite for item '{item.name}': {itemError}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(
+                    $"Failed to upload sprite for item '{item.name}': {itemError}"
+                );
+            }
+
+            logger.Log(
+                $"Item '{item.name}' sprite uploaded. Backend spriteId='{createdSprite.id}', url='{createdSprite.url}'",
+                this,
+                Logging.LogType.Info
+            );
+
+            item.spriteId = createdSprite.id;
+            nameToBackendSpriteId[item.name] = createdSprite.id;
+        }
+
+        // Propagate new spriteId to EnemyLootItem based on itemName
+        if (worldData.enemies != null && worldData.enemies.Count > 0)
+        {
+            foreach (var enemy in worldData.enemies)
+            {
+                if (enemy?.lootItems == null)
+                    continue;
+
+                foreach (var loot in enemy.lootItems)
+                {
+                    if (loot == null)
+                        continue;
+
+                    if (
+                        !string.IsNullOrEmpty(loot.itemName)
+                        && nameToBackendSpriteId.TryGetValue(loot.itemName, out var backendId)
+                    )
+                    {
+                        logger.Log(
+                            $"Updating loot spriteId for enemy loot item '{loot.itemName}' to backend spriteId='{backendId}'",
+                            this,
+                            Logging.LogType.Info
+                        );
+                        loot.spriteId = backendId;
+                    }
+                }
+            }
         }
     }
 
