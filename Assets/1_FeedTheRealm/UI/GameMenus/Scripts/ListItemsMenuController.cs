@@ -197,10 +197,7 @@ public class ListItemsMenuController : MenuController
         return rootElem;
     }
 
-    private void AddItemMenu()
-    {
-
-    }
+    private void AddItemMenu() { }
 
     private void OnDisable()
     {
