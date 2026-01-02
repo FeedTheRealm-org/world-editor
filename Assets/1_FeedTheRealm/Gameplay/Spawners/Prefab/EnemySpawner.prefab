@@ -105,6 +105,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerController
   spawnerColor: {r: 0.24781048, g: 1, b: 0, a: 1}
+  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
 --- !u!135 &7579879578991499288
 SphereCollider:
   m_ObjectHideFlags: 0

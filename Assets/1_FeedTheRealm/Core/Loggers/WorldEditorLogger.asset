@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
   m_Name: WorldEditorLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 1
-  _loggerPrefix: WorldEdit
-  _loggerColor: {r: 1, g: 1, b: 1, a: 0}
+  showLogs: 1
+  loggerPrefix: 'WorldEditor '
+  loggerColor: {r: 0.09395306, g: 0.6742617, b: 0.6247677, a: 0}
+  showColor: 1

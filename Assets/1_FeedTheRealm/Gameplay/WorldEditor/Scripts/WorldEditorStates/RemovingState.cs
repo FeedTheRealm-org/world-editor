@@ -27,11 +27,7 @@ public class RemovingState : IMakerState
     {
         worldEditor.Log($"ObjectLayerMask value: {objectLayerMask.value}");
         if (!Raycaster.TryGetPlacementPoint(worldEditor, objectLayerMask, out RaycastHit hit))
-        {
-            worldEditor.Log("No objects to remove.");
-            worldEditor.Log($"Hit object: {hit.collider}");
             return;
-        }
         GameObject hitObject = hit.collider.gameObject;
         worldEditor.Log($"Removing object: {hitObject.name}");
         GameObject rootObject = hitObject;
@@ -39,7 +35,6 @@ public class RemovingState : IMakerState
         {
             rootObject = rootObject.transform.parent.gameObject;
         }
-
         worldEditor.Log($"Removing object: {rootObject.name}");
         Object.Destroy(rootObject);
     }
