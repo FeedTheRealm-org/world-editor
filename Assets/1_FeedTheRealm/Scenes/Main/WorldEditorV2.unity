@@ -842,7 +842,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
-      value: Add Item
+      value: Consumable Items
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[3].Name
@@ -855,7 +855,7 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].panel
       value: 
-      objectReference: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}
+      objectReference: {fileID: 4598189756783925192, guid: c524a0b0ad7afa1438079a3f0bb67818, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[3].panel
       value: 
