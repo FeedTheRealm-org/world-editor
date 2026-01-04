@@ -87,8 +87,9 @@ public class ListItemsMenuController : MenuController
     {
         listView = new ListView();
         listView.name = "ConsumableListView";
-        listView.selectionType = SelectionType.Single;
-        listView.fixedItemHeight = 56;
+        // Disable selecting items in the list
+        listView.selectionType = SelectionType.None;
+        listView.fixedItemHeight = 92;
         listView.showBoundCollectionSize = true;
 
         listView.makeItem = () => CreateItemForList();
@@ -153,15 +154,20 @@ public class ListItemsMenuController : MenuController
 
     private VisualElement CreateItemForList()
     {
-        var rootElem = new VisualElement();
+        var rootElem = new VisualElement { focusable = false };
         rootElem.style.flexDirection = FlexDirection.Row;
+        rootElem.style.height = new Length(80);
+        rootElem.style.width = Length.Percent(100);
         rootElem.style.alignItems = Align.Center;
-        rootElem.style.paddingLeft = 6;
-        rootElem.style.paddingRight = 6;
+        rootElem.style.paddingLeft = new Length(6);
+        rootElem.style.paddingRight = new Length(6);
+        rootElem.style.paddingTop = new Length(6);
+        rootElem.style.paddingBottom = new Length(6);
+        rootElem.style.marginBottom = new Length(12);
 
         var img = new Image { name = "itemImage" };
-        img.style.width = 48;
-        img.style.height = 48;
+        img.style.width = 65;
+        img.style.height = 65;
         img.style.marginRight = 8;
 
         var textCol = new VisualElement();
@@ -170,21 +176,37 @@ public class ListItemsMenuController : MenuController
 
         var nameLabel = new Label { name = "itemName" };
         nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        nameLabel.style.fontSize = 22;
+        nameLabel.style.color = new StyleColor(Color.white);
 
         var infoLabel = new Label { name = "itemInfo" };
         infoLabel.style.unityFontStyleAndWeight = FontStyle.Normal;
-        infoLabel.style.fontSize = 12;
+        infoLabel.style.fontSize = 18;
+        infoLabel.style.color = new StyleColor(Color.white);
 
         textCol.Add(nameLabel);
         textCol.Add(infoLabel);
 
         var deleteBtn = new Button() { name = "deleteBtn", text = "Delete" };
-        deleteBtn.style.width = 80;
-        deleteBtn.style.height = 30;
+        deleteBtn.style.width = 90;
+        deleteBtn.style.height = 34;
+        deleteBtn.style.fontSize = 16;
+        deleteBtn.style.marginLeft = 8;
+        deleteBtn.style.paddingLeft = 8;
+        deleteBtn.style.paddingRight = 8;
+        deleteBtn.style.borderTopLeftRadius = 6;
+        deleteBtn.style.borderTopRightRadius = 6;
+        deleteBtn.style.borderBottomLeftRadius = 6;
+        deleteBtn.style.borderBottomRightRadius = 6;
+        deleteBtn.style.backgroundColor = new StyleColor(new Color(0.80f, 0.20f, 0.20f));
+        deleteBtn.style.color = new StyleColor(Color.white);
+        deleteBtn.style.alignSelf = Align.Center;
+        deleteBtn.style.unityTextAlign = TextAnchor.MiddleCenter;
 
         // Handler uses the element.userData which is updated in bindItem
         deleteBtn.clicked += () =>
         {
+            logger.Log("ListItemsMenuController: Delete button clicked.", this);
             int idx = (int?)(rootElem.userData as int?) ?? -1;
             if (idx >= 0)
                 DeleteItemAtIndex(idx);
