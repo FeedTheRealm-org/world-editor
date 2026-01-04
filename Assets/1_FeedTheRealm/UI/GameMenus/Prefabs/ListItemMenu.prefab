@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1858915c69f9f15458315679a4f38575, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ListItemsMenuController
   consumableItemsDatabase: {fileID: 11400000, guid: b842dab11394bd148862082cc4e1017c, type: 2}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
