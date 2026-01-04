@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public static class Raycaster
 {
-    private const float DefaultMaxDistance = 10000f;
+    private const float DefaultMaxDistance = 1000000f;
 
     public static bool TryGetPlacementPoint(
         WorldEditorStateMachine maker,

@@ -11,16 +11,19 @@ public enum SpawnerType
 public class SpawnerObject : IPlaceable
 {
     public SpawnerType spawnerType;
-    public float spawnRadius;
+    private float defaultSpawnRadius = 3.0f;
     private GameObject spawnerObject;
     private float spawnerHeight = 0.1f;
 
-    public SpawnerObject(SpawnerType spawnerType, float spawnRadius, GameObject spawnerObject)
+    public SpawnerObject(SpawnerType spawnerType, GameObject spawnerObject)
     {
         this.spawnerType = spawnerType;
-        this.spawnRadius = spawnRadius;
         this.spawnerObject = spawnerObject;
-        spawnerObject.transform.localScale = new Vector3(spawnRadius, spawnerHeight, spawnRadius);
+        spawnerObject.transform.localScale = new Vector3(
+            defaultSpawnRadius,
+            spawnerHeight,
+            defaultSpawnRadius
+        );
         spawnerObject.SetActive(false);
     }
 

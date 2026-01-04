@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5062968973939956887}
   - component: {fileID: -5073203916795117295}
   - component: {fileID: 7579879578991499288}
+  - component: {fileID: 8191976043836424432}
   m_Layer: 11
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -104,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3596f3b7762694a1920a0afbc26e356, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerController
-  spawnerColor: {r: 0.24781048, g: 1, b: 0, a: 1}
+  spawnerColor: {r: 0.24781048, g: 1, b: 0, a: 0.5019608}
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
 --- !u!135 &7579879578991499288
 SphereCollider:
@@ -127,3 +128,26 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &8191976043836424432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5537282333109391366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 337440a5cdfef44538a69ac38b85137b, type: 3}
+  m_SortingOrder: 2
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}

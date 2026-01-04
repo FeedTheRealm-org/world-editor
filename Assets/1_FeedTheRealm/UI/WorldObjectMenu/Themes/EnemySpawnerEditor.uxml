@@ -1,3 +1,16 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1;"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/WorldObjectMenu/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+    <ui:VisualElement name="root" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="Menu" class="menuContainer" style="margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%;">
+            <ui:Label text="Edit your enemy Spawner!" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255);"/>
+            <ui:Slider label="Spawner Radius" value="0.44" high-value="50" low-value="3" fill="true" name="SpawnerRadius" show-input-field="true" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+            <ui:IntegerField label="Max Enemies" value="3" name="MaxEnemies" auto-correction="false" emoji-fallback-support="true" hide-placeholder-on-focus="false" max-length="100" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left;"/>
+            <ui:IntegerField label="Spawn Rate" value="2" name="SpawnRate" auto-correction="false" emoji-fallback-support="true" hide-placeholder-on-focus="false" max-length="100" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left;"/>
+            <ui:IntegerField label="Reset After Kills" value="6" name="ResetAfterKills" auto-correction="false" emoji-fallback-support="true" hide-placeholder-on-focus="false" max-length="100" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left;"/>
+            <ui:IntegerField label="Reset Delay" value="10" name="ResetDelay" auto-correction="false" emoji-fallback-support="true" hide-placeholder-on-focus="false" max-length="100" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-left;"/>
+            <ui:GroupBox style="flex-direction: row-reverse;">
+                <ui:Button text="Close" name="Close" enable-rich-text="true" class="closeButton"/>
+            </ui:GroupBox>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

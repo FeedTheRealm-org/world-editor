@@ -35,11 +35,7 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         logger.Log("Loading spawner objects...", null, Logging.LogType.Info);
         foreach (var entry in spawnerDefinitions)
         {
-            SpawnerObject spawnerObject = new(
-                entry.spawnerType,
-                entry.spawnRadius,
-                entry.spawnerPrefab
-            );
+            SpawnerObject spawnerObject = new(entry.spawnerType, entry.spawnerPrefab);
             spawnerObjects.Add(spawnerObject);
         }
     }
@@ -69,24 +65,28 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
     private async Task OnLoadAsync(EnemySpawnAreaData spawnerData)
     {
-        await LoadSpawnerAsync(SpawnerType.EnemySpawner, spawnerData.Radius, spawnerData.Position);
-    }
-
-    private async Task OnLoadAsync(PlayerSpawnAreaData spawnerData)
-    {
-        await LoadSpawnerAsync(SpawnerType.PlayerSpawner, spawnerData.Radius, spawnerData.Position);
-    }
-
-    private async Task LoadSpawnerAsync(SpawnerType type, float radius, Vector3 position)
-    {
-        SpawnerObject spawnerObject = spawnerObjects.FirstOrDefault(s => s.spawnerType == type);
-
-        spawnerObject.spawnRadius = radius;
+        SpawnerObject spawnerObject = spawnerObjects.FirstOrDefault(s =>
+            s.spawnerType == SpawnerType.EnemySpawner
+        );
 
         GameObject spawnerInstance = await spawnerObject.GetPlaceableObject(
             WorldLayers.WorldObjectLayer
         );
-        spawnerInstance.transform.position = position;
+        EnemySpawnerController spawnerController =
+            spawnerInstance.GetComponent<EnemySpawnerController>();
+        spawnerController.enemySpawnData = spawnerData;
+    }
+
+    private async Task OnLoadAsync(PlayerSpawnAreaData spawnerData)
+    {
+        SpawnerObject spawnerObject = spawnerObjects.FirstOrDefault(s =>
+            s.spawnerType == SpawnerType.PlayerSpawner
+        );
+
+        GameObject spawnerInstance = await spawnerObject.GetPlaceableObject(
+            WorldLayers.WorldObjectLayer
+        );
+        spawnerInstance.transform.position = spawnerData.Position;
     }
 }
 
@@ -94,6 +94,5 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 public class SpawnerTypeGameObject
 {
     public SpawnerType spawnerType;
-    public float spawnRadius;
     public GameObject spawnerPrefab;
 }
