@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -23,6 +24,7 @@ public class ListItemsMenuController : MenuController
     private ListView listView;
     private Button addButton;
     private Button closeButton;
+    private bool waitingForMenuClose = false;
 
     private void OnEnable()
     {
@@ -67,6 +69,7 @@ public class ListItemsMenuController : MenuController
             addButton.clicked += () =>
             {
                 menuController.OpenMenu();
+                _ = WaitForMenuCloseAsync(addItemMenuInstance);
             };
         }
 
@@ -75,11 +78,6 @@ public class ListItemsMenuController : MenuController
 
         SetUpListView();
         container.Add(listView);
-        RefreshItems();
-    }
-
-    private void Update()
-    {
         RefreshItems();
     }
 
@@ -220,6 +218,18 @@ public class ListItemsMenuController : MenuController
     }
 
     private void AddItemMenu() { }
+
+    private async Task WaitForMenuCloseAsync(GameObject menuInstance)
+    {
+        if (menuInstance == null)
+            return;
+
+        while (menuInstance.activeSelf)
+        {
+            await Task.Yield();
+        }
+        RefreshItems();
+    }
 
     private void OnDisable()
     {
