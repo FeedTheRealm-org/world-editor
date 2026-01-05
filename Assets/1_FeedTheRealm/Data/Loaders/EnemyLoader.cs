@@ -9,7 +9,7 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
     [SerializeField]
     private Logging.Logger logger;
 
-    private List<ICreatable> enemies = new();
+    private List<CreatorObject> enemies = new();
 
     void OnEnable()
     {
@@ -21,23 +21,23 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
         SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
-    public List<ICreatable> GetCreatables()
+    public List<CreatorObject> GetCreatables()
     {
         return enemies.FindAll(item => !item.IsDeleted);
     }
 
-    public void AddCreatable(ICreatable creatable)
+    public void AddCreatable(CreatorObject creatable)
     {
         enemies.Add(creatable);
     }
 
-    public void RemoveCreatable(ICreatable creatable)
+    public void RemoveCreatable(CreatorObject creatable)
     {
         creatable.Delete();
         enemies.Remove(creatable);
     }
 
-    public void UpdateCreatable(ICreatable creatable)
+    public void UpdateCreatable(CreatorObject creatable)
     {
         int index = enemies.FindIndex(item => item.ObjectId == creatable.ObjectId);
         if (index != -1)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -43,7 +44,7 @@ public class ItemsMenuController : MenuController
             )
         )
         {
-            var itemEntry = itemListTemplate.Instantiate();
+            VisualElement itemEntry = itemListTemplate.Instantiate();
             var headerLabel = itemEntry.Q<Label>("Header");
             headerLabel.text = item.DisplayName;
 
@@ -51,7 +52,7 @@ public class ItemsMenuController : MenuController
             var deleteButton = itemEntry.Q<Button>("Delete");
 
             editButton.clicked += () => OnEditItem(item);
-            deleteButton.clicked += () => OnDeleteItem(item);
+            deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
 
             itemsList.hierarchy.Add(itemEntry);
         }
@@ -62,11 +63,11 @@ public class ItemsMenuController : MenuController
         logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
     }
 
-    void OnDeleteItem(CreatorObject item)
+    void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)
     {
         logger.Log("Deleting item: " + item.DisplayName, this, Logging.LogType.Info);
         creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.ConsumableItem, item);
-        PopulateItemsList();
+        itemListEntry.RemoveFromHierarchy();
     }
 
     void OnDisable()

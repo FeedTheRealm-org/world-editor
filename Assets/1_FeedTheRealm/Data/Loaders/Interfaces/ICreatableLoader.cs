@@ -3,8 +3,8 @@ using Models;
 
 public interface ICreatableLoader
 {
-    List<ICreatable> GetCreatables();
-    void AddCreatable(ICreatable creatable);
-    void RemoveCreatable(ICreatable creatable);
-    void UpdateCreatable(ICreatable creatable);
+    List<CreatorObject> GetCreatables();
+    void AddCreatable(CreatorObject creatable);
+    void RemoveCreatable(CreatorObject creatable);
+    void UpdateCreatable(CreatorObject creatable);
 }

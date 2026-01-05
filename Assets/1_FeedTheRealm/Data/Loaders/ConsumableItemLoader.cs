@@ -12,7 +12,7 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
     [SerializeField]
     private Logging.Logger logger;
 
-    private List<ICreatable> consumableItems = new();
+    private List<CreatorObject> consumableItems = new();
 
     void OnEnable()
     {
@@ -24,7 +24,7 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
         SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
-    public List<ICreatable> GetCreatables()
+    public List<CreatorObject> GetCreatables()
     {
         logger.Log(
             $"Retrieving {consumableItems.Count} consumable items",
@@ -34,7 +34,7 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
         return consumableItems.FindAll(item => !item.IsDeleted);
     }
 
-    public void AddCreatable(ICreatable creatable)
+    public void AddCreatable(CreatorObject creatable)
     {
         consumableItems.Add(creatable);
         logger.Log(
@@ -44,13 +44,13 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
         );
     }
 
-    public void RemoveCreatable(ICreatable creatable)
+    public void RemoveCreatable(CreatorObject creatable)
     {
         creatable.Delete();
         consumableItems.Remove(creatable);
     }
 
-    public void UpdateCreatable(ICreatable creatable)
+    public void UpdateCreatable(CreatorObject creatable)
     {
         int index = consumableItems.FindIndex(item => item.ObjectId == creatable.ObjectId);
         if (index != -1)

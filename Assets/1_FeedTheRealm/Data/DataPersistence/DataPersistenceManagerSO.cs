@@ -87,18 +87,19 @@ public class DataPersistenceManagerSO : ScriptableObject
 
     private List<IPersistent> FindAllDataPersistenceObjects()
     {
-        var found = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        var monoFound = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<IPersistent>();
-        return new List<IPersistent>(found);
+        var soFound = Resources.FindObjectsOfTypeAll<ScriptableObject>().OfType<IPersistent>();
+        return new List<IPersistent>(monoFound.Concat(soFound));
     }
 
     // TODO: this method preps the world to be saved but it's not scalable due to having to save ALL of the data
     // instead of only the changes in the world.
     private void PrepWorld()
     {
-        worldData.objectPlacementData.Clear();
-        worldData.enemySpawnAreas.Clear();
-        worldData.playerSpawnAreas.Clear();
+        string worldName = worldData.worldName;
+        string worldId = worldData.id;
+        worldData = new WorldData { worldName = worldName, id = worldId };
     }
 
 #if UNITY_EDITOR

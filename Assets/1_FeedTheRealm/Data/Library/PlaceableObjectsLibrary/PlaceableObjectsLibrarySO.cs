@@ -6,7 +6,7 @@ using UnityEngine;
     fileName = "PlaceableObjectsLibrary",
     menuName = "Scriptable Objects/Library/PlaceableObjectsLibrary"
 )]
-public class PlaceableObjectsLibrarySO : ScriptableObject, ILibraryInitializer
+public class PlaceableObjectsLibrarySO : ScriptableObject
 {
     [SerializeField]
     private Logging.Logger logger;

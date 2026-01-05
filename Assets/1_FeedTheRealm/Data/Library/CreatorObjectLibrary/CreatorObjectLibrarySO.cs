@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Models;
 using UnityEngine;
 
 [CreateAssetMenu(
     fileName = "CreatorObjectLibrary",
     menuName = "Scriptable Objects/Library/CreatorObjectLibrary"
 )]
-public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
+public class CreatorObjectLibrarySO : ScriptableObject, IPersistent
 {
     [SerializeField]
     private Logging.Logger logger;
@@ -31,7 +32,7 @@ public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
         );
     }
 
-    public List<ICreatable> GetCreatables(CreatorObjectCategories category)
+    public List<CreatorObject> GetCreatables(CreatorObjectCategories category)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
         {
@@ -42,10 +43,10 @@ public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
             this,
             Logging.LogType.Warning
         );
-        return new List<ICreatable>();
+        return new List<CreatorObject>();
     }
 
-    public void AddCreatable(CreatorObjectCategories category, ICreatable creatable)
+    public void AddCreatable(CreatorObjectCategories category, CreatorObject creatable)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
         {
@@ -59,7 +60,7 @@ public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
         );
     }
 
-    public void RemoveCreatable(CreatorObjectCategories category, ICreatable creatable)
+    public void RemoveCreatable(CreatorObjectCategories category, CreatorObject creatable)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
         {
@@ -73,7 +74,7 @@ public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
         );
     }
 
-    public void UpdateCreatable(CreatorObjectCategories category, ICreatable creatable)
+    public void UpdateCreatable(CreatorObjectCategories category, CreatorObject creatable)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
         {
@@ -85,6 +86,17 @@ public class CreatorObjectLibrarySO : ScriptableObject, ILibraryInitializer
             this,
             Logging.LogType.Warning
         );
+    }
+
+    public void SaveData(ref WorldData worldData)
+    {
+        foreach (var loader in loaderCache.Values)
+        {
+            foreach (var creatable in loader.GetCreatables())
+            {
+                creatable.SaveData(ref worldData);
+            }
+        }
     }
 
     [Serializable]
