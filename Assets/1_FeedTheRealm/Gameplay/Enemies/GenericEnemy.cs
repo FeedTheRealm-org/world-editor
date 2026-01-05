@@ -10,7 +10,7 @@ public class GenericEnemy : CreatorObject
     public bool canMove;
     public int range;
     public string spriteId;
-    public List<EnemyLootItemData> lootItems = new List<EnemyLootItemData>();
+    public List<EnemyLootItemData> lootItems = new();
     public float goldAmount;
 
     public GenericEnemy(EnemyData enemyData)
@@ -20,7 +20,6 @@ public class GenericEnemy : CreatorObject
         healthPoints = enemyData.healthPoints;
         damage = enemyData.damage;
         speed = enemyData.speed;
-        canMove = enemyData.canMove;
         range = enemyData.range;
         spriteId = enemyData.spriteId;
         lootItems = enemyData.lootItems;

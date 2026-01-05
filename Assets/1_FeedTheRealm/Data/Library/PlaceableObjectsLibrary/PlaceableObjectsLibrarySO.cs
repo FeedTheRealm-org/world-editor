@@ -23,6 +23,7 @@ public class PlaceableObjectsLibrarySO : ScriptableObject
         foreach (var loader in loaders)
         {
             loaderCache[loader.category] = loader.loader as IPlaceableLoader;
+            loaderCache[loader.category].LoadLibrary();
         }
         logger.Log(
             $"Placeable Objects Library loaded {loaders.Count} loaders",

@@ -160,7 +160,6 @@ public class ItemCreatorMenuController : MenuController
     {
         FileBrowser.SetFilters(false, new FileBrowser.Filter("PNG Images", ".png"));
         FileBrowser.SetDefaultFilter(".png");
-
         FileBrowser.ShowLoadDialog(
             onSuccess: OnSpriteSelected,
             onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info),

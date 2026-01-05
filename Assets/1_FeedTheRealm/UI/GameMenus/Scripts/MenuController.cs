@@ -20,6 +20,5 @@ public class MenuController : MonoBehaviour
     {
         CloseMenu();
         Instantiate(menuprefab);
-        inputReader.ToggleInput(false);
     }
 }

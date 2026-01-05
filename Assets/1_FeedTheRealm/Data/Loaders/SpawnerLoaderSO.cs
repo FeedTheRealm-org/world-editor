@@ -39,6 +39,11 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
             );
             spawnerObjects.Add(spawnerObject);
         }
+        logger.Log(
+            $"Loaded {spawnerObjects.Count} spawner objects into library.",
+            null,
+            Logging.LogType.Info
+        );
     }
 
     public List<IPlaceable> GetObjects()
