@@ -7,7 +7,7 @@ using Utils;
 
 [CreateAssetMenu(
     fileName = "StructureLoader",
-    menuName = "Scriptable Objects/WorldEditor/StructureLoader"
+    menuName = "Scriptable Objects/Loaders/StructureLoader"
 )]
 public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 {

@@ -6,14 +6,15 @@ using UnityEngine.UIElements;
 public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
-    private PlaceableObjectsLibrarySO creatorLibrary;
+    private PlaceableObjectsLibrarySO placeableObjectLibrary;
     private ScrollView libraryHUD;
 
     private DropdownField libraryOptions;
 
     void Start()
     {
-        creatorLibrary.Initialize();
+        // TODO: review a better way to initialize the library it shouldnt have to be done here
+        placeableObjectLibrary.Initialize();
         UIDocument hudVisualDocument = GetComponent<UIDocument>();
         libraryHUD = hudVisualDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
         RenderDropDown();
@@ -44,7 +45,7 @@ public class HudLibraryController : MonoBehaviour
     private void RenderObjectButtons(PlaceableObjectCategories category)
     {
         libraryHUD.Clear();
-        List<IPlaceable> worldObjects = creatorLibrary.GetObjects(category);
+        List<IPlaceable> worldObjects = placeableObjectLibrary.GetObjects(category);
         foreach (var worldObject in worldObjects)
         {
             var assetButton = new Button() { text = worldObject.DisplayName };

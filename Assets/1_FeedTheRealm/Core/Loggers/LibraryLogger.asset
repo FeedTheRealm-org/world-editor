@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
   m_Name: LibraryLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 0
-  _loggerPrefix: CreatorLibrary
-  _loggerColor: {r: 0.6279364, g: 0.9371856, b: 0.2708135, a: 0}
+  showLogs: 1
+  loggerPrefix: 'Library '
+  loggerColor: {r: 0.44044465, g: 0.55878067, b: 0.89757234, a: 0}
+  showColor: 1

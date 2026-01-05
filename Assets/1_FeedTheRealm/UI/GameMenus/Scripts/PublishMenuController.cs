@@ -88,7 +88,7 @@ public class PublishMenuController : MenuController
         }
 
         // 1) Upload item sprites first and update spriteIds with backend IDs.
-        await UploadItemSpritesAndUpdateIds();
+        //await UploadItemSpritesAndUpdateIds();
 
         // Debug summary of world contents before publish (after spriteId normalization)
         int itemCount = worldData?.consumableItems != null ? worldData.consumableItems.Count : 0;
@@ -109,7 +109,7 @@ public class PublishMenuController : MenuController
         }
 
         // After world metadata is stored, upload enemy sprites (optional, best-effort).
-        await PublishEnemies();
+        //await PublishEnemies();
 
         string uploadError = await PublishModels(worldId);
         if (!string.IsNullOrEmpty(uploadError))
@@ -193,100 +193,100 @@ public class PublishMenuController : MenuController
         );
     }
 
-    /// <summary>
-    /// Upload item sprites and normalize spriteId to use the backend ID.
-    /// Also updates EnemyLootItem to those items.
-    /// </summary>
-    private async Task UploadItemSpritesAndUpdateIds()
-    {
-        if (worldData == null || worldData.consumableItems == null || itemsService == null)
-            return;
+    // /// <summary>
+    // /// Upload item sprites and normalize spriteId to use the backend ID.
+    // /// Also updates EnemyLootItem to those items.
+    // /// </summary>
+    // private async Task UploadItemSpritesAndUpdateIds()
+    // {
+    //     if (worldData == null || worldData.consumableItems == null || itemsService == null)
+    //         return;
 
-        var nameToBackendSpriteId = new System.Collections.Generic.Dictionary<string, string>();
+    //     var nameToBackendSpriteId = new System.Collections.Generic.Dictionary<string, string>();
 
-        foreach (var item in worldData.consumableItems)
-        {
-            if (item == null || string.IsNullOrEmpty(item.spriteId))
-                continue;
+    //     foreach (var item in worldData.consumableItems)
+    //     {
+    //         if (item == null || string.IsNullOrEmpty(item.spriteId))
+    //             continue;
 
-            logger.Log(
-                $"Uploading sprite for consumable item '{item.name}' (pre-publish spriteId='{item.spriteId}')",
-                this,
-                Logging.LogType.Info
-            );
+    //         logger.Log(
+    //             $"Uploading sprite for consumable item '{item.name}' (pre-publish spriteId='{item.spriteId}')",
+    //             this,
+    //             Logging.LogType.Info
+    //         );
 
-            string path = SpriteStorage.GetFilePathFromIdOrPath(item.spriteId);
-            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
-            if (spriteBytes == null || spriteBytes.Length == 0)
-            {
-                logger.Log(
-                    $"Sprite bytes for asset ID '{item.spriteId}' are null or empty. Cancelling publish.",
-                    this,
-                    Logging.LogType.Error
-                );
-                throw new System.Exception(
-                    $"Failed to load sprite bytes for item '{item.name}' (spriteId='{item.spriteId}')."
-                );
-            }
+    //         string path = SpriteStorage.GetFilePathFromIdOrPath(item.spriteId);
+    //         byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+    //         if (spriteBytes == null || spriteBytes.Length == 0)
+    //         {
+    //             logger.Log(
+    //                 $"Sprite bytes for asset ID '{item.spriteId}' are null or empty. Cancelling publish.",
+    //                 this,
+    //                 Logging.LogType.Error
+    //             );
+    //             throw new System.Exception(
+    //                 $"Failed to load sprite bytes for item '{item.name}' (spriteId='{item.spriteId}')."
+    //             );
+    //         }
 
-            string type = System.IO.Path.GetExtension(path).Replace(".", "").ToLower();
-            var (createdSprite, itemError) = await itemsService.UploadItemSprite(
-                spriteBytes,
-                $"{item.name}{System.IO.Path.GetExtension(path)}",
-                $"image/{type}"
-            );
+    //         string type = System.IO.Path.GetExtension(path).Replace(".", "").ToLower();
+    //         var (createdSprite, itemError) = await itemsService.UploadItemSprite(
+    //             spriteBytes,
+    //             $"{item.name}{System.IO.Path.GetExtension(path)}",
+    //             $"image/{type}"
+    //         );
 
-            if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
-            {
-                logger.Log(
-                    $"Failed to upload sprite for item '{item.name}': {itemError}",
-                    this,
-                    Logging.LogType.Error
-                );
-                throw new System.Exception(
-                    $"Failed to upload sprite for item '{item.name}': {itemError}"
-                );
-            }
+    //         if (!string.IsNullOrEmpty(itemError) || createdSprite == null)
+    //         {
+    //             logger.Log(
+    //                 $"Failed to upload sprite for item '{item.name}': {itemError}",
+    //                 this,
+    //                 Logging.LogType.Error
+    //             );
+    //             throw new System.Exception(
+    //                 $"Failed to upload sprite for item '{item.name}': {itemError}"
+    //             );
+    //         }
 
-            logger.Log(
-                $"Item '{item.name}' sprite uploaded. Backend spriteId='{createdSprite.id}', url='{createdSprite.url}'",
-                this,
-                Logging.LogType.Info
-            );
+    //         logger.Log(
+    //             $"Item '{item.name}' sprite uploaded. Backend spriteId='{createdSprite.id}', url='{createdSprite.url}'",
+    //             this,
+    //             Logging.LogType.Info
+    //         );
 
-            item.spriteId = createdSprite.id;
-            nameToBackendSpriteId[item.name] = createdSprite.id;
-        }
+    //         item.spriteId = createdSprite.id;
+    //         nameToBackendSpriteId[item.name] = createdSprite.id;
+    //     }
 
-        // Propagate new spriteId to EnemyLootItem based on itemName
-        if (worldData.enemies != null && worldData.enemies.Count > 0)
-        {
-            foreach (var enemy in worldData.enemies)
-            {
-                if (enemy?.lootItems == null)
-                    continue;
+    //     // Propagate new spriteId to EnemyLootItem based on itemName
+    //     if (worldData.enemies != null && worldData.enemies.Count > 0)
+    //     {
+    //         foreach (var enemy in worldData.enemies)
+    //         {
+    //             if (enemy?.lootItems == null)
+    //                 continue;
 
-                foreach (var loot in enemy.lootItems)
-                {
-                    if (loot == null)
-                        continue;
+    //             foreach (var loot in enemy.lootItems)
+    //             {
+    //                 if (loot == null)
+    //                     continue;
 
-                    if (
-                        !string.IsNullOrEmpty(loot.itemName)
-                        && nameToBackendSpriteId.TryGetValue(loot.itemName, out var backendId)
-                    )
-                    {
-                        logger.Log(
-                            $"Updating loot spriteId for enemy loot item '{loot.itemName}' to backend spriteId='{backendId}'",
-                            this,
-                            Logging.LogType.Info
-                        );
-                        loot.spriteId = backendId;
-                    }
-                }
-            }
-        }
-    }
+    //                 if (
+    //                     !string.IsNullOrEmpty(loot.itemName)
+    //                     && nameToBackendSpriteId.TryGetValue(loot.itemName, out var backendId)
+    //                 )
+    //                 {
+    //                     logger.Log(
+    //                         $"Updating loot spriteId for enemy loot item '{loot.itemName}' to backend spriteId='{backendId}'",
+    //                         this,
+    //                         Logging.LogType.Info
+    //                     );
+    //                     loot.spriteId = backendId;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     private Task<(SpriteCreatedData data, string error)> UploadEnemySpriteAsync(
         byte[] fileBytes,
@@ -314,52 +314,52 @@ public class PublishMenuController : MenuController
         return tcs.Task;
     }
 
-    private async Task PublishEnemies()
-    {
-        if (worldData == null || worldData.enemies == null || enemiesService == null)
-            return;
+    // private async Task PublishEnemies()
+    // {
+    //     if (worldData == null || worldData.enemies == null || enemiesService == null)
+    //         return;
 
-        foreach (var enemy in worldData.enemies)
-        {
-            if (enemy == null || string.IsNullOrEmpty(enemy.spriteId))
-                continue;
+    //     foreach (var enemy in worldData.enemies)
+    //     {
+    //         if (enemy == null || string.IsNullOrEmpty(enemy.spriteId))
+    //             continue;
 
-            logger.Log($"Uploading sprite for enemy '{enemy.name}'", this, Logging.LogType.Info);
+    //         logger.Log($"Uploading sprite for enemy '{enemy.name}'", this, Logging.LogType.Info);
 
-            string path = SpriteStorage.GetFilePathFromIdOrPath(enemy.spriteId);
-            byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
-            if (spriteBytes == null || spriteBytes.Length == 0)
-            {
-                logger.Log(
-                    $"Sprite bytes for enemy spriteId '{enemy.spriteId}' are null or empty. Skipping upload.",
-                    this,
-                    Logging.LogType.Warning
-                );
-                continue;
-            }
+    //         string path = SpriteStorage.GetFilePathFromIdOrPath(enemy.spriteId);
+    //         byte[] spriteBytes = SpriteStorage.LoadSpriteBytesFromPath(path);
+    //         if (spriteBytes == null || spriteBytes.Length == 0)
+    //         {
+    //             logger.Log(
+    //                 $"Sprite bytes for enemy spriteId '{enemy.spriteId}' are null or empty. Skipping upload.",
+    //                 this,
+    //                 Logging.LogType.Warning
+    //             );
+    //             continue;
+    //         }
 
-            string type = Path.GetExtension(path).Replace(".", "").ToLower();
-            var (createdSprite, enemyError) = await UploadEnemySpriteAsync(
-                spriteBytes,
-                $"{enemy.name}{Path.GetExtension(path)}",
-                $"image/{type}"
-            );
+    //         string type = Path.GetExtension(path).Replace(".", "").ToLower();
+    //         var (createdSprite, enemyError) = await UploadEnemySpriteAsync(
+    //             spriteBytes,
+    //             $"{enemy.name}{Path.GetExtension(path)}",
+    //             $"image/{type}"
+    //         );
 
-            if (!string.IsNullOrEmpty(enemyError) || createdSprite == null)
-            {
-                logger.Log(
-                    $"Failed to upload sprite for enemy '{enemy.name}': {enemyError}",
-                    this,
-                    Logging.LogType.Warning
-                );
-                continue;
-            }
+    //         if (!string.IsNullOrEmpty(enemyError) || createdSprite == null)
+    //         {
+    //             logger.Log(
+    //                 $"Failed to upload sprite for enemy '{enemy.name}': {enemyError}",
+    //                 this,
+    //                 Logging.LogType.Warning
+    //             );
+    //             continue;
+    //         }
 
-            logger.Log(
-                $"Sprite uploaded successfully for enemy '{enemy.name}'",
-                this,
-                Logging.LogType.Info
-            );
-        }
-    }
+    //         logger.Log(
+    //             $"Sprite uploaded successfully for enemy '{enemy.name}'",
+    //             this,
+    //             Logging.LogType.Info
+    //         );
+    //     }
+    // }
 }

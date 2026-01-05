@@ -617,6 +617,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3603747472366440528, guid: 6460587118ece6eeba63475a7c41b67c, type: 3}
+      propertyPath: creatorObjectLibrary
+      value: 
+      objectReference: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+    - target: {fileID: 3603747472366440528, guid: 6460587118ece6eeba63475a7c41b67c, type: 3}
+      propertyPath: libraries.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3603747472366440528, guid: 6460587118ece6eeba63475a7c41b67c, type: 3}
+      propertyPath: 'libraries.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+    - target: {fileID: 3603747472366440528, guid: 6460587118ece6eeba63475a7c41b67c, type: 3}
+      propertyPath: 'libraries.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5050661701920911626, guid: 6460587118ece6eeba63475a7c41b67c, type: 3}
       propertyPath: m_Name
       value: WordLoader
@@ -836,13 +852,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2877746089733943109, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: placeableObjectLibrary
+      value: 
+      objectReference: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.size
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
-      value: Consumable Items
+      value: Items
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[3].Name
@@ -855,7 +875,7 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].panel
       value: 
-      objectReference: {fileID: 4598189756783925192, guid: c524a0b0ad7afa1438079a3f0bb67818, type: 3}
+      objectReference: {fileID: 7649707916942922576, guid: 939488e095e0476aeb9e91a86ea8f3be, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[3].panel
       value: 

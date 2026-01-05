@@ -6,7 +6,7 @@ using UnityEngine;
     fileName = "PlaceableObjectsLibrary",
     menuName = "Scriptable Objects/Library/PlaceableObjectsLibrary"
 )]
-public class PlaceableObjectsLibrarySO : ScriptableObject
+public class PlaceableObjectsLibrarySO : ScriptableObject, ILibraryInitializer
 {
     [SerializeField]
     private Logging.Logger logger;
@@ -18,28 +18,17 @@ public class PlaceableObjectsLibrarySO : ScriptableObject
 
     public void Initialize()
     {
-        logger.Log("Initializing Creator Library...", this, Logging.LogType.Info);
+        logger.Log($"Initializing Placeable Objects Library", this, Logging.LogType.Info);
         loaderCache = new Dictionary<PlaceableObjectCategories, IPlaceableLoader>();
         foreach (var loader in loaders)
         {
-            if (
-                loader.loader is ILoadable loadable
-                && loader.loader is IPlaceableLoader placeableLoader
-            )
-            {
-                loadable.LoadLibrary();
-                loaderCache[loader.category] = placeableLoader;
-            }
-            else
-            {
-                logger.Log(
-                    $"Loader for category {loader.category} does not implement ILoadable.",
-                    this,
-                    Logging.LogType.Error
-                );
-            }
+            loaderCache[loader.category] = loader.loader as IPlaceableLoader;
         }
-        logger.Log("Library loaded", this, Logging.LogType.Info);
+        logger.Log(
+            $"Placeable Objects Library loaded {loaders.Count} loaders",
+            this,
+            Logging.LogType.Info
+        );
     }
 
     public List<IPlaceable> GetObjects(PlaceableObjectCategories category)

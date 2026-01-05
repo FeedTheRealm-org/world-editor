@@ -20,12 +20,6 @@ public class DataPersistenceManagerSO : ScriptableObject
     [SerializeField]
     private Logging.Logger logger;
 
-    [SerializeField]
-    private ConsumableItemLibrarySO consumableItemsDatabase;
-
-    [SerializeField]
-    private EnemyLibrarySO enemyDatabase;
-
     private WorldData worldData = null;
     private List<IPersistent> dataPersistenceObjects = new();
 
@@ -67,38 +61,6 @@ public class DataPersistenceManagerSO : ScriptableObject
             Logging.LogType.Info
         );
 
-        // Copy items from their persistence database
-        var itemsFromDb =
-            consumableItemsDatabase != null
-                ? consumableItemsDatabase.GetAllConsumableItems()
-                : new List<ConsumableItem>();
-        logger.Log(
-            $"DataPersistenceManagerSO.SaveWorld: copying {itemsFromDb.Count} consumable items from database.",
-            this,
-            Logging.LogType.Info
-        );
-        worldData.consumableItems = itemsFromDb;
-
-        // Copy enemies from their persistence database
-        if (enemyDatabase != null)
-        {
-            var enemiesFromDb = enemyDatabase.GetAllEnemies() ?? new List<EnemyData>();
-            logger.Log(
-                $"DataPersistenceManagerSO.SaveWorld: copying {enemiesFromDb.Count} enemies from database.",
-                this,
-                Logging.LogType.Info
-            );
-            worldData.enemies = enemiesFromDb;
-        }
-        else
-        {
-            logger.Log(
-                "DataPersistenceManagerSO: enemyDatabase is not assigned. Enemies will not be saved.",
-                this,
-                Logging.LogType.Warning
-            );
-        }
-
         WorldFileHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
     }
@@ -134,9 +96,9 @@ public class DataPersistenceManagerSO : ScriptableObject
     // instead of only the changes in the world.
     private void PrepWorld()
     {
-        string worldName = worldData.worldName;
-        string worldId = worldData.id;
-        worldData = new WorldData { worldName = worldName, id = worldId };
+        worldData.objectPlacementData.Clear();
+        worldData.enemySpawnAreas.Clear();
+        worldData.playerSpawnAreas.Clear();
     }
 
 #if UNITY_EDITOR

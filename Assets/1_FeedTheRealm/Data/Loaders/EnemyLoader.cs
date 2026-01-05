@@ -3,14 +3,13 @@ using Models;
 using UnityEngine;
 using Utils;
 
-[CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/WorldEditor/EnemyLoader")]
-public class EnemyLoader : ScriptableObject, ILoadable
+[CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
+public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
     private Logging.Logger logger;
 
-    [SerializeField]
-    private EnemyLibrarySO enemyDatabase;
+    private List<ICreatable> enemies = new();
 
     void OnEnable()
     {
@@ -22,36 +21,43 @@ public class EnemyLoader : ScriptableObject, ILoadable
         SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
-    // No separate shared enemy library for now – kept for interface symmetry.
-    public void LoadLibrary() { }
+    public List<ICreatable> GetCreatables()
+    {
+        return enemies.FindAll(item => !item.IsDeleted);
+    }
 
-    // Populate the Enemy ScriptableObject database from the world data
-    // so that editor UIs (AddEnemyMenu, etc.) reflect the selected world.
+    public void AddCreatable(ICreatable creatable)
+    {
+        enemies.Add(creatable);
+    }
+
+    public void RemoveCreatable(ICreatable creatable)
+    {
+        creatable.Delete();
+        enemies.Remove(creatable);
+    }
+
+    public void UpdateCreatable(ICreatable creatable)
+    {
+        int index = enemies.FindIndex(item => item.ObjectId == creatable.ObjectId);
+        if (index != -1)
+        {
+            enemies[index] = creatable;
+        }
+    }
+
     public void LoadWorld(WorldData worldData)
     {
+        enemies.Clear();
         if (worldData == null)
         {
-            logger.Log("EnemyLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
+            logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
             return;
         }
 
-        if (enemyDatabase == null)
+        foreach (EnemyData itemData in worldData.enemies ?? new List<EnemyData>())
         {
-            logger.Log(
-                "EnemyLoader.LoadWorld: enemyDatabase is not assigned.",
-                this,
-                Logging.LogType.Error
-            );
-            return;
+            enemies.Add(new GenericEnemy(itemData));
         }
-
-        var enemiesFromWorld = worldData.enemies ?? new List<EnemyData>();
-        logger.Log(
-            $"EnemyLoader.LoadWorld: loading {enemiesFromWorld.Count} enemies into database.",
-            this,
-            Logging.LogType.Info
-        );
-
-        enemyDatabase.LoadEnemies(enemiesFromWorld);
     }
 }

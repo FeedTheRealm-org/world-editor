@@ -13,7 +13,7 @@ public class SaveMenuController : MenuController
     private TextField nameInput;
     private VisualElement root;
 
-    private void OnEnable()
+    void OnEnable()
     {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
