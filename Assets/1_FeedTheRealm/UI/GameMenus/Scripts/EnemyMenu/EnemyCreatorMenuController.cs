@@ -107,7 +107,7 @@ public class EnemyCreatorMenuController : MenuController
         string spritePath = Path.Combine(
             Application.streamingAssetsPath,
             "Items",
-            currentEnemy.spriteId + ".png"
+            currentEnemy.spriteFile + ".png"
         );
         Sprite sprite = LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
@@ -149,7 +149,7 @@ public class EnemyCreatorMenuController : MenuController
                 damageInput.value,
                 speedInput.value,
                 rangeInput.value,
-                "", // spriteId, set after sprite is saved
+                pendingSpriteSourcePath,
                 lootTableData
             );
             currentEnemy = new GenericEnemy(enemyData);
@@ -169,6 +169,7 @@ public class EnemyCreatorMenuController : MenuController
             currentEnemy.speed = speedInput.value;
             currentEnemy.range = rangeInput.value;
             currentEnemy.lootTable = lootTableData;
+            currentEnemy.spriteFile = pendingSpriteSourcePath;
             logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
         }
         ReturnToItemsMenu();

@@ -46,6 +46,16 @@ public class CreatorObjectLibrarySO : ScriptableObject, IPersistent
         return new List<CreatorObject>();
     }
 
+    public List<CreatorObject> GetAllCreatorObjects()
+    {
+        List<CreatorObject> allCreatables = new();
+        foreach (var loader in loaderCache.Values)
+        {
+            allCreatables.AddRange(loader.GetCreatables());
+        }
+        return allCreatables;
+    }
+
     public void AddCreatable(CreatorObjectCategories category, CreatorObject creatable)
     {
         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))

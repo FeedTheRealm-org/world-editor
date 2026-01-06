@@ -7,13 +7,14 @@ public abstract class CreatorObject : ICreatable, IPersistent
 {
     public string name;
     public string objectId;
-    public string spriteFilepath;
+    public string spriteFile;
     private bool _isDeleted = false;
 
-    public CreatorObject(string name, string objectId)
+    public CreatorObject(string name, string objectId, string spriteFile = null)
     {
         this.name = name;
         this.objectId = string.IsNullOrEmpty(objectId) ? Guid.NewGuid().ToString() : objectId;
+        this.spriteFile = spriteFile;
     }
 
     public bool IsDeleted => _isDeleted;
@@ -46,16 +47,16 @@ public abstract class CreatorObject : ICreatable, IPersistent
 
     private void SaveSprite()
     {
-        if (string.IsNullOrEmpty(spriteFilepath))
+        if (string.IsNullOrEmpty(spriteFile))
             return;
-        spriteFilepath = FileHandler.SaveFile(spriteFilepath, objectId);
+        spriteFile = FileHandler.SaveFile(spriteFile, objectId);
     }
 
     private void DeleteSprite()
     {
-        if (string.IsNullOrEmpty(spriteFilepath))
+        if (string.IsNullOrEmpty(spriteFile))
             return;
-        FileHandler.DeleteFile(spriteFilepath);
-        spriteFilepath = null;
+        FileHandler.DeleteFile(spriteFile);
+        spriteFile = null;
     }
 }

@@ -9,18 +9,16 @@ public class GenericEnemy : CreatorObject
     public int speed;
     public bool canMove;
     public int range;
-    public string spriteId;
     public LootTableData lootTable;
 
     public GenericEnemy(EnemyData enemyData)
-        : base(enemyData.name, enemyData.id)
+        : base(enemyData.name, enemyData.id, enemyData.spriteId)
     {
         description = enemyData.description;
         healthPoints = enemyData.healthPoints;
         damage = enemyData.damage;
         speed = enemyData.speed;
         range = enemyData.range;
-        spriteId = enemyData.spriteId;
         lootTable = enemyData.lootTable;
     }
 
@@ -39,7 +37,7 @@ public class GenericEnemy : CreatorObject
             damage,
             speed,
             range,
-            spriteId,
+            spriteFile,
             lootTable
         );
         worldData.enemies.Add(enemyData);

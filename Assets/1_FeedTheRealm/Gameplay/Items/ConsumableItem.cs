@@ -8,10 +8,9 @@ public class ConsumableItem : CreatorObject
     public float duration;
     public float cooldown;
     public int maxStack;
-    public string spriteId;
 
     public ConsumableItem(ConsumableItemData consumableItemData)
-        : base(consumableItemData.name, consumableItemData.id)
+        : base(consumableItemData.name, consumableItemData.id, consumableItemData.spriteId)
     {
         description = consumableItemData.description;
         effectType = consumableItemData.effectType;
@@ -19,7 +18,6 @@ public class ConsumableItem : CreatorObject
         duration = consumableItemData.duration;
         cooldown = consumableItemData.cooldown;
         maxStack = consumableItemData.maxStack;
-        spriteId = consumableItemData.spriteId;
     }
 
     public override void SaveObject(ref WorldData worldData)
@@ -33,7 +31,7 @@ public class ConsumableItem : CreatorObject
             duration,
             cooldown,
             maxStack,
-            spriteId
+            spriteFile
         );
         worldData.consumableItems.Add(itemData);
     }

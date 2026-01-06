@@ -106,7 +106,7 @@ public class LootTableCreatorMenuController : MenuController
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == evt.newValue);
         if (selectedItem != null)
         {
-            UpdateSpritePreview(selectedItem.spriteId);
+            UpdateSpritePreview(selectedItem.spriteFile);
         }
     }
 
@@ -166,7 +166,7 @@ public class LootTableCreatorMenuController : MenuController
             selectedItem.duration,
             selectedItem.cooldown,
             selectedItem.maxStack,
-            selectedItem.spriteId,
+            selectedItem.spriteFile,
             itemProbabilitySlider.value
         );
 

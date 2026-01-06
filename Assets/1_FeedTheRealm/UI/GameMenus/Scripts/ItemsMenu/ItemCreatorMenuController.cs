@@ -96,7 +96,7 @@ public class ItemCreatorMenuController : MenuController
         maxStackInput.value = currentItem.maxStack;
         effectTypeInput.value = currentItem.effectType.ToString();
         // Load existing sprite for preview
-        string spritePath = FileHandler.GetSpriteFilePath(currentItem.spriteId);
+        string spritePath = FileHandler.GetSpriteFilePath(currentItem.spriteFile);
         Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
         {
@@ -117,7 +117,7 @@ public class ItemCreatorMenuController : MenuController
                 duration: durationInput.value,
                 cooldown: cooldownInput.value,
                 maxStack: maxStackInput.value,
-                spriteId: ""
+                spriteId: pendingSpriteSourcePath
             );
             currentItem = new ConsumableItem(itemData);
             creatorObjectLibrary.AddCreatable(CreatorObjectCategories.ConsumableItem, currentItem);
@@ -135,6 +135,7 @@ public class ItemCreatorMenuController : MenuController
             currentItem.duration = durationInput.value;
             currentItem.cooldown = cooldownInput.value;
             currentItem.maxStack = maxStackInput.value;
+            currentItem.spriteFile = pendingSpriteSourcePath;
             currentItem.effectType = (EffectType)
                 Enum.Parse(typeof(EffectType), effectTypeInput.value);
             logger.Log(

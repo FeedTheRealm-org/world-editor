@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
-  m_Name: ModelServiceLogger
+  m_Name: SpriteServiceLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  showLogs: 0
-  loggerPrefix: 'Model '
-  loggerColor: {r: 0.97897255, g: 0.3487732, b: 0.3487732, a: 0}
+  showLogs: 1
+  loggerPrefix: 'Sprite '
+  loggerColor: {r: 0.041070484, g: 0.9083266, b: 0.59926486, a: 0}
   showColor: 1

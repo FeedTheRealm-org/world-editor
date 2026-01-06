@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2385784492049444227}
   - component: {fileID: 3577323213893295326}
   - component: {fileID: 1546281547035943485}
+  - component: {fileID: 3696031326296672572}
   m_Layer: 5
   m_Name: PublishMenu
   m_TagString: Untagged
@@ -71,9 +72,23 @@ MonoBehaviour:
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+  worldPublisherController: {fileID: 3696031326296672572}
+--- !u!114 &3696031326296672572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3678517506282993326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1761b4bafab7624a9a8ba01996473669, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::WorldPublisherController
+  logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
   structureLoader: {fileID: 11400000, guid: bc94fda36a29aca7dbe436f8c09b6035, type: 2}
+  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
-  modelUploadService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
-  itemsService: {fileID: 11400000, guid: 0df1394fe906ded30a195fa0957cf8b0, type: 2}
-  enemiesService: {fileID: 11400000, guid: 420e4cd20b1c6a3f79848882f365c113, type: 2}
+  spriteService: {fileID: 11400000, guid: c00c8d635be048806b011b2f8365dcea, type: 2}
+  modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
