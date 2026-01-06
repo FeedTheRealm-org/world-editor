@@ -5,6 +5,7 @@ using Models;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 [RequireComponent(typeof(UIDocument))]
 public class ItemCreatorMenuController : MenuController
@@ -79,7 +80,6 @@ public class ItemCreatorMenuController : MenuController
         closeButton.clicked += CloseMenu;
         loadSpriteButton.clicked += LoadSprite;
 
-        // Populate fields if editing existing item
         if (currentItem != null)
         {
             PopulateFields();
@@ -96,12 +96,8 @@ public class ItemCreatorMenuController : MenuController
         maxStackInput.value = currentItem.maxStack;
         effectTypeInput.value = currentItem.effectType.ToString();
         // Load existing sprite for preview
-        string spritePath = Path.Combine(
-            Application.streamingAssetsPath,
-            "Items",
-            currentItem.spriteId + ".png"
-        );
-        Sprite sprite = LoadSpriteFromDisk(spritePath);
+        string spritePath = FileHandler.GetSpriteFilePath(currentItem.spriteId);
+        Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
         {
             spritePreview.sprite = sprite;
@@ -147,7 +143,6 @@ public class ItemCreatorMenuController : MenuController
                 Logging.LogType.Info
             );
         }
-        SaveSprite();
         ReturnToItemsMenu();
     }
 
@@ -158,17 +153,9 @@ public class ItemCreatorMenuController : MenuController
 
     private void LoadSprite()
     {
-        FileBrowser.SetFilters(false, new FileBrowser.Filter("PNG Images", ".png"));
-        FileBrowser.SetDefaultFilter(".png");
-        FileBrowser.ShowLoadDialog(
+        FileHandler.ShowFilePickerDialog(
             onSuccess: OnSpriteSelected,
-            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info),
-            pickMode: FileBrowser.PickMode.Files,
-            allowMultiSelection: false,
-            initialPath: null,
-            initialFilename: null,
-            title: "Select Item Sprite",
-            loadButtonText: "Select"
+            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
         );
     }
 
@@ -176,7 +163,6 @@ public class ItemCreatorMenuController : MenuController
     {
         if (paths == null || paths.Length == 0)
             return;
-
         string sourcePath = paths[0];
 
         if (!sourcePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
@@ -184,60 +170,15 @@ public class ItemCreatorMenuController : MenuController
             logger.Log("Selected file is not a PNG", this, Logging.LogType.Warning);
             return;
         }
-
-        Sprite sprite = LoadSpriteFromDisk(sourcePath);
+        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
         if (sprite == null)
         {
             logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
             return;
         }
-
         spritePreview.sprite = sprite;
         pendingSpriteSourcePath = sourcePath;
         logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
-    }
-
-    private void SaveSprite()
-    {
-        if (string.IsNullOrEmpty(pendingSpriteSourcePath))
-            return;
-
-        string targetDir = Path.Combine(Application.streamingAssetsPath, "Items");
-        Directory.CreateDirectory(targetDir);
-        // Ensure spriteId is initialized; use the item's persistent ObjectId by default.
-        string spriteId = currentItem.spriteId;
-        if (string.IsNullOrEmpty(spriteId))
-        {
-            spriteId = currentItem.ObjectId;
-            currentItem.spriteId = spriteId;
-        }
-        string targetPath = Path.Combine(targetDir, spriteId + ".png");
-        FileBrowserHelpers.CopyFile(pendingSpriteSourcePath, targetPath);
-        pendingSpriteSourcePath = null;
-
-        logger.Log($"Sprite saved to disk with id: {spriteId}", this, Logging.LogType.Info);
-    }
-
-    private Sprite LoadSpriteFromDisk(string path)
-    {
-        if (!FileBrowserHelpers.FileExists(path))
-            return null;
-
-        byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(path);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(bytes))
-            return null;
-
-        texture.filterMode = FilterMode.Bilinear;
-        texture.wrapMode = TextureWrapMode.Clamp;
-
-        return Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100f
-        );
     }
 
     void OnDisable()

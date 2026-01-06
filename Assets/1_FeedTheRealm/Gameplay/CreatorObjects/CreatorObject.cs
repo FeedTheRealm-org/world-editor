@@ -1,11 +1,13 @@
 using System;
 using Models;
 using UnityEngine;
+using Utils;
 
 public abstract class CreatorObject : ICreatable, IPersistent
 {
     public string name;
     public string objectId;
+    public string spriteFilepath;
     private bool _isDeleted = false;
 
     public CreatorObject(string name, string objectId)
@@ -31,8 +33,29 @@ public abstract class CreatorObject : ICreatable, IPersistent
     {
         Debug.Log($"Saving CreatorObject: {DisplayName} (ID: {ObjectId}), IsDeleted: {_isDeleted}");
         if (_isDeleted)
+        {
+            DeleteSprite();
             DeleteObject(ref worldData);
+        }
         else
+        {
+            SaveSprite();
             SaveObject(ref worldData);
+        }
+    }
+
+    private void SaveSprite()
+    {
+        if (string.IsNullOrEmpty(spriteFilepath))
+            return;
+        spriteFilepath = FileHandler.SaveFile(spriteFilepath, objectId);
+    }
+
+    private void DeleteSprite()
+    {
+        if (string.IsNullOrEmpty(spriteFilepath))
+            return;
+        FileHandler.DeleteFile(spriteFilepath);
+        spriteFilepath = null;
     }
 }

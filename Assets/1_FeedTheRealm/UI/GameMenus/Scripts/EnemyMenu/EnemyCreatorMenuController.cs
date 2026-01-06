@@ -171,7 +171,6 @@ public class EnemyCreatorMenuController : MenuController
             currentEnemy.lootTable = lootTableData;
             logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
         }
-        SaveSprite();
         ReturnToItemsMenu();
     }
 
@@ -220,27 +219,6 @@ public class EnemyCreatorMenuController : MenuController
         spritePreview.sprite = sprite;
         pendingSpriteSourcePath = sourcePath;
         logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
-    }
-
-    private void SaveSprite()
-    {
-        if (string.IsNullOrEmpty(pendingSpriteSourcePath))
-            return;
-
-        string targetDir = Path.Combine(Application.streamingAssetsPath, "Items");
-        Directory.CreateDirectory(targetDir);
-        // Ensure spriteId is initialized; use the enemy's persistent ObjectId by default.
-        string spriteId = currentEnemy.spriteId;
-        if (string.IsNullOrEmpty(spriteId))
-        {
-            spriteId = currentEnemy.ObjectId;
-            currentEnemy.spriteId = spriteId;
-        }
-        string targetPath = Path.Combine(targetDir, spriteId + ".png");
-        FileBrowserHelpers.CopyFile(pendingSpriteSourcePath, targetPath);
-        pendingSpriteSourcePath = null;
-
-        logger.Log($"Sprite saved to disk with id: {spriteId}", this, Logging.LogType.Info);
     }
 
     private Sprite LoadSpriteFromDisk(string path)
