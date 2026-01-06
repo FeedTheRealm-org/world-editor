@@ -16,3 +16,7 @@ MonoBehaviour:
   loaders:
   - category: 0
     loader: {fileID: 11400000, guid: 6c477c93bdcff34fbb93f8777949f0b5, type: 2}
+  - category: 1
+    loader: {fileID: 11400000, guid: 1ec8de1717b4c079196c2c4bbe8ca163, type: 2}
+  - category: 2
+    loader: {fileID: 11400000, guid: 9ddf2d45daf29322b8f4f1b49605880d, type: 2}

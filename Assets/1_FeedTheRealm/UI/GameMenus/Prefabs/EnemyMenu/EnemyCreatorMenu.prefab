@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 0c2a2d3f4508e7f48a143a5639397046, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 80007a70dc1bfb38180d88e6049fed28, type: 3}
   m_SortingOrder: 2
   m_Position: 0
   m_WorldSpaceSizeMode: 1
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c328ac26c88ffb1c0b17183512280d14, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCreatorMenuController
-  inputReader: {fileID: 0}
-  logger: {fileID: 0}
-  creatorObjectLibrary: {fileID: 0}
-  itemsMenuPrefab: {fileID: 0}
+  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+  logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
+  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+  enemyMenuPrefab: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}

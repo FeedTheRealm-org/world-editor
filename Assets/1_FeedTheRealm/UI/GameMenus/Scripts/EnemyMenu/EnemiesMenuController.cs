@@ -10,7 +10,7 @@ public class EnemiesMenuController : MenuController
     private Logging.Logger logger;
 
     [SerializeField]
-    private GameObject createItemMenuPrefab;
+    private GameObject createEnemyMenuPrefab;
 
     [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
@@ -18,67 +18,65 @@ public class EnemiesMenuController : MenuController
     [SerializeField]
     private VisualTreeAsset itemListTemplate;
     private Button closeButton;
-    private Button addItemButton;
+    private Button addEnemyButton;
 
     void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         closeButton = root.Q<Button>("Close");
-        addItemButton = root.Q<Button>("AddItem");
+        addEnemyButton = root.Q<Button>("AddEnemy");
 
-        addItemButton.clicked += AddItem;
+        addEnemyButton.clicked += AddEnemy;
         closeButton.clicked += CloseMenu;
 
-        PopulateItemsList();
+        PopulateEnemysList();
     }
 
-    private void PopulateItemsList()
+    private void PopulateEnemysList()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
-        var itemsList = root.Q<ListView>("ItemsList");
-        itemsList.Clear();
+        var enemiesList = root.Q<ListView>("EnemiesList");
+        enemiesList.Clear();
 
         foreach (
-            ConsumableItem item in creatorObjectLibrary.GetCreatables(
-                CreatorObjectCategories.ConsumableItem
-            )
+            GenericEnemy enemy in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Enemy)
         )
         {
-            VisualElement itemEntry = itemListTemplate.Instantiate();
-            var headerLabel = itemEntry.Q<Label>("Header");
-            headerLabel.text = item.DisplayName;
+            VisualElement enemyEntry = itemListTemplate.Instantiate();
+            var headerLabel = enemyEntry.Q<Label>("Header");
+            headerLabel.text = enemy.DisplayName;
 
-            var editButton = itemEntry.Q<Button>("Edit");
-            var deleteButton = itemEntry.Q<Button>("Delete");
+            var editButton = enemyEntry.Q<Button>("Edit");
+            var deleteButton = enemyEntry.Q<Button>("Delete");
 
-            editButton.clicked += () => OnEditItem(item);
-            deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
+            editButton.clicked += () => OnEditEnemy(enemy);
+            deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
 
-            itemsList.hierarchy.Add(itemEntry);
+            enemiesList.hierarchy.Add(enemyEntry);
         }
     }
 
-    void OnEditItem(CreatorObject item)
+    void OnEditEnemy(CreatorObject enemy)
     {
-        logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
+        logger.Log("Editing enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
     }
 
-    void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)
+    void OnDeleteEnemy(CreatorObject enemy, VisualElement enemyListEntry)
     {
-        logger.Log("Deleting item: " + item.DisplayName, this, Logging.LogType.Info);
-        creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.ConsumableItem, item);
-        itemListEntry.RemoveFromHierarchy();
+        logger.Log("Deleting enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+        creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Enemy, enemy);
+        enemyListEntry.RemoveFromHierarchy();
     }
 
     void OnDisable()
     {
-        addItemButton.clicked -= AddItem;
+        addEnemyButton.clicked -= AddEnemy;
         closeButton.clicked -= CloseMenu;
     }
 
-    private void AddItem()
+    private void AddEnemy()
     {
-        logger.Log("Opening Create Item Menu", this, Logging.LogType.Info);
-        OpenMenu(createItemMenuPrefab);
+        logger.Log("Opening Create Enemy Menu", this, Logging.LogType.Info);
+        OpenMenu(createEnemyMenuPrefab);
     }
 }

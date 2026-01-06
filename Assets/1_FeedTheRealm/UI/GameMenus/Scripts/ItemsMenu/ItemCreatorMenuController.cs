@@ -204,7 +204,13 @@ public class ItemCreatorMenuController : MenuController
 
         string targetDir = Path.Combine(Application.streamingAssetsPath, "Items");
         Directory.CreateDirectory(targetDir);
+        // Ensure spriteId is initialized; use the item's persistent ObjectId by default.
         string spriteId = currentItem.spriteId;
+        if (string.IsNullOrEmpty(spriteId))
+        {
+            spriteId = currentItem.ObjectId;
+            currentItem.spriteId = spriteId;
+        }
         string targetPath = Path.Combine(targetDir, spriteId + ".png");
         FileBrowserHelpers.CopyFile(pendingSpriteSourcePath, targetPath);
         pendingSpriteSourcePath = null;

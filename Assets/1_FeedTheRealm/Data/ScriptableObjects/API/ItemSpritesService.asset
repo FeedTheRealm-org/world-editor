@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae1cd16f33c0e9547bcf1f7eeff695a2, type: 3}
   m_Name: ItemSpritesService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.ItemSpritesService
-  Hostname: 
-  Port: 0
-  logger: {fileID: 0}
-  session: {fileID: 0}
+  Hostname: localhost
+  Port: 8000
+  logger: {fileID: 11400000, guid: 54b9176f11acb744b94607e586ff012d, type: 2}
+  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}

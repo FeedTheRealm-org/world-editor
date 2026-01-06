@@ -10,8 +10,7 @@ public class GenericEnemy : CreatorObject
     public bool canMove;
     public int range;
     public string spriteId;
-    public List<EnemyLootItemData> lootItems = new();
-    public float goldAmount;
+    public LootTableData lootTable;
 
     public GenericEnemy(EnemyData enemyData)
         : base(enemyData.name, enemyData.id)
@@ -22,8 +21,7 @@ public class GenericEnemy : CreatorObject
         speed = enemyData.speed;
         range = enemyData.range;
         spriteId = enemyData.spriteId;
-        lootItems = enemyData.lootItems;
-        goldAmount = enemyData.goldAmount;
+        lootTable = enemyData.lootTable;
     }
 
     public override void DeleteObject(ref WorldData worldData)
@@ -40,11 +38,9 @@ public class GenericEnemy : CreatorObject
             healthPoints,
             damage,
             speed,
-            canMove,
             range,
             spriteId,
-            lootItems,
-            goldAmount
+            lootTable
         );
         worldData.enemies.Add(enemyData);
     }
