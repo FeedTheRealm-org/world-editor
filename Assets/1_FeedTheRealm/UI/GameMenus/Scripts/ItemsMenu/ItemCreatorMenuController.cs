@@ -96,7 +96,7 @@ public class ItemCreatorMenuController : MenuController
         maxStackInput.value = currentItem.maxStack;
         effectTypeInput.value = currentItem.effectType.ToString();
         // Load existing sprite for preview
-        string spritePath = FileHandler.GetSpriteFilePath(currentItem.spriteFile);
+        string spritePath = currentItem.spriteFile;
         Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
         {
@@ -179,7 +179,11 @@ public class ItemCreatorMenuController : MenuController
         }
         spritePreview.sprite = sprite;
         pendingSpriteSourcePath = sourcePath;
-        logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
+        logger.Log(
+            "Sprite loaded for preview (not saved yet) | filepath" + sourcePath,
+            this,
+            Logging.LogType.Info
+        );
     }
 
     void OnDisable()
@@ -187,8 +191,10 @@ public class ItemCreatorMenuController : MenuController
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
         if (returnButton != null)
-            returnButton.clicked -= CloseMenu;
+            returnButton.clicked -= ReturnToItemsMenu;
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
+        if (loadSpriteButton != null)
+            loadSpriteButton.clicked -= LoadSprite;
     }
 }

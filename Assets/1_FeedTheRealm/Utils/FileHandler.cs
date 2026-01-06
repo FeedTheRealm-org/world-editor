@@ -62,14 +62,14 @@ namespace Utils
         }
 
         /// <summary>
-        /// Saves a sprite file from source path to the Items folder in StreamingAssets.
-        /// Returns the sprite ID used for the saved file.
+        /// Saves a sprite file from source path to a folder in StreamingAssets.
+        /// Returns the path where the file was saved.
+        /// If fileName is null, uses the original filename from sourceFilePath.
         /// </summary>
         public static string SaveFile(
             string sourceFilePath,
-            string fileId,
-            string fileExtension = ".png",
-            string targetDirectory = "Files"
+            string targetDirectory = "Files",
+            string fileName = null
         )
         {
             if (string.IsNullOrEmpty(sourceFilePath))
@@ -78,50 +78,32 @@ namespace Utils
             string targetDirPath = Path.Combine(persistentFilePath, targetDirectory);
             Directory.CreateDirectory(targetDirPath);
 
-            if (string.IsNullOrEmpty(fileId))
-                return null;
-
-            string targetFilePath = Path.Combine(targetDirPath, fileId + fileExtension);
+            string targetFilePath;
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                targetFilePath = Path.Combine(
+                    targetDirPath,
+                    fileName + Path.GetExtension(sourceFilePath)
+                );
+            }
+            else
+            {
+                targetFilePath = Path.Combine(targetDirPath, Path.GetFileName(sourceFilePath));
+            }
             FileBrowserHelpers.CopyFile(sourceFilePath, targetFilePath);
 
-            return fileId;
-        }
-
-        public static bool DeleteFile(
-            string fileId,
-            string fileExtension = ".png",
-            string targetDirectory = "Files"
-        )
-        {
-            if (string.IsNullOrEmpty(fileId))
-                return false;
-
-            string targetFilePath = Path.Combine(
-                persistentFilePath,
-                targetDirectory,
-                fileId + fileExtension
-            );
-
-            if (!FileBrowserHelpers.FileExists(targetFilePath))
-                return false;
-
-            FileBrowserHelpers.DeleteFile(targetFilePath);
-            return true;
+            return Path.Combine(targetDirectory, Path.GetFileName(targetFilePath));
         }
 
         /// <summary>
-        /// Gets the expected path for an image file in StreamingAssets given an image ID.
+        /// Deletes a file from the specified folder in StreamingAssets.
         /// </summary>
-        public static string GetSpriteFilePath(
-            string spriteId,
-            string fileExtension = ".png",
-            string targetDirectory = "Sprites"
-        )
+        public static void DeleteFile(string filePath)
         {
-            if (string.IsNullOrEmpty(spriteId))
-                return null;
+            if (string.IsNullOrEmpty(filePath) || !FileBrowserHelpers.FileExists(filePath))
+                return;
 
-            return Path.Combine(persistentFilePath, targetDirectory, spriteId + fileExtension);
+            FileBrowserHelpers.DeleteFile(filePath);
         }
     }
 }

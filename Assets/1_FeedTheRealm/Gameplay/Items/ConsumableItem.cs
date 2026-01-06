@@ -10,7 +10,7 @@ public class ConsumableItem : CreatorObject
     public int maxStack;
 
     public ConsumableItem(ConsumableItemData consumableItemData)
-        : base(consumableItemData.name, consumableItemData.id, consumableItemData.spriteId)
+        : base(consumableItemData.name, consumableItemData.id, consumableItemData.spriteFilepath)
     {
         description = consumableItemData.description;
         effectType = consumableItemData.effectType;

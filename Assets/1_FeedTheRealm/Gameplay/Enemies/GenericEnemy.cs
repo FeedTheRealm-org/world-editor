@@ -12,7 +12,7 @@ public class GenericEnemy : CreatorObject
     public LootTableData lootTable;
 
     public GenericEnemy(EnemyData enemyData)
-        : base(enemyData.name, enemyData.id, enemyData.spriteId)
+        : base(enemyData.name, enemyData.id, enemyData.spriteFilepath)
     {
         description = enemyData.description;
         healthPoints = enemyData.healthPoints;

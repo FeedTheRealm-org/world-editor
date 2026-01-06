@@ -5,6 +5,7 @@ using Models;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 [RequireComponent(typeof(UIDocument))]
 public class EnemyCreatorMenuController : MenuController
@@ -109,7 +110,7 @@ public class EnemyCreatorMenuController : MenuController
             "Items",
             currentEnemy.spriteFile + ".png"
         );
-        Sprite sprite = LoadSpriteFromDisk(spritePath);
+        Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
         {
             spritePreview.sprite = sprite;
@@ -182,18 +183,9 @@ public class EnemyCreatorMenuController : MenuController
 
     private void LoadSprite()
     {
-        FileBrowser.SetFilters(false, new FileBrowser.Filter("PNG Images", ".png"));
-        FileBrowser.SetDefaultFilter(".png");
-
-        FileBrowser.ShowLoadDialog(
+        FileHandler.ShowFilePickerDialog(
             onSuccess: OnSpriteSelected,
-            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info),
-            pickMode: FileBrowser.PickMode.Files,
-            allowMultiSelection: false,
-            initialPath: null,
-            initialFilename: null,
-            title: "Select Item Sprite",
-            loadButtonText: "Select"
+            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
         );
     }
 
@@ -210,7 +202,7 @@ public class EnemyCreatorMenuController : MenuController
             return;
         }
 
-        Sprite sprite = LoadSpriteFromDisk(sourcePath);
+        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
         if (sprite == null)
         {
             logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
@@ -222,35 +214,15 @@ public class EnemyCreatorMenuController : MenuController
         logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
     }
 
-    private Sprite LoadSpriteFromDisk(string path)
-    {
-        if (!FileBrowserHelpers.FileExists(path))
-            return null;
-
-        byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(path);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(bytes))
-            return null;
-
-        texture.filterMode = FilterMode.Bilinear;
-        texture.wrapMode = TextureWrapMode.Clamp;
-
-        return Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100f
-        );
-    }
-
     void OnDisable()
     {
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
         if (returnButton != null)
-            returnButton.clicked -= CloseMenu;
+            returnButton.clicked -= ReturnToItemsMenu;
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
+        if (loadSpriteButton != null)
+            loadSpriteButton.clicked -= LoadSprite;
     }
 }

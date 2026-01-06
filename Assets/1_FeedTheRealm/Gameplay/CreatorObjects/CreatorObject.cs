@@ -7,8 +7,10 @@ public abstract class CreatorObject : ICreatable, IPersistent
 {
     public string name;
     public string objectId;
-    public string spriteFile;
+    public string spriteFile = "";
     private bool _isDeleted = false;
+
+    private readonly string saveDirectory = "Sprites";
 
     public CreatorObject(string name, string objectId, string spriteFile = null)
     {
@@ -49,7 +51,11 @@ public abstract class CreatorObject : ICreatable, IPersistent
     {
         if (string.IsNullOrEmpty(spriteFile))
             return;
-        spriteFile = FileHandler.SaveFile(spriteFile, objectId);
+        Debug.Log(
+            $"Saving sprite for CreatorObject: {DisplayName} (ID: {ObjectId}) from path: {spriteFile}"
+        );
+        spriteFile = FileHandler.SaveFile(spriteFile, saveDirectory, objectId);
+        Debug.Log($"Sprite saved at path: {spriteFile}");
     }
 
     private void DeleteSprite()

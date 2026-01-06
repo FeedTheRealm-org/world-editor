@@ -64,6 +64,8 @@ public class WorldPublisherController : MonoBehaviour
     /// </summary>
     private async Task<string> PublishModels(WorldData worldData, string worldId)
     {
+        if (worldData.objectPlacementData.Count == 0)
+            return null;
         foreach (var structure in worldData.objectPlacementData)
         {
             structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
@@ -82,6 +84,8 @@ public class WorldPublisherController : MonoBehaviour
     /// </summary>
     private async Task<string> PublishSprites(List<CreatorObject> creatorObjects, string worldId)
     {
+        if (creatorObjects.Count == 0)
+            return null;
         var spriteData = creatorObjects.ConvertAll(obj => (obj.ObjectId, obj.spriteFile));
         return await spriteService.UploadSprites(spriteData, worldId, session.APIToken);
     }

@@ -47,7 +47,7 @@ public static class LootTableMenuHelpers
                 cid.duration,
                 cid.cooldown,
                 cid.maxStack,
-                cid.spriteId,
+                cid.spriteFilepath,
                 0
             );
         }
