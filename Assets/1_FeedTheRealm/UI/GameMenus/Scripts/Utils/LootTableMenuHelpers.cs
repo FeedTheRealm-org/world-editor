@@ -62,7 +62,10 @@ public static class LootTableMenuHelpers
             .ToList();
     }
 
-    public static VisualElement CreateLootItemElement(LootEntryData entry, System.Action<LootEntryData> onRemove)
+    public static VisualElement CreateLootItemElement(
+        LootEntryData entry,
+        System.Action<LootEntryData> onRemove
+    )
     {
         var itemContainer = new VisualElement();
         itemContainer.style.flexDirection = FlexDirection.Row;
