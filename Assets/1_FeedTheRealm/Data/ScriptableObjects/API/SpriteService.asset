@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.SpriteService
   Hostname: localhost
   Port: 8000
-  logger: {fileID: 0}
+  logger: {fileID: 11400000, guid: 5477339d17b1b925bb952e7a32568cbf, type: 2}
