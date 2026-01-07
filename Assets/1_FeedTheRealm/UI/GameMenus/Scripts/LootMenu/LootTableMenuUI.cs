@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Models;
-using LootEntryData = Models.LootTableData.LootEntryData;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
+using LootEntryData = Models.LootTableData.LootEntryData;
 
 public static class LootTableMenuUI
 {
@@ -31,7 +31,10 @@ public static class LootTableMenuUI
         );
     }
 
-    public static void UpdateSpritePreview(UnityEngine.UIElements.Image spritePreview, string spriteId)
+    public static void UpdateSpritePreview(
+        UnityEngine.UIElements.Image spritePreview,
+        string spriteId
+    )
     {
         if (string.IsNullOrEmpty(spriteId))
         {
