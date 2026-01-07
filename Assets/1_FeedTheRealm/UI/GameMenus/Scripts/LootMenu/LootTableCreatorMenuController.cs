@@ -6,6 +6,7 @@ using Models;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
+using LootEntryData = Models.LootTableData.LootEntryData;
 
 [RequireComponent(typeof(UIDocument))]
 public class LootTableCreatorMenuController : MenuController
@@ -92,7 +93,7 @@ public class LootTableCreatorMenuController : MenuController
 
     private void PopulateItemDropdown()
     {
-        var items = LootTableMenuHelpers.GetConsumableItems(creatorObjectLibrary);
+        var items = GetConsumableItems(creatorObjectLibrary);
         itemListDropdown.choices = items.Select(item => item.DisplayName).ToList();
         if (itemListDropdown.choices.Count > 0)
         {
@@ -102,24 +103,46 @@ public class LootTableCreatorMenuController : MenuController
 
     private void OnItemSelected(ChangeEvent<string> evt)
     {
-        var items = LootTableMenuHelpers.GetConsumableItems(creatorObjectLibrary);
+        var items = GetConsumableItems(creatorObjectLibrary);
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == evt.newValue);
         if (selectedItem != null)
         {
-            UpdateSpritePreview(selectedItem.spriteFile);
+            LootTableMenuUI.UpdateSpritePreview(spritePreview, selectedItem.spriteFile);
         }
     }
 
-    private void UpdateSpritePreview(string spriteId)
+    public static LootEntryData CreateLootEntryDataFromObject(object entry)
     {
-        string spritePath = Path.Combine(
-            Application.streamingAssetsPath,
-            "Items",
-            spriteId + ".png"
-        );
-        Sprite sprite = LootTableMenuHelpers.LoadSpriteFromDisk(spritePath);
-        spritePreview.sprite =
-            (FileBrowserHelpers.FileExists(spritePath) && sprite != null) ? sprite : null;
+        if (entry is LootEntryData led)
+        {
+            return led;
+        }
+        if (entry is ConsumableItemData cid)
+        {
+            return new LootEntryData(cid.id, 0);
+        }
+        return null;
+    }
+
+    public static List<ConsumableItem> GetConsumableItems(CreatorObjectLibrarySO library)
+    {
+        return library
+            .GetCreatables(CreatorObjectCategories.ConsumableItem)
+            .Cast<ConsumableItem>()
+            .ToList();
+    }
+
+    public static string GetItemDisplayNameById(CreatorObjectLibrarySO library, string itemId)
+    {
+        if (string.IsNullOrEmpty(itemId))
+            return "<Missing Item Id>";
+
+        var item = library
+            .GetCreatables(CreatorObjectCategories.ConsumableItem)
+            .Cast<ConsumableItem>()
+            .FirstOrDefault(ci => ci.ObjectId == itemId);
+
+        return item != null ? item.DisplayName : $"<Missing Item {itemId}>";
     }
 
     private void PopulateFields()
@@ -133,7 +156,7 @@ public class LootTableCreatorMenuController : MenuController
         {
             foreach (var entry in currentLootTable.lootItems)
             {
-                var lootEntry = LootTableMenuHelpers.CreateLootEntryDataFromObject(entry);
+                var lootEntry = CreateLootEntryDataFromObject(entry);
                 if (lootEntry != null)
                     addedEntries.Add(lootEntry);
             }
@@ -149,7 +172,7 @@ public class LootTableCreatorMenuController : MenuController
             return;
         }
 
-        var items = LootTableMenuHelpers.GetConsumableItems(creatorObjectLibrary);
+        var items = GetConsumableItems(creatorObjectLibrary);
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == itemListDropdown.value);
         if (selectedItem == null)
         {
@@ -157,18 +180,7 @@ public class LootTableCreatorMenuController : MenuController
             return;
         }
 
-        var entry = new LootEntryData(
-            selectedItem.ObjectId,
-            selectedItem.DisplayName,
-            selectedItem.description,
-            selectedItem.effectType,
-            selectedItem.value,
-            selectedItem.duration,
-            selectedItem.cooldown,
-            selectedItem.maxStack,
-            selectedItem.spriteFile,
-            itemProbabilitySlider.value
-        );
+        var entry = new LootEntryData(selectedItem.ObjectId, itemProbabilitySlider.value);
 
         addedEntries.Add(entry);
         if (itemProbabilitySlider != null)
@@ -193,8 +205,10 @@ public class LootTableCreatorMenuController : MenuController
         itemsFoldout.Clear();
         foreach (var entry in addedEntries)
         {
-            var itemElement = LootTableMenuHelpers.CreateLootItemElement(
+            var displayName = GetItemDisplayNameById(creatorObjectLibrary, entry.id);
+            var itemElement = LootTableMenuUI.CreateLootItemElement(
                 entry,
+                displayName,
                 OnRemoveItemClicked
             );
             itemsFoldout.Add(itemElement);
@@ -205,7 +219,11 @@ public class LootTableCreatorMenuController : MenuController
     private void OnRemoveItemClicked(LootEntryData entry)
     {
         addedEntries.Remove(entry);
-        logger?.Log($"Removed item '{entry.name}' from loot table", this, Logging.LogType.Info);
+        logger?.Log(
+            $"Removed item with id '{entry.id}' from loot table",
+            this,
+            Logging.LogType.Info
+        );
         RefreshItemsFoldout();
     }
 
@@ -217,13 +235,7 @@ public class LootTableCreatorMenuController : MenuController
             return;
         }
 
-        var lootEntries = new List<LootEntryData>();
-        foreach (var entry in addedEntries)
-        {
-            var lootEntry = LootTableMenuHelpers.CreateLootEntryDataFromObject(entry);
-            if (lootEntry != null)
-                lootEntries.Add(lootEntry);
-        }
+        var lootEntries = new List<LootEntryData>(addedEntries);
 
         if (currentLootTable == null)
         {
@@ -263,8 +275,6 @@ public class LootTableCreatorMenuController : MenuController
     {
         OpenMenu(lootMenuPrefab);
     }
-
-    // Sprite loading moved to LootTableMenuHelpers
 
     void OnDisable()
     {

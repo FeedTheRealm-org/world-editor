@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Models;
 using UnityEngine;
 using Utils;
@@ -51,10 +52,15 @@ public abstract class CreatorObject : ICreatable, IPersistent
     {
         if (string.IsNullOrEmpty(spriteFile))
             return;
+        string sourceSpritePath = spriteFile;
+        if (!Path.IsPathRooted(spriteFile))
+        {
+            sourceSpritePath = Path.Combine(Application.streamingAssetsPath, spriteFile);
+        }
         Debug.Log(
-            $"Saving sprite for CreatorObject: {DisplayName} (ID: {ObjectId}) from path: {spriteFile}"
+            $"Saving sprite for CreatorObject: {DisplayName} (ID: {ObjectId}) from path: {sourceSpritePath}"
         );
-        spriteFile = FileHandler.SaveFile(spriteFile, saveDirectory, objectId);
+        spriteFile = FileHandler.SaveFile(sourceSpritePath, saveDirectory, objectId);
         Debug.Log($"Sprite saved at path: {spriteFile}");
     }
 

@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Models;
+using LootEntryData = Models.LootTableData.LootEntryData;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public static class LootTableMenuHelpers
+public static class LootTableMenuUI
 {
     public static Sprite LoadSpriteFromDisk(string path)
     {
@@ -30,40 +31,29 @@ public static class LootTableMenuHelpers
         );
     }
 
-    public static LootEntryData CreateLootEntryDataFromObject(object entry)
+    public static void UpdateSpritePreview(UnityEngine.UIElements.Image spritePreview, string spriteId)
     {
-        if (entry is LootEntryData led)
+        if (string.IsNullOrEmpty(spriteId))
         {
-            return led;
+            spritePreview.sprite = null;
+            return;
         }
-        else if (entry is ConsumableItemData cid)
-        {
-            return new LootEntryData(
-                cid.id,
-                cid.name,
-                cid.description,
-                cid.effectType,
-                cid.value,
-                cid.duration,
-                cid.cooldown,
-                cid.maxStack,
-                cid.spriteFilepath,
-                0
-            );
-        }
-        return null;
-    }
 
-    public static List<ConsumableItem> GetConsumableItems(CreatorObjectLibrarySO library)
-    {
-        return library
-            .GetCreatables(CreatorObjectCategories.ConsumableItem)
-            .Cast<ConsumableItem>()
-            .ToList();
+        string cleanId = Path.GetFileNameWithoutExtension(spriteId);
+
+        string spritePath = Path.Combine(
+            Application.streamingAssetsPath,
+            "Sprites",
+            cleanId + ".png"
+        );
+        Sprite sprite = LoadSpriteFromDisk(spritePath);
+        spritePreview.sprite =
+            (FileBrowserHelpers.FileExists(spritePath) && sprite != null) ? sprite : null;
     }
 
     public static VisualElement CreateLootItemElement(
         LootEntryData entry,
+        string itemDisplayName,
         System.Action<LootEntryData> onRemove
     )
     {
@@ -85,7 +75,7 @@ public static class LootTableMenuHelpers
         var infoContainer = new VisualElement();
         infoContainer.style.flexDirection = FlexDirection.Column;
 
-        var itemLabel = new Label($"{entry.name}");
+        var itemLabel = new Label(itemDisplayName);
         itemLabel.style.color = Color.white;
         itemLabel.style.fontSize = 14;
 

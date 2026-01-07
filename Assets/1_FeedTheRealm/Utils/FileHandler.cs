@@ -90,6 +90,15 @@ namespace Utils
             {
                 targetFilePath = Path.Combine(targetDirPath, Path.GetFileName(sourceFilePath));
             }
+            // Avoid copying if the source and destination are the same file
+            if (
+                File.Exists(targetFilePath)
+                && Path.GetFullPath(sourceFilePath) == Path.GetFullPath(targetFilePath)
+            )
+            {
+                // Already exists and is the same file, do not copy
+                return Path.Combine(targetDirectory, Path.GetFileName(targetFilePath));
+            }
             FileBrowserHelpers.CopyFile(sourceFilePath, targetFilePath);
 
             return Path.Combine(targetDirectory, Path.GetFileName(targetFilePath));

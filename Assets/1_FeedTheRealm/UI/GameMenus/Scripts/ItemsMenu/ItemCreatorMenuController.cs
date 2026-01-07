@@ -106,6 +106,13 @@ public class ItemCreatorMenuController : MenuController
 
     private void OnSaveClicked()
     {
+        string savedSpritePath = null;
+        if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
+        {
+            string itemId = currentItem != null ? currentItem.ObjectId : Guid.NewGuid().ToString();
+            savedSpritePath = FileHandler.SaveFile(pendingSpriteSourcePath, "Sprites", itemId);
+        }
+
         if (currentItem == null)
         {
             var itemData = new ConsumableItemData(
@@ -117,7 +124,7 @@ public class ItemCreatorMenuController : MenuController
                 duration: durationInput.value,
                 cooldown: cooldownInput.value,
                 maxStack: maxStackInput.value,
-                spriteId: pendingSpriteSourcePath
+                spriteFilepath: savedSpritePath
             );
             currentItem = new ConsumableItem(itemData);
             creatorObjectLibrary.AddCreatable(CreatorObjectCategories.ConsumableItem, currentItem);
@@ -135,7 +142,7 @@ public class ItemCreatorMenuController : MenuController
             currentItem.duration = durationInput.value;
             currentItem.cooldown = cooldownInput.value;
             currentItem.maxStack = maxStackInput.value;
-            currentItem.spriteFile = pendingSpriteSourcePath;
+            currentItem.spriteFile = savedSpritePath ?? currentItem.spriteFile;
             currentItem.effectType = (EffectType)
                 Enum.Parse(typeof(EffectType), effectTypeInput.value);
             logger.Log(

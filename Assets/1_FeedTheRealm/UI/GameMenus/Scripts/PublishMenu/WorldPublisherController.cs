@@ -87,6 +87,17 @@ public class WorldPublisherController : MonoBehaviour
         if (creatorObjects.Count == 0)
             return null;
         var spriteData = creatorObjects.ConvertAll(obj => (obj.ObjectId, obj.spriteFile));
-        return await spriteService.UploadSprites(spriteData, worldId, session.APIToken);
+        string result = await spriteService.UploadSprites(spriteData, worldId, session.APIToken);
+        // Ignores error 409 (conflict) due to duplicate key
+        if (!string.IsNullOrEmpty(result) && result.Contains("409"))
+        {
+            logger.Log(
+                "Some sprites already exist on the server (409 conflict). Continuing with publication.",
+                this,
+                Logging.LogType.Warning
+            );
+            return null;
+        }
+        return result;
     }
 }

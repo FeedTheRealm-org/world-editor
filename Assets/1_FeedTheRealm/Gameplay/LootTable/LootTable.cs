@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Models;
+using LootEntryData = Models.LootTableData.LootEntryData;
 
 public class LootTable : CreatorObject
 {
