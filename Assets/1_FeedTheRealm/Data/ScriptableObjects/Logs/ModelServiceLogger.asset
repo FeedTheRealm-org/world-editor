@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
   m_Name: ModelServiceLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 1
-  _loggerPrefix: '[MODEL-SERVICE]'
-  _loggerColor: {r: 1, g: 0, b: 0.4002924, a: 0}
+  showLogs: 0
+  loggerPrefix: 'Model '
+  loggerColor: {r: 0.97897255, g: 0.3487732, b: 0.3487732, a: 0}
+  showColor: 1

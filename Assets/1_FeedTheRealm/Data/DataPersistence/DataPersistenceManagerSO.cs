@@ -19,15 +19,10 @@ public class DataPersistenceManagerSO : ScriptableObject
 
     [SerializeField]
     private Logging.Logger logger;
-
-    // [SerializeField]
-    // private CreatorLibrary creatorLibrary;
-
-    [SerializeField]
-    private ConsumableItems consumableItemsDatabase;
-
     private WorldData worldData = null;
     private List<IPersistent> dataPersistenceObjects = new();
+
+    // ---------------- Public Methods ----------------
 
     public WorldData CurrentWorldData => worldData;
 
@@ -36,39 +31,13 @@ public class DataPersistenceManagerSO : ScriptableObject
         worldData = new WorldData();
     }
 
-    public void UnSetActiveWorld()
-    {
-        worldData = null;
-    }
-
     public void SaveWorld(string worldName)
     {
         if (worldData == null)
-        {
-            logger.Log(
-                "No world data found. A new world will be created for saving.",
-                this,
-                Logging.LogType.Warning
-            );
             NewWorld();
-        }
-        ClearWorld();
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
+        PrepWorld();
         worldData.worldName = worldName;
-        logger.Log("Starting world save...", this, Logging.LogType.Info);
-
-        foreach (IPersistent dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.SaveData(ref worldData);
-        }
-        logger.Log(
-            $"Saved {dataPersistenceObjects.Count} data persistence objects.",
-            this,
-            Logging.LogType.Info
-        );
-
-        worldData.consumableItems = consumableItemsDatabase.GetAllConsumableItems();
-
+        SaveAllDataPersistentObjects();
         WorldFileHandler.Save(worldData, saveDirectory, fileExtension);
         logger.Log("World data save completed!", this, Logging.LogType.Info);
     }
@@ -88,26 +57,27 @@ public class DataPersistenceManagerSO : ScriptableObject
         return worldName + fileExtension;
     }
 
-    public bool WorldFileExists(string worldName)
-    {
-        return WorldFileHandler.IsWorldFilePresent(worldName, saveDirectory, fileExtension);
-    }
+    // ---------------- Private Methods ----------------
 
-    private List<IPersistent> FindAllDataPersistenceObjects()
+    private void SaveAllDataPersistentObjects()
     {
-        var found = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        var monoFound = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
             .OfType<IPersistent>();
-        return new List<IPersistent>(found);
+        var soFound = Resources.FindObjectsOfTypeAll<ScriptableObject>().OfType<IPersistent>();
+        dataPersistenceObjects = new List<IPersistent>(monoFound.Concat(soFound));
+        foreach (IPersistent dataPersistenceObj in dataPersistenceObjects)
+        {
+            dataPersistenceObj.SaveData(ref worldData);
+        }
     }
 
-    // this is due to when saving, the data gets duplicated, so we clear it first
-    // in the future we should figure a consistent saving mechanism to avoid this
-    private void ClearWorld()
+    // TODO: this method preps the world to be saved but it's not scalable due to having to save ALL of the data
+    // instead of only the changes in the world.
+    private void PrepWorld()
     {
-        worldData.enemySpawnAreas.Clear();
-        worldData.playerSpawnAreas.Clear();
-        worldData.objectPlacementData.Clear();
-        worldData.consumableItems.Clear();
+        string worldName = worldData.worldName;
+        string worldId = worldData.id;
+        worldData = new WorldData { worldName = worldName, id = worldId };
     }
 
 #if UNITY_EDITOR

@@ -6,18 +6,19 @@ using UnityEngine.UIElements;
 public class HudLibraryController : MonoBehaviour
 {
     [SerializeField]
-    private CreatorLibrarySO creatorLibrary;
+    private PlaceableObjectsLibrarySO placeableObjectLibrary;
     private ScrollView libraryHUD;
 
     private DropdownField libraryOptions;
 
     void Start()
     {
-        creatorLibrary.Initialize();
+        // TODO: review a better way to initialize the library it shouldnt have to be done here
+        placeableObjectLibrary.Initialize();
         UIDocument hudVisualDocument = GetComponent<UIDocument>();
         libraryHUD = hudVisualDocument.rootVisualElement.Q<ScrollView>("LibraryHUD");
         RenderDropDown();
-        RenderObjectButtons(WorldObjectCategories.Structure);
+        RenderObjectButtons(PlaceableObjectCategories.Structure);
     }
 
     private void RenderDropDown()
@@ -26,7 +27,7 @@ public class HudLibraryController : MonoBehaviour
             .rootVisualElement.Q<DropdownField>("LibraryOptions");
 
         libraryOptions.choices = new List<string>();
-        foreach (var category in System.Enum.GetValues(typeof(WorldObjectCategories)))
+        foreach (var category in System.Enum.GetValues(typeof(PlaceableObjectCategories)))
         {
             libraryOptions.choices.Add(category.ToString());
         }
@@ -35,16 +36,16 @@ public class HudLibraryController : MonoBehaviour
         {
             Debug.Log("Category changed to: " + evt.newValue);
             RenderObjectButtons(
-                (WorldObjectCategories)
-                    System.Enum.Parse(typeof(WorldObjectCategories), evt.newValue)
+                (PlaceableObjectCategories)
+                    System.Enum.Parse(typeof(PlaceableObjectCategories), evt.newValue)
             );
         });
     }
 
-    private void RenderObjectButtons(WorldObjectCategories category)
+    private void RenderObjectButtons(PlaceableObjectCategories category)
     {
         libraryHUD.Clear();
-        List<IPlaceable> worldObjects = creatorLibrary.GetObjects(category);
+        List<IPlaceable> worldObjects = placeableObjectLibrary.GetObjects(category);
         foreach (var worldObject in worldObjects)
         {
             var assetButton = new Button() { text = worldObject.DisplayName };

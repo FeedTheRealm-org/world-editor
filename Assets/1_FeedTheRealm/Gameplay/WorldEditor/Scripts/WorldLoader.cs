@@ -10,10 +10,21 @@ public class WorldLoader : MonoBehaviour
     [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
-    void Start()
+    [SerializeField]
+    private CreatorObjectLibrarySO creatorObjectLibrary;
+
+    void Awake()
     {
+        InitializeLibraries();
         WorldData worldData = dataPersistenceManager.CurrentWorldData;
         LoadWorld(worldData);
+    }
+
+    // TODO: This is to force initialization of the libraries.
+    // Find a better way to do this.
+    private void InitializeLibraries()
+    {
+        creatorObjectLibrary.Initialize();
     }
 
     // TODO: consider adding a loading screen or something to avoid having the user

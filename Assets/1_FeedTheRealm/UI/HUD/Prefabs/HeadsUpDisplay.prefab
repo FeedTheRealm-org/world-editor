@@ -87,3 +87,7 @@ MonoBehaviour:
     panel: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}
   - Name: Publish World
     panel: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
+  - Name: Add Item
+    panel: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}
+  - Name: Add Item
+    panel: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}

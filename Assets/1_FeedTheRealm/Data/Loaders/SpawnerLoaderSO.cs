@@ -6,10 +6,7 @@ using Models;
 using UnityEngine;
 using Utils;
 
-[CreateAssetMenu(
-    fileName = "SpawnerLoader",
-    menuName = "Scriptable Objects/WorldEditor/SpawnerLoader"
-)]
+[CreateAssetMenu(fileName = "SpawnerLoader", menuName = "Scriptable Objects/Loaders/SpawnerLoader")]
 public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 {
     [SerializeField]
@@ -42,6 +39,11 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
             );
             spawnerObjects.Add(spawnerObject);
         }
+        logger.Log(
+            $"Loaded {spawnerObjects.Count} spawner objects into library.",
+            null,
+            Logging.LogType.Info
+        );
     }
 
     public List<IPlaceable> GetObjects()
