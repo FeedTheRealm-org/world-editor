@@ -28,7 +28,7 @@ public class MakerController : MonoBehaviour
             inputReader.LookEvent += OnLookInput;
             inputReader.MoveVerticalEvent += OnMoveVertical;
             inputReader.CursorToggleEvent += OnToggleSettingsMenu;
-            logger.Log("MakerController subscribed from events.", this);
+            logger.Log("MakerController subscribed to events.", this);
         }
     }
 
