@@ -2,17 +2,23 @@ using UnityEngine;
 
 public class MakerController : MonoBehaviour
 {
-    [SerializeField]
-    public MakerInputReader inputReader;
-
+    [Header("Editor Control Configuration")]
     [SerializeField]
     public MovementController movementController;
 
     [SerializeField]
     public CameraController cameraController;
 
+    [Header("HUD Configuration")]
+    [SerializeField]
+    public SettingsMenuController settingsMenu;
+
+    [Header("General settings")]
     [SerializeField]
     private Logging.Logger logger;
+
+    [SerializeField]
+    public MakerInputReader inputReader;
 
     private void OnEnable()
     {
@@ -21,7 +27,8 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent += OnMoveInput;
             inputReader.LookEvent += OnLookInput;
             inputReader.MoveVerticalEvent += OnMoveVertical;
-            logger.Log("MakerController subscribed from events.", this);
+            inputReader.CursorToggleEvent += OnToggleSettingsMenu;
+            logger.Log("MakerController subscribed to events.", this);
         }
     }
 
@@ -33,6 +40,7 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent -= OnMoveInput;
             inputReader.LookEvent -= OnLookInput;
             inputReader.MoveVerticalEvent -= OnMoveVertical;
+            inputReader.CursorToggleEvent -= OnToggleSettingsMenu;
             logger.Log("MakerController unsubscribed from events.", this);
         }
     }
@@ -50,5 +58,13 @@ public class MakerController : MonoBehaviour
     private void OnMoveVertical(float value)
     {
         movementController.MoveVertical(value);
+    }
+
+    public void OnToggleSettingsMenu()
+    {
+        if (settingsMenu != null)
+        {
+            settingsMenu.ToggleSettings();
+        }
     }
 }
