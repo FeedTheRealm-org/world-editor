@@ -62,6 +62,9 @@ public class MakerController : MonoBehaviour
 
     public void OnToggleSettingsMenu()
     {
-        settingsMenu.ToggleSettings();
+        if (settingsMenu != null)
+        {
+            settingsMenu.ToggleSettings();
+        }
     }
 }
