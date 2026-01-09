@@ -50,13 +50,22 @@ public class PublishMenuController : MenuController
 
     private async void OnPublishClicked()
     {
-        logger.Log("PublishMenuController: Publishing world.", this, Logging.LogType.Info);
+        logger.Log(
+            $"PublishMenuController: Publishing world. Current local id='{worldData?.id}', name='{worldData?.worldName}'",
+            this,
+            Logging.LogType.Info
+        );
         await PublishWorld();
     }
 
     private async Task PublishWorld()
     {
         // We save the world to ensure the latest changes are included
+        logger.Log(
+            $"PublishMenuController: Before SaveWorld, worldData.id='{worldData?.id}'",
+            this,
+            Logging.LogType.Info
+        );
         dataPersistenceManager.SaveWorld(worldData.worldName);
         string fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
 
@@ -68,12 +77,25 @@ public class PublishMenuController : MenuController
 
         if (!string.IsNullOrEmpty(error))
         {
-            logger.Log("Error publishing world: " + error, this, Logging.LogType.Error);
+            logger.Log(
+                "PublishMenuController: Error publishing world: " + error,
+                this,
+                Logging.LogType.Error
+            );
             return;
         }
 
-        logger.Log("World published successfully!", this, Logging.LogType.Info);
+        logger.Log(
+            $"PublishMenuController: World published successfully with server id='{worldId}'",
+            this,
+            Logging.LogType.Info
+        );
         worldData.id = worldId;
+        logger.Log(
+            $"PublishMenuController: After setting id, worldData.id='{worldData.id}', saving world again.",
+            this,
+            Logging.LogType.Info
+        );
         dataPersistenceManager.SaveWorld(worldData.worldName);
         CloseMenu();
     }
