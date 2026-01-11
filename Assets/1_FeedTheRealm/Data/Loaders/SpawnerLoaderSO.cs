@@ -14,7 +14,7 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
     [SerializeField]
     private List<SpawnerTypeGameObject> spawnerDefinitions = new();
-    private List<SpawnerObject> spawnerObjects = new();
+    private Dictionary<SpawnerType, SpawnerObject> spawnerObjectsMap = new();
 
     void OnEnable()
     {
@@ -28,7 +28,7 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
     public void LoadLibrary()
     {
-        spawnerObjects.Clear();
+        spawnerObjectsMap.Clear();
         logger.Log("Loading spawner objects...", null, Logging.LogType.Info);
         foreach (var entry in spawnerDefinitions)
         {
@@ -37,10 +37,10 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
                 entry.spawnRadius,
                 entry.spawnerPrefab
             );
-            spawnerObjects.Add(spawnerObject);
+            spawnerObjectsMap[entry.spawnerType] = spawnerObject;
         }
         logger.Log(
-            $"Loaded {spawnerObjects.Count} spawner objects into library.",
+            $"Loaded {spawnerObjectsMap.Count} spawner objects into library.",
             null,
             Logging.LogType.Info
         );
@@ -49,46 +49,80 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     public List<IPlaceable> GetObjects()
     {
         logger.Log(
-            "Retrieving structure objects: count = " + spawnerObjects.Count,
+            "Retrieving structure objects: count = " + spawnerObjectsMap.Count,
             null,
             Logging.LogType.Info
         );
-        return spawnerObjects.Cast<IPlaceable>().ToList();
+        return spawnerObjectsMap.Values.Cast<IPlaceable>().ToList();
     }
 
-    public void LoadWorld(WorldData worldData)
+    public async void LoadWorld(WorldData worldData)
     {
+        LoadLibrary();
         logger.Log("Loading spawners into world...", this, Logging.LogType.Info);
-        foreach (var spawner in worldData.enemySpawnAreas)
+        var tasks = new List<Task>();
+        foreach (var enemySpawnerData in worldData.enemySpawnAreas)
         {
-            _ = OnLoadAsync(spawner);
+            tasks.Add(LoadEnemySpawnerAsync(enemySpawnerData));
         }
-        foreach (var spawner in worldData.playerSpawnAreas)
+        foreach (var playerSpawnerData in worldData.playerSpawnAreas)
         {
-            _ = OnLoadAsync(spawner);
+            tasks.Add(LoadPlayerSpawnerAsync(playerSpawnerData));
         }
+        await Task.WhenAll(tasks);
+        logger.Log("Spawners loaded successfully.", this, Logging.LogType.Info);
     }
 
-    private async Task OnLoadAsync(EnemySpawnAreaData spawnerData)
-    {
-        await LoadSpawnerAsync(SpawnerType.EnemySpawner, spawnerData.Radius, spawnerData.Position);
-    }
-
-    private async Task OnLoadAsync(PlayerSpawnAreaData spawnerData)
-    {
-        await LoadSpawnerAsync(SpawnerType.PlayerSpawner, spawnerData.Radius, spawnerData.Position);
-    }
-
-    private async Task LoadSpawnerAsync(SpawnerType type, float radius, Vector3 position)
-    {
-        SpawnerObject spawnerObject = spawnerObjects.FirstOrDefault(s => s.spawnerType == type);
-
-        spawnerObject.spawnRadius = radius;
-
-        GameObject spawnerInstance = await spawnerObject.GetPlaceableObject(
-            WorldLayers.WorldObjectLayer
+    private async Task LoadPlayerSpawnerAsync(PlayerSpawnerData spawnerData) =>
+        await LoadSpawnerAsync<PlayerSpawnerController, PlayerSpawnerData>(
+            SpawnerType.PlayerSpawner,
+            spawnerData,
+            (controller, data) => controller.PlayerSpawnData = data
         );
-        spawnerInstance.transform.position = position;
+
+    private async Task LoadEnemySpawnerAsync(EnemySpawnerData spawnerData) =>
+        await LoadSpawnerAsync<EnemySpawnerController, EnemySpawnerData>(
+            SpawnerType.EnemySpawner,
+            spawnerData,
+            (controller, data) => controller.EnemySpawnData = data
+        );
+
+    private async Task LoadSpawnerAsync<TController, TSpawnData>(
+        SpawnerType spawnerType,
+        TSpawnData spawnData,
+        Action<TController, TSpawnData> setDataAction
+    )
+        where TController : Component
+    {
+        if (!spawnerObjectsMap.TryGetValue(spawnerType, out var spawnerObject))
+        {
+            logger.Log(
+                $"Spawner type {spawnerType} not found in library.",
+                this,
+                Logging.LogType.Error
+            );
+            return;
+        }
+        try
+        {
+            GameObject spawnerInstance = await spawnerObject.GetPlaceableObject(
+                WorldLayers.WorldObjectLayer
+            );
+            if (!spawnerInstance.TryGetComponent(out TController controller))
+            {
+                logger.Log(
+                    $"Spawner instance does not have {typeof(TController).Name} component.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return;
+            }
+            setDataAction(controller, spawnData);
+        }
+        catch (Exception e)
+        {
+            logger.Log($"Error loading spawner: {e.Message}", this, Logging.LogType.Error);
+        }
     }
 }
 

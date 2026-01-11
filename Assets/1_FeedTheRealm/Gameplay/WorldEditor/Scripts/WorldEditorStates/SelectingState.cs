@@ -20,7 +20,18 @@ public class SelectingState : IMakerState
 
     public void OnPrimaryAction()
     {
-        maker.Log("Select object in world");
+        GameObject selectedObject = Raycaster.GetGameObject(
+            maker,
+            WorldLayers.WorldObjectLayerMask
+        );
+        if (!selectedObject)
+        {
+            return;
+        }
+        if (selectedObject.TryGetComponent<ISelectable>(out var selectable))
+            selectable.OnObjectSelected();
+        else
+            maker.Log("The selected object is not selectable", Logging.LogType.Warning);
     }
 
     public void OnSecondaryAction() { }
