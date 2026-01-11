@@ -934,14 +934,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
-      value: Items
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: menuOptions.Array.data[3].Name
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[3].Name
+      value: LootTable
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[4].Name
+      value: Items
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[5].Name
+      value: WeaponItems
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[6].Name
       value: LootTable
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
@@ -951,13 +959,21 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].panel
       value: 
-      objectReference: {fileID: 7649707916942922576, guid: 939488e095e0476aeb9e91a86ea8f3be, type: 3}
+      objectReference: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[3].panel
       value: 
-      objectReference: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
+      objectReference: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[4].panel
+      value: 
+      objectReference: {fileID: 3436638423149990055, guid: 0428ffadd9b08ef419f66bf9809cc60c, type: 3}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[5].panel
+      value: 
+      objectReference: {fileID: 3436638423149990055, guid: 0428ffadd9b08ef419f66bf9809cc60c, type: 3}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[6].panel
       value: 
       objectReference: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
     m_RemovedComponents: []
