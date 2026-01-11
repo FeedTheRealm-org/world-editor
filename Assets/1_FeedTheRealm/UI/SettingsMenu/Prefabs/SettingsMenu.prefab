@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6178262041549493483
+--- !u!1 &3092455468846421062
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4404402790963862322}
-  - component: {fileID: 172146008588548170}
-  - component: {fileID: 4223749394371077016}
+  - component: {fileID: 198210166898971669}
+  - component: {fileID: 4803093572343354384}
+  - component: {fileID: 8739125850922495337}
   m_Layer: 0
   m_Name: SettingsMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4404402790963862322
+  m_IsActive: 0
+--- !u!4 &198210166898971669
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6178262041549493483}
+  m_GameObject: {fileID: 3092455468846421062}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.49864, y: 1, z: -23.26638}
@@ -33,13 +33,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &172146008588548170
+--- !u!114 &4803093572343354384
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6178262041549493483}
+  m_GameObject: {fileID: 3092455468846421062}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -56,18 +56,18 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &4223749394371077016
+--- !u!114 &8739125850922495337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6178262041549493483}
+  m_GameObject: {fileID: 3092455468846421062}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22bf0e44569155347b7e5bee60bcf9c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d397e74fd88f6b42852fece6100c82d, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FeedTheRealm_Shared::SettingsMenuController
+  m_EditorClassIdentifier: Assembly-CSharp::SettingsMenuController
   homeScene:
     sceneName: MainMenu
     sceneAsset: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
