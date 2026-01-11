@@ -4,8 +4,9 @@
         <ui:VisualElement name="MenuContainer" class="menu-container" style="flex-grow: 1; justify-content: flex-start;">
             <ui:VisualElement name="Header" class="header" style="display: flex;">
                 <ui:Label text="World Items" class="header-label"/>
-                <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
-                    <ui:Button text="Add Item" name="AddItem" class="button"/>
+                <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 60%;">
+                    <ui:Button text="Add Consumable Item" name="AddConsumableItem" class="button"/>
+                    <ui:Button text="Add Weapon Item" name="AddWeaponItem" class="button"/>
                     <ui:Button text="Close" name="Close" class="button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
