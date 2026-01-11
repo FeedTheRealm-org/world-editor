@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7649707916942922576
+--- !u!1 &3436638423149990055
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1683648153566102449}
-  - component: {fileID: 7728332863470844193}
-  - component: {fileID: 190925839814694052}
+  - component: {fileID: 3028476777057818909}
+  - component: {fileID: -1658722055949357455}
+  - component: {fileID: -3587784106667264666}
   m_Layer: 0
   m_Name: ItemsMenu
   m_TagString: Untagged
@@ -18,28 +18,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1683648153566102449
+--- !u!4 &3028476777057818909
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7649707916942922576}
+  m_GameObject: {fileID: 3436638423149990055}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.98883, y: 20.19973, z: -0.68442}
+  m_LocalPosition: {x: -4.49864, y: 1, z: -23.26638}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7728332863470844193
+--- !u!114 &-1658722055949357455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7649707916942922576}
+  m_GameObject: {fileID: 3436638423149990055}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -56,20 +56,22 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &190925839814694052
+--- !u!114 &-3587784106667264666
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7649707916942922576}
+  m_GameObject: {fileID: 3436638423149990055}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6f139cdcdadf0c3981958c45a57de56, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ItemsMenuController
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
-  createItemMenuPrefab: {fileID: 5469601061524204739, guid: 262ae2c000e265831a3ff23e00f616bb, type: 3}
+  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+  createConsumableItemMenuPrefab: {fileID: 902821296252507059, guid: 775de7162628e17459f2ea67fb2f204c, type: 3}
+  createWeaponItemMenuPrefab: {fileID: 7824535126564437059, guid: b3f50d4c3625e42499f810faf55d0061, type: 3}
   creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+  itemCategory: 0000000001000000
   itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
