@@ -100,6 +100,7 @@ public class EnemySpawnerController : SpawnerController, IPersistent, ISelectabl
         if (!gameObject.activeSelf)
             return;
 
+        _enemySpawnData.Position = transform.position;
         worldData.enemySpawnAreas.Add(EnemySpawnData);
     }
 }
