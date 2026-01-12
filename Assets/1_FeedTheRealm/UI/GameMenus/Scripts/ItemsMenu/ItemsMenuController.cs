@@ -56,7 +56,7 @@ public class ItemsMenuController : MenuController
                 headerLabel.text = item.DisplayName;
 
                 var typeLabel = itemEntry.Q<Label>("Type");
-                typeLabel.text = category.ToString();
+                typeLabel.text = category.GetDisplayName();
 
                 var editButton = itemEntry.Q<Button>("Edit");
                 var deleteButton = itemEntry.Q<Button>("Delete");
