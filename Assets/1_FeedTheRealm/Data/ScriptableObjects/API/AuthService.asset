@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440baedae784ae84488ef1d20bd55476, type: 3}
   m_Name: AuthService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.AuthService
-  Hostname: localhost
-  Port: 8000
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
+  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
