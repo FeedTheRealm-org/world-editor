@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b1de90136ae18d49b6a7ef7ae02ca95, type: 3}
   m_Name: Session
   m_EditorClassIdentifier: FeedTheRealm_Shared::Session.Session
-  apiToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjU5MDUwODgsImlzcyI6MTc2NTgxODY4OCwidXNlcklEIjoiODkzNGJlMjUtY2I0ZC00ZTE1LWFiNmQtMjc2M2E2M2IyZjBjIn0.VFtYrGj8K7yrgzfUhP8FpaGJ7dtmj1Fl7OkLexU9-vU
+  apiToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjgzMjc2NzgsImlzcyI6MTc2ODI0MTI3OCwidXNlcklEIjoiZjYzZDUxOTEtOWFlOC00OTdkLWI2MGEtZjc5NGQzNWZiYmU2In0.EmukWdPONAv0gefkB3Bh4BRq5Bv-MKECXUlTxA7sC1A
   isFirstLogin: 0

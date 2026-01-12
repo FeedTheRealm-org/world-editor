@@ -3,16 +3,12 @@ using Models;
 using UnityEngine;
 using Utils;
 
-[CreateAssetMenu(
-    fileName = "ConsumableItemLoader",
-    menuName = "Scriptable Objects/Loaders/ConsumableItemLoader"
-)]
-public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoader
+public abstract class ItemLoader<TItemData> : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
-    private Logging.Logger logger;
+    protected Logging.Logger logger;
 
-    private List<CreatorObject> consumableItems = new();
+    protected List<CreatorObject> items = new();
 
     void OnEnable()
     {
@@ -26,17 +22,13 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
 
     public List<CreatorObject> GetCreatables()
     {
-        logger.Log(
-            $"Retrieving {consumableItems.Count} consumable items",
-            this,
-            Logging.LogType.Info
-        );
-        return consumableItems.FindAll(item => !item.IsDeleted);
+        logger.Log($"Retrieving {items.Count} items", this, Logging.LogType.Info);
+        return items.FindAll(item => !item.IsDeleted);
     }
 
     public void AddCreatable(CreatorObject creatable)
     {
-        consumableItems.Add(creatable);
+        items.Add(creatable);
         logger.Log(
             $"Added new creatable: {creatable.DisplayName} (ID: {creatable.ObjectId})",
             this,
@@ -47,33 +39,33 @@ public class ConsumableItemLoader : ScriptableObject, ILoadable, ICreatableLoade
     public void RemoveCreatable(CreatorObject creatable)
     {
         creatable.Delete();
-        consumableItems.Remove(creatable);
+        items.Remove(creatable);
     }
 
     public void UpdateCreatable(CreatorObject creatable)
     {
-        int index = consumableItems.FindIndex(item => item.ObjectId == creatable.ObjectId);
+        int index = items.FindIndex(item => item.ObjectId == creatable.ObjectId);
         if (index != -1)
         {
-            consumableItems[index] = creatable;
+            items[index] = creatable;
         }
     }
 
     public void LoadWorld(WorldData worldData)
     {
-        consumableItems.Clear();
+        items.Clear();
         if (worldData == null)
         {
             logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
             return;
         }
 
-        foreach (
-            ConsumableItemData itemData in worldData.consumableItems
-                ?? new List<ConsumableItemData>()
-        )
+        foreach (var itemData in GetData(worldData) ?? new List<TItemData>())
         {
-            consumableItems.Add(new ConsumableItem(itemData));
+            items.Add(CreateItem(itemData));
         }
     }
+
+    protected abstract IEnumerable<TItemData> GetData(WorldData worldData);
+    protected abstract CreatorObject CreateItem(TItemData data);
 }
