@@ -1,68 +1,49 @@
 using System;
-using System.IO;
-using System.Linq;
-using Models;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
 
 [RequireComponent(typeof(UIDocument))]
-public class ItemCreatorMenuController : MenuController
+public abstract class ItemCreatorMenuController<TItem> : MenuController
+    where TItem : Item
 {
     [SerializeField]
-    private Logging.Logger logger;
+    protected Logging.Logger logger;
 
     [SerializeField]
-    private ConsumableItem currentItem;
+    protected TItem currentItem;
 
     [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
+    protected CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
-    private GameObject itemsMenuPrefab;
+    protected GameObject itemsMenuPrefab;
 
-    private TextField nameInput;
-    private TextField descriptionInput;
-    private DropdownField effectTypeInput;
-    private IntegerField valueInput;
-    private FloatField durationInput;
-    private FloatField cooldownInput;
-    private IntegerField maxStackInput;
-    private Button saveButton;
-    private Button returnButton;
-    private Button closeButton;
-    private Button loadSpriteButton;
-    private Image spritePreview;
-    private string pendingSpriteSourcePath;
+    protected TextField nameInput;
+    protected TextField descriptionInput;
+    protected Button saveButton;
+    protected Button returnButton;
+    protected Button closeButton;
+    protected Button loadSpriteButton;
+    protected Image spritePreview;
+    protected string pendingSpriteSourcePath;
 
-    void OnEnable()
+    protected abstract CreatorObjectCategories Category { get; }
+
+    protected virtual void OnEnable()
     {
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
 
-        // note: these if statements are helpful when debugging missing UI elements
+        // Common UI elements
         nameInput = root.Q<TextField>("NameField");
         if (nameInput == null)
             logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
         descriptionInput = root.Q<TextField>("DescriptionField");
         if (descriptionInput == null)
             logger.Log("Description input field not found in UI", this, Logging.LogType.Error);
-        effectTypeInput = root.Q<DropdownField>("EffectTypeField");
-        if (effectTypeInput == null)
-            logger.Log("Effect type dropdown field not found in UI", this, Logging.LogType.Error);
-        valueInput = root.Q<IntegerField>("EffectValueField");
-        if (valueInput == null)
-            logger.Log("Effect value input field not found in UI", this, Logging.LogType.Error);
-        durationInput = root.Q<FloatField>("EffectDurationField");
-        if (durationInput == null)
-            logger.Log("Effect duration input field not found in UI", this, Logging.LogType.Error);
-        cooldownInput = root.Q<FloatField>("EffectCooldownField");
-        if (cooldownInput == null)
-            logger.Log("Effect cooldown input field not found in UI", this, Logging.LogType.Error);
-        maxStackInput = root.Q<IntegerField>("MaxStackField");
-        if (maxStackInput == null)
-            logger.Log("Max stack input field not found in UI", this, Logging.LogType.Error);
+
         saveButton = root.Q<Button>("SaveItem");
         returnButton = root.Q<Button>("Return");
         closeButton = root.Q<Button>("Close");
@@ -73,12 +54,17 @@ public class ItemCreatorMenuController : MenuController
         {
             loadSpriteButton = itemPreviewContainer.Q<Button>();
         }
-        effectTypeInput.choices = Enum.GetNames(typeof(EffectType)).ToList();
 
-        saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToItemsMenu;
-        closeButton.clicked += CloseMenu;
-        loadSpriteButton.clicked += LoadSprite;
+        InitializeSpecificFields(root);
+
+        if (saveButton != null)
+            saveButton.clicked += OnSaveClicked;
+        if (returnButton != null)
+            returnButton.clicked += ReturnToItemsMenu;
+        if (closeButton != null)
+            closeButton.clicked += CloseMenu;
+        if (loadSpriteButton != null)
+            loadSpriteButton.clicked += LoadSprite;
 
         if (currentItem != null)
         {
@@ -86,17 +72,24 @@ public class ItemCreatorMenuController : MenuController
         }
     }
 
-    private void PopulateFields()
+    protected abstract void InitializeSpecificFields(VisualElement root);
+
+    protected abstract void PopulateFields();
+
+    protected abstract void OnSaveClicked();
+
+    protected string SaveSpriteIfNeeded()
     {
-        nameInput.value = currentItem.name;
-        descriptionInput.value = currentItem.description ?? "";
-        valueInput.value = currentItem.value;
-        durationInput.value = currentItem.duration;
-        cooldownInput.value = currentItem.cooldown;
-        maxStackInput.value = currentItem.maxStack;
-        effectTypeInput.value = currentItem.effectType.ToString();
-        // Load existing sprite for preview
-        string spritePath = currentItem.spriteFile;
+        if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
+        {
+            string itemId = currentItem != null ? currentItem.ObjectId : Guid.NewGuid().ToString();
+            return FileHandler.SaveFile(pendingSpriteSourcePath, "Sprites", itemId);
+        }
+        return null;
+    }
+
+    protected void LoadExistingSprite(string spritePath)
+    {
         Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
         if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
         {
@@ -104,62 +97,12 @@ public class ItemCreatorMenuController : MenuController
         }
     }
 
-    private void OnSaveClicked()
-    {
-        string savedSpritePath = null;
-        if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
-        {
-            string itemId = currentItem != null ? currentItem.ObjectId : Guid.NewGuid().ToString();
-            savedSpritePath = FileHandler.SaveFile(pendingSpriteSourcePath, "Sprites", itemId);
-        }
-
-        if (currentItem == null)
-        {
-            var itemData = new ConsumableItemData(
-                null,
-                name: nameInput.value,
-                description: descriptionInput.value ?? "",
-                effectType: (EffectType)Enum.Parse(typeof(EffectType), effectTypeInput.value),
-                value: valueInput.value,
-                duration: durationInput.value,
-                cooldown: cooldownInput.value,
-                maxStack: maxStackInput.value,
-                spriteFilepath: savedSpritePath
-            );
-            currentItem = new ConsumableItem(itemData);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.ConsumableItem, currentItem);
-            logger.Log(
-                $"Created new consumable item: {currentItem.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        else
-        {
-            currentItem.name = nameInput.value;
-            currentItem.description = descriptionInput.value;
-            currentItem.value = valueInput.value;
-            currentItem.duration = durationInput.value;
-            currentItem.cooldown = cooldownInput.value;
-            currentItem.maxStack = maxStackInput.value;
-            currentItem.spriteFile = savedSpritePath ?? currentItem.spriteFile;
-            currentItem.effectType = (EffectType)
-                Enum.Parse(typeof(EffectType), effectTypeInput.value);
-            logger.Log(
-                $"Updated consumable item: {currentItem.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        ReturnToItemsMenu();
-    }
-
-    private void ReturnToItemsMenu()
+    protected void ReturnToItemsMenu()
     {
         OpenMenu(itemsMenuPrefab);
     }
 
-    private void LoadSprite()
+    protected virtual void LoadSprite()
     {
         FileHandler.ShowFilePickerDialog(
             onSuccess: OnSpriteSelected,
@@ -167,7 +110,7 @@ public class ItemCreatorMenuController : MenuController
         );
     }
 
-    private void OnSpriteSelected(string[] paths)
+    protected virtual void OnSpriteSelected(string[] paths)
     {
         if (paths == null || paths.Length == 0)
             return;
@@ -193,7 +136,7 @@ public class ItemCreatorMenuController : MenuController
         );
     }
 
-    void OnDisable()
+    protected virtual void OnDisable()
     {
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
