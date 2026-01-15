@@ -117,8 +117,6 @@ Button {
     color: rgb(255, 255, 255);
 }
 
-
-
 .popUpContainer > .unity-vector3-field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
     color: rgb(255, 255, 255);
     background-color: rgb(0, 0, 0);
@@ -162,4 +160,8 @@ Button {
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
+    height: 15%;
+    width: 100%;
+    min-height: 15%;
+    max-height: 33%;
 }

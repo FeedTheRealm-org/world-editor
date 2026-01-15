@@ -19,6 +19,9 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
     [SerializeField]
     private string modelsDirectory = "Models";
+
+    [SerializeField]
+    private GameObject structurePrefab;
     private List<StructureObject> structureObjects = new();
 
     void OnEnable()
