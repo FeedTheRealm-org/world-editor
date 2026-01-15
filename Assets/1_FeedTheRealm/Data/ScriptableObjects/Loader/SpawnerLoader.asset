@@ -20,3 +20,6 @@ MonoBehaviour:
   - spawnerType: 1
     spawnRadius: 3
     spawnerPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
+  - spawnerType: 2
+    spawnRadius: 3
+    spawnerPrefab: {fileID: 5537282333109391366, guid: 994e067732e28fe4da14144b2fb9006f, type: 3}
