@@ -10,23 +10,32 @@ public class ItemsMenuController : MenuController
     private Logging.Logger logger;
 
     [SerializeField]
-    private GameObject createItemMenuPrefab;
+    private GameObject createConsumableItemMenuPrefab;
+
+    [SerializeField]
+    private GameObject createWeaponItemMenuPrefab;
 
     [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
+    private List<CreatorObjectCategories> itemCategory;
+
+    [SerializeField]
     private VisualTreeAsset itemListTemplate;
     private Button closeButton;
-    private Button addItemButton;
+    private Button addConsumableItemButton;
+    private Button addWeaponItemButton;
 
     void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         closeButton = root.Q<Button>("Close");
-        addItemButton = root.Q<Button>("AddItem");
+        addConsumableItemButton = root.Q<Button>("AddConsumableItem");
+        addWeaponItemButton = root.Q<Button>("AddWeaponItem");
 
-        addItemButton.clicked += AddItem;
+        addConsumableItemButton.clicked += AddConsumableItem;
+        addWeaponItemButton.clicked += AddWeaponItem;
         closeButton.clicked += CloseMenu;
 
         PopulateItemsList();
@@ -38,23 +47,25 @@ public class ItemsMenuController : MenuController
         var itemsList = root.Q<ListView>("ItemsList");
         itemsList.Clear();
 
-        foreach (
-            ConsumableItem item in creatorObjectLibrary.GetCreatables(
-                CreatorObjectCategories.ConsumableItem
-            )
-        )
+        foreach (CreatorObjectCategories category in itemCategory)
         {
-            VisualElement itemEntry = itemListTemplate.Instantiate();
-            var headerLabel = itemEntry.Q<Label>("Header");
-            headerLabel.text = item.DisplayName;
+            foreach (Item item in creatorObjectLibrary.GetCreatables(category))
+            {
+                VisualElement itemEntry = itemListTemplate.Instantiate();
+                var headerLabel = itemEntry.Q<Label>("Header");
+                headerLabel.text = item.DisplayName;
 
-            var editButton = itemEntry.Q<Button>("Edit");
-            var deleteButton = itemEntry.Q<Button>("Delete");
+                var typeLabel = itemEntry.Q<Label>("Type");
+                typeLabel.text = category.GetDisplayName();
 
-            editButton.clicked += () => OnEditItem(item);
-            deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
+                var editButton = itemEntry.Q<Button>("Edit");
+                var deleteButton = itemEntry.Q<Button>("Delete");
 
-            itemsList.hierarchy.Add(itemEntry);
+                editButton.clicked += () => OnEditItem(item);
+                deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
+
+                itemsList.hierarchy.Add(itemEntry);
+            }
         }
     }
 
@@ -72,13 +83,20 @@ public class ItemsMenuController : MenuController
 
     void OnDisable()
     {
-        addItemButton.clicked -= AddItem;
+        addConsumableItemButton.clicked -= AddConsumableItem;
+        addWeaponItemButton.clicked -= AddWeaponItem;
         closeButton.clicked -= CloseMenu;
     }
 
-    private void AddItem()
+    private void AddConsumableItem()
     {
-        logger.Log("Opening Create Item Menu", this, Logging.LogType.Info);
-        OpenMenu(createItemMenuPrefab);
+        logger.Log("Opening Create Consumable Item Menu", this, Logging.LogType.Info);
+        OpenMenu(createConsumableItemMenuPrefab);
+    }
+
+    private void AddWeaponItem()
+    {
+        logger.Log("Opening Create Weapon Item Menu", this, Logging.LogType.Info);
+        OpenMenu(createWeaponItemMenuPrefab);
     }
 }

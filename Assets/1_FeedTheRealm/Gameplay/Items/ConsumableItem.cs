@@ -1,8 +1,7 @@
 using Models;
 
-public class ConsumableItem : CreatorObject
+public class ConsumableItem : Item
 {
-    public string description;
     public EffectType effectType;
     public int value;
     public float duration;
@@ -10,9 +9,8 @@ public class ConsumableItem : CreatorObject
     public int maxStack;
 
     public ConsumableItem(ConsumableItemData consumableItemData)
-        : base(consumableItemData.name, consumableItemData.id, consumableItemData.spriteFilepath)
+        : base(consumableItemData)
     {
-        description = consumableItemData.description;
         effectType = consumableItemData.effectType;
         value = consumableItemData.value;
         duration = consumableItemData.duration;
@@ -22,18 +20,10 @@ public class ConsumableItem : CreatorObject
 
     public override void SaveObject(ref WorldData worldData)
     {
-        ConsumableItemData itemData = new(
-            ObjectId,
-            DisplayName,
-            description,
-            effectType,
-            value,
-            duration,
-            cooldown,
-            maxStack,
-            spriteFile
-        );
-        worldData.consumableItems.Add(itemData);
+        ConsumableItemData consumableItemData = itemDataBuilder
+            .SetItemData(ObjectId, DisplayName, description, spriteFile)
+            .BuildConsumableItem(effectType, value, duration, cooldown, maxStack);
+        worldData.consumableItems.Add(consumableItemData);
     }
 
     public override void DeleteObject(ref WorldData worldData)

@@ -75,9 +75,25 @@ public class DataPersistenceManagerSO : ScriptableObject
     // instead of only the changes in the world.
     private void PrepWorld()
     {
+        if (worldData == null)
+        {
+            worldData = new WorldData();
+        }
+
+        // Preserve current identifiers while clearing dynamic collections
         string worldName = worldData.worldName;
         string worldId = worldData.id;
-        worldData = new WorldData { worldName = worldName, id = worldId };
+
+        // Clear existing collections to avoid duplicated data before re-saving
+        worldData.enemySpawnAreas.Clear();
+        worldData.playerSpawnAreas.Clear();
+        worldData.objectPlacementData.Clear();
+        worldData.consumableItems.Clear();
+        worldData.weaponItems.Clear();
+
+        // Restore identifiers on the same instance so all references remain valid
+        worldData.worldName = worldName;
+        worldData.id = worldId;
     }
 
 #if UNITY_EDITOR

@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557e31e775f441d7d95df273e9d4aee7, type: 3}
   m_Name: WorldService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.WorldService
-  Hostname: localhost
-  Port: 8000
   logger: {fileID: 11400000, guid: ab390763906a5564381b828e9c0ccafe, type: 2}
+  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
