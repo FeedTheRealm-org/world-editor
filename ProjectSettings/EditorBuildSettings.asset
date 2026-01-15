@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/1_FeedTheRealm/Scenes/Main/WorldEditorV2.unity
+    guid: 862161c47919c6ffaabee20b285b3853
+  - enabled: 1
     path: Assets/1_FeedTheRealm/Scenes/Menus/Login.unity
     guid: 40766490bb28063229218af1b0175161
   - enabled: 1
@@ -23,9 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1_FeedTheRealm/Scenes/Menus/VerifyCode.unity
     guid: f37098309a5dfe64493d8f80366c4a51
-  - enabled: 1
-    path: Assets/1_FeedTheRealm/Scenes/Main/WorldEditorV2.unity
-    guid: 862161c47919c6ffaabee20b285b3853
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: a9994c6bce36539fda157873b80d07d7, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
