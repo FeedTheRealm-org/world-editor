@@ -93,7 +93,7 @@ public class LootTableCreatorMenuController : MenuController
 
     private void PopulateItemDropdown()
     {
-        var items = GetConsumableItems(creatorObjectLibrary);
+        var items = GetItems(creatorObjectLibrary);
         itemListDropdown.choices = items.Select(item => item.DisplayName).ToList();
         if (itemListDropdown.choices.Count > 0)
         {
@@ -103,7 +103,7 @@ public class LootTableCreatorMenuController : MenuController
 
     private void OnItemSelected(ChangeEvent<string> evt)
     {
-        var items = GetConsumableItems(creatorObjectLibrary);
+        var items = GetItems(creatorObjectLibrary);
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == evt.newValue);
         if (selectedItem != null)
         {
@@ -117,19 +117,18 @@ public class LootTableCreatorMenuController : MenuController
         {
             return led;
         }
-        if (entry is ConsumableItemData cid)
+
+        if (entry is ItemData itemData)
         {
-            return new LootEntryData(cid.id, 0);
+            return new LootEntryData(itemData.id, 0);
         }
+
         return null;
     }
 
-    public static List<ConsumableItem> GetConsumableItems(CreatorObjectLibrarySO library)
+    public static List<Item> GetItems(CreatorObjectLibrarySO library)
     {
-        return library
-            .GetCreatables(CreatorObjectCategories.ConsumableItem)
-            .Cast<ConsumableItem>()
-            .ToList();
+        return library.GetAllCreatorObjects().OfType<Item>().ToList();
     }
 
     public static string GetItemDisplayNameById(CreatorObjectLibrarySO library, string itemId)
@@ -137,10 +136,7 @@ public class LootTableCreatorMenuController : MenuController
         if (string.IsNullOrEmpty(itemId))
             return "<Missing Item Id>";
 
-        var item = library
-            .GetCreatables(CreatorObjectCategories.ConsumableItem)
-            .Cast<ConsumableItem>()
-            .FirstOrDefault(ci => ci.ObjectId == itemId);
+        var item = GetItems(library).FirstOrDefault(i => i.ObjectId == itemId);
 
         return item != null ? item.DisplayName : $"<Missing Item {itemId}>";
     }
@@ -172,7 +168,7 @@ public class LootTableCreatorMenuController : MenuController
             return;
         }
 
-        var items = GetConsumableItems(creatorObjectLibrary);
+        var items = GetItems(creatorObjectLibrary);
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == itemListDropdown.value);
         if (selectedItem == null)
         {
