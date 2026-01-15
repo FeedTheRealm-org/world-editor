@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameObjectMenu/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+    <ui:VisualElement class="popUpContainer" style="flex-grow: 1; width: 847px; translate: 40% 180%; justify-content: flex-start;">
+        <ui:Label text="Your Structure Name Here" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255);"/>
+        <ui:Vector3Field label="Position" class="unity-vector3-field__input"/>
+        <ui:Vector3Field label="Rotation" class="unity-vector3-field__input"/>
+        <ui:Vector3Field label="Scale" value="0,0,0" class="unity-vector3-field__input"/>
+        <ui:Button text="Set up Shop?" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: flex-start; justify-content: flex-start; align-content: flex-end; translate: 0% 150%;"/>
+    </ui:VisualElement>
+</ui:UXML>

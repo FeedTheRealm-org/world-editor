@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
-public class StructureObject : IPlaceable
+public class StructureObject : IPlaceable, ISelectable
 {
     public string id;
     public Vector3 size = Vector3.one;
@@ -101,5 +101,10 @@ public class StructureObject : IPlaceable
         {
             AddCollidersRecursively(child.gameObject);
         }
+    }
+
+    public void OnObjectSelected()
+    {
+        throw new System.NotImplementedException();
     }
 }
