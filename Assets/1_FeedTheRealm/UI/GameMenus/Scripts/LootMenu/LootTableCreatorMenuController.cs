@@ -165,6 +165,11 @@ public class LootTableCreatorMenuController : MenuController
         if (string.IsNullOrEmpty(itemListDropdown.value))
         {
             logger?.Log("No item selected", this, Logging.LogType.Warning);
+            ToastNotification.Show(
+                "No item selected. Create an item first.",
+                "alert",
+                Color.yellow
+            );
             return;
         }
 
@@ -228,6 +233,7 @@ public class LootTableCreatorMenuController : MenuController
         if (string.IsNullOrEmpty(nameInput.value))
         {
             logger?.Log("Loot table name is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Loot table name is required", "error", Color.red);
             return;
         }
 
@@ -263,6 +269,8 @@ public class LootTableCreatorMenuController : MenuController
                 Logging.LogType.Info
             );
         }
+
+        ToastNotification.Show("Loot table saved successfully", "success", Color.green);
 
         ReturnToLootMenu();
     }

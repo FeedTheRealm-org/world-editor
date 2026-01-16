@@ -83,7 +83,7 @@ public class EnemyCreatorMenuController : MenuController
             loadSpriteButton = enemyPreviewContainer.Q<Button>();
         }
         saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToItemsMenu;
+        returnButton.clicked += ReturnToEnemiesMenu;
         closeButton.clicked += CloseMenu;
         loadSpriteButton.clicked += LoadSprite;
 
@@ -140,6 +140,20 @@ public class EnemyCreatorMenuController : MenuController
                 selectedLootTable.lootItems
             );
         }
+
+        if (string.IsNullOrEmpty(nameInput.value))
+        {
+            logger?.Log("Enemy name is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Enemy name is required", "error", Color.red);
+            return;
+        }
+        if (selectedLootTable == null)
+        {
+            logger?.Log("Valid loot table selection is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Valid loot table selection is required", "error", Color.red);
+            return;
+        }
+
         if (currentEnemy == null)
         {
             var enemyData = new EnemyData(
@@ -173,10 +187,13 @@ public class EnemyCreatorMenuController : MenuController
             currentEnemy.spriteFile = pendingSpriteSourcePath;
             logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
         }
-        ReturnToItemsMenu();
+
+        ToastNotification.Show("Enemy saved successfully", "success", Color.green);
+
+        ReturnToEnemiesMenu();
     }
 
-    private void ReturnToItemsMenu()
+    private void ReturnToEnemiesMenu()
     {
         OpenMenu(enemyMenuPrefab);
     }
@@ -219,7 +236,7 @@ public class EnemyCreatorMenuController : MenuController
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
         if (returnButton != null)
-            returnButton.clicked -= ReturnToItemsMenu;
+            returnButton.clicked -= ReturnToEnemiesMenu;
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
         if (loadSpriteButton != null)

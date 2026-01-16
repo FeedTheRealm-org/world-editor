@@ -31,31 +31,31 @@ public class WorldPublisherController : MonoBehaviour
     /// Publishes the world, its models and sprites to the server.
     /// If any step fails, returns the error message.
     /// </summary>
-    public async Task<(string, string)> PublishWorld(
+    public async Task<(string, string, long)> PublishWorld(
         WorldData worldData,
         string worldFile,
         string description
     )
     {
-        (string worldId, string worldError) = await worldService.PublishWorld(
+        (string worldId, string worldError, long statusCode) = await worldService.PublishWorld(
             worldData,
             worldFile,
             description,
             session.APIToken
         );
         if (!string.IsNullOrEmpty(worldError))
-            return (null, worldError);
+            return (null, worldError, statusCode);
 
         string modelError = await PublishModels(worldData, worldId);
         if (!string.IsNullOrEmpty(modelError))
-            return (null, modelError);
+            return (null, modelError, 0);
         // TODO: maybe we can consider seperateing this into multiple calls
         List<CreatorObject> creatorObjects = creatorObjectLibrary.GetAllCreatorObjects();
         string spriteError = await PublishSprites(creatorObjects, worldId);
         if (!string.IsNullOrEmpty(spriteError))
-            return (null, spriteError);
+            return (null, spriteError, 0);
 
-        return (worldId, null);
+        return (worldId, null, 200);
     }
 
     /// <summary>

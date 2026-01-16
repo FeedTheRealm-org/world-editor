@@ -58,6 +58,27 @@ public class WeaponItemCreatorMenuController : ItemCreatorMenuController<WeaponI
     {
         string savedSpritePath = SaveSpriteIfNeeded();
 
+        if (string.IsNullOrEmpty(nameInput.value))
+        {
+            logger?.Log("Weapon item name is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Weapon item name is required", "error", Color.red);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(savedSpritePath))
+        {
+            logger?.Log("Weapon item sprite is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Weapon item sprite is required", "error", Color.red);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(weaponTypeInput.value))
+        {
+            logger?.Log("Weapon type is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Weapon type is required", "error", Color.red);
+            return;
+        }
+
         if (currentItem == null)
         {
             var weaponItemData = itemDataBuilder
@@ -100,6 +121,9 @@ public class WeaponItemCreatorMenuController : ItemCreatorMenuController<WeaponI
                 Logging.LogType.Info
             );
         }
+
+        ToastNotification.Show("Weapon item saved successfully", "success", Color.green);
+
         ReturnToItemsMenu();
     }
 }

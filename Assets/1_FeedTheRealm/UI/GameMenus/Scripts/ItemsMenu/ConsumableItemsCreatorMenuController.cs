@@ -58,6 +58,27 @@ public class ConsumableItemCreatorMenuController : ItemCreatorMenuController<Con
     {
         string savedSpritePath = SaveSpriteIfNeeded();
 
+        if (string.IsNullOrEmpty(nameInput.value))
+        {
+            logger?.Log("Consumable item name is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Consumable item name is required", "error", Color.red);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(savedSpritePath))
+        {
+            logger?.Log("Consumable item sprite is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Consumable item sprite is required", "error", Color.red);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(effectTypeInput.value))
+        {
+            logger?.Log("Consumable item effect type is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Consumable item effect type is required", "error", Color.red);
+            return;
+        }
+
         if (currentItem == null)
         {
             var consumableItemData = itemDataBuilder
@@ -100,6 +121,9 @@ public class ConsumableItemCreatorMenuController : ItemCreatorMenuController<Con
                 Logging.LogType.Info
             );
         }
+
+        ToastNotification.Show("Consumable item saved successfully", "success", Color.green);
+
         ReturnToItemsMenu();
     }
 }
