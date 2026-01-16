@@ -65,7 +65,7 @@ public class WeaponItemCreatorMenuController : ItemCreatorMenuController<WeaponI
             return;
         }
 
-        if (string.IsNullOrEmpty(savedSpritePath))
+        if (currentItem == null && string.IsNullOrEmpty(savedSpritePath))
         {
             logger?.Log("Weapon item sprite is required", this, Logging.LogType.Warning);
             ToastNotification.Show("Weapon item sprite is required", "error", Color.red);

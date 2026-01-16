@@ -72,6 +72,21 @@ public class ItemsMenuController : MenuController
     void OnEditItem(CreatorObject item)
     {
         logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
+
+        EditContext.SetObjectToEdit(item);
+
+        if (item is ConsumableItem)
+        {
+            OpenMenu(createConsumableItemMenuPrefab);
+        }
+        else if (item is WeaponItem)
+        {
+            OpenMenu(createWeaponItemMenuPrefab);
+        }
+        else
+        {
+            logger.Log($"Unknown item type: {item.GetType().Name}", this, Logging.LogType.Error);
+        }
     }
 
     void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)

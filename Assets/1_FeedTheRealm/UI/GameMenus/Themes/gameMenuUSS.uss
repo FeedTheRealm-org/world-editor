@@ -167,3 +167,18 @@ Button {
     border-top-color: rgb(255, 255, 255);
     border-bottom-color: rgb(255, 255, 255);
 }
+
+.white-dropdown {
+    background-color: transparent;
+    color: black;
+}
+
+.white-dropdown .unity-base-field__label {
+    color: white;
+    background-color: transparent;
+}
+
+.white-dropdown .unity-popup-field__input {
+    background-color: white;
+    color: black;
+}

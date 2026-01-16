@@ -33,7 +33,7 @@ public class LootTableCreatorMenuController : MenuController
     private Button returnButton;
     private Button closeButton;
     private Image spritePreview;
-    private Foldout itemsFoldout;
+    private ScrollView itemsScrollView;
 
     private List<LootEntryData> addedEntries = new();
 
@@ -58,6 +58,10 @@ public class LootTableCreatorMenuController : MenuController
         itemProbabilitySlider = root.Q<SliderInt>("ItemProbabilitySlider");
         if (itemProbabilitySlider == null)
             logger?.Log("Item probability slider not found in UI", this, Logging.LogType.Error);
+        else
+        {
+            itemProbabilitySlider.showInputField = true;
+        }
 
         minGoldDropAmountInput = root.Q<FloatField>("MinGoldDropAmount");
         if (minGoldDropAmountInput == null)
@@ -72,19 +76,18 @@ public class LootTableCreatorMenuController : MenuController
         returnButton = root.Q<Button>("Return");
         closeButton = root.Q<Button>("Close");
         spritePreview = root.Q<Image>("SpritePreview");
-        itemsFoldout = root.Q<Foldout>();
-
-        if (itemsFoldout != null)
-        {
-            itemsFoldout.text = "Added Items";
-        }
+        itemsScrollView = root.Q<ScrollView>("ItemsScrollView");
 
         addItemButton.clicked += OnAddItemClicked;
         saveLootTableButton.clicked += OnSaveLootTableClicked;
         returnButton.clicked += ReturnToLootMenu;
         closeButton.clicked += CloseMenu;
 
-        // Populate fields if editing existing loot table
+        if (currentLootTable == null)
+        {
+            currentLootTable = EditContext.GetAndClearObjectToEdit<LootTable>();
+        }
+
         if (currentLootTable != null)
         {
             PopulateFields();
@@ -184,10 +187,6 @@ public class LootTableCreatorMenuController : MenuController
         var entry = new LootEntryData(selectedItem.ObjectId, itemProbabilitySlider.value);
 
         addedEntries.Add(entry);
-        if (itemProbabilitySlider != null)
-        {
-            itemProbabilitySlider.showInputField = true;
-        }
 
         logger?.Log(
             $"Added item '{selectedItem.DisplayName}' with {itemProbabilitySlider.value}% probability",
@@ -200,10 +199,10 @@ public class LootTableCreatorMenuController : MenuController
 
     private void RefreshItemsFoldout()
     {
-        if (itemsFoldout == null)
+        if (itemsScrollView == null)
             return;
 
-        itemsFoldout.Clear();
+        itemsScrollView.Clear();
         foreach (var entry in addedEntries)
         {
             var displayName = GetItemDisplayNameById(creatorObjectLibrary, entry.id);
@@ -212,9 +211,8 @@ public class LootTableCreatorMenuController : MenuController
                 displayName,
                 OnRemoveItemClicked
             );
-            itemsFoldout.Add(itemElement);
+            itemsScrollView.Add(itemElement);
         }
-        itemsFoldout.text = $"Added Items ({addedEntries.Count})";
     }
 
     private void OnRemoveItemClicked(LootEntryData entry)

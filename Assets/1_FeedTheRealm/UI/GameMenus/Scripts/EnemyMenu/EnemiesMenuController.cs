@@ -59,6 +59,10 @@ public class EnemiesMenuController : MenuController
     void OnEditEnemy(CreatorObject enemy)
     {
         logger.Log("Editing enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+
+        EditContext.SetObjectToEdit(enemy);
+
+        OpenMenu(createEnemyMenuPrefab);
     }
 
     void OnDeleteEnemy(CreatorObject enemy, VisualElement enemyListEntry)

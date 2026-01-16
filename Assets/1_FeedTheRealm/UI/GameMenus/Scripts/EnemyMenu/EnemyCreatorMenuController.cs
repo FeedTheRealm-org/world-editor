@@ -87,6 +87,11 @@ public class EnemyCreatorMenuController : MenuController
         closeButton.clicked += CloseMenu;
         loadSpriteButton.clicked += LoadSprite;
 
+        if (currentEnemy == null)
+        {
+            currentEnemy = EditContext.GetAndClearObjectToEdit<GenericEnemy>();
+        }
+
         // Populate fields if editing existing item
         if (currentEnemy != null)
         {
@@ -104,16 +109,42 @@ public class EnemyCreatorMenuController : MenuController
         rangeInput.value = currentEnemy.range;
         if (currentEnemy.lootTable != null)
             lootTableInput.value = currentEnemy.lootTable.name;
+
         // Load existing sprite for preview
-        string spritePath = Path.Combine(
-            Application.streamingAssetsPath,
-            "Items",
-            currentEnemy.spriteFile + ".png"
-        );
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
-        if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
+        LoadExistingSprite(currentEnemy.spriteFile);
+    }
+
+    private void LoadExistingSprite(string spritePath)
+    {
+        if (string.IsNullOrEmpty(spritePath))
+            return;
+
+        string absolutePath = spritePath;
+        if (!Path.IsPathRooted(spritePath))
         {
-            spritePreview.sprite = sprite;
+            absolutePath = Path.Combine(Application.streamingAssetsPath, spritePath);
+        }
+
+        if (FileBrowserHelpers.FileExists(absolutePath))
+        {
+            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
+            if (sprite != null)
+            {
+                spritePreview.sprite = sprite;
+                //logger?.Log($"Loaded existing sprite from: {absolutePath}", this, Logging.LogType.Info);
+            }
+            else
+            {
+                logger?.Log(
+                    $"Failed to load sprite from: {absolutePath}",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+        }
+        else
+        {
+            logger?.Log($"Sprite file not found at: {absolutePath}", this, Logging.LogType.Warning);
         }
     }
 
