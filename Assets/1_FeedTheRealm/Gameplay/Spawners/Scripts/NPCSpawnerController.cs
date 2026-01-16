@@ -63,7 +63,7 @@ public class NPCSpawnerController : SpawnerController, IPersistent, ISelectable
 
     private void OnCloseClicked()
     {
-        Debug.Log("EnemySpawnerController: Closing editor menu");
+        Debug.Log("NPCSpawnerController: Closing editor menu");
         inputReader.ToggleInput(true);
         editorMenu.rootVisualElement.style.display = DisplayStyle.None;
     }
