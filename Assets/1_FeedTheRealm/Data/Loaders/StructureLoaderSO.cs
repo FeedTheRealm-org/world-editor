@@ -72,10 +72,11 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     private void LoadStructureLibrary()
     {
         string json = System.IO.File.ReadAllText(PersistentLibraryFilePath);
-        List<StructureObject> objects = JsonUtility
-            .FromJson<WorldObjectReferenceList>(json)
-            .objects;
-        structureObjects = objects;
+        structureObjects = JsonUtility.FromJson<WorldObjectReferenceList>(json).objects;
+        foreach (var structureObject in structureObjects)
+        {
+            structureObject.structureObject = structurePrefab;
+        }
     }
 
     private void GenerateLibrary(string outputPath)

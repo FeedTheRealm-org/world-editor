@@ -7,12 +7,17 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
     [SerializeField]
     private UIDocument structureUI;
 
-    public string structureName;
-    public string id;
-    public Vector3 size = Vector3.one;
-    public Vector3 rotation;
-    public Vector3 offset;
-    public string objectUrl;
+    [SerializeField]
+    private MakerInputReader inputReader;
+
+    public StructureData structureData;
+
+    // public string structureName;
+    // public string id;
+    // public Vector3 size = Vector3.one;
+    // public Vector3 rotation;
+    // public Vector3 offset;
+    // public string objectUrl;
 
     // UI Elements
     private Label titleLabel;
@@ -23,9 +28,7 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
 
     void OnEnable()
     {
-        if (structureUI == null)
-            return;
-        structureUI.enabled = false;
+        structureUI.rootVisualElement.style.display = DisplayStyle.None;
         VisualElement root = structureUI.rootVisualElement;
         titleLabel = root.Q<Label>("StructureName");
         positionField = root.Q<Vector3Field>("Position");
@@ -45,7 +48,7 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
             return;
 
         StructureData structureData = new(
-            Structure.name,
+            this.structureData.structureName,
             name,
             transform.localScale,
             transform.eulerAngles,
@@ -57,39 +60,27 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
 
     public void OnObjectSelected()
     {
-        if (structureUI == null)
-            return;
-
-        structureUI.enabled = true;
-
-        if (titleLabel != null)
-            titleLabel.text = name;
-
-        if (positionField != null)
-            positionField.value = transform.position;
-        if (rotationField != null)
-            rotationField.value = transform.eulerAngles;
-        if (scaleField != null)
-            scaleField.value = transform.localScale;
-
-        if (positionField != null)
-            positionField.RegisterValueChangedCallback(evt => transform.position = evt.newValue);
-        if (rotationField != null)
-            rotationField.RegisterValueChangedCallback(evt => transform.eulerAngles = evt.newValue);
-        if (scaleField != null)
-            scaleField.RegisterValueChangedCallback(evt => transform.localScale = evt.newValue);
-
-        if (closeButton != null)
-            closeButton.clicked += OnObjectDeselected;
+        RenderMenu();
     }
 
-    public void OnObjectDeselected()
+    public void RenderMenu()
     {
-        if (structureUI == null)
-            return;
+        inputReader.ToggleInput(false);
+        structureUI.rootVisualElement.style.display = DisplayStyle.Flex;
+        titleLabel.text = name;
+        positionField.value = transform.position;
+        rotationField.value = transform.eulerAngles;
+        scaleField.value = transform.localScale;
+        positionField.RegisterValueChangedCallback(evt => transform.position = evt.newValue);
+        rotationField.RegisterValueChangedCallback(evt => transform.eulerAngles = evt.newValue);
+        scaleField.RegisterValueChangedCallback(evt => transform.localScale = evt.newValue);
+        closeButton.clicked += OnClose;
+    }
 
-        structureUI.enabled = false;
-        if (closeButton != null)
-            closeButton.clicked -= OnObjectDeselected;
+    public void OnClose()
+    {
+        inputReader.ToggleInput(true);
+        structureUI.rootVisualElement.style.display = DisplayStyle.None;
+        closeButton.clicked -= OnClose;
     }
 }

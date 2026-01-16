@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 [System.Serializable]
-public class StructureObject : IPlaceable, ISelectable
+public class StructureObject : IPlaceable
 {
     public string id;
     public Vector3 size = Vector3.one;
@@ -10,8 +10,8 @@ public class StructureObject : IPlaceable, ISelectable
     public Vector3 offset;
     public string objectUrl;
     private bool isObjectLoaded = false;
+    public GameObject structureObject;
     private GameObject worldObject;
-    private Transform visualRoot;
 
     public StructureObject(
         string id,
@@ -32,79 +32,47 @@ public class StructureObject : IPlaceable, ISelectable
 
     public async Task<GameObject> GetPlaceableObject(int layerMask)
     {
-        GameObject instance;
         if (!isObjectLoaded)
-        {
             await LoadWorldObject();
-        }
-        instance = Object.Instantiate(worldObject);
+        GameObject structureInstance = Object.Instantiate(structureObject);
+        structureInstance.transform.position = Vector3.zero;
+        structureInstance.transform.rotation = Quaternion.identity;
+        GameObject instance = Object.Instantiate(worldObject);
+        instance.transform.SetParent(structureInstance.transform);
         instance.SetActive(true);
-        ApplyTransform(instance, layerMask);
-        return instance;
+        structureInstance.SetActive(true);
+        structureInstance.layer = layerMask;
+        structureInstance.name = DisplayName;
+        NormalizeObject(instance);
+        SetColliderLayer(instance, structureInstance);
+
+        return structureInstance;
     }
 
     // -------------------- Private Methods --------------------
 
     private async Task LoadWorldObject()
     {
-        worldObject = new GameObject($"Loaded_{DisplayName}");
-        await API.GltfHandler.Load(worldObject, objectUrl);
+        GameObject loadedObject = new($"Loaded_{DisplayName}");
+        await API.GltfHandler.Load(loadedObject, objectUrl);
         isObjectLoaded = true;
-
-        foreach (Transform child in worldObject.transform)
-        {
-            child.gameObject.AddComponent<BoxCollider>();
-        }
-        worldObject.name = id;
-
-        StructureController controller = worldObject.AddComponent<StructureController>();
-        controller.structureName = objectUrl;
-        controller.id = id;
-        controller.size = size;
-        controller.rotation = rotation;
-        controller.offset = offset;
+        worldObject = loadedObject.transform.GetChild(0).gameObject;
         worldObject.SetActive(false);
     }
 
-    private void ApplyTransform(GameObject instance, int layerMask)
+    private void NormalizeObject(GameObject instance)
     {
-        if (instance == null)
-        {
-            Debug.LogError("Instance is null in ApplyTransform");
-            return;
-        }
         instance.transform.localScale = size;
-        instance.transform.localRotation = Quaternion.identity;
-        if (instance.transform.childCount > 0)
-        {
-            visualRoot = instance.transform.GetChild(0);
-            visualRoot.localPosition = offset;
-            visualRoot.localEulerAngles = rotation;
-            visualRoot.localScale = Vector3.one;
-        }
-        SetLayerRecursively(instance, layerMask);
+        instance.transform.localPosition = Vector3.zero;
+        instance.transform.rotation = Quaternion.Euler(rotation);
     }
 
-    private void SetLayerRecursively(GameObject obj, int layer)
+    private void SetColliderLayer(GameObject instance, GameObject structureInstance)
     {
-        obj.layer = layer;
-        foreach (Transform child in obj.transform)
-        {
-            SetLayerRecursively(child.gameObject, layer);
-        }
-    }
-
-    private void AddCollidersRecursively(GameObject obj)
-    {
-        obj.AddComponent<BoxCollider>();
-        foreach (Transform child in obj.transform)
-        {
-            AddCollidersRecursively(child.gameObject);
-        }
-    }
-
-    public void OnObjectSelected()
-    {
-        throw new System.NotImplementedException();
+        BoxCollider instanceCollider = instance.AddComponent<BoxCollider>();
+        BoxCollider structureCollider = structureInstance.AddComponent<BoxCollider>();
+        structureCollider.size = instanceCollider.size;
+        structureCollider.center = instanceCollider.center;
+        instanceCollider.enabled = false;
     }
 }

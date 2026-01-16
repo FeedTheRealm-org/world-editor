@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4421515928892810060
 Transform:
   m_ObjectHideFlags: 0
@@ -45,12 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73612c07ca91e2c63a2648e35a8bba5e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::StructureController
-  id:
-  structureName:
-  size: {x: 0, y: 0, z: 0}
-  rotation: {x: 0, y: 0, z: 0}
-  offset: {x: 0, y: 0, z: 0}
   structureUI: {fileID: 8650860572608832213}
+  structureData:
+    id:
+    size: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0, z: 0}
+    structureName:
 --- !u!114 &8650860572608832213
 MonoBehaviour:
   m_ObjectHideFlags: 0
