@@ -69,6 +69,10 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         {
             tasks.Add(LoadPlayerSpawnerAsync(playerSpawnerData));
         }
+        foreach (var npcSpawnerData in worldData.npcSpawnAreas)
+        {
+            tasks.Add(LoadNPCSpawnerAsync(npcSpawnerData));
+        }
         await Task.WhenAll(tasks);
         logger.Log("Spawners loaded successfully.", this, Logging.LogType.Info);
     }
@@ -85,6 +89,13 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
             SpawnerType.EnemySpawner,
             spawnerData,
             (controller, data) => controller.EnemySpawnData = data
+        );
+
+    private async Task LoadNPCSpawnerAsync(NPCSpawnerData spawnerData) =>
+        await LoadSpawnerAsync<NPCSpawnerController, NPCSpawnerData>(
+            SpawnerType.NPCSpawner,
+            spawnerData,
+            (controller, data) => controller.NPCSpawnData = data
         );
 
     private async Task LoadSpawnerAsync<TController, TSpawnData>(
