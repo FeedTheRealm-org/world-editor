@@ -930,7 +930,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
@@ -946,7 +946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[5].Name
-      value: WeaponItems
+      value: Dialogs
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].Name
@@ -971,7 +971,7 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[5].panel
       value: 
-      objectReference: {fileID: 3436638423149990055, guid: 0428ffadd9b08ef419f66bf9809cc60c, type: 3}
+      objectReference: {fileID: 8615618779716038286, guid: 621b05f7a2cc7df48ab44caf9447fbcd, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].panel
       value: 
