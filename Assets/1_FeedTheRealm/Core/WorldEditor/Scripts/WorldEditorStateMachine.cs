@@ -3,16 +3,22 @@ using UnityEngine;
 public class WorldEditorStateMachine : MonoBehaviour
 {
     [SerializeField]
-    public MakerInputReader inputReader;
-
-    [SerializeField]
-    public Camera playerCamera;
-
-    [SerializeField]
     private Logging.Logger logger;
-    private IMakerState currentState;
 
+    [Header("References | DO NOT SET IN INSPECTOR")]
+    public MakerInputReader inputReader;
+    public Camera playerCamera;
     public IPlaceable SelectedObject { get; private set; }
+    public bool EnableEditor = true;
+
+    public void ToggleEditor(bool status)
+    {
+        if (!status)
+            currentState?.Exit();
+        EnableEditor = status;
+    }
+
+    private IWorldEditorState currentState;
 
     void Start()
     {
@@ -29,19 +35,28 @@ public class WorldEditorStateMachine : MonoBehaviour
 
     private void OnDisable()
     {
-        inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
-        inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
+        inputReader.PrimaryInteractionEvent -= OnPrimaryInteraction;
+        inputReader.SecondaryInteractionEvent -= OnSecondaryInteraction;
         Utils.SelectionRaiser.ObjectSelected -= OnWorldObjectSelected;
     }
 
     private void OnWorldObjectSelected(IPlaceable reference)
     {
+        if (currentState is PlacingState)
+        {
+            SelectedObject = reference;
+            Log($"Switched to: {reference.DisplayName}");
+            return;
+        }
         SelectedObject = reference;
         SetState(new PlacingState(this));
     }
 
-    public void SetState(IMakerState newState)
+    public void SetState(IWorldEditorState newState)
     {
+        if (!EnableEditor)
+            return;
+
         currentState?.Exit();
         currentState = newState;
         currentState?.Enter();

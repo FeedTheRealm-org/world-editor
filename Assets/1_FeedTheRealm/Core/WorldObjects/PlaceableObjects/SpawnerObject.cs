@@ -32,7 +32,7 @@ public class SpawnerObject : IPlaceable
     {
         GameObject instance = Object.Instantiate(spawnerObject);
         instance.SetActive(true);
-        instance.name = spawnerType.ToString();
+        instance.name = DisplayName;
         instance.layer = layerMask;
         return instance;
     }

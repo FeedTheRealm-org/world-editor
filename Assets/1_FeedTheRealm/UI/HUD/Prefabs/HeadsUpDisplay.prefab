@@ -66,10 +66,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 207140240817700842}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed350f68fd2deb41993a46b38b68ee8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c42fb1ed7a9a7eac8a2864dc7c6a388, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::HudLibraryController
-  creatorLibrary: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
+  placeableObjectLibrary: {fileID: 0}
 --- !u!114 &8448761236676883819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,15 +79,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 207140240817700842}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93aa3f2736cd146b1b1b97dcff91a15f, type: 3}
+  m_Script: {fileID: 11500000, guid: f90cbb09789086aec8063cf744ab1c42, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MenuBarController
-  menuOptions:
-  - Name: Save World
-    panel: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}
-  - Name: Publish World
-    panel: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
-  - Name: Add Item
-    panel: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}
-  - Name: Add Item
-    panel: {fileID: 5362735870089170922, guid: 1518751b9a3f0ed4e8352a4537ada521, type: 3}
+  menuOptions: []
+  worldEditorStateMachine: {fileID: 0}

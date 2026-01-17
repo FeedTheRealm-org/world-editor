@@ -1,9 +1,10 @@
+using System;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class EnemySpawnerController : SpawnerController, IPersistent, ISelectable
+public class EnemySpawnerController : SpawnerController, IPersistent, IEditable
 {
     [SerializeField]
     private MakerInputReader inputReader;
@@ -29,6 +30,13 @@ public class EnemySpawnerController : SpawnerController, IPersistent, ISelectabl
                 _enemySpawnData.Radius
             );
         }
+    }
+
+    public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
+
+    public void OnObjectDeselected()
+    {
+        CloseMenu();
     }
 
     void OnEnable()
@@ -61,17 +69,10 @@ public class EnemySpawnerController : SpawnerController, IPersistent, ISelectabl
             EnemySpawnData.ResetAfterKills = e.newValue
         );
         resetDelayField.RegisterValueChangedCallback(e => EnemySpawnData.ResetDelay = e.newValue);
-        closeButton.clicked += OnCloseClicked;
-
         editorMenu.rootVisualElement.style.display = DisplayStyle.None;
     }
 
-    void OnDisable()
-    {
-        closeButton.clicked -= OnCloseClicked;
-    }
-
-    private void RenderMenu()
+    private void RenderMenu(Action CloseEditorCallback)
     {
         inputReader.ToggleInput(false);
         radiusSlider.value = EnemySpawnData.Radius;
@@ -79,20 +80,19 @@ public class EnemySpawnerController : SpawnerController, IPersistent, ISelectabl
         spawnRateField.value = (int)EnemySpawnData.SpawnRate;
         resetAfterKillsField.value = EnemySpawnData.ResetAfterKills;
         resetDelayField.value = (int)EnemySpawnData.ResetDelay;
-
         editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+        closeButton.clicked += () =>
+        {
+            CloseMenu();
+            CloseEditorCallback?.Invoke();
+        };
     }
 
-    private void OnCloseClicked()
+    private void CloseMenu()
     {
         Debug.Log("EnemySpawnerController: Closing editor menu");
         inputReader.ToggleInput(true);
         editorMenu.rootVisualElement.style.display = DisplayStyle.None;
-    }
-
-    public void OnObjectSelected()
-    {
-        RenderMenu();
     }
 
     public override void SaveData(ref WorldData worldData)
