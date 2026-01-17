@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class NPCSpawnerController : SpawnerController, IPersistent, ISelectable
+public class NPCSpawnerController : SpawnerController, IPersistent
 {
     [SerializeField]
     private MakerInputReader inputReader;
