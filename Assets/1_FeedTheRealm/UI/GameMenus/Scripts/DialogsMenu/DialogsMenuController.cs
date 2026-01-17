@@ -13,6 +13,9 @@ public class DialogsMenuController : MenuController
     private GameObject createDialogMenuPrefab;
 
     [SerializeField]
+    private GameObject messagesMenuPrefab;
+
+    [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
@@ -58,7 +61,13 @@ public class DialogsMenuController : MenuController
 
     void OnEditDialog(Dialog dialog)
     {
-        logger.Log("Editing dialog: " + dialog.DisplayName, this, Logging.LogType.Info);
+        logger.Log(
+            "Opening messages for dialog: " + dialog.DisplayName,
+            this,
+            Logging.LogType.Info
+        );
+        MessagesMenuController.PendingDialogId = dialog.ObjectId;
+        OpenMenu(messagesMenuPrefab);
     }
 
     void OnDeleteDialog(Dialog dialog, VisualElement dialogListEntry)
