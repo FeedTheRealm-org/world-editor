@@ -4,4 +4,5 @@ public enum CreatorObjectCategories
     WeaponItem,
     Enemy,
     LootTable,
+    Dialog,
 }

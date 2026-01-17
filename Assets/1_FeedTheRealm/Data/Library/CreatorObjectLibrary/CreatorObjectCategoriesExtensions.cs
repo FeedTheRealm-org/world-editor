@@ -9,6 +9,7 @@ public static class CreatorObjectCategoriesExtensions
         { CreatorObjectCategories.WeaponItem, "Weapon Item" },
         { CreatorObjectCategories.Enemy, "Enemy" },
         { CreatorObjectCategories.LootTable, "Loot Table" },
+        { CreatorObjectCategories.Dialog, "Dialog" },
     };
 
     public static string GetDisplayName(this CreatorObjectCategories category)
