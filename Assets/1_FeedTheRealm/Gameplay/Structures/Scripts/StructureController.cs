@@ -10,6 +10,15 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
     [SerializeField]
     private MakerInputReader inputReader;
 
+    [SerializeField]
+    private float positionScrollSensitivity = 1f;
+
+    [SerializeField]
+    private float rotationScrollSensitivity = 10f;
+
+    [SerializeField]
+    private float scaleScrollSensitivity = 1f;
+
     public StructureData structureData;
 
     // public string structureName;
@@ -25,6 +34,8 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
     private Vector3Field rotationField;
     private Vector3Field scaleField;
     private Button closeButton;
+    private FloatField focusedAxisField;
+    private Vector3Field focusedVectorField;
 
     void OnEnable()
     {
@@ -74,6 +85,12 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
         positionField.RegisterValueChangedCallback(evt => transform.position = evt.newValue);
         rotationField.RegisterValueChangedCallback(evt => transform.eulerAngles = evt.newValue);
         scaleField.RegisterValueChangedCallback(evt => transform.localScale = evt.newValue);
+
+        RegisterAxisFocusListeners(positionField);
+        RegisterAxisFocusListeners(rotationField);
+        RegisterAxisFocusListeners(scaleField);
+
+        inputReader.ScrollEvent += OnScroll;
         closeButton.clicked += OnClose;
     }
 
@@ -82,5 +99,70 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
         inputReader.ToggleInput(true);
         structureUI.rootVisualElement.style.display = DisplayStyle.None;
         closeButton.clicked -= OnClose;
+        inputReader.ScrollEvent -= OnScroll;
+        focusedAxisField = null;
+    }
+
+    private void RegisterAxisFocusListeners(Vector3Field field)
+    {
+        var vectorInput = field.Q(className: "unity-vector3-field__input");
+        if (vectorInput == null)
+            return;
+
+        var xInput = vectorInput.Q<FloatField>(name: "unity-x-input");
+        var yInput = vectorInput.Q<FloatField>(name: "unity-y-input");
+        var zInput = vectorInput.Q<FloatField>(name: "unity-z-input");
+
+        xInput.RegisterCallback<FocusInEvent>(_ =>
+        {
+            focusedAxisField = xInput;
+            focusedVectorField = field;
+        });
+        xInput.RegisterCallback<FocusOutEvent>(_ =>
+        {
+            focusedAxisField = null;
+            focusedVectorField = null;
+        });
+        yInput.RegisterCallback<FocusInEvent>(_ =>
+        {
+            focusedAxisField = yInput;
+            focusedVectorField = field;
+        });
+        yInput.RegisterCallback<FocusOutEvent>(_ =>
+        {
+            focusedAxisField = null;
+            focusedVectorField = null;
+        });
+        zInput.RegisterCallback<FocusInEvent>(_ =>
+        {
+            focusedAxisField = zInput;
+            focusedVectorField = field;
+        });
+        zInput.RegisterCallback<FocusOutEvent>(_ =>
+        {
+            focusedAxisField = null;
+            focusedVectorField = null;
+        });
+    }
+
+    private void OnScroll(Vector2 scrollValue)
+    {
+        if (focusedAxisField == null || focusedVectorField == null)
+            return;
+
+        float sensitivity = GetSensitivityForField(focusedVectorField);
+        float scrollDelta = scrollValue.y > 0 ? 1f * sensitivity : -1f * sensitivity;
+        focusedAxisField.value += scrollDelta;
+    }
+
+    private float GetSensitivityForField(Vector3Field field)
+    {
+        return field switch
+        {
+            _ when field == positionField => positionScrollSensitivity,
+            _ when field == rotationField => rotationScrollSensitivity,
+            _ when field == scaleField => scaleScrollSensitivity,
+            _ => 1f,
+        };
     }
 }
