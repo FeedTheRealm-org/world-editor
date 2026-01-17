@@ -7,6 +7,9 @@ public class MenuBarController : MonoBehaviour
 {
     [SerializeField]
     private List<MenuOptions> menuOptions;
+
+    [SerializeField]
+    private WorldEditorStateMachine worldEditorStateMachine;
     private VisualElement menuBar;
 
     void Start()
@@ -24,6 +27,9 @@ public class MenuBarController : MonoBehaviour
             menuButton.clicked += () =>
             {
                 GameObject menuPanel = Instantiate(option.panel);
+                MenuController menuController = menuPanel.GetComponent<MenuController>();
+                menuController.ToggleEditorCallback += worldEditorStateMachine.ToggleEditor;
+                worldEditorStateMachine.ToggleEditor(false);
             };
             menuButton.AddToClassList("menuButtons");
             menuBar.Add(menuButton);
@@ -31,7 +37,7 @@ public class MenuBarController : MonoBehaviour
     }
 }
 
-[System.Serializable]
+[Serializable]
 public class MenuOptions
 {
     public string Name;
