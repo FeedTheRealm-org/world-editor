@@ -187,13 +187,12 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
             );
             if (structureObject == null)
                 continue;
-            structureObject.data.size = structureData.size;
-            structureObject.data.rotation = structureData.rotation;
-            structureObject.data.offset = structureData.offset;
             GameObject structureInstance = await structureObject.GetPlaceableObject(
                 WorldLayers.WorldObjectLayer
             );
             structureInstance.transform.position = structureData.position;
+            structureInstance.transform.localScale = structureData.size;
+            structureInstance.transform.localEulerAngles = structureData.rotation;
         }
     }
 }

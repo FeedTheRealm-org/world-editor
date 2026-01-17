@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class StructureObject : IPlaceable
 {
-    public StructureData data;
+    public StructureData data; // TODO: consider removing this because since now the objects can be mofied, all i really need it the object ID
     public string structureFilepath;
     private bool isObjectLoaded = false;
     public GameObject structurePrefab;
@@ -24,30 +24,21 @@ public class StructureObject : IPlaceable
     {
         if (!isObjectLoaded)
             await LoadWorldObject();
-        GameObject structureInstance = CreateStructureInstance();
+        GameObject structureInstance = Object.Instantiate(structurePrefab);
         GameObject childInstance = CreateChildInstance(structureInstance);
         ConfigureGameObjectProperties(structureInstance, layerMask);
         SetupObjectTransforms(childInstance);
         SetupColliders(childInstance, structureInstance);
-
         return structureInstance;
     }
 
     // -------------------- Private Methods --------------------
 
-    private GameObject CreateStructureInstance()
-    {
-        GameObject structureInstance = Object.Instantiate(structurePrefab);
-        StructureController structureController =
-            structureInstance.GetComponent<StructureController>();
-        structureController.structureData = data;
-        return structureInstance;
-    }
-
     private GameObject CreateChildInstance(GameObject parent)
     {
         GameObject instance = Object.Instantiate(worldObject);
         instance.transform.SetParent(parent.transform);
+        instance.name = data.id;
         instance.SetActive(true);
         return instance;
     }
@@ -82,10 +73,10 @@ public class StructureObject : IPlaceable
 
     private void NormalizeObject(GameObject gameObject)
     {
-        gameObject.transform.localScale = data.size;
+        gameObject.transform.localScale = Vector3.one;
         gameObject.transform.localPosition = Vector3.zero;
-        gameObject.transform.rotation = Quaternion.Euler(data.rotation);
-        gameObject.transform.localPosition = data.offset;
+        gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+        gameObject.transform.localPosition = Vector3.zero;
         foreach (Transform child in gameObject.transform)
         {
             NormalizeObject(child.gameObject);

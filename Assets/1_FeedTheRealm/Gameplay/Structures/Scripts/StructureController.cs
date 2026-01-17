@@ -21,7 +21,8 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     private float scaleScrollSensitivity = 1f;
 
     // Data
-    public StructureData structureData;
+    public GameObject Structure =>
+        transform.childCount > 0 ? transform.GetChild(0).gameObject : null;
 
     // UI Elements
     private Label titleLabel;
@@ -45,13 +46,19 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         closeButton = root.Q<Button>("Close");
     }
 
-    public GameObject Structure =>
-        transform.childCount > 0 ? transform.GetChild(0).gameObject : null;
-
     public void SaveData(ref WorldData worldData)
     {
         if (!gameObject.activeSelf)
             return;
+
+        StructureData structureData = new StructureData(
+            Structure.name,
+            name,
+            transform.localScale,
+            transform.localEulerAngles,
+            Vector3.zero,
+            transform.position
+        );
 
         worldData.objectPlacementData.Add(structureData);
     }
@@ -72,11 +79,11 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         titleLabel.text = name;
 
         positionField.value = transform.position;
-        rotationField.value = transform.eulerAngles;
+        rotationField.value = transform.localEulerAngles;
         scaleField.value = transform.localScale;
 
         positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
-        rotationField.RegisterValueChangedCallback(e => transform.eulerAngles = e.newValue);
+        rotationField.RegisterValueChangedCallback(e => transform.localEulerAngles = e.newValue);
         scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);
 
         RegisterAxisHandlers(positionField);
