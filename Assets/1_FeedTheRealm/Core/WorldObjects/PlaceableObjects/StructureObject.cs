@@ -1,60 +1,80 @@
 using System.Threading.Tasks;
+using Models;
 using UnityEngine;
 
 [System.Serializable]
 public class StructureObject : IPlaceable
 {
-    public string id;
-    public Vector3 size = Vector3.one;
-    public Vector3 rotation;
-    public Vector3 offset;
-    public string objectUrl;
+    public StructureData data;
+    public string structureFilepath;
     private bool isObjectLoaded = false;
-    public GameObject structureObject;
+    public GameObject structurePrefab;
     private GameObject worldObject;
 
-    public StructureObject(
-        string id,
-        Vector3 size,
-        Vector3 rotation,
-        Vector3 offset,
-        string objectUrl
-    )
+    public StructureObject(StructureData data, string structureFilepath, GameObject structurePrefab)
     {
-        this.id = id;
-        this.size = size;
-        this.rotation = rotation;
-        this.offset = offset;
-        this.objectUrl = objectUrl;
+        this.data = data;
+        this.structureFilepath = structureFilepath;
+        this.structurePrefab = structurePrefab;
     }
 
-    public string DisplayName => objectUrl.Replace("_", " ").Replace("-", " ").ToUpper();
+    public string DisplayName => data.structureName.Replace("_", " ").Replace("-", " ").ToUpper();
 
     public async Task<GameObject> GetPlaceableObject(int layerMask)
     {
         if (!isObjectLoaded)
             await LoadWorldObject();
-        GameObject structureInstance = Object.Instantiate(structureObject);
-        structureInstance.transform.position = Vector3.zero;
-        structureInstance.transform.rotation = Quaternion.identity;
-        GameObject instance = Object.Instantiate(worldObject);
-        instance.transform.SetParent(structureInstance.transform);
-        instance.SetActive(true);
-        structureInstance.SetActive(true);
-        structureInstance.layer = layerMask;
-        structureInstance.name = DisplayName;
-        NormalizeObject(instance);
-        SetColliderLayer(instance, structureInstance);
+        GameObject structureInstance = CreateStructureInstance();
+        GameObject childInstance = CreateChildInstance(structureInstance);
+        ConfigureGameObjectProperties(structureInstance, layerMask);
+        SetupObjectTransforms(childInstance);
+        SetupColliders(childInstance, structureInstance);
 
         return structureInstance;
     }
 
     // -------------------- Private Methods --------------------
 
+    private GameObject CreateStructureInstance()
+    {
+        GameObject structureInstance = Object.Instantiate(structurePrefab);
+        StructureController structureController =
+            structureInstance.GetComponent<StructureController>();
+        structureController.structureData = data;
+        return structureInstance;
+    }
+
+    private GameObject CreateChildInstance(GameObject parent)
+    {
+        GameObject instance = Object.Instantiate(worldObject);
+        instance.transform.SetParent(parent.transform);
+        instance.SetActive(true);
+        return instance;
+    }
+
+    private void ConfigureGameObjectProperties(GameObject structureInstance, int layerMask)
+    {
+        structureInstance.transform.position = Vector3.zero;
+        structureInstance.transform.rotation = Quaternion.identity;
+        structureInstance.SetActive(true);
+        structureInstance.layer = layerMask;
+        structureInstance.name = DisplayName;
+    }
+
+    private void SetupObjectTransforms(GameObject childInstance)
+    {
+        NormalizeObject(childInstance);
+    }
+
+    private void SetupColliders(GameObject childInstance, GameObject structureInstance)
+    {
+        SetColliderLayer(childInstance, structureInstance);
+    }
+
     private async Task LoadWorldObject()
     {
         worldObject = new($"Loaded_{DisplayName}");
-        await API.GltfHandler.Load(worldObject, objectUrl);
+        await API.GltfHandler.Load(worldObject, structureFilepath);
         isObjectLoaded = true;
         worldObject.SetActive(false);
         NormalizeObject(worldObject);
@@ -62,10 +82,10 @@ public class StructureObject : IPlaceable
 
     private void NormalizeObject(GameObject gameObject)
     {
-        gameObject.transform.localScale = size;
+        gameObject.transform.localScale = data.size;
         gameObject.transform.localPosition = Vector3.zero;
-        gameObject.transform.rotation = Quaternion.Euler(rotation);
-        gameObject.transform.localPosition = offset;
+        gameObject.transform.rotation = Quaternion.Euler(data.rotation);
+        gameObject.transform.localPosition = data.offset;
         foreach (Transform child in gameObject.transform)
         {
             NormalizeObject(child.gameObject);
@@ -74,44 +94,30 @@ public class StructureObject : IPlaceable
 
     private void SetColliderLayer(GameObject instance, GameObject structureInstance)
     {
-        // Calculate bounds from all child renderers
         Bounds bounds = GetBounds(instance);
-
-        // Add collider to instance with calculated bounds
         BoxCollider instanceCollider = instance.AddComponent<BoxCollider>();
         instanceCollider.size = bounds.size;
         instanceCollider.center = bounds.center;
         instanceCollider.enabled = false;
-
-        // Add collider to structure with the same bounds
         BoxCollider structureCollider = structureInstance.AddComponent<BoxCollider>();
         structureCollider.size = bounds.size;
         structureCollider.center = bounds.center;
-
-        // Add colliders to all children as well
         AddCollidersToChildren(instance);
     }
 
     private Bounds GetBounds(GameObject gameObject)
     {
-        Bounds bounds = new Bounds(gameObject.transform.position, Vector3.zero);
         Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-
         if (renderers.Length > 0)
         {
-            bounds = renderers[0].bounds;
+            Bounds bounds = renderers[0].bounds;
             foreach (Renderer renderer in renderers)
             {
                 bounds.Encapsulate(renderer.bounds);
             }
+            return bounds;
         }
-        else
-        {
-            // Fallback to transform bounds if no renderers
-            bounds = new Bounds(gameObject.transform.position, Vector3.one);
-        }
-
-        return bounds;
+        return new Bounds(gameObject.transform.position, Vector3.one);
     }
 
     private void AddCollidersToChildren(GameObject parent)
@@ -125,8 +131,6 @@ public class StructureObject : IPlaceable
                 collider.size = renderer.bounds.size;
                 collider.center = renderer.bounds.center - child.position;
             }
-
-            // Recursively add colliders to grandchildren
             AddCollidersToChildren(child.gameObject);
         }
     }

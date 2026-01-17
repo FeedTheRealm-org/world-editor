@@ -1,9 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Models;
 using UnityEngine;
 using Utils;
+
+[Serializable]
+public class WorldObjectReferenceList
+{
+    public List<StructureData> structureData;
+}
 
 [CreateAssetMenu(
     fileName = "StructureLoader",
@@ -15,7 +22,7 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     private Logging.Logger logger;
 
     [SerializeField]
-    private string libraryFilePath = "Assets/models.json";
+    private string libraryFilePath = "Models/models.json";
 
     [SerializeField]
     private string modelsDirectory = "Models";
@@ -34,29 +41,14 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         SelectionRaiser.WorldSelected -= LoadWorld;
     }
 
-    private string PersistentLibraryFilePath =>
-        System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
-
     public void LoadLibrary()
     {
         logger.Log("Loading structure library...", this, Logging.LogType.Info);
         structureObjects.Clear();
-        if (
-            System.IO.File.Exists(PersistentLibraryFilePath)
-            && new System.IO.FileInfo(PersistentLibraryFilePath).Length > 0
-        )
-        {
-            LoadStructureLibrary();
-        }
-        else
-        {
-            logger.Log(
-                "Structure library file not found. Generating new library...",
-                this,
-                Logging.LogType.Warning
-            );
+        if (!System.IO.File.Exists(PersistentLibraryFilePath))
             GenerateLibrary(PersistentLibraryFilePath);
-        }
+        LoadStructureLibrary();
+
         logger.Log(
             "Structure library loaded. Count: " + structureObjects.Count,
             this,
@@ -69,86 +61,15 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         return structureObjects.Cast<IPlaceable>().ToList();
     }
 
-    private void LoadStructureLibrary()
-    {
-        string json = System.IO.File.ReadAllText(PersistentLibraryFilePath);
-        structureObjects = JsonUtility.FromJson<WorldObjectReferenceList>(json).objects;
-        foreach (var structureObject in structureObjects)
-        {
-            structureObject.structureObject = structurePrefab;
-        }
-    }
-
-    private void GenerateLibrary(string outputPath)
-    {
-        string modelsPath = System.IO.Path.Combine(
-            Application.streamingAssetsPath,
-            modelsDirectory
-        );
-        if (!System.IO.Directory.Exists(modelsPath))
-        {
-            System.IO.Directory.CreateDirectory(modelsPath);
-            logger.Log(
-                "Models directory not found. Created new directory at: "
-                    + modelsPath
-                    + " make sure to add model files here. and regenerate the library.",
-                this,
-                Logging.LogType.Warning
-            );
-            return;
-        }
-        string[] objectFiles = System
-            .IO.Directory.GetFiles(modelsPath, "*.*")
-            .Where(f => !f.EndsWith(".meta"))
-            .ToArray();
-        if (objectFiles.Length == 0)
-        {
-            logger.Log(
-                "No model files found in models directory: "
-                    + modelsPath
-                    + " make sure to add model files here. and regenerate the library.",
-                this,
-                Logging.LogType.Warning
-            );
-            return;
-        }
-        foreach (string objectFile in objectFiles)
-        {
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(objectFile);
-            StructureObject structureObject = new(
-                System.Guid.NewGuid().ToString(),
-                Vector3.one,
-                Vector3.zero,
-                Vector3.zero,
-                fileName
-            );
-            structureObjects.Add(structureObject);
-        }
-        string json = JsonUtility.ToJson(
-            new WorldObjectReferenceList { objects = structureObjects },
-            true
-        );
-        string outputDirectory = System.IO.Path.GetDirectoryName(outputPath);
-        if (!System.IO.Directory.Exists(outputDirectory))
-        {
-            System.IO.Directory.CreateDirectory(outputDirectory);
-        }
-        System.IO.File.WriteAllText(outputPath, json);
-    }
-
-    public string GetModelFilePath(string structureName)
-    {
-        return System.IO.Path.Combine(
-            Application.streamingAssetsPath,
-            modelsDirectory,
-            structureName + ".glb"
-        );
-    }
-
     public bool IsModelPresent(string structureName)
     {
         string modelPath = GetModelFilePath(structureName);
         return System.IO.File.Exists(modelPath);
+    }
+
+    public string GetModelFilePath(string structureName)
+    {
+        return System.IO.Path.Combine(PersistentModelsDirectory, structureName + ".glb");
     }
 
     public void LoadWorld(WorldData worldData)
@@ -159,18 +80,116 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         _ = OnLoadAsync(worldData.objectPlacementData);
     }
 
+    // -------------------- Private Methods --------------------
+
+    #region Path Helpers
+
+    private string PersistentLibraryFilePath =>
+        System.IO.Path.Combine(Application.persistentDataPath, libraryFilePath);
+
+    private string PersistentModelsDirectory =>
+        System.IO.Path.Combine(Application.streamingAssetsPath, modelsDirectory);
+
+    private bool EnsurePathExists(string path, bool isDirectory = false)
+    {
+        if (isDirectory)
+        {
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+                return false;
+            }
+            return true;
+        }
+        if (!System.IO.File.Exists(path))
+        {
+            string outputDirectory = System.IO.Path.GetDirectoryName(path);
+            if (!System.IO.Directory.Exists(outputDirectory))
+            {
+                System.IO.Directory.CreateDirectory(outputDirectory);
+            }
+            System.IO.File.WriteAllText(path, "");
+            return false;
+        }
+        return true;
+    }
+
+    #endregion
+
+    #region Library Generation
+
+    private void LoadStructureLibrary()
+    {
+        logger.Log("Loading structure library...", this, Logging.LogType.Info);
+        string json = System.IO.File.ReadAllText(PersistentLibraryFilePath);
+        List<StructureData> structureDataList = JsonUtility
+            .FromJson<WorldObjectReferenceList>(json)
+            .structureData;
+        foreach (var structureData in structureDataList)
+        {
+            StructureObject structureObject = new(
+                structureData,
+                structureData.structureName,
+                structurePrefab
+            );
+            structureObjects.Add(structureObject);
+        }
+    }
+
+    private void GenerateLibrary(string outputPath)
+    {
+        logger.Log("Generating structure library...", this, Logging.LogType.Info);
+        string modelsPath = PersistentModelsDirectory;
+        if (!EnsurePathExists(modelsPath, true))
+        {
+            logger.Log(
+                "Models directory not found. Created empty directory at: "
+                    + modelsPath
+                    + " Please add model files here and regenerate the library.",
+                this,
+                Logging.LogType.Warning
+            );
+            return;
+        }
+        string[] objectFiles = System
+            .IO.Directory.GetFiles(modelsPath, "*.*")
+            .Where(f => !f.EndsWith(".meta"))
+            .ToArray();
+
+        List<StructureData> structureDataList = objectFiles
+            .Select(objectFile => new StructureData(
+                Guid.NewGuid().ToString(),
+                System.IO.Path.GetFileNameWithoutExtension(objectFile),
+                Vector3.one,
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.zero
+            ))
+            .ToList();
+        string json = JsonUtility.ToJson(
+            new WorldObjectReferenceList { structureData = structureDataList },
+            true
+        );
+        string outputDirectory = System.IO.Path.GetDirectoryName(outputPath);
+        if (!System.IO.Directory.Exists(outputDirectory))
+        {
+            System.IO.Directory.CreateDirectory(outputDirectory);
+        }
+        System.IO.File.WriteAllText(outputPath, json);
+    }
+
     private async Task OnLoadAsync(List<StructureData> structureDatas)
     {
         foreach (var structureData in structureDatas)
         {
             StructureObject structureObject = structureObjects.Find(obj =>
-                obj.id == structureData.id
+                obj.data.id == structureData.id
             );
             if (structureObject == null)
                 continue;
-            structureObject.size = structureData.size;
-            structureObject.rotation = structureData.rotation;
-            structureObject.offset = structureData.offset;
+            structureObject.data.size = structureData.size;
+            structureObject.data.rotation = structureData.rotation;
+            structureObject.data.offset = structureData.offset;
             GameObject structureInstance = await structureObject.GetPlaceableObject(
                 WorldLayers.WorldObjectLayer
             );
@@ -179,8 +198,4 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     }
 }
 
-[System.Serializable]
-public class WorldObjectReferenceList
-{
-    public List<StructureObject> objects;
-}
+    #endregion
