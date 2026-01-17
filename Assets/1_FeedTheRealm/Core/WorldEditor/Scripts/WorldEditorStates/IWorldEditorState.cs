@@ -1,4 +1,4 @@
-public interface IMakerState
+public interface IWorldEditorState
 {
     void Enter();
     void Exit();

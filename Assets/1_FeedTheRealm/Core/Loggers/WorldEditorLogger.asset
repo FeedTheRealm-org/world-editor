@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: WorldEditorLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   showLogs: 1
-  loggerPrefix: Editor
-  loggerColor: {r: 0.85937554, g: 1, b: 0.042464375, a: 0}
+  loggerPrefix: WSM
+  loggerColor: {r: 0.12910816, g: 0.8615627, b: 0.08164266, a: 0}
   showColor: 1

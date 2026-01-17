@@ -1,17 +1,17 @@
 using UnityEngine;
 
-public class SelectingState : IMakerState
+public class SelectingState : IWorldEditorState
 {
-    private readonly WorldEditorStateMachine maker;
+    private readonly WorldEditorStateMachine worldEditor;
 
-    public SelectingState(WorldEditorStateMachine maker)
+    public SelectingState(WorldEditorStateMachine worldEditor)
     {
-        this.maker = maker;
+        this.worldEditor = worldEditor;
     }
 
     public void Enter()
     {
-        maker.Log("Selecting objects");
+        worldEditor.Log("Selecting objects");
     }
 
     public void Exit() { }
@@ -21,17 +21,12 @@ public class SelectingState : IMakerState
     public void OnPrimaryAction()
     {
         GameObject selectedObject = Raycaster.GetGameObject(
-            maker,
+            worldEditor,
             WorldLayers.WorldObjectLayerMask
         );
         if (!selectedObject)
-        {
             return;
-        }
-        if (selectedObject.TryGetComponent<ISelectable>(out var selectable))
-            selectable.OnObjectSelected();
-        else
-            maker.Log("The selected object is not selectable", Logging.LogType.Warning);
+        worldEditor.SetState(new EditingState(worldEditor, selectedObject));
     }
 
     public void OnSecondaryAction() { }

@@ -1,8 +1,9 @@
+using System;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class StructureController : MonoBehaviour, IPersistent, ISelectable
+public class StructureController : MonoBehaviour, IPersistent, IEditable
 {
     [SerializeField]
     private UIDocument structureUI;
@@ -52,21 +53,19 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
         if (!gameObject.activeSelf)
             return;
 
-        worldData.objectPlacementData.Add(
-            new StructureData(
-                structureData.structureName,
-                name,
-                transform.localScale,
-                transform.eulerAngles,
-                Vector3.zero,
-                transform.position
-            )
-        );
+        worldData.objectPlacementData.Add(structureData);
     }
 
-    public void OnObjectSelected() => RenderMenu();
+    public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
 
-    public void RenderMenu()
+    public void OnObjectDeselected()
+    {
+        CloseMenu();
+    }
+
+    // -------------------- Private Methods --------------------
+
+    private void RenderMenu(Action CloseEditorCallback)
     {
         structureUI.rootVisualElement.style.display = DisplayStyle.Flex;
 
@@ -85,21 +84,29 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
         RegisterAxisHandlers(scaleField);
 
         inputReader.ScrollEvent += OnScroll;
-        closeButton.clicked += OnClose;
+        closeButton.clicked += () =>
+        {
+            CloseMenu();
+            CloseEditorCallback?.Invoke();
+        };
     }
 
-    public void OnClose()
+    private void CloseMenu()
     {
         structureUI.rootVisualElement.style.display = DisplayStyle.None;
-
-        closeButton.clicked -= OnClose;
         inputReader.ScrollEvent -= OnScroll;
-
         focusedAxisField = null;
         focusedVectorField = null;
     }
 
-    // -------------------- Private Methods --------------------
+    private void OnScroll(Vector2 scrollValue)
+    {
+        if (focusedAxisField == null || focusedVectorField == null)
+            return;
+        float sensitivity = GetSensitivityForField(focusedVectorField);
+        float delta = scrollValue.y > 0 ? sensitivity : -sensitivity;
+        focusedAxisField.value += delta;
+    }
 
     private void RegisterAxisHandlers(Vector3Field field)
     {
@@ -121,13 +128,6 @@ public class StructureController : MonoBehaviour, IPersistent, ISelectable
             focusedAxisField = null;
             focusedVectorField = null;
         });
-    }
-
-    private void OnScroll(Vector2 scrollValue)
-    {
-        float sensitivity = GetSensitivityForField(focusedVectorField);
-        float delta = scrollValue.y > 0 ? sensitivity : -sensitivity;
-        focusedAxisField.value += delta;
     }
 
     private float GetSensitivityForField(Vector3Field field) =>

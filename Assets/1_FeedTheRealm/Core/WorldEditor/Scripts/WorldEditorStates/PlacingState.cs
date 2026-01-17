@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class PlacingState : IMakerState
+public class PlacingState : IWorldEditorState
 {
     private WorldEditorStateMachine worldEditor;
 

@@ -10,8 +10,7 @@ public class WorldEditorStateMachine : MonoBehaviour
 
     [SerializeField]
     private Logging.Logger logger;
-    private IMakerState currentState;
-
+    private IWorldEditorState currentState;
     public IPlaceable SelectedObject { get; private set; }
 
     void Start()
@@ -40,7 +39,7 @@ public class WorldEditorStateMachine : MonoBehaviour
         SetState(new PlacingState(this));
     }
 
-    public void SetState(IMakerState newState)
+    public void SetState(IWorldEditorState newState)
     {
         currentState?.Exit();
         currentState = newState;
