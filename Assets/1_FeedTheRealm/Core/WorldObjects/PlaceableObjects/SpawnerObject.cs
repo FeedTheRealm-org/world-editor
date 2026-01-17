@@ -5,6 +5,7 @@ public enum SpawnerType
 {
     EnemySpawner,
     PlayerSpawner,
+    NPCSpawner,
 }
 
 [System.Serializable]
