@@ -3,23 +3,23 @@ using Models;
 
 public class Message : CreatorObject
 {
-    public string sender;
-    public string content;
+    public string Sender;
+    public string Content;
     public string dialogId;
 
     public Message(MessageData data, string dialogId)
-        : base(data.content, data.id, "")
+        : base(data.Content, data.id, "")
     {
-        sender = data.sender;
-        content = data.content;
+        Sender = data.Sender;
+        Content = data.Content;
         this.dialogId = dialogId;
     }
 
-    public Message(string id, string sender, string content, string dialogId)
-        : base(content, id, "")
+    public Message(string id, string Sender, string Content, string dialogId)
+        : base(Content, id, "")
     {
-        this.sender = sender;
-        this.content = content;
+        this.Sender = Sender;
+        this.Content = Content;
         this.dialogId = dialogId;
     }
 
@@ -34,7 +34,7 @@ public class Message : CreatorObject
 
     public override void SaveObject(ref WorldData worldData)
     {
-        MessageData messageData = new(ObjectId, sender, content);
+        MessageData messageData = new(ObjectId, Sender, Content);
         var dialog = worldData.dialogs.Find(d => d.id == dialogId);
         if (dialog != null)
         {

@@ -246,6 +246,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &245348055 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3953743930877300310, guid: 6d7686df63f30be61b96e27573d65070, type: 3}
+  m_PrefabInstance: {fileID: 5007419823180808302}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff2134fdf0fc727fb6cd71084515ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldEditorStateMachine
 --- !u!1 &961739749
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,20 +936,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2877746089733943109, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2877746089733943109, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: placeableObjectLibrary
       value: 
       objectReference: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.size
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: worldEditorStateMachine
+      value: 
+      objectReference: {fileID: 245348055}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[0].Name
+      value: Save world
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[1].Name
+      value: Publish world
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[2].Name
@@ -961,6 +976,10 @@ PrefabInstance:
       value: LootTable
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
+      propertyPath: menuOptions.Array.data[0].panel
+      value: 
+      objectReference: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}
+    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[1].panel
       value: 
       objectReference: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
@@ -979,7 +998,7 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[5].panel
       value: 
-      objectReference: {fileID: 8615618779716038286, guid: 621b05f7a2cc7df48ab44caf9447fbcd, type: 3}
+      objectReference: {fileID: 2802280877163831150, guid: 6ecdaa482264eef4fb9d8f25319faa84, type: 3}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].panel
       value: 
