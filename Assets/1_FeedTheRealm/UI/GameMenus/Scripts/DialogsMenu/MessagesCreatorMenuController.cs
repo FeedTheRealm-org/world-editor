@@ -87,7 +87,7 @@ public class MessagesCreatorMenuController : MenuController
 
     private void PopulateFields()
     {
-        contentField.value = currentMessage.content;
+        contentField.value = currentMessage.Content;
         // attempt to select the dialog by id
         var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
         var dlg = dialogs.Find(d => d.ObjectId == currentMessage.dialogId);
@@ -119,7 +119,7 @@ public class MessagesCreatorMenuController : MenuController
         }
         else
         {
-            currentMessage.content = contentField.value;
+            currentMessage.Content = contentField.value;
             currentMessage.dialogId = dialog.ObjectId;
             logger.Log(
                 $"Updated message: {currentMessage.DisplayName}",

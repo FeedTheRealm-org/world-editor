@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8615618779716038286
+--- !u!1 &2802280877163831150
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3989333229068402082}
-  - component: {fileID: -466189420394139356}
-  - component: {fileID: -4236311414752094707}
+  - component: {fileID: 4108761814267092047}
+  - component: {fileID: 1482510999511659748}
+  - component: {fileID: 3761236060135864045}
   m_Layer: 0
   m_Name: MessagesMenu
   m_TagString: Untagged
@@ -18,13 +18,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3989333229068402082
+--- !u!4 &4108761814267092047
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8615618779716038286}
+  m_GameObject: {fileID: 2802280877163831150}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.49864, y: 1, z: -23.26638}
@@ -33,13 +33,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-466189420394139356
+--- !u!114 &1482510999511659748
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8615618779716038286}
+  m_GameObject: {fileID: 2802280877163831150}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -56,13 +56,13 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &-4236311414752094707
+--- !u!114 &3761236060135864045
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8615618779716038286}
+  m_GameObject: {fileID: 2802280877163831150}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42e0452b61c8a0e4783bbefeb019c984, type: 3}
@@ -70,8 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MessagesMenuController
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  createMessageMenuPrefab: {fileID: 8615618779716038286, guid: 4ca3d2afd6f21f546b5ac79723cd06ee, type: 3}
-  dialogsMenuPrefab: {fileID: 8615618779716038286, guid: 621b05f7a2cc7df48ab44caf9447fbcd, type: 3}
-  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+  createMessageMenuPrefab: {fileID: 2802280877163831150, guid: ea56cde69729ec149a20b02fe58a2b28, type: 3}
   creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
   itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
