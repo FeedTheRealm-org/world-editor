@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API;
 using Models;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WorldPublisherController : MonoBehaviour
@@ -66,15 +68,14 @@ public class WorldPublisherController : MonoBehaviour
     {
         if (worldData.objectPlacementData.Count == 0)
             return null;
-        foreach (var structure in worldData.objectPlacementData)
+
+        var uniqueStructures = worldData.objectPlacementData.DistinctBy(s => s.id).ToList();
+
+        foreach (var structure in uniqueStructures)
         {
             structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
         }
-        return await modelService.UploadModels(
-            worldData.objectPlacementData,
-            worldId,
-            session.APIToken
-        );
+        return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
     }
 
     /// <summary>

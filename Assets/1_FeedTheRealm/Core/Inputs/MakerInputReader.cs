@@ -12,6 +12,7 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
     public event Action<float> MoveVerticalEvent;
     public event Action RemoveEvent;
     public event Action CursorToggleEvent;
+    public event Action<Vector2> ScrollEvent;
     private MakerControls controls;
 
     private void OnEnable()
@@ -32,9 +33,19 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
     public void ToggleInput(bool isEnabled)
     {
         if (isEnabled)
-            controls.Player.Enable();
+        {
+            controls.Player.Move.Enable();
+            controls.Player.Look.Enable();
+            controls.Player.MoveUp.Enable();
+            controls.Player.MoveDown.Enable();
+        }
         else
-            controls.Player.Disable();
+        {
+            controls.Player.Move.Disable();
+            controls.Player.Look.Disable();
+            controls.Player.MoveUp.Disable();
+            controls.Player.MoveDown.Disable();
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -114,6 +125,14 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
         if (context.performed)
         {
             CursorToggleEvent?.Invoke();
+        }
+    }
+
+    public void OnScroll(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            ScrollEvent?.Invoke(context.ReadValue<Vector2>());
         }
     }
 }
