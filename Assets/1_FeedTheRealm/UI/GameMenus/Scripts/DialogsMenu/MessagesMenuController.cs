@@ -12,12 +12,16 @@ public class MessagesMenuController : MenuController
     private GameObject createMessageMenuPrefab;
 
     [SerializeField]
+    private GameObject dialogMenuPrefab;
+
+    [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
     private VisualTreeAsset itemListTemplate;
     private Button closeButton;
     private Button createMessageButton;
+    private Button dialogBackButton;
     public static string PendingDialogId;
 
     void OnEnable()
@@ -25,8 +29,10 @@ public class MessagesMenuController : MenuController
         var root = GetComponent<UIDocument>().rootVisualElement;
         closeButton = root.Q<Button>("Close");
         createMessageButton = root.Q<Button>("CreateMessage");
+        dialogBackButton = root.Q<Button>("BackToDialogs");
 
         createMessageButton.clicked += AddMessage;
+        dialogBackButton.clicked += BackToDialogs;
         closeButton.clicked += CloseMenu;
 
         PopulateMessagesList();
@@ -37,7 +43,9 @@ public class MessagesMenuController : MenuController
         var root = GetComponent<UIDocument>().rootVisualElement;
         var messagesList = root.Q<ListView>("MessagesList");
         messagesList.Clear();
+
         var allMessages = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Message);
+
         foreach (Message message in allMessages)
         {
             if (!string.IsNullOrEmpty(PendingDialogId) && message.dialogId != PendingDialogId)
@@ -54,8 +62,6 @@ public class MessagesMenuController : MenuController
 
             messagesList.hierarchy.Add(entry);
         }
-        // Clear pending filter after populating
-        PendingDialogId = null;
     }
 
     void OnEditMessage(Message message)
@@ -79,6 +85,13 @@ public class MessagesMenuController : MenuController
     private void AddMessage()
     {
         logger.Log("Opening Create Message Menu", this, Logging.LogType.Info);
+        MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
         OpenMenu(createMessageMenuPrefab);
+    }
+
+    private void BackToDialogs()
+    {
+        logger.Log("Returning to Dialogs Menu", this, Logging.LogType.Info);
+        OpenMenu(dialogMenuPrefab);
     }
 }
