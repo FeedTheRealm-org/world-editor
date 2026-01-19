@@ -87,6 +87,7 @@ public class DataPersistenceManagerSO : ScriptableObject
         // Clear existing collections to avoid duplicated data before re-saving
         worldData.enemySpawnAreas.Clear();
         worldData.playerSpawnAreas.Clear();
+        worldData.npcSpawnAreas.Clear();
         worldData.objectPlacementData.Clear();
         worldData.consumableItems.Clear();
         worldData.weaponItems.Clear();
