@@ -131,7 +131,6 @@ public class EnemyCreatorMenuController : MenuController
             if (sprite != null)
             {
                 spritePreview.sprite = sprite;
-                //logger?.Log($"Loaded existing sprite from: {absolutePath}", this, Logging.LogType.Info);
             }
             else
             {
@@ -215,7 +214,10 @@ public class EnemyCreatorMenuController : MenuController
             currentEnemy.speed = speedInput.value;
             currentEnemy.range = rangeInput.value;
             currentEnemy.lootTable = lootTableData;
-            currentEnemy.spriteFile = pendingSpriteSourcePath;
+            if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
+            {
+                currentEnemy.spriteFile = pendingSpriteSourcePath;
+            }
             logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
         }
 

@@ -50,7 +50,7 @@ public class WorldPublisherController : MonoBehaviour
         string modelError = await PublishModels(worldData, worldId);
         if (!string.IsNullOrEmpty(modelError))
             return (null, modelError, 0);
-        // TODO: maybe we can consider seperateing this into multiple calls
+        // TODO: maybe we can consider separating this into multiple calls
         List<CreatorObject> creatorObjects = creatorObjectLibrary.GetAllCreatorObjects();
         var spriteData = new Dictionary<string, string>();
         foreach (var obj in creatorObjects)

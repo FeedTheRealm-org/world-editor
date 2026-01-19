@@ -113,7 +113,6 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
             if (sprite != null)
             {
                 spritePreview.sprite = sprite;
-                //logger?.Log($"Loaded existing sprite from: {absolutePath}", this, Logging.LogType.Info);
             }
             else
             {
