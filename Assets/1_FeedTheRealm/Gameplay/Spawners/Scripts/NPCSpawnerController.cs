@@ -1,9 +1,10 @@
+using System;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class NPCSpawnerController : SpawnerController, IPersistent, ISelectable
+public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
 {
     [SerializeField]
     private MakerInputReader inputReader;
@@ -43,34 +44,35 @@ public class NPCSpawnerController : SpawnerController, IPersistent, ISelectable
             NPCSpawnData.Radius = e.newValue;
             transform.localScale = new Vector3(e.newValue, transform.localScale.y, e.newValue);
         });
-        closeButton.clicked += OnCloseClicked;
+        closeButton.clicked += CloseMenu;
 
         editorMenu.rootVisualElement.style.display = DisplayStyle.None;
     }
 
     void OnDisable()
     {
-        closeButton.clicked -= OnCloseClicked;
+        closeButton.clicked -= CloseMenu;
     }
 
-    private void RenderMenu()
+    private void RenderMenu(Action CloseEditorCallback)
     {
         inputReader.ToggleInput(false);
         radiusSlider.value = NPCSpawnData.Radius;
 
         editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+
+        closeButton.clicked += () =>
+        {
+            CloseMenu();
+            CloseEditorCallback?.Invoke();
+        };
     }
 
-    private void OnCloseClicked()
+    private void CloseMenu()
     {
         Debug.Log("NPCSpawnerController: Closing editor menu");
         inputReader.ToggleInput(true);
         editorMenu.rootVisualElement.style.display = DisplayStyle.None;
-    }
-
-    public void OnObjectSelected()
-    {
-        RenderMenu();
     }
 
     public override void SaveData(ref WorldData worldData)
@@ -80,5 +82,12 @@ public class NPCSpawnerController : SpawnerController, IPersistent, ISelectable
 
         _npcSpawnData.Position = transform.position;
         worldData.npcSpawnAreas.Add(NPCSpawnData);
+    }
+
+    public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
+
+    public void OnObjectDeselected()
+    {
+        CloseMenu();
     }
 }

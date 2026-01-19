@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class PlacingState : IMakerState
+public class PlacingState : IWorldEditorState
 {
     private WorldEditorStateMachine worldEditor;
 
@@ -32,13 +32,16 @@ public class PlacingState : IMakerState
     private async Task OnPrimaryActionAsync()
     {
         if (!Raycaster.TryGetPlacementPoint(worldEditor, placementLayerMask, out RaycastHit hit))
-        {
-            worldEditor.Log("No valid placement point found.", Logging.LogType.Warning);
             return;
-        }
-        var instance = await worldEditor.SelectedObject.GetPlaceableObject(
+
+        GameObject instance = await worldEditor.SelectedObject.GetPlaceableObject(
             WorldLayers.WorldObjectLayer
         );
+        if (instance == null)
+        {
+            worldEditor.Log("Failed to get placeable object instance.", Logging.LogType.Error);
+            return;
+        }
         instance.transform.position = hit.point;
         instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RemovingState : IMakerState
+public class RemovingState : IWorldEditorState
 {
     private WorldEditorStateMachine worldEditor;
 

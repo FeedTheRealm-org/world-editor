@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 public class MenuController : MonoBehaviour
 {
     [SerializeField]
     private MakerInputReader inputReader;
+
+    public Action<bool> ToggleEditorCallback;
 
     void Awake()
     {
@@ -13,6 +16,7 @@ public class MenuController : MonoBehaviour
     public void CloseMenu()
     {
         inputReader.ToggleInput(true);
+        ToggleEditorCallback.Invoke(true);
         Destroy(gameObject);
     }
 
