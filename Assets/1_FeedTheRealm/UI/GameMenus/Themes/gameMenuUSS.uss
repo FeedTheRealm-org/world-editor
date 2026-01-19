@@ -84,8 +84,6 @@
     font-size: 25px;
 }
 
-.list {
-}
 
 Button {
     border-top-left-radius: 5px;
@@ -166,4 +164,8 @@ Button {
     border-right-color: rgb(255, 255, 255);
     border-top-color: rgb(255, 255, 255);
     border-bottom-color: rgb(255, 255, 255);
+}
+
+.unity-list-view__item:hover {
+    background-color: transparent;
 }
