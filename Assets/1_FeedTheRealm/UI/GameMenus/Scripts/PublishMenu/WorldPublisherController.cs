@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API;
 using Models;
@@ -51,7 +52,33 @@ public class WorldPublisherController : MonoBehaviour
             return (null, modelError, 0);
         // TODO: maybe we can consider seperateing this into multiple calls
         List<CreatorObject> creatorObjects = creatorObjectLibrary.GetAllCreatorObjects();
-        string spriteError = await PublishSprites(creatorObjects, worldId);
+        var spriteData = new Dictionary<string, string>();
+        foreach (var obj in creatorObjects)
+        {
+            spriteData[obj.ObjectId] = obj.spriteFile;
+        }
+        if (worldData.consumableItems != null)
+        {
+            foreach (var item in worldData.consumableItems)
+            {
+                if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
+                {
+                    spriteData[item.id] = item.spriteFilepath;
+                }
+            }
+        }
+        if (worldData.weaponItems != null)
+        {
+            foreach (var item in worldData.weaponItems)
+            {
+                if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
+                {
+                    spriteData[item.id] = item.spriteFilepath;
+                }
+            }
+        }
+        var spriteList = spriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
+        string spriteError = await PublishSprites(spriteList, worldId);
         if (!string.IsNullOrEmpty(spriteError))
             return (null, spriteError, 0);
 
@@ -82,11 +109,10 @@ public class WorldPublisherController : MonoBehaviour
     ///  The sprites are composed of tuples with (sprite_id, sprite_filepath)
     ///  If an error occurs, returns the error message.
     /// </summary>
-    private async Task<string> PublishSprites(List<CreatorObject> creatorObjects, string worldId)
+    private async Task<string> PublishSprites(List<(string, string)> spriteData, string worldId)
     {
-        if (creatorObjects.Count == 0)
+        if (spriteData.Count == 0)
             return null;
-        var spriteData = creatorObjects.ConvertAll(obj => (obj.ObjectId, obj.spriteFile));
         string result = await spriteService.UploadSprites(spriteData, worldId, session.APIToken);
         // Ignores error 409 (conflict) due to duplicate key
         if (!string.IsNullOrEmpty(result) && result.Contains("409"))
