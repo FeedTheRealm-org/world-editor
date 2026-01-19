@@ -51,7 +51,7 @@ public class DialogLoader : ScriptableObject, ILoadable, ICreatableLoader
         dialogs.Clear();
         if (worldData == null)
         {
-            logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
+            logger.Log("DialogLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
             return;
         }
 
