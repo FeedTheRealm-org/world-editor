@@ -11,6 +11,9 @@ public class ShopMenuController : MenuController
     private Logging.Logger logger;
 
     [SerializeField]
+    private ShopManagerSO shopManager;
+
+    [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
@@ -18,7 +21,6 @@ public class ShopMenuController : MenuController
     private Button closeButton;
     private DropdownField itemSelector;
     private ListView itemContainer;
-    private ShopObject shop = new();
     private const string Placeholder = "Select an item";
 
     void OnEnable()
@@ -32,14 +34,13 @@ public class ShopMenuController : MenuController
         closeButton.clicked += CloseMenu;
         itemSelector.RegisterValueChangedCallback(OnItemSelected);
 
-        PopulateDropdown();
-
+        SetupDropdown();
         SetupListView();
     }
 
     private void SetupListView()
     {
-        itemContainer.itemsSource = shop.products;
+        itemContainer.itemsSource = shopManager.GetProducts();
         itemContainer.fixedItemHeight = 120;
         itemContainer.selectionType = SelectionType.None;
 
@@ -52,7 +53,7 @@ public class ShopMenuController : MenuController
 
         itemContainer.bindItem = (ve, index) =>
         {
-            var product = shop.products[index];
+            var product = shopManager.GetProducts()[index];
             var item = product.item;
 
             ve.Q<Label>("ProductName").text = item.DisplayName;
@@ -69,13 +70,13 @@ public class ShopMenuController : MenuController
 
             ve.Q<Button>("Delete").clicked += () =>
             {
-                shop.products.Remove(product);
+                shopManager.RemoveProduct(product.id);
                 itemContainer.RefreshItems();
             };
         };
     }
 
-    private void PopulateDropdown()
+    private void SetupDropdown()
     {
         var allItems = creatorObjectLibrary.GetAllCreatorObjects();
         var itemNames = allItems.Select(item => item.DisplayName).ToList();
@@ -114,8 +115,7 @@ public class ShopMenuController : MenuController
 
     private void AddItemToProducts(CreatorObject item)
     {
-        var product = new ProductObject(item, 0);
-        shop.products.Add(product);
+        shopManager.AddProduct(item, 0);
         itemContainer.RefreshItems();
     }
 

@@ -76,4 +76,9 @@ public abstract class CreatorObject : ICreatable, IPersistent
     {
         return $"CreatorObject(Name: {name}, ID: {objectId}, SpriteFile: {spriteFile}, IsDeleted: {_isDeleted})";
     }
+
+    public ItemData ToItemData()
+    {
+        return new ItemData(objectId, name, "", spriteFile);
+    }
 }
