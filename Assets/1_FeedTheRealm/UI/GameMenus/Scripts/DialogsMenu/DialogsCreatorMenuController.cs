@@ -23,7 +23,6 @@ public class DialogsCreatorMenuController : MenuController
     private GameObject dialogMenuPrefab;
 
     private TextField nameInput;
-    private DropdownField npcDropdown;
 
     private Button saveButton;
     private Button returnButton;
@@ -38,9 +37,6 @@ public class DialogsCreatorMenuController : MenuController
         nameInput = root.Q<TextField>("NameField");
         if (nameInput == null)
             logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
-        npcDropdown = root.Q<DropdownField>("NPCField");
-        if (npcDropdown == null)
-            logger.Log("NPC Dropdown field not found in UI", this, Logging.LogType.Error);
 
         saveButton = root.Q<Button>("SaveDialog");
         returnButton = root.Q<Button>("Return");
@@ -60,7 +56,6 @@ public class DialogsCreatorMenuController : MenuController
     private void PopulateFields()
     {
         nameInput.value = currentDialog.name;
-        npcDropdown.value = currentDialog.npc;
     }
 
     private void OnSaveClicked()
