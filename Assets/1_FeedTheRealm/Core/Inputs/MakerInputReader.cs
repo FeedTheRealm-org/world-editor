@@ -36,11 +36,15 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
         {
             controls.Player.Move.Enable();
             controls.Player.Look.Enable();
+            controls.Player.MoveUp.Enable();
+            controls.Player.MoveDown.Enable();
         }
         else
         {
             controls.Player.Move.Disable();
             controls.Player.Look.Disable();
+            controls.Player.MoveUp.Disable();
+            controls.Player.MoveDown.Disable();
         }
     }
 
