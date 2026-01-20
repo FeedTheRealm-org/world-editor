@@ -71,4 +71,4 @@ MonoBehaviour:
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
-  dialogMenuPrefab: {fileID: 2802280877163831150, guid: 6ecdaa482264eef4fb9d8f25319faa84, type: 3}
+  dialogMenuPrefab: {fileID: 2802280877163831150, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
