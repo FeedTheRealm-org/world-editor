@@ -70,15 +70,7 @@ public class PublishMenuController : MenuController
 
     private async Task PublishWorld()
     {
-        // Update the world name with the input value
         worldData.worldName = nameInput.value;
-
-        // We save the world to ensure the latest changes are included
-        logger.Log(
-            $"PublishMenuController: Before SaveWorld, worldData.id='{worldData?.id}', worldData.worldName='{worldData?.worldName}'",
-            this,
-            Logging.LogType.Info
-        );
         dataPersistenceManager.SaveWorld(worldData.worldName);
         string fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
 
@@ -99,32 +91,15 @@ public class PublishMenuController : MenuController
             string message = error;
             Color color = Color.red;
             if (statusCode == 401)
-            {
                 message = "Session expired. Please log in again.";
-            }
             else if (statusCode >= 500 || statusCode == 0)
-            {
                 message = "Unable to connect to server. Please try again later.";
-            }
             ToastNotification.Show(message, "error", color);
             return;
         }
-
-        logger.Log(
-            $"PublishMenuController: World published successfully with server id='{worldId}'",
-            this,
-            Logging.LogType.Info
-        );
         worldData.id = worldId;
-        logger.Log(
-            $"PublishMenuController: After setting id, worldData.id='{worldData.id}', saving world again.",
-            this,
-            Logging.LogType.Info
-        );
         dataPersistenceManager.SaveWorld(worldData.worldName);
-
         ToastNotification.Show("World published successfully", "success", Color.green);
-
         CloseMenu();
     }
 }
