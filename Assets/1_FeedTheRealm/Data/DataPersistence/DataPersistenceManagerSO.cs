@@ -93,6 +93,7 @@ public class DataPersistenceManagerSO : ScriptableObject
         worldData.weaponItems.Clear();
         worldData.enemies.Clear();
         worldData.lootTables.Clear();
+        worldData.dialogs.Clear();
 
         // Restore identifiers on the same instance so all references remain valid
         worldData.worldName = worldName;

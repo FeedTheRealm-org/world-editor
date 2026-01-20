@@ -1191,20 +1191,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2877746089733943109, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2877746089733943109, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: placeableObjectLibrary
       value: 
       objectReference: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.size
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: worldEditorStateMachine
@@ -1236,7 +1228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].Name
-      value: LootTable
+      value: NPC Dialogs
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[0].panel
@@ -1265,7 +1257,7 @@ PrefabInstance:
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].panel
       value: 
-      objectReference: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
+      objectReference: {fileID: 2802280877163831150, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
