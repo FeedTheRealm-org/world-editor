@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
@@ -25,7 +26,7 @@ public class ShopMenuController : MenuController
 
     void OnEnable()
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         closeButton = root.Q<Button>("Close");
         itemSelector = root.Q<DropdownField>("ItemSelector");
@@ -46,22 +47,22 @@ public class ShopMenuController : MenuController
 
         itemContainer.makeItem = () =>
         {
-            var ve = itemListTemplate.Instantiate();
+            VisualElement ve = itemListTemplate.Instantiate();
             ve.style.marginBottom = 8;
             return ve;
         };
 
         itemContainer.bindItem = (ve, index) =>
         {
-            var product = shopManager.GetProducts()[index];
-            var item = product.item;
+            ProductObject product = shopManager.GetProducts()[index];
+            CreatorObject item = product.item;
 
             ve.Q<Label>("ProductName").text = item.DisplayName;
 
-            var image = ve.Q<Image>("Preview");
+            Image image = ve.Q<Image>("Preview");
             LoadItemSprite(item, image);
 
-            var priceField = ve.Q<IntegerField>("ProductPrice");
+            IntegerField priceField = ve.Q<IntegerField>("ProductPrice");
             priceField.SetValueWithoutNotify(product.price);
             priceField.RegisterValueChangedCallback(evt =>
             {
@@ -76,13 +77,20 @@ public class ShopMenuController : MenuController
         };
     }
 
+    private void SetupDropdownByCategory(CreatorObjectCategories category)
+    {
+        List<CreatorObject> items = creatorObjectLibrary.GetCreatables(category);
+        List<string> itemNames = items.Select(item => item.DisplayName).ToList();
+
+        itemNames.Insert(0, Placeholder);
+        itemSelector.choices.AddRange(itemNames);
+        itemSelector.value = Placeholder;
+    }
+
     private void SetupDropdown()
     {
-        var allItems = creatorObjectLibrary.GetAllCreatorObjects();
-        var itemNames = allItems.Select(item => item.DisplayName).ToList();
-        itemNames.Insert(0, Placeholder);
-        itemSelector.choices = itemNames;
-        itemSelector.value = Placeholder;
+        SetupDropdownByCategory(CreatorObjectCategories.WeaponItem);
+        SetupDropdownByCategory(CreatorObjectCategories.ConsumableItem);
     }
 
     private void LoadItemSprite(CreatorObject item, Image image)
@@ -101,7 +109,7 @@ public class ShopMenuController : MenuController
         if (evt.newValue == Placeholder)
             return;
 
-        var selectedItem = creatorObjectLibrary
+        CreatorObject selectedItem = creatorObjectLibrary
             .GetAllCreatorObjects()
             .FirstOrDefault(item => item.DisplayName == evt.newValue);
 
