@@ -59,6 +59,10 @@ public class LootMenuController : MenuController
     void OnEditItem(CreatorObject lootTable)
     {
         logger.Log("Editing LootTable: " + lootTable.DisplayName, this, Logging.LogType.Info);
+
+        EditContext.SetObjectToEdit(lootTable);
+
+        OpenMenu(createLootTableMenuPrefab);
     }
 
     void OnDeleteItem(CreatorObject lootTable, VisualElement lootTableEntry)
