@@ -39,8 +39,11 @@ namespace Utils
         /// <summary>
         /// Loads a sprite from disk at the given path.
         /// </summary>
-        public static Sprite LoadSpriteFromDisk(string path)
+        public static Sprite LoadSpriteFromDisk(string path, bool loadFromPersistentPath = false)
         {
+            if (loadFromPersistentPath)
+                path = Path.Combine(persistentFilePath, path);
+
             if (!FileBrowserHelpers.FileExists(path))
                 return null;
 

@@ -6,10 +6,10 @@ using UnityEngine.UIElements;
 public class MenuBarController : MonoBehaviour
 {
     [SerializeField]
-    private List<MenuOptions> menuOptions;
+    private WorldEditorStateMachine worldEditorStateMachine;
 
     [SerializeField]
-    private WorldEditorStateMachine worldEditorStateMachine;
+    private List<MenuOptions> menuOptions;
     private VisualElement menuBar;
 
     void Start()

@@ -2,10 +2,12 @@ using System.Threading.Tasks;
 using Models;
 using UnityEngine;
 
+// TODO: refactor this so that the strcuture data doesnt have implicit dependency on the GameObject,
+// just give the data to the prefab and let it handle itself
 [System.Serializable]
 public class StructureObject : IPlaceable
 {
-    public StructureData data; // TODO: consider removing this because since now the objects can be mofied, all i really need it the object ID
+    public StructureData data;
     public string structureFilepath;
     private bool isObjectLoaded = false;
     public GameObject structurePrefab;
@@ -38,7 +40,7 @@ public class StructureObject : IPlaceable
     {
         GameObject instance = Object.Instantiate(worldObject);
         instance.transform.SetParent(parent.transform);
-        instance.name = data.id;
+        instance.name = data.id; // remove this!
         instance.SetActive(true);
         return instance;
     }
@@ -49,7 +51,7 @@ public class StructureObject : IPlaceable
         structureInstance.transform.rotation = Quaternion.identity;
         structureInstance.SetActive(true);
         structureInstance.layer = layerMask;
-        structureInstance.name = DisplayName;
+        structureInstance.name = data.structureName; // remove this!
     }
 
     private void SetupObjectTransforms(GameObject childInstance)

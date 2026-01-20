@@ -71,4 +71,14 @@ public abstract class CreatorObject : ICreatable, IPersistent
         FileHandler.DeleteFile(spriteFile);
         spriteFile = null;
     }
+
+    public override string ToString()
+    {
+        return $"CreatorObject(Name: {name}, ID: {objectId}, SpriteFile: {spriteFile}, IsDeleted: {_isDeleted})";
+    }
+
+    public ItemData ToItemData()
+    {
+        return new ItemData(objectId, name, "", spriteFile);
+    }
 }
