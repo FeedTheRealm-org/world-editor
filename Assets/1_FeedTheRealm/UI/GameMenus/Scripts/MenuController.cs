@@ -16,10 +16,7 @@ public class MenuController : MonoBehaviour
     public void CloseMenu()
     {
         inputReader.ToggleInput(true);
-        if (ToggleEditorCallback != null)
-        {
-            ToggleEditorCallback.Invoke(true);
-        }
+        ToggleEditorCallback?.Invoke(true);
         Destroy(gameObject);
     }
 
