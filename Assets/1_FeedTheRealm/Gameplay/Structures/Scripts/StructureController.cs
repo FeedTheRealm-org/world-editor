@@ -20,6 +20,8 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     [SerializeField]
     private float scaleScrollSensitivity = 1f;
 
+    public bool isShop = false;
+
     // Data
     public GameObject Structure =>
         transform.childCount > 0 ? transform.GetChild(0).gameObject : null;
@@ -30,6 +32,7 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     private Vector3Field rotationField;
     private Vector3Field scaleField;
     private Button closeButton;
+    private Toggle shopToggle;
 
     private FloatField focusedAxisField;
     private Vector3Field focusedVectorField;
@@ -38,12 +41,12 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     {
         var root = structureUI.rootVisualElement;
         root.style.display = DisplayStyle.None;
-
         titleLabel = root.Q<Label>("StructureName");
         positionField = root.Q<Vector3Field>("Position");
         rotationField = root.Q<Vector3Field>("Rotation");
         scaleField = root.Q<Vector3Field>("Scale");
         closeButton = root.Q<Button>("Close");
+        shopToggle = root.Q<Toggle>("ShopToggle");
     }
 
     public void SaveData(ref WorldData worldData)
@@ -51,13 +54,14 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         if (!gameObject.activeSelf)
             return;
 
-        StructureData structureData = new StructureData(
+        StructureData structureData = new(
             Structure.name,
             name,
             transform.localScale,
             transform.localEulerAngles,
             Vector3.zero,
-            transform.position
+            transform.position,
+            isShop
         );
 
         worldData.objectPlacementData.Add(structureData);
@@ -81,7 +85,9 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         positionField.value = transform.position;
         rotationField.value = transform.localEulerAngles;
         scaleField.value = transform.localScale;
+        shopToggle.value = isShop;
 
+        shopToggle.RegisterValueChangedCallback(e => isShop = e.newValue);
         positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
         rotationField.RegisterValueChangedCallback(e => transform.localEulerAngles = e.newValue);
         scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);

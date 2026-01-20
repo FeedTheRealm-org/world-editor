@@ -1,0 +1,16 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameObjectMenu/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+    <ui:VisualElement name="root" style="flex-grow: 1; background-color: rgba(69, 69, 69, 0.4);">
+        <ui:VisualElement name="Menu" class="menuContainer" style="width: 75%; height: 60%; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%; background-color: rgba(0, 0, 0, 0.6); translate: 6% 0;">
+            <ui:VisualElement name="Header" style="flex-grow: 1; flex-direction: row; justify-content: space-evenly; margin-bottom: 1%; padding-bottom: 1%; height: 5%; min-height: 10%; max-height: 5%;">
+                <ui:Label text="Lets Set Up Shop!" name="Title" style="font-size: 30px; -unity-font-style: bold; color: rgb(255, 255, 255); width: 25%; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-bottom-width: 1px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);"/>
+                <ui:VisualElement name="AddItemContaier" style="flex-grow: 1; align-self: auto; justify-content: space-around; align-items: flex-end; width: 100%;">
+                    <ui:Label text="Select an Item to be added!" style="-unity-font-style: normal; color: rgb(255, 255, 255); width: 19%; margin-bottom: 5%; font-size: 20px; margin-right: 7%;"/>
+                    <ui:DropdownField name="ItemSelector" choices="" style="width: 30%;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:ListView name="ItemContainer" fixed-item-height="120" show-add-remove-footer="false" header-title=""  style="height: 100%; flex-grow: 1; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; margin-bottom: 0; padding-bottom: 0; padding-top: 0; padding-right: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-left: 0; color: rgb(255, 255, 255); -unity-text-align: middle-center;"/>
+            <ui:Button text="Close" name="Close" style="font-size: 15px; white-space: normal; -unity-text-align: middle-center; align-self: flex-end; padding-bottom: 15px; padding-top: 15px; background-color: rgb(0, 0, 0); margin-top: 15px;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
