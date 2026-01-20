@@ -193,6 +193,9 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
             structureInstance.transform.position = structureData.position;
             structureInstance.transform.localScale = structureData.size;
             structureInstance.transform.localEulerAngles = structureData.rotation;
+
+            StructureController controller = structureInstance.GetComponent<StructureController>();
+            controller.isShop = structureData.isShop;
         }
     }
 }

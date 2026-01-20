@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4421515928892810060
 Transform:
   m_ObjectHideFlags: 0
@@ -50,13 +50,6 @@ MonoBehaviour:
   positionScrollSensitivity: 1
   rotationScrollSensitivity: 10
   scaleScrollSensitivity: 1
-  structureData:
-    id:
-    size: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0, z: 0}
-    offset: {x: 0, y: 0, z: 0}
-    position: {x: 0, y: 0, z: 0}
-    structureName:
 --- !u!114 &8650860572608832213
 MonoBehaviour:
   m_ObjectHideFlags: 0
