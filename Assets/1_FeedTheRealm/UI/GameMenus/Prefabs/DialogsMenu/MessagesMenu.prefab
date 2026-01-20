@@ -73,4 +73,4 @@ MonoBehaviour:
   createMessageMenuPrefab: {fileID: 2802280877163831150, guid: ea56cde69729ec149a20b02fe58a2b28, type: 3}
   dialogMenuPrefab: {fileID: 2802280877163831150, guid: 6ecdaa482264eef4fb9d8f25319faa84, type: 3}
   creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
-  itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
+  itemListTemplate: {fileID: 9197481963319205126, guid: 080a16251bd11b24daa391ec40a5f39c, type: 3}

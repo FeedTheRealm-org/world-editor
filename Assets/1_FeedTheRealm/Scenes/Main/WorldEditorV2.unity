@@ -949,18 +949,6 @@ PrefabInstance:
       objectReference: {fileID: 245348055}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[0].Name
-      value: Save world
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: menuOptions.Array.data[1].Name
-      value: Publish world
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: worldEditorStateMachine
-      value: 
-      objectReference: {fileID: 245348055}
-    - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
-      propertyPath: menuOptions.Array.data[0].Name
       value: Save World
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
@@ -981,7 +969,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[5].Name
-      value: Dialogs
+      value: NPC Dialogs
       objectReference: {fileID: 0}
     - target: {fileID: 8448761236676883819, guid: 67ec9af1aaae201089e7a0d8239ea497, type: 3}
       propertyPath: menuOptions.Array.data[6].Name

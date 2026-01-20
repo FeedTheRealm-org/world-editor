@@ -22,7 +22,6 @@ public class MessagesCreatorMenuController : MenuController
     private GameObject messageMenuPrefab;
 
     private TextField contentField;
-    private DropdownField dialogDropdown;
 
     private Button saveButton;
     private Button returnButton;
@@ -37,10 +36,6 @@ public class MessagesCreatorMenuController : MenuController
         if (contentField == null)
             logger.Log("ContentField not found in UI", this, Logging.LogType.Error);
 
-        dialogDropdown = root.Q<DropdownField>("DialogField");
-        if (dialogDropdown == null)
-            logger.Log("DialogField not found in UI", this, Logging.LogType.Error);
-
         saveButton = root.Q<Button>("SaveMessage");
         returnButton = root.Q<Button>("Return");
         closeButton = root.Q<Button>("Close");
@@ -49,57 +44,21 @@ public class MessagesCreatorMenuController : MenuController
         returnButton.clicked += ReturnToMessagesMenu;
         closeButton.clicked += CloseMenu;
 
-        PopulateDialogDropdown();
-
         if (currentMessage != null)
         {
             PopulateFields();
         }
     }
 
-    private void PopulateDialogDropdown()
-    {
-        var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
-        var names = dialogs.Select(d => d.DisplayName).ToList();
-        dialogDropdown.choices = names;
-        if (names.Count > 0)
-        {
-            if (!string.IsNullOrEmpty(PendingDialogId))
-            {
-                var pending = dialogs.Find(d => d.ObjectId == PendingDialogId);
-                if (pending != null)
-                {
-                    dialogDropdown.value = pending.DisplayName;
-                }
-                else
-                {
-                    dialogDropdown.value = names[0];
-                }
-            }
-            else
-            {
-                dialogDropdown.value = names[0];
-            }
-        }
-        // clear after applying
-        PendingDialogId = null;
-    }
-
     private void PopulateFields()
     {
         contentField.value = currentMessage.Content;
-        // attempt to select the dialog by id
-        var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
-        var dlg = dialogs.Find(d => d.ObjectId == currentMessage.dialogId);
-        if (dlg != null)
-            dialogDropdown.value = dlg.DisplayName;
     }
 
     private void OnSaveClicked()
     {
-        var selectedDialogName = dialogDropdown.value;
         var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
-        var dialog = dialogs.Find(d => d.DisplayName == selectedDialogName) as Dialog;
+        var dialog = dialogs.Find(d => d.ObjectId == PendingDialogId) as Dialog;
 
         if (dialog == null)
         {
