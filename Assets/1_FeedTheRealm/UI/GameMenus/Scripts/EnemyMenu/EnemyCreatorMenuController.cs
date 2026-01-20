@@ -83,9 +83,14 @@ public class EnemyCreatorMenuController : MenuController
             loadSpriteButton = enemyPreviewContainer.Q<Button>();
         }
         saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToItemsMenu;
+        returnButton.clicked += ReturnToEnemiesMenu;
         closeButton.clicked += CloseMenu;
         loadSpriteButton.clicked += LoadSprite;
+
+        if (currentEnemy == null)
+        {
+            currentEnemy = EditContext.GetAndClearObjectToEdit<GenericEnemy>();
+        }
 
         // Populate fields if editing existing item
         if (currentEnemy != null)
@@ -104,16 +109,41 @@ public class EnemyCreatorMenuController : MenuController
         rangeInput.value = currentEnemy.range;
         if (currentEnemy.lootTable != null)
             lootTableInput.value = currentEnemy.lootTable.name;
+
         // Load existing sprite for preview
-        string spritePath = Path.Combine(
-            Application.streamingAssetsPath,
-            "Items",
-            currentEnemy.spriteFile + ".png"
-        );
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
-        if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
+        LoadExistingSprite(currentEnemy.spriteFile);
+    }
+
+    private void LoadExistingSprite(string spritePath)
+    {
+        if (string.IsNullOrEmpty(spritePath))
+            return;
+
+        string absolutePath = spritePath;
+        if (!Path.IsPathRooted(spritePath))
         {
-            spritePreview.sprite = sprite;
+            absolutePath = Path.Combine(Application.streamingAssetsPath, spritePath);
+        }
+
+        if (FileBrowserHelpers.FileExists(absolutePath))
+        {
+            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
+            if (sprite != null)
+            {
+                spritePreview.sprite = sprite;
+            }
+            else
+            {
+                logger?.Log(
+                    $"Failed to load sprite from: {absolutePath}",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+        }
+        else
+        {
+            logger?.Log($"Sprite file not found at: {absolutePath}", this, Logging.LogType.Warning);
         }
     }
 
@@ -140,6 +170,20 @@ public class EnemyCreatorMenuController : MenuController
                 selectedLootTable.lootItems
             );
         }
+
+        if (string.IsNullOrEmpty(nameInput.value))
+        {
+            logger?.Log("Enemy name is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Enemy name is required", "error", Color.red);
+            return;
+        }
+        if (selectedLootTable == null)
+        {
+            logger?.Log("Valid loot table selection is required", this, Logging.LogType.Warning);
+            ToastNotification.Show("Valid loot table selection is required", "error", Color.red);
+            return;
+        }
+
         if (currentEnemy == null)
         {
             var enemyData = new EnemyData(
@@ -170,13 +214,19 @@ public class EnemyCreatorMenuController : MenuController
             currentEnemy.speed = speedInput.value;
             currentEnemy.range = rangeInput.value;
             currentEnemy.lootTable = lootTableData;
-            currentEnemy.spriteFile = pendingSpriteSourcePath;
+            if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
+            {
+                currentEnemy.spriteFile = pendingSpriteSourcePath;
+            }
             logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
         }
-        ReturnToItemsMenu();
+
+        ToastNotification.Show("Enemy saved successfully", "success", Color.green);
+
+        ReturnToEnemiesMenu();
     }
 
-    private void ReturnToItemsMenu()
+    private void ReturnToEnemiesMenu()
     {
         OpenMenu(enemyMenuPrefab);
     }
@@ -219,7 +269,7 @@ public class EnemyCreatorMenuController : MenuController
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
         if (returnButton != null)
-            returnButton.clicked -= ReturnToItemsMenu;
+            returnButton.clicked -= ReturnToEnemiesMenu;
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
         if (loadSpriteButton != null)
