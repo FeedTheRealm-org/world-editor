@@ -66,6 +66,11 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
         if (loadSpriteButton != null)
             loadSpriteButton.clicked += LoadSprite;
 
+        if (currentItem == null)
+        {
+            currentItem = EditContext.GetAndClearObjectToEdit<TItem>();
+        }
+
         if (currentItem != null)
         {
             PopulateFields();
@@ -90,10 +95,37 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
 
     protected void LoadExistingSprite(string spritePath)
     {
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(spritePath);
-        if (FileBrowserHelpers.FileExists(spritePath) && sprite != null)
+        if (string.IsNullOrEmpty(spritePath))
+            return;
+
+        string absolutePath = spritePath;
+        if (!System.IO.Path.IsPathRooted(spritePath))
         {
-            spritePreview.sprite = sprite;
+            absolutePath = System.IO.Path.Combine(
+                UnityEngine.Application.streamingAssetsPath,
+                spritePath
+            );
+        }
+
+        if (FileBrowserHelpers.FileExists(absolutePath))
+        {
+            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
+            if (sprite != null)
+            {
+                spritePreview.sprite = sprite;
+            }
+            else
+            {
+                logger?.Log(
+                    $"Failed to load sprite from: {absolutePath}",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+        }
+        else
+        {
+            logger?.Log($"Sprite file not found at: {absolutePath}", this, Logging.LogType.Warning);
         }
     }
 

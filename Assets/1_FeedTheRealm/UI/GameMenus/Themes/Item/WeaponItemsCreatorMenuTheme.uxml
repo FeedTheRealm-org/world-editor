@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/gameMenuUSS.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#gameMenuUSS"/>
     <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
         <ui:VisualElement name="MenuContainer" class="menu-container" style="max-height: 55%; height: 75%;">
-            <ui:VisualElement name="Header" class="header" style="display: flex;">
+            <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
                 <ui:Label text="Weapon Item" class="header-label"/>
                 <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
                     <ui:Button text="Return To Menu" name="Return" class="button"/>
@@ -15,7 +15,7 @@
                     <ui:Image name="SpritePreview" style="width: 220px; height: 220px; background-color: rgba(0, 0, 0, 0); border-radius: 6px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding-bottom: 0; padding-top: 0; padding-right: 0; padding-left: 0; margin-bottom: 5%;"/>
                     <ui:Button text="Set your item sprite here" name="LoadSprite" focusable="true" style="width: 100%;"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column; height: 100%; max-height: 100%; min-height: 50%;">
+                <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column; height: 100%; max-height: 100%; min-height: 50%; padding-top: 1.5%;">
                     <ui:TextField placeholder-text="Item name" name="NameField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 40px; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
                     <ui:TextField placeholder-text="Object Description" name="DescriptionField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 25%; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
                     <ui:DropdownField label="Weapon Type" name="WeaponTypeField" class="text"/>

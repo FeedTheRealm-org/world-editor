@@ -169,3 +169,18 @@ Button {
 .unity-list-view__item:hover {
     background-color: transparent;
 }
+
+.white-dropdown {
+    background-color: transparent;
+    color: black;
+}
+
+.white-dropdown .unity-base-field__label {
+    color: white;
+    background-color: transparent;
+}
+
+.white-dropdown .unity-popup-field__input {
+    background-color: white;
+    color: black;
+}

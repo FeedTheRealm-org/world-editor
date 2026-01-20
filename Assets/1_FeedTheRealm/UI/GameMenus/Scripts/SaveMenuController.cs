@@ -42,11 +42,14 @@ public class SaveMenuController : MenuController
         if (string.IsNullOrEmpty(worldName))
         {
             Debug.LogWarning("SaveMenuController: No world name entered!");
+            ToastNotification.Show("World name is required", "error", Color.red);
             return;
         }
 
         Debug.Log($"SaveMenuController: Saving world '{worldName}'");
         dataPersistenceManager.SaveWorld(worldName);
+
+        ToastNotification.Show("World saved successfully", "success", Color.green);
 
         CloseMenu();
     }
