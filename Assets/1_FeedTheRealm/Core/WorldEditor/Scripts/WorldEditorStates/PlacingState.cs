@@ -49,6 +49,6 @@ public class PlacingState : IWorldEditorState
     public void OnSecondaryAction()
     {
         worldEditor.Log("Cancel placement");
-        worldEditor.SetState(new SelectingState(worldEditor));
+        worldEditor.SetState(worldEditor.SelectingState);
     }
 }

@@ -16,7 +16,7 @@ public class EditingState : IWorldEditorState
         CloseEditorEventCallback = () =>
         {
             worldEditor.Log("Edit completed, returning to selection mode");
-            worldEditor.SetState(new SelectingState(worldEditor));
+            worldEditor.SetState(worldEditor.SelectingState);
         };
 
         if (selectedObject.TryGetComponent<IEditable>(out var selectable))
@@ -42,6 +42,6 @@ public class EditingState : IWorldEditorState
     public void OnSecondaryAction()
     {
         worldEditor.Log("Cancel edit mode");
-        worldEditor.SetState(new SelectingState(worldEditor));
+        worldEditor.SetState(worldEditor.SelectingState);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Models;
+using UnityEngine;
 
 namespace Utils
 {
@@ -9,6 +10,8 @@ namespace Utils
 
         public static event Action<WorldData> WorldSelected;
 
+        public static event Action<GameObject> GameObjectSelected;
+
         public static void RaiseSelected(IPlaceable reference)
         {
             ObjectSelected?.Invoke(reference);
@@ -17,6 +20,11 @@ namespace Utils
         public static void RaiseSelected(WorldData reference)
         {
             WorldSelected?.Invoke(reference);
+        }
+
+        public static void RaiseSelected(GameObject reference)
+        {
+            GameObjectSelected?.Invoke(reference);
         }
     }
 }
