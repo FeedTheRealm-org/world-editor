@@ -51,21 +51,14 @@ public class WorldPublisherController : MonoBehaviour
         string modelError = await PublishModels(worldData, worldId);
         if (!string.IsNullOrEmpty(modelError))
             return (null, modelError, 0);
-        // TODO: maybe we can consider separating this into multiple calls
-        List<CreatorObject> creatorObjects = creatorObjectLibrary.GetAllCreatorObjects();
+
         var spriteData = new Dictionary<string, string>();
-        foreach (var obj in creatorObjects)
-        {
-            spriteData[obj.ObjectId] = obj.spriteFile;
-        }
         if (worldData.consumableItems != null)
         {
             foreach (var item in worldData.consumableItems)
             {
                 if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
-                {
                     spriteData[item.id] = item.spriteFilepath;
-                }
             }
         }
         if (worldData.weaponItems != null)
@@ -73,9 +66,7 @@ public class WorldPublisherController : MonoBehaviour
             foreach (var item in worldData.weaponItems)
             {
                 if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
-                {
                     spriteData[item.id] = item.spriteFilepath;
-                }
             }
         }
         var spriteList = spriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
