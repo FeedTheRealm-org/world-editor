@@ -337,8 +337,8 @@ MonoBehaviour:
     sceneName: MainMenu
     sceneAsset: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
   gameScene:
-    sceneName: WorldEditor
-    sceneAsset: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
+    sceneName: WorldEditorV2
+    sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

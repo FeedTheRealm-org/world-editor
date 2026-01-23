@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
   m_Name: MakerLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 1
+  _showLogs: 0
   _loggerPrefix: Maker
   _loggerColor: {r: 0.09247851, g: 0.7923645, b: 0, a: 0}

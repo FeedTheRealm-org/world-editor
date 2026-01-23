@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2385784492049444227}
   - component: {fileID: 3577323213893295326}
   - component: {fileID: 3715907354677866441}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SaveMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,12 +43,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 0611e9448c2328784b9d3113acc60da5, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c49b29607feb9e9f5a9c0c5e93d7d23d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SaveMenuController
+  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}

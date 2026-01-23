@@ -3,69 +3,54 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class SaveMenuController : MonoBehaviour {
-    [SerializeField] private DataPersistenceManagerSO dataPersistenceManager;
-    [SerializeField] private Maker player;
+public class SaveMenuController : MenuController
+{
+    [SerializeField]
+    private DataPersistenceManagerSO dataPersistenceManager;
 
     private Button saveButton;
     private Button closeButton;
     private TextField nameInput;
     private VisualElement root;
 
-    private void OnEnable() {
+    void OnEnable()
+    {
         var uiDocument = GetComponent<UIDocument>();
         root = uiDocument.rootVisualElement;
-
-        WorldData worldData = dataPersistenceManager.CurrentWorldData;
-
-        if (player != null) {
-            player.ToggleMovement(false);
-        }
-
         saveButton = root.Q<Button>("Save");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
-
-        if (worldData != null && !string.IsNullOrEmpty(worldData.worldName)) {
+        WorldData worldData = dataPersistenceManager.CurrentWorldData;
+        if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
+        {
             nameInput.value = worldData.worldName;
         }
 
-        if (saveButton != null)
-            saveButton.clicked += OnSaveClicked;
-
-        if (closeButton != null)
-            closeButton.clicked += OnCloseClicked;
+        saveButton.clicked += OnSaveClicked;
+        closeButton.clicked += CloseMenu;
     }
 
-    private void OnDisable() {
-        // Unhook to avoid leaks / duplicates
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-
-        if (closeButton != null)
-            closeButton.clicked -= OnCloseClicked;
+    private void OnDisable()
+    {
+        saveButton.clicked -= OnSaveClicked;
+        closeButton.clicked -= CloseMenu;
     }
 
-    private void OnSaveClicked() {
+    private void OnSaveClicked()
+    {
         string worldName = nameInput?.value?.Trim();
-        if (string.IsNullOrEmpty(worldName)) {
+        if (string.IsNullOrEmpty(worldName))
+        {
             Debug.LogWarning("SaveMenuController: No world name entered!");
+            ToastNotification.Show("World name is required", "error", Color.red);
             return;
         }
 
         Debug.Log($"SaveMenuController: Saving world '{worldName}'");
         dataPersistenceManager.SaveWorld(worldName);
 
-        CloseMenu();
-    }
+        ToastNotification.Show("World saved successfully", "success", Color.green);
 
-    private void OnCloseClicked() {
-        Debug.Log("SaveMenuController: Closing save menu.");
         CloseMenu();
-    }
-
-    private void CloseMenu() {
-        player.ToggleMovement(true);
-        gameObject.SetActive(false);
     }
 }
