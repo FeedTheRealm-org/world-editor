@@ -44,6 +44,9 @@ namespace API
                 return;
             }
             await gltf.InstantiateMainSceneAsync(parent.transform);
+
+            parent = parent.transform.GetChild(0).gameObject; // Move to the instantiated object
+
             FlattenHierarchy(parent);
         }
 
