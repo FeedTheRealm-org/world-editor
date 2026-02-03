@@ -6,9 +6,6 @@ using UnityEngine.UIElements;
 public class MenuBarController : MonoBehaviour
 {
     [SerializeField]
-    private WorldEditorStateMachine worldEditorStateMachine;
-
-    [SerializeField]
     private List<MenuOptions> menuOptions;
     private VisualElement menuBar;
 
@@ -27,9 +24,6 @@ public class MenuBarController : MonoBehaviour
             menuButton.clicked += () =>
             {
                 GameObject menuPanel = Instantiate(option.panel);
-                MenuController menuController = menuPanel.GetComponent<MenuController>();
-                menuController.ToggleEditorCallback += worldEditorStateMachine.ToggleEditor;
-                worldEditorStateMachine.ToggleEditor(false);
             };
             menuButton.AddToClassList("menuButtons");
             menuBar.Add(menuButton);

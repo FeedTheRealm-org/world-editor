@@ -6,17 +6,21 @@ public class MenuController : MonoBehaviour
     [SerializeField]
     private MakerInputReader inputReader;
 
+    [SerializeField]
+    private WorldEditorStateMachine worldEditorStateMachine;
+
     public Action<bool> ToggleEditorCallback;
 
     void Awake()
     {
         inputReader.ToggleInput(false);
+        worldEditorStateMachine?.ToggleEditor(false);
     }
 
     public void CloseMenu()
     {
         inputReader.ToggleInput(true);
-        ToggleEditorCallback?.Invoke(true);
+        worldEditorStateMachine?.ToggleEditor(true);
         Destroy(gameObject);
     }
 
