@@ -44,9 +44,7 @@ namespace API
                 return;
             }
             await gltf.InstantiateMainSceneAsync(parent.transform);
-
-            parent = parent.transform.GetChild(0).gameObject; // Move to the instantiated object
-
+            parent = parent.transform.GetChild(0).gameObject;
             FlattenHierarchy(parent);
         }
 
@@ -57,7 +55,6 @@ namespace API
             cube.name = "Fallback";
         }
 
-        // TODO: review this method to improve performance, this seems more like an unecesary edge case solution
         private static void FlattenHierarchy(GameObject parent)
         {
             Transform[] children = parent.GetComponentsInChildren<Transform>();
@@ -65,7 +62,6 @@ namespace API
             {
                 if (child != parent.transform && child.childCount == 0)
                 {
-                    // Move renderers to parent if they have no children
                     if (child.GetComponent<Renderer>() != null)
                     {
                         child.SetParent(parent.transform);

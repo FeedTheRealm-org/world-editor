@@ -7,6 +7,7 @@ public class PlacingState : IWorldEditorState
     private WorldEditorStateMachine worldEditor;
 
     private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
+    private const float PLACEMENT_OFFSET = 1.0f;
 
     public PlacingState(WorldEditorStateMachine worldEditor)
     {
@@ -42,7 +43,7 @@ public class PlacingState : IWorldEditorState
         var collider = instance.GetComponentInChildren<Collider>();
         float bottomY = collider.bounds.min.y;
         float desiredBottomY = hit.point.y;
-        float correction = desiredBottomY - bottomY - 1;
+        float correction = desiredBottomY - bottomY - PLACEMENT_OFFSET;
         instance.transform.position += Vector3.up * correction;
     }
 
