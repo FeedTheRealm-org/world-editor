@@ -27,10 +27,9 @@ namespace FeedTheRealm.UI.MenuBar
 
         [SerializeField]
         private MenuOption aboutOptionController;
-
         private VisualElement root;
         private VisualElement currentDropdown;
-        private VisualElement clickCatcher;
+        private readonly List<VisualElement> openMenus = new();
 
         void Awake()
         {
@@ -40,72 +39,96 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("Subscriptions", subscriptionsOptionController);
             BindButton("Help", helpOptionController);
             BindButton("About", aboutOptionController);
-
             root.RegisterCallback<PointerDownEvent>(OnPointerDown, TrickleDown.TrickleDown);
         }
 
         private void BindButton(string buttonName, MenuOption option)
         {
-            var button = root.Q<Button>(buttonName);
-            if (button == null)
-            {
-                Debug.LogWarning($"Menu button '{buttonName}' not found in UXML.");
+            Button button = root.Q<Button>(buttonName);
+            if (button == null || option == null)
                 return;
-            }
+
             button.clicked += () =>
             {
-                CloseDropdown();
-
-                if (option == null)
-                    return;
                 if (option.MenuOptions.Count == 0)
-                {
-                    option.Execute();
                     return;
-                }
-                OpenDropdown(button, option);
+
+                OpenMenu(button, option.MenuOptions, 0);
             };
         }
 
-        private void OpenDropdown(Button source, MenuOption option)
+        private void OpenMenu(VisualElement anchor, IReadOnlyList<MenuOption> options, int depth)
         {
-            var dropdown = new VisualElement();
-            dropdown.AddToClassList("dropdown");
-            dropdown.style.position = Position.Absolute;
+            CloseMenusFromDepth(depth);
+            VisualElement menu = new VisualElement();
+            menu.AddToClassList("dropdown");
+            menu.style.position = Position.Absolute;
+            menu.style.flexDirection = FlexDirection.Column;
+            menu.RegisterCallback<PointerDownEvent>(e => e.StopPropagation());
 
-            foreach (var sub in option.MenuOptions)
+            foreach (MenuOption option in options)
             {
-                var btn = new Button(() =>
+                Button button = new() { text = option.Label };
+
+                button.style.width = Length.Percent(100);
+
+                if (option.MenuOptions.Count > 0)
                 {
-                    CloseDropdown();
-                    sub.Execute();
-                })
+                    button.RegisterCallback<PointerEnterEvent>(_ =>
+                    {
+                        OpenMenu(button, option.MenuOptions, depth + 1);
+                    });
+                }
+                else
                 {
-                    text = sub.Label,
-                };
-                btn.style.width = Length.Percent(100);
-                dropdown.Add(btn);
+                    button.clicked += () =>
+                    {
+                        CloseAllMenus();
+                        option.Execute();
+                    };
+                }
+
+                menu.Add(button);
             }
+            root.Add(menu);
+            PositionMenu(menu, anchor, depth);
+            openMenus.Add(menu);
+        }
 
-            root.Add(dropdown);
+        private void PositionMenu(VisualElement menu, VisualElement anchor, int depth)
+        {
+            Rect bounds = anchor.worldBound;
+            menu.style.width = bounds.width;
+            if (depth == 0)
+            {
+                menu.style.left = bounds.x;
+                menu.style.top = bounds.yMax + 6;
+            }
+            else
+            {
+                menu.style.left = bounds.xMax + 4;
+                menu.style.top = bounds.y;
+            }
+        }
 
-            // Position under button
-            var bounds = source.worldBound;
-            dropdown.style.width = bounds.width;
-            dropdown.style.left = bounds.x;
-            dropdown.style.top = bounds.yMax + 4;
+        private void CloseMenusFromDepth(int depth)
+        {
+            for (int i = openMenus.Count - 1; i >= depth; i--)
+            {
+                openMenus[i].RemoveFromHierarchy();
+                openMenus.RemoveAt(i);
+            }
+        }
 
-            currentDropdown = dropdown;
+        private void CloseAllMenus()
+        {
+            CloseMenusFromDepth(0);
         }
 
         private void OnPointerDown(PointerDownEvent evt)
         {
-            if (currentDropdown == null)
+            if (currentDropdown == null || currentDropdown.worldBound.Contains(evt.position))
                 return;
-
-            if (currentDropdown.worldBound.Contains(evt.position))
-                return;
-
             CloseDropdown();
         }
 

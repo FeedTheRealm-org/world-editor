@@ -816,6 +816,14 @@ PrefabInstance:
       value: MenuBar
       objectReference: {fileID: 0}
     - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+      propertyPath: editOptionController
+      value: 
+      objectReference: {fileID: 5404704011115972809, guid: 821d83f31a7472c8a91515b47888608d, type: 3}
+    - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+      propertyPath: fileOptionController
+      value: 
+      objectReference: {fileID: 5404704011115972809, guid: 821d83f31a7472c8a91515b47888608d, type: 3}
+    - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
       propertyPath: menuOptions.Array.size
       value: 1
       objectReference: {fileID: 0}
