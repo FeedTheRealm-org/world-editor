@@ -1,0 +1,4 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/commonStyles.uss?fileID=7433441132597879392&amp;guid=ba1b9d365968a62968bb036cf7a2aeb4&amp;type=3#commonStyles"/>
+    <ui:VisualElement name="root" style="flex-grow: 1;"/>
+</ui:UXML>
