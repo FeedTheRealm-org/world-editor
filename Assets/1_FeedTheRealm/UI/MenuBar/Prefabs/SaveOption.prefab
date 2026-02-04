@@ -46,9 +46,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.SaveOptionController
   label: Save
-  menuOptions:
-  - {fileID: 2996711392029120742}
-  - {fileID: 2996711392029120742}
+  menuOptions: []
 --- !u!114 &8693633371347283309
 MonoBehaviour:
   m_ObjectHideFlags: 0

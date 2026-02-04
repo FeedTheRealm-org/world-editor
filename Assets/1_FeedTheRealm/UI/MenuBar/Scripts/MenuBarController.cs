@@ -28,7 +28,6 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private MenuOption aboutOptionController;
         private VisualElement root;
-        private VisualElement currentDropdown;
         private readonly List<VisualElement> openMenus = new();
 
         void Awake()
@@ -39,7 +38,7 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("Subscriptions", subscriptionsOptionController);
             BindButton("Help", helpOptionController);
             BindButton("About", aboutOptionController);
-            root.RegisterCallback<PointerDownEvent>(OnPointerDown, TrickleDown.TrickleDown);
+            root.RegisterCallback<PointerMoveEvent>(OnPointerMove, TrickleDown.TrickleDown);
         }
 
         private void BindButton(string buttonName, MenuOption option)
@@ -125,17 +124,38 @@ namespace FeedTheRealm.UI.MenuBar
             CloseMenusFromDepth(0);
         }
 
-        private void OnPointerDown(PointerDownEvent evt)
+        private void OnPointerMove(PointerMoveEvent evt)
         {
-            if (currentDropdown == null || currentDropdown.worldBound.Contains(evt.position))
+            if (openMenus.Count == 0)
                 return;
-            CloseDropdown();
+
+            Vector2 mousePos = evt.position;
+            foreach (var menu in openMenus)
+            {
+                if (menu.worldBound.Contains(mousePos))
+                    return;
+            }
+            if (IsPointerOverMenuBar(mousePos))
+                return;
+            const float padding = 10f;
+            foreach (var menu in openMenus)
+            {
+                Rect expandedBounds = menu.worldBound;
+                expandedBounds.xMin -= padding;
+                expandedBounds.xMax += padding;
+                expandedBounds.yMin -= padding;
+                expandedBounds.yMax += padding;
+
+                if (expandedBounds.Contains(mousePos))
+                    return;
+            }
+            CloseAllMenus();
         }
 
-        private void CloseDropdown()
+        private bool IsPointerOverMenuBar(Vector2 position)
         {
-            currentDropdown?.RemoveFromHierarchy();
-            currentDropdown = null;
+            var menuBar = root.Q<VisualElement>("MenuBarContainer");
+            return menuBar != null && menuBar.worldBound.Contains(position);
         }
     }
 }
