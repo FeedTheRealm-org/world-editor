@@ -54,6 +54,10 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         if (!gameObject.activeSelf)
             return;
 
+        BoxCollider collider = Structure?.GetComponent<BoxCollider>();
+        Vector3 colliderSize = collider != null ? collider.size : Vector3.zero;
+        Vector3 colliderCenter = collider != null ? collider.center : Vector3.zero;
+
         StructureData structureData = new(
             Structure.name,
             name,
@@ -61,7 +65,9 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
             transform.localEulerAngles,
             Vector3.zero,
             transform.position,
-            isShop
+            isShop,
+            colliderSize,
+            colliderCenter
         );
 
         worldData.objectPlacementData.Add(structureData);
