@@ -54,6 +54,9 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         if (!gameObject.activeSelf)
             return;
 
+        if (Structure == null)
+            return;
+
         BoxCollider collider = Structure?.GetComponent<BoxCollider>();
         Vector3 colliderSize = collider != null ? collider.size : Vector3.zero;
         Vector3 colliderCenter = collider != null ? collider.center : Vector3.zero;
