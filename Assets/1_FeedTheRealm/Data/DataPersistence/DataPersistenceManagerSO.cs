@@ -47,6 +47,11 @@ public class DataPersistenceManagerSO : ScriptableObject
         worldData = WorldFileHandler.Load(dataFileName, saveDirectory);
     }
 
+    public void UnsetActiveWorld()
+    {
+        worldData = null;
+    }
+
     public List<string> ListAllWorlds()
     {
         return WorldFileHandler.GetAllWorlds(saveDirectory, fileExtension);

@@ -46,3 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.ExitToMenuOptionController
   label: Exito to Menu
   menuOptions: []
+  mainMenuScene:
+    sceneName: MainMenu
+    sceneAsset: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
