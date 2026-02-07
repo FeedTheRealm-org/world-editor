@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16d4dbc39c58de13a578f712d445619, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.FileOptionController
-  label: File
+  label: file
   menuOptions:
+  - {fileID: -4011797978883001376, guid: 291882fe59a7dbb748c153252751c06d, type: 3}
   - {fileID: 2996711392029120742, guid: 63c2ce1612aff08f3be1955c7341c133, type: 3}
+  - {fileID: -7263633147756154924, guid: 11a09423abed5b728a5fcd709f6254f0, type: 3}
+  - {fileID: -5929953346205859556, guid: 0a0350046e7dea061addc5f617c695d5, type: 3}
+  - {fileID: 6458959706482787516, guid: 9d7700329d1aaac9a9d90bd2ee51201d, type: 3}

@@ -8,6 +8,9 @@ namespace FeedTheRealm.UI.MenuBar
     public class MenuBarController : MonoBehaviour
     {
         [SerializeField]
+        private Logging.Logger logger;
+
+        [SerializeField]
         private UIDocument menuBarUI;
 
         [SerializeField]
@@ -44,14 +47,25 @@ namespace FeedTheRealm.UI.MenuBar
         private void BindButton(string buttonName, MenuOption option)
         {
             Button button = root.Q<Button>(buttonName);
-            if (button == null || option == null)
-                return;
 
+            if (button == null)
+                logger.Log(
+                    $"Button '{buttonName}' not found in the menu bar.",
+                    this,
+                    Logging.LogType.Error
+                );
+
+            if (option == null)
+            {
+                button.SetEnabled(false);
+                button.style.color = Color.grey;
+                return;
+            }
+            button.text = option.Label;
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)
                     return;
-
                 OpenMenu(button, option.MenuOptions, 0);
             };
         }
@@ -68,9 +82,7 @@ namespace FeedTheRealm.UI.MenuBar
             foreach (MenuOption option in options)
             {
                 Button button = new() { text = option.Label };
-
                 button.style.width = Length.Percent(100);
-
                 if (option.MenuOptions.Count > 0)
                 {
                     button.RegisterCallback<PointerEnterEvent>(_ =>
@@ -86,7 +98,6 @@ namespace FeedTheRealm.UI.MenuBar
                         option.Execute();
                     };
                 }
-
                 menu.Add(button);
             }
             root.Add(menu);
