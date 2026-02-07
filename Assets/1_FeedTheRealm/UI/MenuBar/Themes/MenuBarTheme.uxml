@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/MenuBar/Themes/MenuBarStyles.uss?fileID=7433441132597879392&amp;guid=347ad0bb551b2105e8a27e59f2fd69d7&amp;type=3#MenuBarStyles"/>
     <ui:VisualElement name="root" style="flex-grow: 1;">
-        <ui:VisualElement name="MenuBarContainer" style="flex-grow: 0; height: 5%; min-height: 5%; max-height: 5%; width: auto; min-width: auto; max-width: none; background-color: rgb(0, 0, 20); flex-direction: row; flex-shrink: 0; padding-right: 92%;">
+        <ui:VisualElement name="MenuBarContainer" class="menu-bar">
             <ui:Button text="File" name="File"/>
             <ui:Button text="edit" name="Edit"/>
             <ui:Button text="subscriptions" name="Subscriptions"/>

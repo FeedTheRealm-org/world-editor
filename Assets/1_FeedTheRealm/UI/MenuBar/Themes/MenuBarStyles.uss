@@ -3,7 +3,6 @@
 
 .unity-button {
     background-color: rgba(0, 0, 0, 0);
-    color: rgb(255, 255, 255);
     border-left-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
     border-top-color: rgba(0, 0, 0, 0);
@@ -14,39 +13,45 @@
     width: 100%;
 }
 
+.menu-bar{
+    flex-grow: 0;
+    height: 4%;
+    min-height: 4%;
+    max-height: 4%;
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    background-color: rgb(32, 34, 37);
+    color: rgb(210, 214, 220);
+    flex-direction: row;
+    flex-shrink: 0;
+    padding-right: 92%;
+}
+
 .dropdown {
     flex-direction: column;
-    background-color: rgb(83, 83, 83);
+    background-color: rgb(20, 20, 22);
+    color: rgb(210, 214, 220);
     flex-grow: 0;
     flex-shrink: 0;
     width: 100%;
-    margin: 0;
     padding-left: 8px;
     padding-right: 8px;
-    border-left-width: 0;
-    border-right-width: 0;
-    border-top-width: 0;
-    border-bottom-width: 0;
     justify-content: center;
     align-items: center;
     -unity-text-align: middle-center;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 
 .unity-button:hover {
     color: rgb(255, 255, 255);
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    -unity-font-style: normal;
-    -unity-text-align: middle-center;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+}
+
+.dropdown > .unity-button:last-child {
     border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
