@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5332839163230174798
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3960537262604584644}
+  - component: {fileID: 5404704011115972809}
+  - component: {fileID: 5022664612349865800}
+  - component: {fileID: 7983903898806358930}
+  - component: {fileID: -8004589813204141980}
+  - component: {fileID: -1102919887559925370}
+  - component: {fileID: 6787800069250610893}
+  - component: {fileID: -6399053202439857595}
+  m_Layer: 0
+  m_Name: FIleOption
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3960537262604584644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 34.88691, y: 1, z: 76.8712}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5404704011115972809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16d4dbc39c58de13a578f712d445619, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.FileOptionController
+  label: FIle
+  menuOptions:
+  - {fileID: -6399053202439857595}
+  - {fileID: 5022664612349865800}
+  - {fileID: 7983903898806358930}
+  - {fileID: -8004589813204141980}
+  - {fileID: -1102919887559925370}
+  - {fileID: 6787800069250610893}
+--- !u!114 &5022664612349865800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5343c3f993b8f098f8e918386dfc6cee, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.OpenOptionController
+  label: Open
+  menuOptions: []
+  openMenuPrefab: {fileID: 3678517506282993326, guid: dfdefcf7273786779abf4d38891d92a2, type: 3}
+--- !u!114 &7983903898806358930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4f3191ccacff8a04af15055a6d0786e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.SaveOptionController
+  label: Save
+  menuOptions: []
+  saveMenuPrefab: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}
+--- !u!114 &-8004589813204141980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da35c15051acb0e4482239bc8dc926a3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.PublishOptionController
+  label: Publish
+  menuOptions: []
+  publishMenuPrefab: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}
+--- !u!114 &-1102919887559925370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 996ab045b448aeb5982785d7c4432be5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.ExitToMenuOptionController
+  label: Exit to Menu
+  menuOptions: []
+  mainMenuScene:
+    sceneName: MainMenu
+    sceneAsset: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+--- !u!114 &6787800069250610893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9140f9f3b177deb86a20a0cfe6bd7202, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.ExitGameOptionController
+  label: Exit Game
+  menuOptions: []
+--- !u!114 &-6399053202439857595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5332839163230174798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6278fb55e58f83f59a1b5b962c049eb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.NewWorldOptionController
+  label: New
+  menuOptions: []
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+  worldEditorScene:
+    sceneName: WorldEditorV2
+    sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}

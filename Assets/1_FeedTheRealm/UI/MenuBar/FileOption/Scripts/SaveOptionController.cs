@@ -10,8 +10,7 @@ namespace FeedTheRealm.UI.MenuBar
 
         public override void Execute()
         {
-            var saveMenuInstance = Instantiate(saveMenuPrefab);
-            saveMenuInstance.SetActive(true);
+            Instantiate(saveMenuPrefab);
         }
     }
 }
