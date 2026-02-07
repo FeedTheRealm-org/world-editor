@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da35c15051acb0e4482239bc8dc926a3, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.PublishOptionController
-  label: publish
+  label: Publish
   menuOptions: []
+  publishMenuPrefab: {fileID: 3678517506282993326, guid: 09b0043563fea245394cfd803bd23670, type: 3}

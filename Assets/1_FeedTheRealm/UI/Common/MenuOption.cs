@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using GLTFast.Schema;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace FeedTheRealm.UI.Common
 {

@@ -816,9 +816,13 @@ PrefabInstance:
       value: MenuBar
       objectReference: {fileID: 0}
     - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+    - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
       propertyPath: editOptionController
       value: 
-      objectReference: {fileID: 5404704011115972809, guid: 821d83f31a7472c8a91515b47888608d, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
       propertyPath: fileOptionController
       value: 
@@ -829,7 +833,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
       propertyPath: rootOptions.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6005759458847811455, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
       propertyPath: 'menuOptions.Array.data[0]'

@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4f3191ccacff8a04af15055a6d0786e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.SaveOptionController
-  label: save
+  label: Save
   menuOptions: []
+  saveMenuPrefab: {fileID: 3678517506282993326, guid: f255f265d26d4df5b94410809a754385, type: 3}

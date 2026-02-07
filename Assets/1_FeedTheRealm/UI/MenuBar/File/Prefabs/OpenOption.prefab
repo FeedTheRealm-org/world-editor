@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5343c3f993b8f098f8e918386dfc6cee, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.OpenOptionController
-  label: open
+  label: Open
   menuOptions: []

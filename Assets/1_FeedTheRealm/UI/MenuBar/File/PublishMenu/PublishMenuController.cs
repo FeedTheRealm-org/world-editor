@@ -21,7 +21,7 @@ public class PublishMenuController : MenuController
     // -------- Ui related elements --------
     private Button publishButton;
     private Button closeButton;
-    private TextField nameInput;
+    private Label nameInput;
     private TextField descriptionInput;
     private VisualElement root;
     private WorldData worldData;
@@ -34,10 +34,10 @@ public class PublishMenuController : MenuController
 
         publishButton = root.Q<Button>("Publish");
         closeButton = root.Q<Button>("Close");
-        nameInput = root.Q<TextField>("NameInput");
+        nameInput = root.Q<Label>("WorldName");
         descriptionInput = root.Q<TextField>("DescriptionInput");
 
-        nameInput.value = worldData.worldName;
+        nameInput.text = worldData.worldName;
         publishButton.clicked += OnPublishClicked;
         closeButton.clicked += CloseMenu;
     }
@@ -55,22 +55,12 @@ public class PublishMenuController : MenuController
             this,
             Logging.LogType.Info
         );
-        if (string.IsNullOrEmpty(nameInput.value))
-        {
-            logger.Log(
-                "PublishMenuController: No world name entered!",
-                this,
-                Logging.LogType.Error
-            );
-            ToastNotification.Show("World name is required", "error", Color.red);
-            return;
-        }
         await PublishWorld();
     }
 
     private async Task PublishWorld()
     {
-        worldData.worldName = nameInput.value;
+        worldData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
         dataPersistenceManager.SaveWorld(worldData.worldName);
         string fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
 

@@ -13,9 +13,7 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private UIDocument menuBarUI;
 
-        [SerializeField]
-        private List<MenuOption> rootOptions;
-
+        [Header("Menu Options")]
         [SerializeField]
         private MenuOption fileOptionController;
 

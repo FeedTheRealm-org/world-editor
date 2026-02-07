@@ -1,66 +1,19 @@
 :root {
 }
 
-.menu-container {
+.menu {
+    background-color: rgb(51, 51, 51);
     width: 50%;
-    height: 2%;
-    background-color: rgba(0, 0, 0, 0.86);
-    min-height: 50%;
-    max-height: 50%;
-    justify-content: center;
-    align-self: center;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    padding-top: 1.5%;
-    padding-right: 1.5%;
-    padding-bottom: 1%;
-    padding-left: 1.5%;
-    flex-direction: column;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .text {
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
     -unity-text-align: middle-left;
-}
-
-.cool-button {
-    margin-top: 2%;
-    margin-right: 2%;
-    margin-bottom: 2%;
-    margin-left: 2%;
-    -unity-text-align: middle-center;
-    width: 50px;
-    font-size: 25px;
-    background-color: rgb(23, 80, 230);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    border-top-width: 3px;
-    border-right-width: 3px;
-    border-bottom-width: 3px;
-    border-left-width: 3px;
-    height: auto;
-    min-height: 25px;
-    min-width: 10px;
-    max-height: 50px;
 }
 
 .header {
@@ -82,16 +35,6 @@
     color: rgb(255, 255, 255);
     -unity-text-align: middle-center;
     font-size: 25px;
-}
-
-
-Button {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    color: rgb(255, 255, 255);
-    background-color: rgb(0, 0, 0);
 }
 
 .list-item {
@@ -183,4 +126,45 @@ Button {
 .white-dropdown .unity-popup-field__input {
     background-color: white;
     color: black;
+}
+
+.menu-tab {
+    justify-content: center;
+    align-items: center;
+    padding-left: 2%;
+    padding-right: 2%;
+    border-bottom-width: 1px;
+    border-left-color: rgb(76, 76, 76);
+    border-right-color: rgb(76, 76, 76);
+    border-top-color: rgb(76, 76, 76);
+    border-bottom-color: rgb(76, 76, 76);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.close-button {
+    background-color: rgb(62, 62, 62);
+    color: rgb(255, 255, 255);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    height: 60%;
+    justify-content: space-between;
+    align-self: center;
+}
+
+.title {
+    font-size: 30px;
+}
+
+.menu-content {
+    padding-top: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    padding-left: 2%;
+}
+
+#Root > #MenuContainer > #Content > #DescriptionInput > #unity-text-input {
+    height: 140px;
 }

@@ -24,7 +24,7 @@ public class DataPersistenceManagerSO : ScriptableObject
 
     // ---------------- Public Methods ----------------
 
-    public WorldData CurrentWorldData => worldData;
+    public WorldData CurrentWorldData => worldData ?? new WorldData();
 
     public void NewWorld()
     {

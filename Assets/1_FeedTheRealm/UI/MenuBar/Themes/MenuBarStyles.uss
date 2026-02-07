@@ -40,18 +40,12 @@
     justify-content: center;
     align-items: center;
     -unity-text-align: middle-center;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-radius: 5px;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
 
 .unity-button:hover {
     color: rgb(255, 255, 255);
-}
-
-.dropdown > .unity-button:last-child {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
