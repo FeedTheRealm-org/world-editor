@@ -55,9 +55,13 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
             return;
 
         if (Structure == null)
+        {
+            Debug.LogWarning($"StructureController '{name}' has no structure to save.");
             return;
+        }
 
-        BoxCollider collider = Structure?.GetComponent<BoxCollider>();
+        BoxCollider collider =
+            GetComponent<BoxCollider>() ?? Structure?.GetComponent<BoxCollider>();
         Vector3 colliderSize = collider != null ? collider.size : Vector3.zero;
         Vector3 colliderCenter = collider != null ? collider.center : Vector3.zero;
 
