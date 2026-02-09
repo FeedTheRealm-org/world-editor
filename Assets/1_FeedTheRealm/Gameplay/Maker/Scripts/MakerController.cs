@@ -9,10 +9,6 @@ public class MakerController : MonoBehaviour
     [SerializeField]
     public CameraController cameraController;
 
-    [Header("HUD Configuration")]
-    [SerializeField]
-    public SettingsMenuController settingsMenu;
-
     [Header("General settings")]
     [SerializeField]
     private Logging.Logger logger;

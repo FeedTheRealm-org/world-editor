@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class SettingsMenuController : MenuController
+public class EditorSettingsMenuController : MenuController
 {
     [SerializeField]
     private Logging.Logger logger;
@@ -19,7 +19,7 @@ public class SettingsMenuController : MenuController
         /* Display settings */
         _resolutionSelect = root.Q<DropdownField>("ResolutionSelect");
         _fullscreenToggle = root.Q<Toggle>("FullscreenToggle");
-        _closeButton = root.Q<Button>("CloseButton");
+        _closeButton = root.Q<Button>("Close");
         if (_resolutionSelect == null || _fullscreenToggle == null)
         {
             logger.Log(

@@ -80,7 +80,7 @@ namespace FeedTheRealm.UI.MenuBar
             foreach (MenuOption option in options)
             {
                 Button button = new() { text = option.Label };
-                button.style.unityTextAlign = TextAnchor.MiddleCenter;
+
                 if (option.MenuOptions.Count > 0)
                 {
                     button.RegisterCallback<PointerEnterEvent>(_ =>
