@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
@@ -80,6 +81,7 @@ namespace FeedTheRealm.UI.MenuBar
             foreach (MenuOption option in options)
             {
                 Button button = new() { text = option.Label };
+                button.AddToClassList("dropdown-item");
 
                 if (option.MenuOptions.Count > 0)
                 {

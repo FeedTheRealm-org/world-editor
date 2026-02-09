@@ -12,22 +12,23 @@
     min-height: auto;
     max-height: none;
     margin-top: 1px;
+    font-size: 14px;
+    -unity-text-generator: standard;
 }
 
 .editor-bar {
     flex-grow: 0;
-    height: 3%;
-    min-height: 3%;
-    max-height: 3%;
-    width: auto;
-    min-width: auto;
+    height: 30px;
+    min-height: 30px;
+    max-height: 50px;
+    width: auto;    min-width: auto;
     max-width: none;
     background-color: rgb(14, 14, 14);
     color: rgb(136, 136, 136);
     flex-direction: row;
     flex-shrink: 0;
-    font-size: 12px;
-    margin-top: 1.4%;
+    font-size: 15px;
+    margin-top: 30px;
     padding-left: 30px;
     padding-right: 90%;
     padding-top: 2px;
@@ -71,9 +72,10 @@
     border-bottom-left-radius: 0;
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
-    border-top-width: -1px;
+    border-top-width: 0;
     border-right-width: 1px;
     border-bottom-width: 0;
-    border-left-width: 1px;
-    height: 120%;
+    border-left-width: 0;
+    height: 110%;
+    width: 90%;
 }

@@ -37,6 +37,8 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
             controls.Player.Look.Enable();
             controls.Player.MoveUp.Enable();
             controls.Player.MoveDown.Enable();
+            controls.Player.PrimaryInteraction.Enable();
+            controls.Player.SecondaryInteraction.Enable();
         }
         else
         {
@@ -44,6 +46,8 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
             controls.Player.Look.Disable();
             controls.Player.MoveUp.Disable();
             controls.Player.MoveDown.Disable();
+            controls.Player.PrimaryInteraction.Disable();
+            controls.Player.SecondaryInteraction.Disable();
         }
     }
 
@@ -97,10 +101,16 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
 
     public void OnPrimaryInteraction(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (!context.performed)
+            return;
+
+        if (WorldInputGate.BlockWorldInput)
         {
-            PrimaryInteractionEvent?.Invoke();
+            Debug.Log("World input is currently blocked. Primary interaction ignored.");
+            return;
         }
+
+        PrimaryInteractionEvent?.Invoke();
     }
 
     public void OnSecondaryInteraction(InputAction.CallbackContext context)
@@ -126,4 +136,9 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
             ScrollEvent?.Invoke(context.ReadValue<Vector2>());
         }
     }
+}
+
+public static class WorldInputGate
+{
+    public static bool BlockWorldInput;
 }

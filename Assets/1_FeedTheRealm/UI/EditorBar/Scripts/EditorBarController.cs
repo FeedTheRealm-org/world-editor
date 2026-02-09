@@ -15,30 +15,22 @@ namespace FeedTheRealm.UI.MenuBar
 
         [Header("Menu Options")]
         [SerializeField]
-        private MenuOption fileOptionController;
+        private MenuOption ZoneOption;
 
         [SerializeField]
-        private MenuOption editOptionController;
+        private MenuOption PlacementOption;
 
         [SerializeField]
-        private MenuOption subscriptionsOptionController;
-
-        [SerializeField]
-        private MenuOption helpOptionController;
-
-        [SerializeField]
-        private MenuOption aboutOptionController;
+        private MenuOption ElementOption;
         private VisualElement root;
         private readonly List<VisualElement> openMenus = new();
 
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            BindButton("File", fileOptionController);
-            BindButton("Edit", editOptionController);
-            BindButton("Subscriptions", subscriptionsOptionController);
-            BindButton("Help", helpOptionController);
-            BindButton("About", aboutOptionController);
+            BindButton("Zone", ZoneOption);
+            BindButton("Placement", PlacementOption);
+            BindButton("Element", ElementOption);
             root.RegisterCallback<PointerMoveEvent>(OnPointerMove, TrickleDown.TrickleDown);
         }
 
