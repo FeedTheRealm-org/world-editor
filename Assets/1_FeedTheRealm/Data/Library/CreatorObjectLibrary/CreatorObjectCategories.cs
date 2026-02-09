@@ -7,4 +7,5 @@ public enum CreatorObjectCategories
     Dialog,
     Message,
     NPC,
+    Quest,
 }
