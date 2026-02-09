@@ -77,6 +77,7 @@ namespace FeedTheRealm.UI.MenuBar
             menu.style.position = Position.Absolute;
             menu.style.flexDirection = FlexDirection.Column;
             menu.RegisterCallback<PointerDownEvent>(e => e.StopPropagation());
+            menu.RegisterCallback<PointerLeaveEvent>(_ => CloseMenusFromDepth(depth));
 
             foreach (MenuOption option in options)
             {
@@ -110,12 +111,12 @@ namespace FeedTheRealm.UI.MenuBar
             Rect bounds = anchor.worldBound;
             if (depth == 0)
             {
-                menu.style.left = bounds.x;
+                menu.style.left = bounds.x + 20;
                 menu.style.top = bounds.yMax + 6;
             }
             else
             {
-                menu.style.left = bounds.xMax + 4;
+                menu.style.left = bounds.xMax + 20;
                 menu.style.top = bounds.y;
             }
         }
