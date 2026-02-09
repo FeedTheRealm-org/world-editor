@@ -80,7 +80,7 @@ namespace FeedTheRealm.UI.MenuBar
             foreach (MenuOption option in options)
             {
                 Button button = new() { text = option.Label };
-                button.style.width = Length.Percent(100);
+                button.style.unityTextAlign = TextAnchor.MiddleCenter;
                 if (option.MenuOptions.Count > 0)
                 {
                     button.RegisterCallback<PointerEnterEvent>(_ =>
@@ -106,7 +106,6 @@ namespace FeedTheRealm.UI.MenuBar
         private void PositionMenu(VisualElement menu, VisualElement anchor, int depth)
         {
             Rect bounds = anchor.worldBound;
-            menu.style.width = bounds.width;
             if (depth == 0)
             {
                 menu.style.left = bounds.x;

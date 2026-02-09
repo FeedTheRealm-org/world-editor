@@ -27,7 +27,6 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent += OnMoveInput;
             inputReader.LookEvent += OnLookInput;
             inputReader.MoveVerticalEvent += OnMoveVertical;
-            inputReader.CursorToggleEvent += OnToggleSettingsMenu;
             logger.Log("MakerController subscribed to events.", this);
         }
     }
@@ -40,7 +39,6 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent -= OnMoveInput;
             inputReader.LookEvent -= OnLookInput;
             inputReader.MoveVerticalEvent -= OnMoveVertical;
-            inputReader.CursorToggleEvent -= OnToggleSettingsMenu;
             logger.Log("MakerController unsubscribed from events.", this);
         }
     }
@@ -58,13 +56,5 @@ public class MakerController : MonoBehaviour
     private void OnMoveVertical(float value)
     {
         movementController.MoveVertical(value);
-    }
-
-    public void OnToggleSettingsMenu()
-    {
-        if (settingsMenu != null)
-        {
-            settingsMenu.ToggleSettings();
-        }
     }
 }

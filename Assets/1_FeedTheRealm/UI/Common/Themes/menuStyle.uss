@@ -192,3 +192,10 @@
     margin-bottom: 0;
     margin-left: 0;
 }
+
+#Root > #MenuContainer > #SettingsTabView {
+}
+
+#Root > #MenuContainer > #SettingsTabView > #DisplayTab > #DisplayContent > #ResolutionSelect > .unity-popup-field__input {
+    background-color: rgb(0, 0, 0);
+}

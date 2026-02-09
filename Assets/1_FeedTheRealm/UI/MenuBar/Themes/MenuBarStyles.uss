@@ -8,16 +8,16 @@
     border-top-color: rgba(0, 0, 0, 0);
     border-bottom-color: rgba(0, 0, 0, 0);
     -unity-font-style: normal;
-    font-size: 15px;
+    font-size: 12px;
     -unity-text-align: middle-center;
     width: 100%;
 }
 
-.menu-bar{
+.menu-bar {
     flex-grow: 0;
-    height: 4%;
-    min-height: 4%;
-    max-height: 4%;
+    height: 3%;
+    min-height: 3%;
+    max-height: 3%;
     width: auto;
     min-width: auto;
     max-width: none;
@@ -25,7 +25,7 @@
     color: rgb(210, 214, 220);
     flex-direction: row;
     flex-shrink: 0;
-    padding-right: 92%;
+    padding-right: 96%;
 }
 
 .dropdown {
@@ -34,18 +34,22 @@
     color: rgb(210, 214, 220);
     flex-grow: 0;
     flex-shrink: 0;
-    width: 100%;
-    padding-left: 8px;
-    padding-right: 8px;
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
     justify-content: center;
     align-items: center;
     -unity-text-align: middle-center;
     border-radius: 5px;
     align-items: stretch;
     justify-content: flex-start;
+    font-size: 12px;
+    padding-top: 0;
+    padding-bottom: 0;
+    align-self: center;
 }
-
 
 .unity-button:hover {
     color: rgb(255, 255, 255);
+    font-size: 12px;
 }

@@ -156,15 +156,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CursorToggle"",
-                    ""type"": ""Button"",
-                    ""id"": ""674cd9e2-a452-44f0-a30f-1915f247053d"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Scroll"",
                     ""type"": ""Value"",
                     ""id"": ""3656c93a-5643-46f0-a3f3-a1fa6c097d99"",
@@ -392,17 +383,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RemoveAction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""044af5e7-89bc-4d2e-bd4e-46e08db8c270"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CursorToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1008,7 +988,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player_PrimaryInteraction = m_Player.FindAction("PrimaryInteraction", throwIfNotFound: true);
         m_Player_SecondaryInteraction = m_Player.FindAction("SecondaryInteraction", throwIfNotFound: true);
         m_Player_RemoveAction = m_Player.FindAction("RemoveAction", throwIfNotFound: true);
-        m_Player_CursorToggle = m_Player.FindAction("CursorToggle", throwIfNotFound: true);
         m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
@@ -1110,7 +1089,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_PrimaryInteraction;
     private readonly InputAction m_Player_SecondaryInteraction;
     private readonly InputAction m_Player_RemoveAction;
-    private readonly InputAction m_Player_CursorToggle;
     private readonly InputAction m_Player_Scroll;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
@@ -1151,10 +1129,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/RemoveAction".
         /// </summary>
         public InputAction @RemoveAction => m_Wrapper.m_Player_RemoveAction;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/CursorToggle".
-        /// </summary>
-        public InputAction @CursorToggle => m_Wrapper.m_Player_CursorToggle;
         /// <summary>
         /// Provides access to the underlying input action "Player/Scroll".
         /// </summary>
@@ -1206,9 +1180,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @RemoveAction.started += instance.OnRemoveAction;
             @RemoveAction.performed += instance.OnRemoveAction;
             @RemoveAction.canceled += instance.OnRemoveAction;
-            @CursorToggle.started += instance.OnCursorToggle;
-            @CursorToggle.performed += instance.OnCursorToggle;
-            @CursorToggle.canceled += instance.OnCursorToggle;
             @Scroll.started += instance.OnScroll;
             @Scroll.performed += instance.OnScroll;
             @Scroll.canceled += instance.OnScroll;
@@ -1244,9 +1215,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @RemoveAction.started -= instance.OnRemoveAction;
             @RemoveAction.performed -= instance.OnRemoveAction;
             @RemoveAction.canceled -= instance.OnRemoveAction;
-            @CursorToggle.started -= instance.OnCursorToggle;
-            @CursorToggle.performed -= instance.OnCursorToggle;
-            @CursorToggle.canceled -= instance.OnCursorToggle;
             @Scroll.started -= instance.OnScroll;
             @Scroll.performed -= instance.OnScroll;
             @Scroll.canceled -= instance.OnScroll;
@@ -1599,13 +1567,6 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRemoveAction(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "CursorToggle" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCursorToggle(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Scroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

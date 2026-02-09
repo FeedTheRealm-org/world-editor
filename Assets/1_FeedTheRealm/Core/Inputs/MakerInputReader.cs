@@ -11,7 +11,6 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
     public event Action SecondaryInteractionEvent;
     public event Action<float> MoveVerticalEvent;
     public event Action RemoveEvent;
-    public event Action CursorToggleEvent;
     public event Action<Vector2> ScrollEvent;
     private MakerControls controls;
 
@@ -117,14 +116,6 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
         if (context.performed)
         {
             RemoveEvent?.Invoke();
-        }
-    }
-
-    public void OnCursorToggle(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            CursorToggleEvent?.Invoke();
         }
     }
 

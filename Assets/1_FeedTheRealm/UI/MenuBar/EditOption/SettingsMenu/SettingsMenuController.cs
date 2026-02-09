@@ -1,61 +1,25 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class SettingsMenuController : MonoBehaviour
+public class SettingsMenuController : MenuController
 {
-    [Header("Scenes")]
-    [SerializeField]
-    private SceneReference homeScene;
-
-    [Header("General settings")]
     [SerializeField]
     private Logging.Logger logger;
-
-    /* General settings */
-    private Button _homeButton;
-    private Button _exitButton;
-    private Button _closeSettingsButton;
-    private TabView _settingsTabView;
-
-    /* Display settings */
     private DropdownField _resolutionSelect;
     private Toggle _fullscreenToggle;
-
+    private Button _closeButton;
     private List<Resolution> _availableResolutions;
     private const float baseHeight = 800f;
 
     private void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
-
-        /* General settings */
-        _homeButton = root.Q<Button>("HomeButton");
-        _exitButton = root.Q<Button>("ExitButton");
-        _closeSettingsButton = root.Q<Button>("CloseButton");
-        _settingsTabView = root.Q<TabView>("SettingsTabView");
-
-        if (
-            _homeButton == null
-            || _exitButton == null
-            || _closeSettingsButton == null
-            || _settingsTabView == null
-        )
-        {
-            logger.Log(
-                "One or more general settings UI elements not found in the UI Document.",
-                this,
-                Logging.LogType.Error
-            );
-            return;
-        }
-
         /* Display settings */
         _resolutionSelect = root.Q<DropdownField>("ResolutionSelect");
         _fullscreenToggle = root.Q<Toggle>("FullscreenToggle");
+        _closeButton = root.Q<Button>("CloseButton");
         if (_resolutionSelect == null || _fullscreenToggle == null)
         {
             logger.Log(
@@ -65,7 +29,6 @@ public class SettingsMenuController : MonoBehaviour
             );
             return;
         }
-
         initializeDisplaySettings();
         adjustUIToScreenSize();
         registerButtonCallbacks(true);
@@ -80,26 +43,14 @@ public class SettingsMenuController : MonoBehaviour
     {
         float scaleFactor = Screen.height / baseHeight;
 
-        float homeFontSize = _homeButton.resolvedStyle.fontSize;
-        float exitFontSize = _exitButton.resolvedStyle.fontSize;
         float resolutionFontSize = _resolutionSelect.resolvedStyle.fontSize;
         float fullscreenFontSize = _fullscreenToggle.resolvedStyle.fontSize;
-        float tabViewFontSize = _settingsTabView.resolvedStyle.fontSize;
 
-        _homeButton.style.fontSize = new StyleLength(
-            new Length(homeFontSize * scaleFactor, LengthUnit.Pixel)
-        );
-        _exitButton.style.fontSize = new StyleLength(
-            new Length(exitFontSize * scaleFactor, LengthUnit.Pixel)
-        );
         _resolutionSelect.style.fontSize = new StyleLength(
             new Length(resolutionFontSize * scaleFactor, LengthUnit.Pixel)
         );
         _fullscreenToggle.style.fontSize = new StyleLength(
             new Length(fullscreenFontSize * scaleFactor, LengthUnit.Pixel)
-        );
-        _settingsTabView.style.fontSize = new StyleLength(
-            new Length(tabViewFontSize * scaleFactor, LengthUnit.Pixel)
         );
     }
 
@@ -135,50 +86,14 @@ public class SettingsMenuController : MonoBehaviour
     {
         if (!register)
         {
-            _homeButton.clicked -= onHomeButtonClicked;
-            _exitButton.clicked -= onExitButtonClicked;
-            _closeSettingsButton.clicked -= onCloseSettingsButtonClicked;
             _fullscreenToggle.UnregisterValueChangedCallback(onFullscreenToggleChanged);
             _resolutionSelect.UnregisterValueChangedCallback(onResolutionChanged);
+            _closeButton.clicked -= CloseMenu;
             return;
         }
-        _homeButton.clicked += onHomeButtonClicked;
-        _exitButton.clicked += onExitButtonClicked;
-        _closeSettingsButton.clicked += onCloseSettingsButtonClicked;
         _fullscreenToggle.RegisterValueChangedCallback(onFullscreenToggleChanged);
         _resolutionSelect.RegisterValueChangedCallback(onResolutionChanged);
-    }
-
-    public bool IsOpen()
-    {
-        return gameObject.activeSelf;
-    }
-
-    public void ToggleSettings()
-    {
-        logger.Log("Toggle settings", this);
-
-        bool willBeActive = !gameObject.activeSelf;
-
-        gameObject.SetActive(willBeActive);
-    }
-
-    private void onHomeButtonClicked()
-    {
-        logger.Log("Home button clicked", this, Logging.LogType.Info);
-        SceneManager.LoadScene(homeScene.SceneName);
-    }
-
-    private void onExitButtonClicked()
-    {
-        logger.Log("Exit button clicked", this, Logging.LogType.Info);
-        Application.Quit();
-    }
-
-    private void onCloseSettingsButtonClicked()
-    {
-        logger.Log("Close settings button clicked", this, Logging.LogType.Info);
-        ToggleSettings();
+        _closeButton.clicked += CloseMenu;
     }
 
     private void onFullscreenToggleChanged(ChangeEvent<bool> evt)

@@ -70,15 +70,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CursorToggle",
-                    "type": "Button",
-                    "id": "674cd9e2-a452-44f0-a30f-1915f247053d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Scroll",
                     "type": "Value",
                     "id": "3656c93a-5643-46f0-a3f3-a1fa6c097d99",
@@ -306,17 +297,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "RemoveAction",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "044af5e7-89bc-4d2e-bd4e-46e08db8c270",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CursorToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

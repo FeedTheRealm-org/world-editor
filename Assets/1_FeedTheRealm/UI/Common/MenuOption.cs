@@ -3,11 +3,12 @@ using UnityEngine;
 
 namespace FeedTheRealm.UI.Common
 {
-    public abstract class MenuOption : MonoBehaviour
+    public class MenuOption : MonoBehaviour
     {
         [SerializeField]
-        private string label;
+        private string label = "Menu Option";
 
+        [Header("Dropdown Menu Options")]
         [SerializeField]
         private List<MenuOption> menuOptions = new();
         public string Label => label;
