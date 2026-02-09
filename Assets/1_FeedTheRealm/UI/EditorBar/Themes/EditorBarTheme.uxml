@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/Themes/EditorBarStyles.uss?fileID=7433441132597879392&amp;guid=2615f38f3cc8528efb9c805e1a77b3f8&amp;type=3#EditorBarStyles"/>
+    <ui:VisualElement name="root" style="flex-grow: 1;">
+        <ui:VisualElement name="EditorBarContainer" class="menu-bar editor-bar" style="align-self: stretch; justify-content: space-between; align-items: center;">
+            <ui:Button text="Zone - 1" name="ZoneSelect" class="zone-select unity-button"/>
+            <ui:Button text="Placement" name="Placement" class="unity-button" style="width: 80%;"/>
+            <ui:Button text="Element" name="Element" class="unity-button" style="width: 80%;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

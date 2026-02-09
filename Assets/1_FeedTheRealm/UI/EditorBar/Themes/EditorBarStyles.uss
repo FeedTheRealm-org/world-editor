@@ -1,0 +1,79 @@
+:root {
+}
+
+.unity-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    margin-top: 1px;
+}
+
+.editor-bar {
+    flex-grow: 0;
+    height: 3%;
+    min-height: 3%;
+    max-height: 3%;
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    background-color: rgb(14, 14, 14);
+    color: rgb(136, 136, 136);
+    flex-direction: row;
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-top: 1.4%;
+    padding-left: 30px;
+    padding-right: 90%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.dropdown {
+    flex-direction: column;
+    background-color: rgb(20, 20, 22);
+    color: rgb(210, 214, 220);
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 8%;
+    justify-content: center;
+    align-items: center;
+    -unity-text-align: middle-center;
+    align-items: stretch;
+    justify-content: flex-start;
+    font-size: 12px;
+    align-self: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.unity-button:hover {
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+}
+
+.zone-select {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    color: rgb(255, 255, 255);
+    -unity-font-style: normal;
+    border-top-width: -1px;
+    border-right-width: 1px;
+    border-bottom-width: 0;
+    border-left-width: 1px;
+    height: 120%;
+}
