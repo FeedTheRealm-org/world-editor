@@ -6,4 +6,5 @@ public enum CreatorObjectCategories
     LootTable,
     Dialog,
     Message,
+    NPC,
 }
