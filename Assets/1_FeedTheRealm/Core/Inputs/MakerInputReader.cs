@@ -101,16 +101,10 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
 
     public void OnPrimaryInteraction(InputAction.CallbackContext context)
     {
-        if (!context.performed)
-            return;
-
-        if (WorldInputGate.BlockWorldInput)
+        if (context.performed)
         {
-            Debug.Log("World input is currently blocked. Primary interaction ignored.");
-            return;
+            PrimaryInteractionEvent?.Invoke();
         }
-
-        PrimaryInteractionEvent?.Invoke();
     }
 
     public void OnSecondaryInteraction(InputAction.CallbackContext context)
@@ -136,9 +130,4 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
             ScrollEvent?.Invoke(context.ReadValue<Vector2>());
         }
     }
-}
-
-public static class WorldInputGate
-{
-    public static bool BlockWorldInput;
 }
