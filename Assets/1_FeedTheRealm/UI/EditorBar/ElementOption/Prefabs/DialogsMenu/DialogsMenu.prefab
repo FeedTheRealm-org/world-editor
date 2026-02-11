@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 1ca1b7b306fdf604bbadb1bfd59c475d, type: 3}
-  m_SortingOrder: 2
+  m_SortingOrder: 110
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DialogsMenuController
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+  worldEditorStateMachine: {fileID: 0}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   createDialogMenuPrefab: {fileID: 2802280877163831150, guid: 75b5a558444ffdb44bda91b0a8209698, type: 3}
   messagesMenuPrefab: {fileID: 2802280877163831150, guid: 9f89f9a7175ffdd4787b12a56d5d2737, type: 3}

@@ -10,6 +10,8 @@ namespace Utils
 
         public static event Action<WorldData> WorldSelected;
 
+        public static event Action<bool> EnableInput;
+
         public static void RaiseSelected(IPlaceable reference)
         {
             ObjectSelected?.Invoke(reference);
@@ -18,6 +20,11 @@ namespace Utils
         public static void RaiseSelected(WorldData reference)
         {
             WorldSelected?.Invoke(reference);
+        }
+
+        public static void RaiseEnableInput(bool enableInput)
+        {
+            EnableInput?.Invoke(enableInput);
         }
     }
 }

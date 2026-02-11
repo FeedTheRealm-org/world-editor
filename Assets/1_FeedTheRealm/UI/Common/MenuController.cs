@@ -1,11 +1,9 @@
 using System;
 using UnityEngine;
+using Utils;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    private MakerInputReader inputReader;
-
     [SerializeField]
     private WorldEditorStateMachine worldEditorStateMachine;
 
@@ -13,14 +11,12 @@ public class MenuController : MonoBehaviour
 
     void Awake()
     {
-        inputReader.ToggleInput(false);
-        worldEditorStateMachine?.ToggleEditor(false);
+        SelectionRaiser.RaiseEnableInput(false);
     }
 
     public void CloseMenu()
     {
-        inputReader.ToggleInput(true);
-        worldEditorStateMachine?.ToggleEditor(true);
+        SelectionRaiser.RaiseEnableInput(true);
         Destroy(gameObject);
     }
 

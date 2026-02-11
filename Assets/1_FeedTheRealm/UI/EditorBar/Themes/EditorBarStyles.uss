@@ -24,7 +24,7 @@
     width: auto;    min-width: auto;
     max-width: none;
     background-color: rgb(14, 14, 14);
-    color: rgb(136, 136, 136);
+    color: rgb(180, 180, 180);
     flex-direction: row;
     flex-shrink: 0;
     font-size: 15px;
@@ -57,7 +57,6 @@
 
 .unity-button:hover {
     color: rgb(255, 255, 255);
-    font-size: 12px;
 }
 
 .zone-select {

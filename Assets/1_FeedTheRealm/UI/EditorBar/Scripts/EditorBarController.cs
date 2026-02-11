@@ -137,7 +137,7 @@ namespace FeedTheRealm.UI.MenuBar
             }
             if (IsPointerOverMenuBar(mousePos))
                 return;
-            const float padding = 10f;
+            const float padding = 15f;
             foreach (var menu in openMenus)
             {
                 Rect expandedBounds = menu.worldBound;

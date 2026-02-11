@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Utils;
 
 [CreateAssetMenu(fileName = "MakerInputReader", menuName = "Scriptable Objects/MakerInputReader")]
 public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
@@ -21,12 +22,14 @@ public class MakerInputReader : ScriptableObject, MakerControls.IPlayerActions
             controls = new MakerControls();
             controls.Player.SetCallbacks(this);
         }
+        SelectionRaiser.EnableInput += ToggleInput;
         controls.Player.Enable();
     }
 
     private void OnDisable()
     {
         controls.Player.Disable();
+        SelectionRaiser.EnableInput -= ToggleInput;
     }
 
     public void ToggleInput(bool isEnabled)
