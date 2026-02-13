@@ -67,6 +67,9 @@ public class MessagesMenuController : MenuController
     void OnEditMessage(Message message)
     {
         logger.Log("Editing message: " + message.DisplayName, this, Logging.LogType.Info);
+        EditContext.SetObjectToEdit(message);
+        MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
+        OpenMenu(createMessageMenuPrefab);
     }
 
     void OnDeleteMessage(Message message, VisualElement entry)

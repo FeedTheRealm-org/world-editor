@@ -41,7 +41,6 @@ public class EnemyCreatorMenuController : MenuController
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
 
-        // note: these if statements are helpful when debugging missing UI elements
         nameInput = root.Q<TextField>("NameField");
         if (nameInput == null)
             logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
@@ -65,7 +64,6 @@ public class EnemyCreatorMenuController : MenuController
             logger.Log("LootTable dropdown field not found in UI", this, Logging.LogType.Error);
         else
         {
-            // Populate loot table choices from library
             var lootTables = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.LootTable)
                 .Cast<LootTable>()
@@ -110,7 +108,6 @@ public class EnemyCreatorMenuController : MenuController
         if (currentEnemy.lootTable != null)
             lootTableInput.value = currentEnemy.lootTable.name;
 
-        // Load existing sprite for preview
         LoadExistingSprite(currentEnemy.spriteFile);
     }
 
@@ -149,7 +146,6 @@ public class EnemyCreatorMenuController : MenuController
 
     private void OnSaveClicked()
     {
-        // Find selected loot table by name
         var lootTables = creatorObjectLibrary
             .GetCreatables(CreatorObjectCategories.LootTable)
             .Cast<LootTable>()
@@ -158,7 +154,6 @@ public class EnemyCreatorMenuController : MenuController
             lt.DisplayName == lootTableInput.value
         );
 
-        // Create LootTableData from selected LootTable (if any)
         LootTableData lootTableData = null;
         if (selectedLootTable != null)
         {

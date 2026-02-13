@@ -44,6 +44,12 @@ public class MessagesCreatorMenuController : MenuController
         returnButton.clicked += ReturnToMessagesMenu;
         closeButton.clicked += CloseMenu;
 
+        if (currentMessage == null && EditContext.HasObjectToEdit())
+        {
+            currentMessage = EditContext.GetAndClearObjectToEdit<Message>();
+            PendingDialogId = currentMessage.dialogId;
+        }
+
         if (currentMessage != null)
         {
             PopulateFields();

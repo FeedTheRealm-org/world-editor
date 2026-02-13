@@ -4,7 +4,16 @@ using Models;
 public class Message : CreatorObject
 {
     public string Sender;
-    public string Content;
+    public string Content
+    {
+        get => _content;
+        set
+        {
+            _content = value;
+            name = value;
+        }
+    }
+    private string _content;
     public string dialogId;
 
     public Message(MessageData data, string dialogId)
