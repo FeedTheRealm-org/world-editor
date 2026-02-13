@@ -62,7 +62,7 @@ public class DialogsCreatorMenuController : MenuController
     {
         if (currentDialog == null)
         {
-            var dialogData = new DialogData("", nameInput.value, "");
+            var dialogData = new DialogData("", nameInput.value);
             currentDialog = new Dialog(dialogData);
             creatorObjectLibrary.AddCreatable(CreatorObjectCategories.Dialog, currentDialog);
             logger.Log($"Created new dialog: {currentDialog.name}", this, Logging.LogType.Info);

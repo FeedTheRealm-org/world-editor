@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Models;
 using SimpleFileBrowser;
 using UnityEngine;
@@ -23,25 +25,35 @@ public class NPCCreatorMenuController : MenuController
 
     private TextField nameInput;
     private TextField descriptionInput;
+    private DropdownField dialogDropdown;
+    private ScrollView messagesScrollView;
+    private Label messagesLabel;
     private Button saveButton;
     private Button returnButton;
     private Button closeButton;
     private Button loadSpriteButton;
     private Image spritePreview;
     private string pendingSpriteSourcePath;
+    private string selectedDialogId = "";
+    private Dictionary<string, string> messageQuestAssignments = new Dictionary<string, string>();
+    private NPCMessageItemBuilder messageItemBuilder;
 
     void OnEnable()
     {
         var uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
 
-        // note: these if statements are helpful when debugging missing UI elements
         nameInput = root.Q<TextField>("NameField");
         if (nameInput == null)
             logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
         descriptionInput = root.Q<TextField>("DescriptionField");
         if (descriptionInput == null)
             logger.Log("Description input field not found in UI", this, Logging.LogType.Error);
+
+        dialogDropdown = root.Q<DropdownField>("DialogDropdown");
+        messagesScrollView = root.Q<ScrollView>("MessagesScrollView");
+        messagesLabel = root.Q<Label>("MessagesLabel");
+
         saveButton = root.Q<Button>("SaveNPC");
         returnButton = root.Q<Button>("Return");
         closeButton = root.Q<Button>("Close");
@@ -63,7 +75,19 @@ public class NPCCreatorMenuController : MenuController
             currentNPC = EditContext.GetAndClearObjectToEdit<GenericNPC>();
         }
 
-        // Populate fields if editing existing item
+        messageItemBuilder = new NPCMessageItemBuilder(
+            creatorObjectLibrary,
+            logger,
+            messageQuestAssignments
+        );
+
+        PopulateDialogDropdown();
+
+        if (dialogDropdown != null)
+        {
+            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
+        }
+
         if (currentNPC != null)
         {
             PopulateFields();
@@ -75,8 +99,76 @@ public class NPCCreatorMenuController : MenuController
         nameInput.value = currentNPC.name;
         descriptionInput.value = currentNPC.description ?? "";
 
-        // Load existing sprite for preview
         LoadExistingSprite(currentNPC.spriteFile);
+
+        if (currentNPC.npcDialog != null && !string.IsNullOrEmpty(currentNPC.npcDialog.dialogId))
+        {
+            var dialogId = currentNPC.npcDialog.dialogId;
+
+            var dialogs = creatorObjectLibrary
+                .GetCreatables(CreatorObjectCategories.Dialog)
+                .Cast<Dialog>()
+                .ToList();
+
+            var npcDialog = dialogs.FirstOrDefault(d => d.ObjectId == dialogId);
+            if (npcDialog != null && dialogDropdown != null)
+            {
+                if (
+                    dialogDropdown.choices != null
+                    && dialogDropdown.choices.Contains(npcDialog.DisplayName)
+                )
+                {
+                    dialogDropdown.value = npcDialog.DisplayName;
+                    selectedDialogId = npcDialog.ObjectId;
+
+                    messageQuestAssignments = currentNPC.npcDialog.GetMessageQuestMap();
+
+                    LoadDialogMessagesForEdit(selectedDialogId);
+
+                    logger?.Log(
+                        $"NPCCreator: Loaded dialog '{npcDialog.DisplayName}' with {messageQuestAssignments.Count} quest assignments for NPC '{currentNPC.DisplayName}'",
+                        this,
+                        Logging.LogType.Info
+                    );
+                }
+                else
+                {
+                    logger?.Log(
+                        $"NPCCreator: Dialog '{npcDialog.DisplayName}' not found in dropdown choices",
+                        this,
+                        Logging.LogType.Warning
+                    );
+                }
+            }
+        }
+    }
+
+    private void LoadDialogMessagesForEdit(string dialogId)
+    {
+        if (messagesScrollView == null || messagesLabel == null)
+            return;
+
+        messagesScrollView.Clear();
+        messagesScrollView.style.display = DisplayStyle.Flex;
+        messagesLabel.style.display = DisplayStyle.Flex;
+
+        var messages = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.Message)
+            .Cast<Message>()
+            .Where(m => m.dialogId == dialogId)
+            .ToList();
+
+        logger?.Log(
+            $"NPCCreator: Loading {messages.Count} messages for dialog {dialogId} in edit mode",
+            this,
+            Logging.LogType.Info
+        );
+
+        foreach (var message in messages)
+        {
+            var messageItem = messageItemBuilder.CreateMessageItem(message);
+            messagesScrollView.Add(messageItem);
+        }
     }
 
     private void LoadExistingSprite(string spritePath)
@@ -121,13 +213,28 @@ public class NPCCreatorMenuController : MenuController
             return;
         }
 
+        NPCDialogData npcDialogData = null;
+        if (!string.IsNullOrEmpty(selectedDialogId))
+        {
+            npcDialogData = new NPCDialogData(selectedDialogId);
+
+            npcDialogData.SetMessageQuestMap(messageQuestAssignments);
+
+            logger?.Log(
+                $"NPCCreator: Created NPCDialogData with dialog ID {selectedDialogId} and {messageQuestAssignments.Count} quest assignments",
+                this,
+                Logging.LogType.Info
+            );
+        }
+
         if (currentNPC == null)
         {
             var npcData = new NPCData(
                 null,
                 nameInput.value,
                 descriptionInput.value ?? "",
-                pendingSpriteSourcePath
+                pendingSpriteSourcePath,
+                npcDialogData
             );
             currentNPC = new GenericNPC(npcData);
             creatorObjectLibrary.AddCreatable(CreatorObjectCategories.NPC, currentNPC);
@@ -137,6 +244,7 @@ public class NPCCreatorMenuController : MenuController
         {
             currentNPC.name = nameInput.value;
             currentNPC.description = descriptionInput.value;
+            currentNPC.npcDialog = npcDialogData;
             if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
             {
                 currentNPC.spriteFile = pendingSpriteSourcePath;
@@ -197,5 +305,78 @@ public class NPCCreatorMenuController : MenuController
             closeButton.clicked -= CloseMenu;
         if (loadSpriteButton != null)
             loadSpriteButton.clicked -= LoadSprite;
+        if (dialogDropdown != null)
+            dialogDropdown.UnregisterValueChangedCallback(OnDialogChanged);
+    }
+
+    private void PopulateDialogDropdown()
+    {
+        if (dialogDropdown == null || creatorObjectLibrary == null)
+            return;
+
+        var dialogs = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.Dialog)
+            .Cast<Dialog>()
+            .ToList();
+
+        dialogDropdown.choices = dialogs.Select(d => d.DisplayName).ToList();
+        dialogDropdown.choices.Insert(0, "None");
+
+        dialogDropdown.value = "None";
+
+        logger?.Log($"NPCCreator: Populated {dialogs.Count} dialogs", this, Logging.LogType.Info);
+    }
+
+    private void OnDialogChanged(ChangeEvent<string> evt)
+    {
+        if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
+        {
+            selectedDialogId = "";
+            if (messagesScrollView != null)
+                messagesScrollView.style.display = DisplayStyle.None;
+            if (messagesLabel != null)
+                messagesLabel.style.display = DisplayStyle.None;
+            return;
+        }
+
+        var dialogs = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.Dialog)
+            .Cast<Dialog>()
+            .ToList();
+
+        var selectedDialog = dialogs.FirstOrDefault(d => d.DisplayName == evt.newValue);
+        if (selectedDialog != null)
+        {
+            selectedDialogId = selectedDialog.ObjectId;
+            LoadDialogMessages(selectedDialogId);
+        }
+    }
+
+    private void LoadDialogMessages(string dialogId)
+    {
+        if (messagesScrollView == null || messagesLabel == null)
+            return;
+
+        messagesScrollView.Clear();
+        messagesScrollView.style.display = DisplayStyle.Flex;
+        messagesLabel.style.display = DisplayStyle.Flex;
+
+        var messages = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.Message)
+            .Cast<Message>()
+            .Where(m => m.dialogId == dialogId)
+            .ToList();
+
+        logger?.Log(
+            $"NPCCreator: Loading {messages.Count} messages for dialog {dialogId}",
+            this,
+            Logging.LogType.Info
+        );
+
+        foreach (var message in messages)
+        {
+            var messageItem = messageItemBuilder.CreateMessageItem(message);
+            messagesScrollView.Add(messageItem);
+        }
     }
 }
