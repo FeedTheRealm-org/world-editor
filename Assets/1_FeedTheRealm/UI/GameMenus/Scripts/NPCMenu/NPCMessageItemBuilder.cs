@@ -36,19 +36,7 @@ public class NPCMessageItemBuilder
     private VisualElement CreateMessageContainer()
     {
         var container = new VisualElement();
-        container.style.flexDirection = FlexDirection.Row;
-        container.style.justifyContent = Justify.SpaceBetween;
-        container.style.alignItems = Align.Center;
-        container.style.marginBottom = 5;
-        container.style.paddingLeft = 5;
-        container.style.paddingRight = 5;
-        container.style.paddingTop = 3;
-        container.style.paddingBottom = 3;
-        container.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
-        container.style.borderBottomLeftRadius = 4;
-        container.style.borderBottomRightRadius = 4;
-        container.style.borderTopLeftRadius = 4;
-        container.style.borderTopRightRadius = 4;
+        container.AddToClassList("npc-message-container");
         return container;
     }
 
@@ -60,17 +48,14 @@ public class NPCMessageItemBuilder
                 : message.Content;
 
         var label = new Label(displayContent);
-        label.style.color = Color.white;
-        label.style.flexGrow = 1;
-        label.style.fontSize = 12;
+        label.AddToClassList("npc-message-label");
         return label;
     }
 
     private VisualElement CreateRightContainer(Message message)
     {
         var rightContainer = new VisualElement();
-        rightContainer.style.flexDirection = FlexDirection.Row;
-        rightContainer.style.alignItems = Align.Center;
+        rightContainer.AddToClassList("npc-message-right-container");
 
         string currentQuestId = messageQuestAssignments.ContainsKey(message.ObjectId)
             ? messageQuestAssignments[message.ObjectId]
@@ -78,8 +63,15 @@ public class NPCMessageItemBuilder
 
         var questDropdown = CreateQuestDropdown(message, currentQuestId);
         var addQuestButton = CreateAddQuestButton(message, questDropdown, currentQuestId);
+        var removeQuestButton = CreateRemoveQuestButton(
+            message,
+            questDropdown,
+            addQuestButton,
+            currentQuestId
+        );
 
         rightContainer.Add(questDropdown);
+        rightContainer.Add(removeQuestButton);
         rightContainer.Add(addQuestButton);
 
         return rightContainer;
@@ -88,10 +80,10 @@ public class NPCMessageItemBuilder
     private DropdownField CreateQuestDropdown(Message message, string currentQuestId)
     {
         var dropdown = new DropdownField();
+        dropdown.AddToClassList("npc-quest-dropdown");
         dropdown.style.display = string.IsNullOrEmpty(currentQuestId)
             ? DisplayStyle.None
             : DisplayStyle.Flex;
-        dropdown.style.minWidth = 120;
 
         PopulateQuestDropdown(dropdown, currentQuestId);
 
@@ -118,17 +110,20 @@ public class NPCMessageItemBuilder
     )
     {
         var button = new Button();
+        button.AddToClassList("npc-add-quest-button");
         button.text = "add quest";
-        button.style.fontSize = 10;
-        button.style.paddingLeft = 8;
-        button.style.paddingRight = 8;
-        button.style.paddingTop = 4;
-        button.style.paddingBottom = 4;
 
         button.clicked += () =>
         {
             questDropdown.style.display = DisplayStyle.Flex;
             button.style.display = DisplayStyle.None;
+
+            var rightContainer = button.parent;
+            var removeButton = rightContainer?.Q<Button>();
+            if (removeButton != null && removeButton.text == "✕")
+            {
+                removeButton.style.display = DisplayStyle.Flex;
+            }
 
             var quests = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.Quest)
@@ -142,6 +137,41 @@ public class NPCMessageItemBuilder
         };
 
         if (!string.IsNullOrEmpty(currentQuestId))
+        {
+            button.style.display = DisplayStyle.None;
+        }
+
+        return button;
+    }
+
+    private Button CreateRemoveQuestButton(
+        Message message,
+        DropdownField questDropdown,
+        Button addQuestButton,
+        string currentQuestId
+    )
+    {
+        var button = new Button();
+        button.AddToClassList("npc-remove-quest-button");
+        button.text = "✕";
+
+        button.clicked += () =>
+        {
+            if (messageQuestAssignments.ContainsKey(message.ObjectId))
+            {
+                messageQuestAssignments.Remove(message.ObjectId);
+            }
+
+            questDropdown.style.display = DisplayStyle.None;
+            button.style.display = DisplayStyle.None;
+
+            if (addQuestButton != null)
+            {
+                addQuestButton.style.display = DisplayStyle.Flex;
+            }
+        };
+
+        if (string.IsNullOrEmpty(currentQuestId))
         {
             button.style.display = DisplayStyle.None;
         }
