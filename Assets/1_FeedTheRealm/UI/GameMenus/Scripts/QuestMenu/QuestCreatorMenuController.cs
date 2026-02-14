@@ -4,24 +4,10 @@ using Enums;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 
 [RequireComponent(typeof(UIDocument))]
-public class QuestCreatorMenuController : MenuController
+public class QuestCreatorMenuController : BaseCreatorMenuController<GenericQuest>
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GenericQuest currentQuest;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private GameObject questMenuPrefab;
-
-    private TextField nameInput;
     private TextField contentInput;
     private DropdownField questTypeDropdown;
     private DropdownField enemyDropdown;
@@ -29,33 +15,24 @@ public class QuestCreatorMenuController : MenuController
     private IntegerField targetAmountField;
     private VisualElement enemyContainer;
     private VisualElement npcContainer;
-    private Button saveButton;
-    private Button returnButton;
-    private Button closeButton;
 
-    void OnEnable()
+    protected override CreatorObjectCategories Category => CreatorObjectCategories.Quest;
+    protected override string ObjectTypeName => "Quest";
+    protected override string SaveButtonName => "SaveButton";
+
+    protected override void InitializeSpecificFields(VisualElement root)
     {
-        var uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
-
-        nameInput = root.Q<TextField>("NameField");
         contentInput = root.Q<TextField>("ContentField");
+        LogIfNull(contentInput, "Content input field");
+
         questTypeDropdown = root.Q<DropdownField>("QuestTypeDropdown");
+        LogIfNull(questTypeDropdown, "QuestType dropdown");
+
         enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
         npcDropdown = root.Q<DropdownField>("NPCDropdown");
         targetAmountField = root.Q<IntegerField>("TargetAmount");
         enemyContainer = root.Q<VisualElement>("EnemyContainer");
         npcContainer = root.Q<VisualElement>("NPCContainer");
-        saveButton = root.Q<Button>("SaveQuest");
-        returnButton = root.Q<Button>("Return");
-        closeButton = root.Q<Button>("Close");
-
-        if (nameInput == null)
-            logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
-        if (contentInput == null)
-            logger.Log("Content input field not found in UI", this, Logging.LogType.Error);
-        if (questTypeDropdown == null)
-            logger.Log("QuestType dropdown not found in UI", this, Logging.LogType.Error);
 
         if (questTypeDropdown != null)
         {
@@ -63,52 +40,38 @@ public class QuestCreatorMenuController : MenuController
             questTypeDropdown.RegisterValueChangedCallback(OnQuestTypeChanged);
         }
 
-        saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToQuestsMenu;
-        closeButton.clicked += CloseMenu;
-
-        if (currentQuest == null)
-        {
-            currentQuest = EditContext.GetAndClearObjectToEdit<GenericQuest>();
-        }
-
         if (enemyContainer != null)
             enemyContainer.style.display = DisplayStyle.None;
         if (npcContainer != null)
             npcContainer.style.display = DisplayStyle.None;
-
-        if (currentQuest != null)
-        {
-            PopulateFields();
-        }
     }
 
-    private void PopulateFields()
+    protected override void PopulateFields()
     {
-        nameInput.value = currentQuest.name;
-        contentInput.value = currentQuest.content ?? "";
-        questTypeDropdown.value = currentQuest.questType.ToString();
-        targetAmountField.value = currentQuest.targetAmount;
+        nameInput.value = currentObject.name;
+        contentInput.value = currentObject.content ?? "";
+        questTypeDropdown.value = currentObject.questType.ToString();
+        targetAmountField.value = currentObject.targetAmount;
 
-        UpdateQuestTypeUI(currentQuest.questType.ToString());
+        UpdateQuestTypeUI(currentObject.questType.ToString());
 
-        if (currentQuest.questType == QuestType.EnemySlays && enemyDropdown != null)
+        if (currentObject.questType == QuestType.EnemySlays && enemyDropdown != null)
         {
             var enemies = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.Enemy)
                 .Cast<GenericEnemy>()
                 .ToList();
-            var selectedEnemy = enemies.FirstOrDefault(e => e.ObjectId == currentQuest.targetId);
+            var selectedEnemy = enemies.FirstOrDefault(e => e.ObjectId == currentObject.targetId);
             if (selectedEnemy != null)
                 enemyDropdown.value = selectedEnemy.DisplayName;
         }
-        else if (currentQuest.questType == QuestType.NpcInteract && npcDropdown != null)
+        else if (currentObject.questType == QuestType.NpcInteract && npcDropdown != null)
         {
             var npcs = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.NPC)
                 .Cast<GenericNPC>()
                 .ToList();
-            var selectedNPC = npcs.FirstOrDefault(n => n.ObjectId == currentQuest.targetId);
+            var selectedNPC = npcs.FirstOrDefault(n => n.ObjectId == currentObject.targetId);
             if (selectedNPC != null)
                 npcDropdown.value = selectedNPC.DisplayName;
         }
@@ -172,44 +135,79 @@ public class QuestCreatorMenuController : MenuController
         logger?.Log($"QuestCreator: Populated {npcs.Count} NPCs", this, Logging.LogType.Info);
     }
 
-    private void OnSaveClicked()
+    protected override bool ValidateSpecificFields()
     {
-        if (string.IsNullOrEmpty(nameInput.value))
+        if (string.IsNullOrEmpty(questTypeDropdown?.value))
         {
-            logger?.Log("Quest name is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Quest name is required", "error", Color.red);
-            return;
-        }
-
-        if (string.IsNullOrEmpty(questTypeDropdown.value))
-        {
-            logger?.Log("Quest type is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Quest type is required", "error", Color.red);
-            return;
+            ShowValidationError("Quest type is required");
+            return false;
         }
 
         if (!Enum.TryParse<QuestType>(questTypeDropdown.value, out var questType))
         {
-            logger?.Log("Invalid quest type", this, Logging.LogType.Warning);
-            return;
+            ShowValidationError("Invalid quest type");
+            return false;
         }
 
-        string targetId = null;
+        if (questType == QuestType.EnemySlays && string.IsNullOrEmpty(enemyDropdown?.value))
+        {
+            ShowValidationError("Please select an enemy");
+            return false;
+        }
+
+        if (questType == QuestType.NpcInteract && string.IsNullOrEmpty(npcDropdown?.value))
+        {
+            ShowValidationError("Please select an NPC");
+            return false;
+        }
+
+        return true;
+    }
+
+    protected override void CreateNewObject()
+    {
+        var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
+        string targetId = GetTargetId(questType);
         int targetAmount = questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
 
+        var questData = new QuestData(
+            null,
+            nameInput.value,
+            contentInput.value ?? "",
+            questType,
+            targetId,
+            targetAmount,
+            null
+        );
+
+        currentObject = new GenericQuest(questData);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log($"Created new quest: {currentObject.DisplayName}", this, Logging.LogType.Info);
+    }
+
+    protected override void UpdateExistingObject()
+    {
+        var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
+
+        currentObject.name = nameInput.value;
+        currentObject.content = contentInput.value;
+        currentObject.questType = questType;
+        currentObject.targetId = GetTargetId(questType);
+        currentObject.targetAmount =
+            questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
+
+        logger?.Log($"Updated quest: {currentObject.DisplayName}", this, Logging.LogType.Info);
+    }
+
+    private string GetTargetId(QuestType questType)
+    {
         if (questType == QuestType.EnemySlays && enemyDropdown != null)
         {
             var enemies = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.Enemy)
                 .Cast<GenericEnemy>()
                 .ToList();
-            var selectedEnemy = enemies.FirstOrDefault(e => e.DisplayName == enemyDropdown.value);
-            if (selectedEnemy == null)
-            {
-                ToastNotification.Show("Please select an enemy", "error", Color.red);
-                return;
-            }
-            targetId = selectedEnemy.ObjectId;
+            return enemies.FirstOrDefault(e => e.DisplayName == enemyDropdown.value)?.ObjectId;
         }
         else if (questType == QuestType.NpcInteract && npcDropdown != null)
         {
@@ -217,62 +215,15 @@ public class QuestCreatorMenuController : MenuController
                 .GetCreatables(CreatorObjectCategories.NPC)
                 .Cast<GenericNPC>()
                 .ToList();
-            var selectedNPC = npcs.FirstOrDefault(n => n.DisplayName == npcDropdown.value);
-            if (selectedNPC == null)
-            {
-                ToastNotification.Show("Please select an NPC", "error", Color.red);
-                return;
-            }
-            targetId = selectedNPC.ObjectId;
+            return npcs.FirstOrDefault(n => n.DisplayName == npcDropdown.value)?.ObjectId;
         }
-
-        if (currentQuest == null)
-        {
-            var questData = new QuestData(
-                null,
-                nameInput.value,
-                contentInput.value ?? "",
-                questType,
-                targetId,
-                targetAmount,
-                null
-            );
-            currentQuest = new GenericQuest(questData);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.Quest, currentQuest);
-            logger.Log(
-                $"Created new quest: {currentQuest.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        else
-        {
-            currentQuest.name = nameInput.value;
-            currentQuest.content = contentInput.value;
-            currentQuest.questType = questType;
-            currentQuest.targetId = targetId;
-            currentQuest.targetAmount = targetAmount;
-            logger.Log($"Updated quest: {currentQuest.DisplayName}", this, Logging.LogType.Info);
-        }
-
-        ToastNotification.Show("Quest saved successfully", "success", Color.green);
-
-        ReturnToQuestsMenu();
+        return null;
     }
 
-    private void ReturnToQuestsMenu()
+    protected override void OnDisable()
     {
-        OpenMenu(questMenuPrefab);
-    }
+        base.OnDisable();
 
-    void OnDisable()
-    {
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-        if (returnButton != null)
-            returnButton.clicked -= ReturnToQuestsMenu;
-        if (closeButton != null)
-            closeButton.clicked -= CloseMenu;
         if (questTypeDropdown != null)
             questTypeDropdown.UnregisterValueChangedCallback(OnQuestTypeChanged);
     }

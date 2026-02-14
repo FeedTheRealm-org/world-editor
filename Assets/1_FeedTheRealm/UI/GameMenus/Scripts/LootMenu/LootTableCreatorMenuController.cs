@@ -1,97 +1,58 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Models;
-using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
 using LootEntryData = Models.LootTableData.LootEntryData;
 
 [RequireComponent(typeof(UIDocument))]
-public class LootTableCreatorMenuController : MenuController
+public class LootTableCreatorMenuController : BaseCreatorMenuController<LootTable>
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private LootTable currentLootTable;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private GameObject lootMenuPrefab;
-
-    private TextField nameInput;
     private DropdownField itemListDropdown;
     private SliderInt itemProbabilitySlider;
     private FloatField minGoldDropAmountInput;
     private FloatField maxGoldDropAmountInput;
     private Button addItemButton;
-    private Button saveLootTableButton;
-    private Button returnButton;
-    private Button closeButton;
-    private Image spritePreview;
+    private Image itemSpritePreview;
     private ScrollView itemsScrollView;
 
     private List<LootEntryData> addedEntries = new();
 
-    void OnEnable()
+    protected override CreatorObjectCategories Category => CreatorObjectCategories.LootTable;
+    protected override string ObjectTypeName => "Loot Table";
+    protected override string SaveButtonName => "SaveButton";
+
+    protected override void InitializeSpecificFields(VisualElement root)
     {
-        var uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
-
-        nameInput = root.Q<TextField>("NameField");
-        if (nameInput == null)
-            logger?.Log("Name input field not found in UI", this, Logging.LogType.Error);
-
         itemListDropdown = root.Q<DropdownField>("ItemList");
-        if (itemListDropdown == null)
-            logger?.Log("ItemList dropdown not found in UI", this, Logging.LogType.Error);
-        else
+        LogIfNull(itemListDropdown, "ItemList dropdown");
+
+        if (itemListDropdown != null)
         {
             PopulateItemDropdown();
             itemListDropdown.RegisterValueChangedCallback(OnItemSelected);
         }
 
         itemProbabilitySlider = root.Q<SliderInt>("ItemProbabilitySlider");
-        if (itemProbabilitySlider == null)
-            logger?.Log("Item probability slider not found in UI", this, Logging.LogType.Error);
-        else
+        LogIfNull(itemProbabilitySlider, "Item probability slider");
+
+        if (itemProbabilitySlider != null)
         {
             itemProbabilitySlider.showInputField = true;
         }
 
         minGoldDropAmountInput = root.Q<FloatField>("MinGoldDropAmount");
-        if (minGoldDropAmountInput == null)
-            logger?.Log("Min gold drop amount field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(minGoldDropAmountInput, "Min gold drop amount field");
 
         maxGoldDropAmountInput = root.Q<FloatField>("MaxGoldDropAmount");
-        if (maxGoldDropAmountInput == null)
-            logger?.Log("Max gold drop amount field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(maxGoldDropAmountInput, "Max gold drop amount field");
 
         addItemButton = root.Q<Button>("AddItemButton");
-        saveLootTableButton = root.Q<Button>("SaveLootTableButton");
-        returnButton = root.Q<Button>("Return");
-        closeButton = root.Q<Button>("Close");
-        spritePreview = root.Q<Image>("SpritePreview");
+        itemSpritePreview = root.Q<Image>("SpritePreview");
         itemsScrollView = root.Q<ScrollView>("ItemsScrollView");
 
-        addItemButton.clicked += OnAddItemClicked;
-        saveLootTableButton.clicked += OnSaveLootTableClicked;
-        returnButton.clicked += ReturnToLootMenu;
-        closeButton.clicked += CloseMenu;
-
-        if (currentLootTable == null)
-        {
-            currentLootTable = EditContext.GetAndClearObjectToEdit<LootTable>();
-        }
-
-        if (currentLootTable != null)
-        {
-            PopulateFields();
-        }
+        RegisterButtonCallback(addItemButton, OnAddItemClicked);
     }
 
     private void PopulateItemDropdown()
@@ -110,7 +71,7 @@ public class LootTableCreatorMenuController : MenuController
         var selectedItem = items.FirstOrDefault(item => item.DisplayName == evt.newValue);
         if (selectedItem != null)
         {
-            LootTableMenuUI.UpdateSpritePreview(spritePreview, selectedItem.spriteFile);
+            LootTableMenuUI.UpdateSpritePreview(itemSpritePreview, selectedItem.spriteFile);
         }
     }
 
@@ -144,16 +105,16 @@ public class LootTableCreatorMenuController : MenuController
         return item != null ? item.DisplayName : $"<Missing Item {itemId}>";
     }
 
-    private void PopulateFields()
+    protected override void PopulateFields()
     {
-        nameInput.value = currentLootTable.DisplayName;
-        minGoldDropAmountInput.value = currentLootTable.minGoldDropAmount;
-        maxGoldDropAmountInput.value = currentLootTable.maxGoldDropAmount;
+        nameInput.value = currentObject.DisplayName;
+        minGoldDropAmountInput.value = currentObject.minGoldDropAmount;
+        maxGoldDropAmountInput.value = currentObject.maxGoldDropAmount;
 
         addedEntries = new List<LootEntryData>();
-        if (currentLootTable.lootItems != null)
+        if (currentObject.lootItems != null)
         {
-            foreach (var entry in currentLootTable.lootItems)
+            foreach (var entry in currentObject.lootItems)
             {
                 var lootEntry = CreateLootEntryDataFromObject(entry);
                 if (lootEntry != null)
@@ -226,68 +187,38 @@ public class LootTableCreatorMenuController : MenuController
         RefreshItemsFoldout();
     }
 
-    private void OnSaveLootTableClicked()
+    protected override void CreateNewObject()
     {
-        if (string.IsNullOrEmpty(nameInput.value))
-        {
-            logger?.Log("Loot table name is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Loot table name is required", "error", Color.red);
-            return;
-        }
+        var lootTableData = new LootTableData(
+            null,
+            nameInput.value,
+            (int)minGoldDropAmountInput.value,
+            (int)maxGoldDropAmountInput.value,
+            new List<LootEntryData>(addedEntries)
+        );
 
-        var lootEntries = new List<LootEntryData>(addedEntries);
-
-        if (currentLootTable == null)
-        {
-            var lootTableData = new LootTableData(
-                null,
-                nameInput.value,
-                (int)minGoldDropAmountInput.value,
-                (int)maxGoldDropAmountInput.value,
-                lootEntries
-            );
-
-            currentLootTable = new LootTable(lootTableData);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.LootTable, currentLootTable);
-            logger?.Log(
-                $"Created new loot table: {currentLootTable.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        else
-        {
-            currentLootTable.name = nameInput.value;
-            currentLootTable.minGoldDropAmount = (int)minGoldDropAmountInput.value;
-            currentLootTable.maxGoldDropAmount = (int)maxGoldDropAmountInput.value;
-            currentLootTable.lootItems = lootEntries;
-            logger?.Log(
-                $"Updated loot table: {currentLootTable.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-
-        ToastNotification.Show("Loot table saved successfully", "success", Color.green);
-
-        ReturnToLootMenu();
+        currentObject = new LootTable(lootTableData);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log(
+            $"Created new loot table: {currentObject.DisplayName}",
+            this,
+            Logging.LogType.Info
+        );
     }
 
-    private void ReturnToLootMenu()
+    protected override void UpdateExistingObject()
     {
-        OpenMenu(lootMenuPrefab);
+        currentObject.name = nameInput.value;
+        currentObject.minGoldDropAmount = (int)minGoldDropAmountInput.value;
+        currentObject.maxGoldDropAmount = (int)maxGoldDropAmountInput.value;
+        currentObject.lootItems = new List<LootEntryData>(addedEntries);
+        logger?.Log($"Updated loot table: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
-        if (addItemButton != null)
-            addItemButton.clicked -= OnAddItemClicked;
-        if (saveLootTableButton != null)
-            saveLootTableButton.clicked -= OnSaveLootTableClicked;
-        if (returnButton != null)
-            returnButton.clicked -= ReturnToLootMenu;
-        if (closeButton != null)
-            closeButton.clicked -= CloseMenu;
+        base.OnDisable();
+
         if (itemListDropdown != null)
             itemListDropdown.UnregisterValueChangedCallback(OnItemSelected);
     }

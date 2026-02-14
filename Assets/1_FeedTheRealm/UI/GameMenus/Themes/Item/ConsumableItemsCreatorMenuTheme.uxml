@@ -23,7 +23,7 @@
                     <ui:FloatField label="Effect Duration" value="42.2" name="EffectDurationField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                     <ui:FloatField label="Effect Cooldown" value="42.2" name="EffectCooldownField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                     <ui:IntegerField label="Max amout to stack" value="42.2" name="MaxStackField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
-                    <ui:Button text="Save Item" name="SaveItem" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:Button text="Save Item" name="SaveButton" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

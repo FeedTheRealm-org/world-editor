@@ -1,79 +1,44 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Models;
-using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 
 [RequireComponent(typeof(UIDocument))]
-public class NPCCreatorMenuController : MenuController
+public class NPCCreatorMenuController : BaseCreatorMenuController<GenericNPC>
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GenericNPC currentNPC;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private GameObject npcMenuPrefab;
-
-    private TextField nameInput;
     private TextField descriptionInput;
     private DropdownField dialogDropdown;
     private ScrollView messagesScrollView;
     private Label messagesLabel;
-    private Button saveButton;
-    private Button returnButton;
-    private Button closeButton;
-    private Button loadSpriteButton;
-    private Image spritePreview;
-    private string pendingSpriteSourcePath;
     private string selectedDialogId = "";
     private Dictionary<string, string> messageQuestAssignments = new Dictionary<string, string>();
     private NPCMessageItemBuilder messageItemBuilder;
 
-    void OnEnable()
-    {
-        var uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
+    protected override CreatorObjectCategories Category => CreatorObjectCategories.NPC;
+    protected override string ObjectTypeName => "NPC";
+    protected override string SaveButtonName => "SaveButton";
+    protected override bool RequiresSprite => true;
 
-        nameInput = root.Q<TextField>("NameField");
-        if (nameInput == null)
-            logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+
+        if (dialogDropdown != null)
+        {
+            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
+        }
+    }
+
+    protected override void InitializeSpecificFields(VisualElement root)
+    {
         descriptionInput = root.Q<TextField>("DescriptionField");
-        if (descriptionInput == null)
-            logger.Log("Description input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(descriptionInput, "Description input field");
 
         dialogDropdown = root.Q<DropdownField>("DialogDropdown");
         messagesScrollView = root.Q<ScrollView>("MessagesScrollView");
         messagesLabel = root.Q<Label>("MessagesLabel");
-
-        saveButton = root.Q<Button>("SaveNPC");
-        returnButton = root.Q<Button>("Return");
-        closeButton = root.Q<Button>("Close");
-        spritePreview = root.Q<Image>("SpritePreview");
-
-        var npcPreviewContainer = root.Q<VisualElement>("NPCPreviewContainer");
-        if (npcPreviewContainer != null)
-        {
-            loadSpriteButton = npcPreviewContainer.Q<Button>();
-        }
-
-        saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToNPCsMenu;
-        closeButton.clicked += CloseMenu;
-        loadSpriteButton.clicked += LoadSprite;
-
-        if (currentNPC == null)
-        {
-            currentNPC = EditContext.GetAndClearObjectToEdit<GenericNPC>();
-        }
 
         messageItemBuilder = new NPCMessageItemBuilder(
             creatorObjectLibrary,
@@ -82,28 +47,21 @@ public class NPCCreatorMenuController : MenuController
         );
 
         PopulateDialogDropdown();
-
-        if (dialogDropdown != null)
-        {
-            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
-        }
-
-        if (currentNPC != null)
-        {
-            PopulateFields();
-        }
     }
 
-    private void PopulateFields()
+    protected override void PopulateFields()
     {
-        nameInput.value = currentNPC.name;
-        descriptionInput.value = currentNPC.description ?? "";
+        nameInput.value = currentObject.name;
+        descriptionInput.value = currentObject.description ?? "";
 
-        LoadExistingSprite(currentNPC.spriteFile);
+        LoadExistingSprite(currentObject.spriteFile);
 
-        if (currentNPC.npcDialog != null && !string.IsNullOrEmpty(currentNPC.npcDialog.dialogId))
+        if (
+            currentObject.npcDialog != null
+            && !string.IsNullOrEmpty(currentObject.npcDialog.dialogId)
+        )
         {
-            var dialogId = currentNPC.npcDialog.dialogId;
+            var dialogId = currentObject.npcDialog.dialogId;
 
             var dialogs = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.Dialog)
@@ -121,12 +79,17 @@ public class NPCCreatorMenuController : MenuController
                     dialogDropdown.value = npcDialog.DisplayName;
                     selectedDialogId = npcDialog.ObjectId;
 
-                    messageQuestAssignments = currentNPC.npcDialog.GetMessageQuestMap();
+                    messageQuestAssignments.Clear();
+                    var questMap = currentObject.npcDialog.GetMessageQuestMap();
+                    foreach (var kvp in questMap)
+                    {
+                        messageQuestAssignments[kvp.Key] = kvp.Value;
+                    }
 
                     LoadDialogMessagesForEdit(selectedDialogId);
 
                     logger?.Log(
-                        $"NPCCreator: Loaded dialog '{npcDialog.DisplayName}' with {messageQuestAssignments.Count} quest assignments for NPC '{currentNPC.DisplayName}'",
+                        $"NPCCreator: Loaded dialog '{npcDialog.DisplayName}' with {messageQuestAssignments.Count} quest assignments for NPC '{currentObject.DisplayName}'",
                         this,
                         Logging.LogType.Info
                     );
@@ -171,53 +134,20 @@ public class NPCCreatorMenuController : MenuController
         }
     }
 
-    private void LoadExistingSprite(string spritePath)
+    protected override bool ValidateSpecificFields()
     {
-        if (string.IsNullOrEmpty(spritePath))
-            return;
-
-        string absolutePath = spritePath;
-        if (!Path.IsPathRooted(spritePath))
-        {
-            absolutePath = Path.Combine(Application.streamingAssetsPath, spritePath);
-        }
-
-        if (FileBrowserHelpers.FileExists(absolutePath))
-        {
-            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
-            if (sprite != null)
-            {
-                spritePreview.sprite = sprite;
-            }
-            else
-            {
-                logger?.Log(
-                    $"Failed to load sprite from: {absolutePath}",
-                    this,
-                    Logging.LogType.Warning
-                );
-            }
-        }
-        else
-        {
-            logger?.Log($"Sprite file not found at: {absolutePath}", this, Logging.LogType.Warning);
-        }
+        // NPC specific validation can go here if needed
+        return true;
     }
 
-    private void OnSaveClicked()
+    protected override void CreateNewObject()
     {
-        if (string.IsNullOrEmpty(nameInput.value))
-        {
-            logger?.Log("NPC name is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("NPC name is required", "error", Color.red);
-            return;
-        }
+        string savedSpritePath = SaveSpriteIfNeeded();
 
         NPCDialogData npcDialogData = null;
         if (!string.IsNullOrEmpty(selectedDialogId))
         {
             npcDialogData = new NPCDialogData(selectedDialogId);
-
             npcDialogData.SetMessageQuestMap(messageQuestAssignments);
 
             logger?.Log(
@@ -227,86 +157,45 @@ public class NPCCreatorMenuController : MenuController
             );
         }
 
-        if (currentNPC == null)
-        {
-            var npcData = new NPCData(
-                null,
-                nameInput.value,
-                descriptionInput.value ?? "",
-                pendingSpriteSourcePath,
-                npcDialogData
-            );
-            currentNPC = new GenericNPC(npcData);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.NPC, currentNPC);
-            logger.Log($"Created new NPC: {currentNPC.DisplayName}", this, Logging.LogType.Info);
-        }
-        else
-        {
-            currentNPC.name = nameInput.value;
-            currentNPC.description = descriptionInput.value;
-            currentNPC.npcDialog = npcDialogData;
-            if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
-            {
-                currentNPC.spriteFile = pendingSpriteSourcePath;
-            }
-            logger.Log($"Updated NPC: {currentNPC.DisplayName}", this, Logging.LogType.Info);
-        }
-
-        ToastNotification.Show("NPC saved successfully", "success", Color.green);
-
-        ReturnToNPCsMenu();
-    }
-
-    private void ReturnToNPCsMenu()
-    {
-        OpenMenu(npcMenuPrefab);
-    }
-
-    private void LoadSprite()
-    {
-        FileHandler.ShowFilePickerDialog(
-            onSuccess: OnSpriteSelected,
-            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
+        var npcData = new NPCData(
+            null,
+            nameInput.value,
+            descriptionInput.value ?? "",
+            savedSpritePath,
+            npcDialogData
         );
+        currentObject = new GenericNPC(npcData);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log($"Created new NPC: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 
-    private void OnSpriteSelected(string[] paths)
+    protected override void UpdateExistingObject()
     {
-        if (paths == null || paths.Length == 0)
-            return;
+        string savedSpritePath = SaveSpriteIfNeeded();
 
-        string sourcePath = paths[0];
-
-        if (!sourcePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+        NPCDialogData npcDialogData = null;
+        if (!string.IsNullOrEmpty(selectedDialogId))
         {
-            logger.Log("Selected file is not a PNG", this, Logging.LogType.Warning);
-            return;
+            npcDialogData = new NPCDialogData(selectedDialogId);
+            npcDialogData.SetMessageQuestMap(messageQuestAssignments);
+
+            logger?.Log(
+                $"NPCCreator: Updated NPCDialogData with dialog ID {selectedDialogId} and {messageQuestAssignments.Count} quest assignments",
+                this,
+                Logging.LogType.Info
+            );
         }
 
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
-        if (sprite == null)
+        currentObject.name = nameInput.value;
+        currentObject.description = descriptionInput.value;
+        currentObject.npcDialog = npcDialogData;
+
+        if (!string.IsNullOrEmpty(savedSpritePath))
         {
-            logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
-            return;
+            currentObject.spriteFile = savedSpritePath;
         }
 
-        spritePreview.sprite = sprite;
-        pendingSpriteSourcePath = sourcePath;
-        logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
-    }
-
-    void OnDisable()
-    {
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-        if (returnButton != null)
-            returnButton.clicked -= ReturnToNPCsMenu;
-        if (closeButton != null)
-            closeButton.clicked -= CloseMenu;
-        if (loadSpriteButton != null)
-            loadSpriteButton.clicked -= LoadSprite;
-        if (dialogDropdown != null)
-            dialogDropdown.UnregisterValueChangedCallback(OnDialogChanged);
+        logger?.Log($"Updated NPC: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 
     private void PopulateDialogDropdown()
@@ -322,7 +211,10 @@ public class NPCCreatorMenuController : MenuController
         dialogDropdown.choices = dialogs.Select(d => d.DisplayName).ToList();
         dialogDropdown.choices.Insert(0, "None");
 
-        dialogDropdown.value = "None";
+        if (currentObject == null || currentObject.npcDialog == null)
+        {
+            dialogDropdown.value = "None";
+        }
 
         logger?.Log($"NPCCreator: Populated {dialogs.Count} dialogs", this, Logging.LogType.Info);
     }
@@ -378,5 +270,13 @@ public class NPCCreatorMenuController : MenuController
             var messageItem = messageItemBuilder.CreateMessageItem(message);
             messagesScrollView.Add(messageItem);
         }
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+
+        if (dialogDropdown != null)
+            dialogDropdown.UnregisterValueChangedCallback(OnDialogChanged);
     }
 }

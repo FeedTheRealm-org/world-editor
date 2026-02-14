@@ -1,68 +1,45 @@
 using System;
-using System.IO;
 using System.Linq;
 using Models;
-using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 
 [RequireComponent(typeof(UIDocument))]
-public class EnemyCreatorMenuController : MenuController
+public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy>
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GenericEnemy currentEnemy;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private GameObject enemyMenuPrefab;
-
-    private TextField nameInput;
     private TextField descriptionInput;
     private IntegerField healthPointsInput;
     private IntegerField damageInput;
     private IntegerField speedInput;
     private IntegerField rangeInput;
     private DropdownField lootTableInput;
-    private Button saveButton;
-    private Button returnButton;
-    private Button closeButton;
-    private Button loadSpriteButton;
-    private Image spritePreview;
-    private string pendingSpriteSourcePath;
 
-    void OnEnable()
+    protected override CreatorObjectCategories Category => CreatorObjectCategories.Enemy;
+    protected override string ObjectTypeName => "Enemy";
+    protected override string SaveButtonName => "SaveButton";
+    protected override bool RequiresSprite => true;
+
+    protected override void InitializeSpecificFields(VisualElement root)
     {
-        var uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
-
-        nameInput = root.Q<TextField>("NameField");
-        if (nameInput == null)
-            logger.Log("Name input field not found in UI", this, Logging.LogType.Error);
         descriptionInput = root.Q<TextField>("DescriptionField");
-        if (descriptionInput == null)
-            logger.Log("Description input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(descriptionInput, "Description input field");
+
         healthPointsInput = root.Q<IntegerField>("HealthPoints");
-        if (healthPointsInput == null)
-            logger.Log("Health points input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(healthPointsInput, "Health points input field");
+
         damageInput = root.Q<IntegerField>("AttackDamage");
-        if (damageInput == null)
-            logger.Log("Attack damage input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(damageInput, "Attack damage input field");
+
         speedInput = root.Q<IntegerField>("Speed");
-        if (speedInput == null)
-            logger.Log("Speed input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(speedInput, "Speed input field");
+
         rangeInput = root.Q<IntegerField>("Range");
-        if (rangeInput == null)
-            logger.Log("Range input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(rangeInput, "Range input field");
+
         lootTableInput = root.Q<DropdownField>("LootTableField");
-        if (lootTableInput == null)
-            logger.Log("LootTable dropdown field not found in UI", this, Logging.LogType.Error);
-        else
+        LogIfNull(lootTableInput, "LootTable dropdown field");
+
+        if (lootTableInput != null)
         {
             var lootTables = creatorObjectLibrary
                 .GetCreatables(CreatorObjectCategories.LootTable)
@@ -70,81 +47,42 @@ public class EnemyCreatorMenuController : MenuController
                 .ToList();
             lootTableInput.choices = lootTables.Select(lt => lt.DisplayName).ToList();
         }
-        saveButton = root.Q<Button>("SaveEnemy");
-        returnButton = root.Q<Button>("Return");
-        closeButton = root.Q<Button>("Close");
-        spritePreview = root.Q<Image>("SpritePreview");
-
-        var enemyPreviewContainer = root.Q<VisualElement>("EnemyPreviewContainer");
-        if (enemyPreviewContainer != null)
-        {
-            loadSpriteButton = enemyPreviewContainer.Q<Button>();
-        }
-        saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToEnemiesMenu;
-        closeButton.clicked += CloseMenu;
-        loadSpriteButton.clicked += LoadSprite;
-
-        if (currentEnemy == null)
-        {
-            currentEnemy = EditContext.GetAndClearObjectToEdit<GenericEnemy>();
-        }
-
-        // Populate fields if editing existing item
-        if (currentEnemy != null)
-        {
-            PopulateFields();
-        }
     }
 
-    private void PopulateFields()
+    protected override void PopulateFields()
     {
-        nameInput.value = currentEnemy.name;
-        descriptionInput.value = currentEnemy.description ?? "";
-        healthPointsInput.value = currentEnemy.healthPoints;
-        damageInput.value = currentEnemy.damage;
-        speedInput.value = currentEnemy.speed;
-        rangeInput.value = currentEnemy.range;
-        if (currentEnemy.lootTable != null)
-            lootTableInput.value = currentEnemy.lootTable.name;
+        nameInput.value = currentObject.name;
+        descriptionInput.value = currentObject.description ?? "";
+        healthPointsInput.value = currentObject.healthPoints;
+        damageInput.value = currentObject.damage;
+        speedInput.value = currentObject.speed;
+        rangeInput.value = currentObject.range;
 
-        LoadExistingSprite(currentEnemy.spriteFile);
+        if (currentObject.lootTable != null)
+            lootTableInput.value = currentObject.lootTable.name;
+
+        LoadExistingSprite(currentObject.spriteFile);
     }
 
-    private void LoadExistingSprite(string spritePath)
+    protected override bool ValidateSpecificFields()
     {
-        if (string.IsNullOrEmpty(spritePath))
-            return;
+        var lootTables = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.LootTable)
+            .Cast<LootTable>()
+            .ToList();
+        var selectedLootTable = lootTables.FirstOrDefault(lt =>
+            lt.DisplayName == lootTableInput?.value
+        );
 
-        string absolutePath = spritePath;
-        if (!Path.IsPathRooted(spritePath))
+        if (selectedLootTable == null)
         {
-            absolutePath = Path.Combine(Application.streamingAssetsPath, spritePath);
+            ShowValidationError("Valid loot table selection is required");
+            return false;
         }
-
-        if (FileBrowserHelpers.FileExists(absolutePath))
-        {
-            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
-            if (sprite != null)
-            {
-                spritePreview.sprite = sprite;
-            }
-            else
-            {
-                logger?.Log(
-                    $"Failed to load sprite from: {absolutePath}",
-                    this,
-                    Logging.LogType.Warning
-                );
-            }
-        }
-        else
-        {
-            logger?.Log($"Sprite file not found at: {absolutePath}", this, Logging.LogType.Warning);
-        }
+        return true;
     }
 
-    private void OnSaveClicked()
+    protected override void CreateNewObject()
     {
         var lootTables = creatorObjectLibrary
             .GetCreatables(CreatorObjectCategories.LootTable)
@@ -154,120 +92,62 @@ public class EnemyCreatorMenuController : MenuController
             lt.DisplayName == lootTableInput.value
         );
 
-        LootTableData lootTableData = null;
-        if (selectedLootTable != null)
-        {
-            lootTableData = new LootTableData(
-                selectedLootTable.ObjectId,
-                selectedLootTable.DisplayName,
-                selectedLootTable.minGoldDropAmount,
-                selectedLootTable.maxGoldDropAmount,
-                selectedLootTable.lootItems
-            );
-        }
-
-        if (string.IsNullOrEmpty(nameInput.value))
-        {
-            logger?.Log("Enemy name is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Enemy name is required", "error", Color.red);
-            return;
-        }
-        if (selectedLootTable == null)
-        {
-            logger?.Log("Valid loot table selection is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Valid loot table selection is required", "error", Color.red);
-            return;
-        }
-
-        if (currentEnemy == null)
-        {
-            var enemyData = new EnemyData(
-                null,
-                nameInput.value,
-                descriptionInput.value ?? "",
-                healthPointsInput.value,
-                damageInput.value,
-                speedInput.value,
-                rangeInput.value,
-                pendingSpriteSourcePath,
-                lootTableData
-            );
-            currentEnemy = new GenericEnemy(enemyData);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.Enemy, currentEnemy);
-            logger.Log(
-                $"Created new enemy: {currentEnemy.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        else
-        {
-            currentEnemy.name = nameInput.value;
-            currentEnemy.description = descriptionInput.value;
-            currentEnemy.healthPoints = healthPointsInput.value;
-            currentEnemy.damage = damageInput.value;
-            currentEnemy.speed = speedInput.value;
-            currentEnemy.range = rangeInput.value;
-            currentEnemy.lootTable = lootTableData;
-            if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
-            {
-                currentEnemy.spriteFile = pendingSpriteSourcePath;
-            }
-            logger.Log($"Updated enemy: {currentEnemy.DisplayName}", this, Logging.LogType.Info);
-        }
-
-        ToastNotification.Show("Enemy saved successfully", "success", Color.green);
-
-        ReturnToEnemiesMenu();
-    }
-
-    private void ReturnToEnemiesMenu()
-    {
-        OpenMenu(enemyMenuPrefab);
-    }
-
-    private void LoadSprite()
-    {
-        FileHandler.ShowFilePickerDialog(
-            onSuccess: OnSpriteSelected,
-            onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
+        LootTableData lootTableData = new LootTableData(
+            selectedLootTable.ObjectId,
+            selectedLootTable.DisplayName,
+            selectedLootTable.minGoldDropAmount,
+            selectedLootTable.maxGoldDropAmount,
+            selectedLootTable.lootItems
         );
+
+        var enemyData = new EnemyData(
+            null,
+            nameInput.value,
+            descriptionInput.value ?? "",
+            healthPointsInput.value,
+            damageInput.value,
+            speedInput.value,
+            rangeInput.value,
+            pendingSpriteSourcePath,
+            lootTableData
+        );
+
+        currentObject = new GenericEnemy(enemyData);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log($"Created new enemy: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 
-    private void OnSpriteSelected(string[] paths)
+    protected override void UpdateExistingObject()
     {
-        if (paths == null || paths.Length == 0)
-            return;
+        var lootTables = creatorObjectLibrary
+            .GetCreatables(CreatorObjectCategories.LootTable)
+            .Cast<LootTable>()
+            .ToList();
+        var selectedLootTable = lootTables.FirstOrDefault(lt =>
+            lt.DisplayName == lootTableInput.value
+        );
 
-        string sourcePath = paths[0];
+        LootTableData lootTableData = new LootTableData(
+            selectedLootTable.ObjectId,
+            selectedLootTable.DisplayName,
+            selectedLootTable.minGoldDropAmount,
+            selectedLootTable.maxGoldDropAmount,
+            selectedLootTable.lootItems
+        );
 
-        if (!sourcePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+        currentObject.name = nameInput.value;
+        currentObject.description = descriptionInput.value;
+        currentObject.healthPoints = healthPointsInput.value;
+        currentObject.damage = damageInput.value;
+        currentObject.speed = speedInput.value;
+        currentObject.range = rangeInput.value;
+        currentObject.lootTable = lootTableData;
+
+        if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
         {
-            logger.Log("Selected file is not a PNG", this, Logging.LogType.Warning);
-            return;
+            currentObject.spriteFile = pendingSpriteSourcePath;
         }
 
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
-        if (sprite == null)
-        {
-            logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
-            return;
-        }
-
-        spritePreview.sprite = sprite;
-        pendingSpriteSourcePath = sourcePath;
-        logger.Log("Sprite loaded for preview (not saved yet)", this, Logging.LogType.Info);
-    }
-
-    void OnDisable()
-    {
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-        if (returnButton != null)
-            returnButton.clicked -= ReturnToEnemiesMenu;
-        if (closeButton != null)
-            closeButton.clicked -= CloseMenu;
-        if (loadSpriteButton != null)
-            loadSpriteButton.clicked -= LoadSprite;
+        logger?.Log($"Updated enemy: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 }

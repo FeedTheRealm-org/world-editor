@@ -5,109 +5,82 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
-public class MessagesCreatorMenuController : MenuController
+public class MessagesCreatorMenuController : BaseCreatorMenuController<Message>
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private Message currentMessage;
-
     public static string PendingDialogId;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private GameObject messageMenuPrefab;
 
     private TextField contentField;
 
-    private Button saveButton;
-    private Button returnButton;
-    private Button closeButton;
+    protected override CreatorObjectCategories Category => CreatorObjectCategories.Message;
+    protected override string ObjectTypeName => "Message";
+    protected override string SaveButtonName => "SaveButton";
 
-    void OnEnable()
+    protected override void OnEnable()
     {
-        var uiDocument = GetComponent<UIDocument>();
-        var root = uiDocument.rootVisualElement;
+        base.OnEnable();
 
+        // Handle PendingDialogId for messages
+        if (currentObject != null && string.IsNullOrEmpty(PendingDialogId))
+        {
+            PendingDialogId = currentObject.dialogId;
+        }
+    }
+
+    protected override void InitializeSpecificFields(VisualElement root)
+    {
         contentField = root.Q<TextField>("ContentField");
-        if (contentField == null)
-            logger.Log("ContentField not found in UI", this, Logging.LogType.Error);
-
-        saveButton = root.Q<Button>("SaveMessage");
-        returnButton = root.Q<Button>("Return");
-        closeButton = root.Q<Button>("Close");
-
-        saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToMessagesMenu;
-        closeButton.clicked += CloseMenu;
-
-        if (currentMessage == null && EditContext.HasObjectToEdit())
-        {
-            currentMessage = EditContext.GetAndClearObjectToEdit<Message>();
-            PendingDialogId = currentMessage.dialogId;
-        }
-
-        if (currentMessage != null)
-        {
-            PopulateFields();
-        }
+        LogIfNull(contentField, "ContentField");
     }
 
-    private void PopulateFields()
+    protected override void PopulateFields()
     {
-        contentField.value = currentMessage.Content;
+        contentField.value = currentObject.Content;
     }
 
-    private void OnSaveClicked()
+    protected override bool ValidateRequiredFields()
+    {
+        if (string.IsNullOrEmpty(contentField?.value))
+        {
+            ShowValidationError("Message content is required");
+            return false;
+        }
+        return ValidateSpecificFields();
+    }
+
+    protected override bool ValidateSpecificFields()
     {
         var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
         var dialog = dialogs.Find(d => d.ObjectId == PendingDialogId) as Dialog;
 
         if (dialog == null)
         {
-            logger.Log("No dialog selected to attach message to", this, Logging.LogType.Warning);
-            return;
+            ShowValidationError("No dialog selected to attach message to");
+            return false;
         }
-
-        if (currentMessage == null)
-        {
-            currentMessage = new Message("", "", contentField.value, dialog.ObjectId);
-            creatorObjectLibrary.AddCreatable(CreatorObjectCategories.Message, currentMessage);
-            logger.Log(
-                $"Created new message for dialog {dialog.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-        else
-        {
-            currentMessage.Content = contentField.value;
-            currentMessage.dialogId = dialog.ObjectId;
-            logger.Log(
-                $"Updated message: {currentMessage.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
-
-        ReturnToMessagesMenu();
+        return true;
     }
 
-    private void ReturnToMessagesMenu()
+    protected override void CreateNewObject()
     {
-        OpenMenu(messageMenuPrefab);
+        var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
+        var dialog = dialogs.Find(d => d.ObjectId == PendingDialogId) as Dialog;
+
+        currentObject = new Message("", "", contentField.value, dialog.ObjectId);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log(
+            $"Created new message for dialog {dialog.DisplayName}",
+            this,
+            Logging.LogType.Info
+        );
     }
 
-    void OnDisable()
+    protected override void UpdateExistingObject()
     {
-        if (saveButton != null)
-            saveButton.clicked -= OnSaveClicked;
-        if (returnButton != null)
-            returnButton.clicked -= ReturnToMessagesMenu;
-        if (closeButton != null)
-            closeButton.clicked -= CloseMenu;
+        var dialogs = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog);
+        var dialog = dialogs.Find(d => d.ObjectId == PendingDialogId) as Dialog;
+
+        currentObject.Content = contentField.value;
+        currentObject.dialogId = dialog.ObjectId;
+        logger?.Log($"Updated message: {currentObject.DisplayName}", this, Logging.LogType.Info);
     }
 }

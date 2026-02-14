@@ -21,7 +21,7 @@
                     <ui:VisualElement name="NPCContainer" style="flex-direction: column; display: none;">
                         <ui:DropdownField label="NPC" name="NPCDropdown" class="text unity-text-field__input" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                     </ui:VisualElement>
-                    <ui:Button text="Save Quest" name="SaveQuest" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:Button text="Save Quest" name="SaveButton" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

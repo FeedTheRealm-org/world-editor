@@ -17,24 +17,24 @@ public class ConsumableItemCreatorMenuController : ItemCreatorMenuController<Con
     private ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
 
     protected override CreatorObjectCategories Category => CreatorObjectCategories.ConsumableItem;
+    protected override string ObjectTypeName => "Consumable Item";
 
-    protected override void InitializeSpecificFields(VisualElement root)
+    protected override void InitializeItemSpecificFields(VisualElement root)
     {
         effectTypeInput = root.Q<DropdownField>("EffectTypeField");
-        if (effectTypeInput == null)
-            logger.Log("Effect type dropdown field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(effectTypeInput, "Effect type dropdown field");
+
         valueInput = root.Q<IntegerField>("EffectValueField");
-        if (valueInput == null)
-            logger.Log("Effect value input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(valueInput, "Effect value input field");
+
         durationInput = root.Q<FloatField>("EffectDurationField");
-        if (durationInput == null)
-            logger.Log("Effect duration input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(durationInput, "Effect duration input field");
+
         cooldownInput = root.Q<FloatField>("EffectCooldownField");
-        if (cooldownInput == null)
-            logger.Log("Effect cooldown input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(cooldownInput, "Effect cooldown input field");
+
         maxStackInput = root.Q<IntegerField>("MaxStackField");
-        if (maxStackInput == null)
-            logger.Log("Max stack input field not found in UI", this, Logging.LogType.Error);
+        LogIfNull(maxStackInput, "Max stack input field");
 
         if (effectTypeInput != null)
         {
@@ -44,86 +44,66 @@ public class ConsumableItemCreatorMenuController : ItemCreatorMenuController<Con
 
     protected override void PopulateFields()
     {
-        nameInput.value = currentItem.name;
-        descriptionInput.value = currentItem.description ?? "";
-        valueInput.value = currentItem.value;
-        durationInput.value = currentItem.duration;
-        cooldownInput.value = currentItem.cooldown;
-        maxStackInput.value = currentItem.maxStack;
-        effectTypeInput.value = currentItem.effectType.ToString();
-        LoadExistingSprite(currentItem.spriteFile);
+        nameInput.value = currentObject.name;
+        descriptionInput.value = currentObject.description ?? "";
+        valueInput.value = currentObject.value;
+        durationInput.value = currentObject.duration;
+        cooldownInput.value = currentObject.cooldown;
+        maxStackInput.value = currentObject.maxStack;
+        effectTypeInput.value = currentObject.effectType.ToString();
+        LoadExistingSprite(currentObject.spriteFile);
     }
 
-    protected override void OnSaveClicked()
+    protected override bool ValidateSpecificFields()
+    {
+        if (string.IsNullOrEmpty(effectTypeInput?.value))
+        {
+            ShowValidationError("Consumable item effect type is required");
+            return false;
+        }
+        return true;
+    }
+
+    protected override void CreateNewObject()
     {
         string savedSpritePath = SaveSpriteIfNeeded();
 
-        if (string.IsNullOrEmpty(nameInput.value))
-        {
-            logger?.Log("Consumable item name is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Consumable item name is required", "error", Color.red);
-            return;
-        }
-
-        if (currentItem == null && string.IsNullOrEmpty(savedSpritePath))
-        {
-            logger?.Log("Consumable item sprite is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Consumable item sprite is required", "error", Color.red);
-            return;
-        }
-
-        if (string.IsNullOrEmpty(effectTypeInput.value))
-        {
-            logger?.Log("Consumable item effect type is required", this, Logging.LogType.Warning);
-            ToastNotification.Show("Consumable item effect type is required", "error", Color.red);
-            return;
-        }
-
-        if (currentItem == null)
-        {
-            var consumableItemData = itemDataBuilder
-                .SetItemData(
-                    null,
-                    nameInput.value,
-                    descriptionInput.value ?? "",
-                    savedSpritePath ?? ""
-                )
-                .BuildConsumableItem(
-                    (EffectType)Enum.Parse(typeof(EffectType), effectTypeInput.value),
-                    valueInput.value,
-                    durationInput.value,
-                    cooldownInput.value,
-                    maxStackInput.value
-                );
-
-            currentItem = new ConsumableItem(consumableItemData);
-            creatorObjectLibrary.AddCreatable(Category, currentItem);
-            logger.Log(
-                $"Created new consumable item: {currentItem.DisplayName}",
-                this,
-                Logging.LogType.Info
+        var consumableItemData = itemDataBuilder
+            .SetItemData(null, nameInput.value, descriptionInput.value ?? "", savedSpritePath ?? "")
+            .BuildConsumableItem(
+                (EffectType)Enum.Parse(typeof(EffectType), effectTypeInput.value),
+                valueInput.value,
+                durationInput.value,
+                cooldownInput.value,
+                maxStackInput.value
             );
-        }
-        else
-        {
-            currentItem.name = nameInput.value;
-            currentItem.description = descriptionInput.value;
-            currentItem.value = valueInput.value;
-            currentItem.duration = durationInput.value;
-            currentItem.cooldown = cooldownInput.value;
-            currentItem.maxStack = maxStackInput.value;
-            currentItem.spriteFile = savedSpritePath ?? currentItem.spriteFile;
-            currentItem.effectType = (EffectType)
-                Enum.Parse(typeof(EffectType), effectTypeInput.value);
-            logger.Log(
-                $"Updated consumable item: {currentItem.DisplayName}",
-                this,
-                Logging.LogType.Info
-            );
-        }
 
-        ToastNotification.Show("Consumable item saved successfully", "success", Color.green);
+        currentObject = new ConsumableItem(consumableItemData);
+        creatorObjectLibrary.AddCreatable(Category, currentObject);
+        logger?.Log(
+            $"Created new consumable item: {currentObject.DisplayName}",
+            this,
+            Logging.LogType.Info
+        );
+    }
 
-        ReturnToItemsMenu();
+    protected override void UpdateExistingObject()
+    {
+        string savedSpritePath = SaveSpriteIfNeeded();
+
+        currentObject.name = nameInput.value;
+        currentObject.description = descriptionInput.value;
+        currentObject.value = valueInput.value;
+        currentObject.duration = durationInput.value;
+        currentObject.cooldown = cooldownInput.value;
+        currentObject.maxStack = maxStackInput.value;
+        currentObject.spriteFile = savedSpritePath ?? currentObject.spriteFile;
+        currentObject.effectType = (EffectType)
+            Enum.Parse(typeof(EffectType), effectTypeInput.value);
+        logger?.Log(
+            $"Updated consumable item: {currentObject.DisplayName}",
+            this,
+            Logging.LogType.Info
+        );
     }
 }
