@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class WorldEditorStateMachine : MonoBehaviour
@@ -8,7 +9,8 @@ public class WorldEditorStateMachine : MonoBehaviour
     public MakerInputReader inputReader;
     public Camera playerCamera;
     public IPlaceable SelectedObject { get; private set; }
-    public bool EnableEditor { get; private set; } = true;
+    public bool IsEditorEnabled { get; private set; }
+    private IWorldEditorState currentState;
 
     // ------ States ------
     public SelectingState SelectingState { get; private set; }
@@ -16,29 +18,57 @@ public class WorldEditorStateMachine : MonoBehaviour
     public RemovingState RemovingState { get; private set; }
     public EditingState EditingState { get; private set; }
 
-    public void ToggleEditor(bool status)
-    {
-        if (!status)
-            currentState?.Exit();
-        EnableEditor = status;
-    }
-
-    private IWorldEditorState currentState;
+    // -------------------- Public Methods --------------------
 
     void Start()
     {
+        IsEditorEnabled = true;
         SelectingState = new SelectingState(this);
         PlacingState = new PlacingState(this);
         RemovingState = new RemovingState(this);
         SetState(SelectingState);
     }
 
+    public void SetState(IWorldEditorState newState)
+    {
+        currentState?.Exit();
+        currentState = newState;
+        currentState?.Enter();
+    }
+
+    public void OnPrimaryInteraction()
+    {
+        if (!IsEditorEnabled)
+            return;
+        currentState?.OnPrimaryAction();
+    }
+
+    public void OnSecondaryInteraction()
+    {
+        if (!IsEditorEnabled)
+            return;
+        currentState?.OnSecondaryAction();
+    }
+
+    public void OnRemoveAction()
+    {
+        SetState(new RemovingState(this));
+    }
+
+    public void Log(string message, Logging.LogType type = Logging.LogType.Info)
+    {
+        logger.Log(message, this, type);
+    }
+
+    // -------------------- Private Methods --------------------
+
     private void OnEnable()
     {
         inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
-        inputReader.RemoveEvent += OnRemoveAction;
         Utils.SelectionRaiser.ObjectSelected += OnWorldObjectSelected;
+        Utils.SelectionRaiser.EnableEditor += ToggleEditor;
+        inputReader.RemoveEvent += OnRemoveAction;
     }
 
     private void OnDisable()
@@ -46,6 +76,16 @@ public class WorldEditorStateMachine : MonoBehaviour
         inputReader.PrimaryInteractionEvent -= OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent -= OnSecondaryInteraction;
         Utils.SelectionRaiser.ObjectSelected -= OnWorldObjectSelected;
+        Utils.SelectionRaiser.EnableEditor -= ToggleEditor;
+        inputReader.RemoveEvent -= OnRemoveAction;
+    }
+
+    private void ToggleEditor(bool locked)
+    {
+        IsEditorEnabled = locked;
+        if (locked)
+            currentState?.Exit();
+        Debug.Log($"Interaction {(locked ? "locked" : "unlocked")}.");
     }
 
     private void OnWorldObjectSelected(IPlaceable reference)
@@ -60,38 +100,10 @@ public class WorldEditorStateMachine : MonoBehaviour
         SetState(new PlacingState(this));
     }
 
-    public void SetState(IWorldEditorState newState)
-    {
-        if (!EnableEditor)
-            return;
-
-        currentState?.Exit();
-        currentState = newState;
-        currentState?.Enter();
-    }
-
-    public void OnPrimaryInteraction()
-    {
-        currentState?.OnPrimaryAction();
-    }
-
-    public void OnSecondaryInteraction()
-    {
-        currentState?.OnSecondaryAction();
-    }
-
-    public void OnRemoveAction()
-    {
-        SetState(new RemovingState(this));
-    }
-
-    public void Log(string message, Logging.LogType type = Logging.LogType.Info)
-    {
-        logger.Log(message, this, type);
-    }
-
     private void Update()
     {
+        if (IsEditorEnabled)
+            return;
         currentState?.Tick();
     }
 }

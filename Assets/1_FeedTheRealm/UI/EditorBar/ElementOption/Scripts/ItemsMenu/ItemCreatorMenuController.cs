@@ -109,7 +109,7 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
 
         if (FileBrowserHelpers.FileExists(absolutePath))
         {
-            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
+            Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(absolutePath);
             if (sprite != null)
             {
                 spritePreview.sprite = sprite;
@@ -136,7 +136,7 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
 
     protected virtual void LoadSprite()
     {
-        FileHandler.ShowFilePickerDialog(
+        CustomFileBrowser.ShowFilePickerDialog(
             onSuccess: OnSpriteSelected,
             onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
         );
@@ -153,7 +153,7 @@ public abstract class ItemCreatorMenuController<TItem> : MenuController
             logger.Log("Selected file is not a PNG", this, Logging.LogType.Warning);
             return;
         }
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
+        Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(sourcePath);
         if (sprite == null)
         {
             logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);

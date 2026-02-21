@@ -95,7 +95,7 @@ public class ShopMenuController : MenuController
 
     private void LoadItemSprite(CreatorObject item, Image image)
     {
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(item.spriteFile, true);
+        Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(item.spriteFile, true);
         if (sprite == null)
         {
             logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);

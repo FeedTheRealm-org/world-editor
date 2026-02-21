@@ -127,7 +127,7 @@ public class EnemyCreatorMenuController : MenuController
 
         if (FileBrowserHelpers.FileExists(absolutePath))
         {
-            Sprite sprite = FileHandler.LoadSpriteFromDisk(absolutePath);
+            Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(absolutePath);
             if (sprite != null)
             {
                 spritePreview.sprite = sprite;
@@ -233,7 +233,7 @@ public class EnemyCreatorMenuController : MenuController
 
     private void LoadSprite()
     {
-        FileHandler.ShowFilePickerDialog(
+        CustomFileBrowser.ShowFilePickerDialog(
             onSuccess: OnSpriteSelected,
             onCancel: () => logger.Log("Sprite selection canceled", this, Logging.LogType.Info)
         );
@@ -252,7 +252,7 @@ public class EnemyCreatorMenuController : MenuController
             return;
         }
 
-        Sprite sprite = FileHandler.LoadSpriteFromDisk(sourcePath);
+        Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(sourcePath);
         if (sprite == null)
         {
             logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);

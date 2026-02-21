@@ -1,0 +1,19 @@
+{
+  "name": "FTR.UI",
+  "references": [
+    "FeedTheRealm_Shared",
+    "FTR.Core",
+    "FTR.Gameplay",
+    "UnityEngine",
+    "Unity.InputSystem",
+    "SimpleFileBrowser.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor",
+    "WindowsStandalone64",
+    "LinuxStandalone64"
+  ],
+  "autoReferenced": false,
+  "noEngineReferences": false,
+  "languageVersion": "10.0"
+}

@@ -7,10 +7,9 @@ namespace Utils
     public static class SelectionRaiser
     {
         public static event Action<IPlaceable> ObjectSelected;
-
         public static event Action<WorldData> WorldSelected;
-
         public static event Action<bool> EnableInput;
+        public static event Action<bool> EnableEditor;
 
         public static void RaiseSelected(IPlaceable reference)
         {
@@ -25,6 +24,11 @@ namespace Utils
         public static void RaiseEnableInput(bool enableInput)
         {
             EnableInput?.Invoke(enableInput);
+        }
+
+        public static void RaiseEnableEditor(bool status)
+        {
+            EnableEditor?.Invoke(status);
         }
     }
 }

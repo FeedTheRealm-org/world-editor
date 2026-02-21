@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using Models;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class WorldPublisherController : MonoBehaviour
@@ -83,16 +82,16 @@ public class WorldPublisherController : MonoBehaviour
     /// </summary>
     private async Task<string> PublishModels(WorldData worldData, string worldId)
     {
-        if (worldData.objectPlacementData.Count == 0)
-            return null;
+        // if (worldData.objectPlacementData.Count == 0)
+        //     return null;
 
-        var uniqueStructures = worldData.objectPlacementData.DistinctBy(s => s.id).ToList();
+        // var uniqueStructures = worldData.objectPlacementData.DistinctBy(s => s.id).ToList();
 
-        foreach (var structure in uniqueStructures)
-        {
-            structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
-        }
-        return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
+        // foreach (var structure in uniqueStructures)
+        // {
+        //     structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
+        // }
+        return await Task.FromResult<string>(null); // TODO: Implement model upload when API is ready
     }
 
     /// <summary>

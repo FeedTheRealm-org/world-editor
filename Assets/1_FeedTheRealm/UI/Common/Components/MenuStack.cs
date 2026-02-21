@@ -13,17 +13,31 @@ public class MenuStack
     private int menuSpacingX = 20;
     private int menuSpacingY = 6;
 
+    private bool enabled = true;
+
     public MenuStack(VisualElement root)
     {
         this.root = root;
+        Utils.SelectionRaiser.EnableEditor += ToggleMenuStack;
     }
 
     public void Open(VisualElement anchor, IReadOnlyList<MenuOption> options, int depth = 0)
     {
+        if (!enabled)
+            return;
         CloseFromDepth(depth);
         var menu = CreateMenu(anchor, options, depth);
         root.Add(menu);
         openMenus.Add(menu);
+    }
+
+    // -------------------- Private Methods --------------------
+    private void ToggleMenuStack(bool enabled)
+    {
+        Debug.Log($"Setting menu interaction lock to {(enabled ? "locked" : "unlocked")}.");
+        this.enabled = enabled;
+        if (!enabled)
+            CloseAll();
     }
 
     private VisualElement CreateMenu(

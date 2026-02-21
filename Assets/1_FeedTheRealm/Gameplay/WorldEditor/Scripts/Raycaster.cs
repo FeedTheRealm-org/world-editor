@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public static class Raycaster
 {
@@ -12,8 +11,9 @@ public static class Raycaster
         float maxDistance = DefaultMaxDistance
     )
     {
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = maker.playerCamera.ScreenPointToRay(mousePos);
+        //Vector2 mousePos = Mouse.current.position.ReadValue();
+        Debug.Log("FIX THIS TO NOT USE MOUSE!");
+        Ray ray = maker.playerCamera.ScreenPointToRay(Vector2.zero);
         return Physics.Raycast(ray, out hit, maxDistance, layermask);
     }
 

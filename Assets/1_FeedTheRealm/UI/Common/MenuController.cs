@@ -4,19 +4,16 @@ using Utils;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    private WorldEditorStateMachine worldEditorStateMachine;
-
-    public Action<bool> ToggleEditorCallback;
-
     void Awake()
     {
         SelectionRaiser.RaiseEnableInput(false);
+        SelectionRaiser.RaiseEnableEditor(false);
     }
 
     public void CloseMenu()
     {
         SelectionRaiser.RaiseEnableInput(true);
+        SelectionRaiser.RaiseEnableEditor(true);
         Destroy(gameObject);
     }
 

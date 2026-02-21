@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/1_FeedTheRealm/Scenes/Main/WorldEditorV2.unity
+    path: Assets/1_FeedTheRealm/Scenes/Main/WorldEditor.unity
     guid: 862161c47919c6ffaabee20b285b3853
   - enabled: 1
     path: Assets/1_FeedTheRealm/Scenes/Menus/Login.unity

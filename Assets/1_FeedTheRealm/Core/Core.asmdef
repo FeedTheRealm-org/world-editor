@@ -1,0 +1,17 @@
+{
+  "name": "FTR.Core",
+  "references": [
+    "FeedTheRealm_Shared",
+    "UnityEngine",
+    "Unity.InputSystem",
+    "glTFast"
+],
+  "includePlatforms": [
+    "Editor",
+    "WindowsStandalone64",
+    "LinuxStandalone64"
+  ],
+  "autoReferenced": false,
+  "noEngineReferences": false,
+  "languageVersion": "10.0"
+}
