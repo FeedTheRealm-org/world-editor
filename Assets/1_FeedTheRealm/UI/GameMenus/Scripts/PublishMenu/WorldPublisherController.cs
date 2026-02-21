@@ -27,6 +27,9 @@ public class WorldPublisherController : MonoBehaviour
     ModelService modelService;
 
     [SerializeField]
+    ItemService itemService;
+
+    [SerializeField]
     Session.Session session;
 
     /// <summary>
@@ -52,27 +55,63 @@ public class WorldPublisherController : MonoBehaviour
         if (!string.IsNullOrEmpty(modelError))
             return (null, modelError, 0);
 
-        var spriteData = new Dictionary<string, string>();
+        var consumableSpriteData = new Dictionary<string, string>();
         if (worldData.consumableItems != null)
         {
             foreach (var item in worldData.consumableItems)
             {
-                if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
-                    spriteData[item.id] = item.spriteFilepath;
+                if (
+                    !string.IsNullOrEmpty(item.spriteFilepath)
+                    && !consumableSpriteData.ContainsKey(item.id)
+                )
+                    consumableSpriteData[item.id] = item.spriteFilepath;
             }
         }
+
+        var weaponSpriteData = new Dictionary<string, string>();
         if (worldData.weaponItems != null)
         {
             foreach (var item in worldData.weaponItems)
             {
-                if (!string.IsNullOrEmpty(item.spriteFilepath) && !spriteData.ContainsKey(item.id))
-                    spriteData[item.id] = item.spriteFilepath;
+                if (
+                    !string.IsNullOrEmpty(item.spriteFilepath)
+                    && !weaponSpriteData.ContainsKey(item.id)
+                )
+                    weaponSpriteData[item.id] = item.spriteFilepath;
             }
         }
-        var spriteList = spriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
-        string spriteError = await PublishSprites(spriteList, worldId);
-        if (!string.IsNullOrEmpty(spriteError))
-            return (null, spriteError, 0);
+
+        ItemCategoryListResponse categoryListResponse = await itemService.GetItemCategories(
+            session.APIToken
+        );
+        Debug.Log($"Fetched {categoryListResponse.category_list} item categories from server.");
+
+        ItemCategoryResponse consumableCategory = categoryListResponse.category_list.FirstOrDefault(
+            c => c.category_name == "consumables"
+        );
+        ItemCategoryResponse weaponCategory = categoryListResponse.category_list.FirstOrDefault(c =>
+            c.category_name == "weapons"
+        );
+
+        var consumableSpriteList = consumableSpriteData
+            .Select(kvp => (kvp.Key, kvp.Value))
+            .ToList();
+        string consumableSpriteError = await PublishItems(
+            consumableSpriteList,
+            worldId,
+            consumableCategory.category_id
+        );
+        if (!string.IsNullOrEmpty(consumableSpriteError))
+            return (null, consumableSpriteError, 0);
+
+        var weaponSpriteList = weaponSpriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
+        string weaponSpriteError = await PublishItems(
+            weaponSpriteList,
+            worldId,
+            weaponCategory.category_id
+        );
+        if (!string.IsNullOrEmpty(weaponSpriteError))
+            return (null, weaponSpriteError, 0);
 
         return (worldId, null, 200);
     }
@@ -93,6 +132,24 @@ public class WorldPublisherController : MonoBehaviour
             structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
         }
         return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
+    }
+
+    /// <summary>
+    ///  Uploads model files for a world.
+    ///  If an error occurs, returns the error message.
+    /// </summary>
+    private async Task<string> PublishItems(
+        List<(string, string)> itemData,
+        string worldId,
+        string categoryId
+    )
+    {
+        return await itemService.UploadItemsByCategory(
+            itemData,
+            worldId,
+            categoryId,
+            session.APIToken
+        );
     }
 
     /// <summary>

@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PublishMenuController
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+  worldEditorStateMachine: {fileID: 0}
   logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   worldPublisherController: {fileID: 3696031326296672572}
@@ -91,4 +92,5 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   spriteService: {fileID: 11400000, guid: c00c8d635be048806b011b2f8365dcea, type: 2}
   modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
+  itemService: {fileID: 11400000, guid: 9289716798ab6784d84277304e6f1987, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
