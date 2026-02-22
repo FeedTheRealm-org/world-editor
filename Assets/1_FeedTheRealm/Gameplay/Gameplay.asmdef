@@ -5,7 +5,9 @@
     "FTR.Core",
     "UnityEngine",
     "Unity.Cinemachine",
-    "glTFast"
+    "glTFast",
+    "VContainer",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [
     "Editor",

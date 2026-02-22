@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Gameplay.Inputs;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,7 +10,7 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     private UIDocument structureUI;
 
     [SerializeField]
-    private MakerInputReader inputReader;
+    private InputReader inputReader;
 
     [SerializeField]
     private float positionScrollSensitivity = 1f;

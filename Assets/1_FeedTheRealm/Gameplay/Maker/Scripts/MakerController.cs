@@ -1,3 +1,4 @@
+using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
 
 public class MakerController : MonoBehaviour
@@ -14,7 +15,7 @@ public class MakerController : MonoBehaviour
     private Logging.Logger logger;
 
     [SerializeField]
-    public MakerInputReader inputReader;
+    public InputReader inputReader;
 
     private void OnEnable()
     {

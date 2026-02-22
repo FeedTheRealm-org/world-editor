@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
 
 public class WorldEditorStateMachine : MonoBehaviour
@@ -6,7 +7,7 @@ public class WorldEditorStateMachine : MonoBehaviour
     [SerializeField]
     private Logging.Logger logger;
 
-    public MakerInputReader inputReader;
+    public InputReader inputReader;
     public Camera playerCamera;
     public IPlaceable SelectedObject { get; private set; }
     public bool IsEditorEnabled { get; private set; }

@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Gameplay.Inputs;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,7 +8,7 @@ using UnityEngine.UIElements;
 public class EnemySpawnerController : SpawnerController, IPersistent, IEditable
 {
     [SerializeField]
-    private MakerInputReader inputReader;
+    private InputReader inputReader;
     private UIDocument editorMenu;
     private Slider radiusSlider;
     private IntegerField maxEnemiesField;

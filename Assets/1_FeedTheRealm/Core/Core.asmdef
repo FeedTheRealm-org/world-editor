@@ -3,7 +3,6 @@
   "references": [
     "FeedTheRealm_Shared",
     "UnityEngine",
-    "Unity.InputSystem",
     "glTFast"
 ],
   "includePlatforms": [
