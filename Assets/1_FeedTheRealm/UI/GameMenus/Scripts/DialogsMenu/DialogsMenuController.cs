@@ -50,9 +50,15 @@ public class DialogsMenuController : MenuController
             headerLabel.text = dialog.DisplayName;
 
             var editButton = dialogEntry.Q<Button>("Edit");
+            var editMessagesButton = dialogEntry.Q<Button>("EditMessages");
             var deleteButton = dialogEntry.Q<Button>("Delete");
 
+            var typeLabel = dialogEntry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "Dialog";
+
             editButton.clicked += () => OnEditDialog(dialog);
+            editMessagesButton.clicked += () => OnEditMessages(dialog);
             deleteButton.clicked += () => OnDeleteDialog(dialog, dialogEntry);
 
             dialogsList.hierarchy.Add(dialogEntry);
@@ -60,6 +66,12 @@ public class DialogsMenuController : MenuController
     }
 
     void OnEditDialog(Dialog dialog)
+    {
+        EditContext.SetObjectToEdit(dialog);
+        OpenMenu(createDialogMenuPrefab);
+    }
+
+    void OnEditMessages(Dialog dialog)
     {
         logger.Log(
             "Opening messages for dialog: " + dialog.DisplayName,

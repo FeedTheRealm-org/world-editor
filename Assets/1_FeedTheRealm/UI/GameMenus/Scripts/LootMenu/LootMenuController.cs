@@ -49,6 +49,10 @@ public class LootMenuController : MenuController
             var editButton = lootTableEntry.Q<Button>("Edit");
             var deleteButton = lootTableEntry.Q<Button>("Delete");
 
+            var typeLabel = lootTableEntry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "Loot Table";
+
             editButton.clicked += () => OnEditItem(item);
             deleteButton.clicked += () => OnDeleteItem(item, lootTableEntry);
 

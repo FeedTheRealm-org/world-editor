@@ -4,9 +4,10 @@
         <ui:VisualElement style="flex-grow: 1;">
             <ui:Label text="ItemName" name="Header" selectable="true" focusable="true" class="list-item-header" style="margin-top: 2px; margin-right: 2px; margin-bottom: 2px; margin-left: 2px; padding-top: 2px; padding-right: 2px; padding-bottom: 2px; padding-left: 2px;"/>
         </ui:VisualElement>
-        <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; width: 0%; min-width: 0%; max-width: 18%; justify-content: space-around; align-items: center; align-content: center; align-self: center;">
-            <ui:Button text="Edit" name="Edit"/>
-            <ui:Button text="Delete" name="Delete"/>
+        <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; width: 0%; min-width: 0%; max-width: 25%; justify-content: space-around; align-items: center; align-content: center; align-self: center;">
+            <ui:Button text="Edit" name="Edit" style="margin-right: 84px;"/>
+            <ui:Button text="Edit Messages" name="EditMessages" style="margin-right: 84px;"/>
+            <ui:Button text="Delete" name="Delete" style="margin-right: 32px;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

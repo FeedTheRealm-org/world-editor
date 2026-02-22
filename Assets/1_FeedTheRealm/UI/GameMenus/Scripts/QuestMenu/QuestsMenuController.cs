@@ -65,6 +65,10 @@ public class QuestsMenuController : MenuController
             var editButton = questEntry.Q<Button>("Edit");
             var deleteButton = questEntry.Q<Button>("Delete");
 
+            var typeLabel = questEntry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "Quest";
+
             if (editButton != null)
                 editButton.clicked += () => OnEditQuest(quest);
             if (deleteButton != null)

@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/gameMenuUSS.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#gameMenuUSS"/>
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/NPC/NPCCreatorMenuTheme.uss?fileID=7433441132597879392&amp;guid=PLACEHOLDER&amp;type=3#NPCCreatorMenuTheme"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/NPC/NPCCreatorMenuTheme.uss?fileID=7433441132597879392&amp;guid=26efa24db767408929acc37f620c50ff&amp;type=3#NPCCreatorMenuTheme"/>
     <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
         <ui:VisualElement name="MenuContainer" class="menu-container" style="max-height: 55%; height: 540px;">
             <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
@@ -20,8 +20,11 @@
                 <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column; height: 400px; max-height: 100%; min-height: 50%; padding-top: 1.5%;">
                     <ui:TextField placeholder-text="NPC name" name="NameField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 40px; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
                     <ui:TextField placeholder-text="NPC Description" name="DescriptionField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 18%; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
-                    <ui:DropdownField label="Dialog" name="DialogDropdown" class="text unity-text-field__input" style="color: rgb(255, 255, 255); margin-top: 10px; margin-right: 0; margin-bottom: 10px; margin-left: 0;"/>
-                    <ui:Label text="Dialog Messages" name="MessagesLabel" class="text" style="font-size: 14px; margin-top: 10px; margin-bottom: 5px; display: none;"/>
+                    <ui:VisualElement class="npc-dropdown-row" style="flex-direction: row; align-items: auto; margin-top: 10px; margin-bottom: 10px; align-self: auto; align-content: auto; justify-content: flex-start;">
+                        <ui:Label text="Dialog" name="DialogDropdownLabel" class="npc-dropdown-label" style="color: rgb(255, 255, 255); margin-bottom: 0; margin-right: 24px; align-self: auto; justify-content: flex-start; align-content: auto; align-items: auto; flex-direction: column; flex-wrap: nowrap; height: 34px; margin-top: 0; padding-right: 1px; background-position-x: center; background-position-y: center; -unity-background-scale-mode: stretch-to-fill; -unity-text-align: middle-left;"/>
+                        <ui:DropdownField name="DialogDropdown" class="text unity-text-field__input" style="color: rgb(0, 0, 0); margin-bottom: 0; margin-left: 0; width: 202px;"/>
+                    </ui:VisualElement>
+                    <ui:Label text="Dialog Messages" name="MessagesLabel" class="text" style="font-size: 14px; margin-top: 5px; margin-bottom: 5px; display: none;"/>
                     <ui:ScrollView name="MessagesScrollView" style="max-height: 60%; border-width: 1px; border-color: rgb(255, 255, 255); border-radius: 4px; padding: 5px; margin-bottom: 10px; display: none;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
