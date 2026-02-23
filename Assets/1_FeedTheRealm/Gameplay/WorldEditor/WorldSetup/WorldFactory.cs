@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class WorldFactory
+    public class WorldCreatorService
     {
         private readonly WorldControllerV2 worldController;
 
-        public WorldFactory(WorldControllerV2 worldPrefab)
+        public WorldCreatorService(WorldControllerV2 worldPrefab)
         {
             this.worldController = worldPrefab;
         }

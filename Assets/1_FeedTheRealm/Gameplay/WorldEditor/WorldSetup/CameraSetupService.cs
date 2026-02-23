@@ -5,7 +5,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class CameraSetupService
     {
-        public Camera Setup(Transform followTarget)
+        public Camera Setup()
         {
             // Create main camera
             var cameraGO = new GameObject("Main Camera");
@@ -18,9 +18,6 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             // Create virtual camera
             var vcamGO = new GameObject("World Virtual Camera");
             var virtualCamera = vcamGO.AddComponent<CinemachineCamera>();
-
-            virtualCamera.Follow = followTarget;
-            virtualCamera.LookAt = followTarget;
 
             // Position the virtual camera
             virtualCamera.transform.position = new Vector3(0, 10, -10);

@@ -153,7 +153,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
-  makerInputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+  InputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   WorldControllerV2Prefab: {fileID: 7349877737517603765, guid: 0ebf5ea53eb4fd013bc753d6ab180207, type: 3}
 --- !u!4 &1613682534
 Transform:

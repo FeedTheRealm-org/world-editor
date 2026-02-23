@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class MovementController : MonoBehaviour
 {
+    // TODO: move all numeric fields to a Config SO for better tuning and reuse
+
     [SerializeField]
     float moveSpeed = 5f;
 

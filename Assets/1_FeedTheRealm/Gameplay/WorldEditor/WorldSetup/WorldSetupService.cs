@@ -4,12 +4,12 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class WorldSetupService
     {
-        private readonly WorldFactory worldFactory;
+        private readonly WorldCreatorService worldFactory;
         private readonly CameraSetupService cameraSetup;
         private readonly LightingSetupService lightingSetup;
 
         public WorldSetupService(
-            WorldFactory worldFactory,
+            WorldCreatorService worldFactory,
             CameraSetupService cameraSetup,
             LightingSetupService lightingSetup
         )
@@ -21,11 +21,9 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public void Setup()
         {
-            Debug.Log("Setting up world...");
             worldFactory.Create();
             cameraSetup.Setup();
             lightingSetup.Setup();
-            Debug.Log("World setup complete.");
         }
     }
 }

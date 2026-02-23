@@ -1,5 +1,6 @@
 using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
+using VContainer;
 
 public class MakerController : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class MakerController : MonoBehaviour
 
     [SerializeField]
     public InputReader inputReader;
+
+    [Inject]
+    public void Construct(InputReader inputReader)
+    {
+        this.inputReader = inputReader;
+    }
 
     private void OnEnable()
     {
