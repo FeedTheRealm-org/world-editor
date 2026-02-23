@@ -17,48 +17,43 @@ public class MovementController : MonoBehaviour
     private Vector2 inputDirection = Vector2.zero;
     private float verticalInput = 0f;
 
-    public void Move(Vector2 direction)
-    {
-        inputDirection = direction;
-    }
+    public void Move(Vector2 direction) => inputDirection = direction;
 
-    public void MoveVertical(float direction)
-    {
-        verticalInput = direction;
-    }
+    public void MoveVertical(float direction) => verticalInput = direction;
 
-    private void OnEnable()
-    {
-        tickEvent.OnRaised += Tick;
-    }
+    private void OnEnable() => tickEvent.OnRaised += Tick;
 
-    private void OnDisable()
-    {
-        tickEvent.OnRaised -= Tick;
-    }
+    private void OnDisable() => tickEvent.OnRaised -= Tick;
 
     private void Tick()
     {
-        float targetSpeed = inputDirection.magnitude > 0 ? config.moveSpeed : 0;
-        float currentSpeed = currentVelocity.magnitude;
-        float accelerationRate =
-            inputDirection.magnitude > 0 ? config.acceleration : config.deceleration;
-        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, accelerationRate * Time.deltaTime);
+        UpdateVelocity();
+        ApplyMovement();
+    }
 
-        if (inputDirection.magnitude > 0)
-        {
-            Vector3 forward = playerObject.transform.forward;
-            Vector3 right = playerObject.transform.right;
-            Vector3 moveDirection = (
-                forward * inputDirection.y + right * inputDirection.x
-            ).normalized;
-            currentVelocity = moveDirection * currentSpeed;
-        }
-        else
-        {
-            currentVelocity = Vector3.zero;
-        }
+    private void UpdateVelocity()
+    {
+        bool isMoving = inputDirection.magnitude > 0;
+        float targetSpeed = isMoving ? config.moveSpeed : 0;
+        float accelerationRate = isMoving ? config.acceleration : config.deceleration;
+        float currentSpeed = Mathf.Lerp(
+            currentVelocity.magnitude,
+            targetSpeed,
+            accelerationRate * Time.deltaTime
+        );
 
+        currentVelocity = isMoving ? CalculateMoveDirection() * currentSpeed : Vector3.zero;
+    }
+
+    private Vector3 CalculateMoveDirection()
+    {
+        Vector3 forward = playerObject.transform.forward;
+        Vector3 right = playerObject.transform.right;
+        return (forward * inputDirection.y + right * inputDirection.x).normalized;
+    }
+
+    private void ApplyMovement()
+    {
         playerObject.transform.position += currentVelocity * Time.deltaTime;
         playerObject.transform.position +=
             verticalInput * config.verticalSpeed * Time.deltaTime * Vector3.up;
