@@ -28,6 +28,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private LateTickEvent lateTickEvent;
 
+        [SerializeField]
+        private PlayerConfig playerConfig;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(dataPersistenceManager);
@@ -37,6 +40,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
+            builder.RegisterInstance(playerConfig);
             builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
             builder.Register<LightingSetupService>(Lifetime.Scoped);
