@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     private Transform playerObject;
 
     [SerializeField]
-    private MovementConfig config;
+    private PlayerConfig config;
 
     [SerializeField]
     float currentPitch = 0f;

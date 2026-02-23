@@ -5,7 +5,7 @@ using VContainer;
 public class MovementController : MonoBehaviour
 {
     [SerializeField]
-    private MovementConfig config;
+    private PlayerConfig config;
 
     [SerializeField]
     private Transform playerObject;

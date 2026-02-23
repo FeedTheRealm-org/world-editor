@@ -9,10 +9,12 @@ namespace FeedTheRealm.Gameplay.WorldSetup
     {
         private readonly GameObject playerPrefab;
         private readonly IObjectResolver objectResolver;
+        private readonly PlayerConfig playerConfig;
 
         public PlayerSetupService(
             WorldPrefabProvider worldPrefabProvider,
-            IObjectResolver objectResolver
+            IObjectResolver objectResolver,
+            PlayerConfig playerConfig
         )
         {
             if (worldPrefabProvider == null)
@@ -22,6 +24,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             }
             playerPrefab = worldPrefabProvider.playerPrefab;
             this.objectResolver = objectResolver;
+            this.playerConfig = playerConfig;
         }
 
         public void Setup()
@@ -30,7 +33,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             playerPrefab.SetActive(false);
             GameObject playerInstance = Object.Instantiate(
                 playerPrefab,
-                Vector3.zero,
+                new Vector3(playerConfig.positionX, playerConfig.positionY, playerConfig.positionZ),
                 Quaternion.identity
             );
             objectResolver.InjectGameObject(playerInstance);
