@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1613682534}
   - component: {fileID: 1613682533}
   m_Layer: 0
-  m_Name: WorldEditorEntrypoint
+  m_Name: WorldEditorInitiator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,7 +154,10 @@ MonoBehaviour:
   autoInjectGameObjects: []
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   InputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  WorldControllerV2Prefab: {fileID: 7349877737517603765, guid: 0ebf5ea53eb4fd013bc753d6ab180207, type: 3}
+  worldPrefabProvider: {fileID: 11400000, guid: 36f48e688128bc65b8af8d71ef86f3f1, type: 2}
+  tickEvent: {fileID: 11400000, guid: 2cc95b74b8a1ad36f88f366fcbf4e8e3, type: 2}
+  fixedTickEvent: {fileID: 11400000, guid: 5bcf141af277623009f9582fea19b6f1, type: 2}
+  lateTickEvent: {fileID: 11400000, guid: 3ac78d2c84182126eb836dab55d71af3, type: 2}
 --- !u!4 &1613682534
 Transform:
   m_ObjectHideFlags: 0

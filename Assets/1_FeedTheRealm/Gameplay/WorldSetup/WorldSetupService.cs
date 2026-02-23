@@ -11,10 +11,17 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         public WorldSetupService(
             BaseplateSetupService worldCreator,
             CameraSetupService cameraSetup,
-            LightingSetupService lightingSetup
+            LightingSetupService lightingSetup,
+            PlayerSetupService playerSetup
         )
         {
-            setupServices = new List<ISetup> { worldCreator, cameraSetup, lightingSetup };
+            setupServices = new List<ISetup>
+            {
+                worldCreator,
+                cameraSetup,
+                lightingSetup,
+                playerSetup,
+            };
         }
 
         public void ExecuteSetup()

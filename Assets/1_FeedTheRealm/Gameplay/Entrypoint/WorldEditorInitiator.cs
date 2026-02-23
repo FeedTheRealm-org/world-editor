@@ -1,3 +1,5 @@
+using FeedTheRealm.Core;
+using FeedTheRealm.Core.EventChannels.Ticks;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.WorldSetup;
 using UnityEngine;
@@ -6,7 +8,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.WorldEditor
 {
-    public class WorldEditorEntrypoint : LifetimeScope
+    public class WorldEditorInitiator : LifetimeScope
     {
         [SerializeField]
         private DataPersistenceManagerSO dataPersistenceManager;
@@ -15,22 +17,35 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private InputReader InputReader;
 
         [SerializeField]
-        private WorldControllerV2 WorldControllerV2Prefab;
+        private WorldPrefabProvider worldPrefabProvider;
+
+        [SerializeField]
+        private TickEvent tickEvent;
+
+        [SerializeField]
+        private FixedTickEvent fixedTickEvent;
+
+        [SerializeField]
+        private LateTickEvent lateTickEvent;
 
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(InputReader);
+            builder.RegisterInstance(worldPrefabProvider);
 
-            builder.RegisterInstance(WorldControllerV2Prefab);
+            builder.RegisterInstance(tickEvent);
+            builder.RegisterInstance(fixedTickEvent);
+            builder.RegisterInstance(lateTickEvent);
             builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
             builder.Register<LightingSetupService>(Lifetime.Scoped);
+            builder.Register<PlayerSetupService>(Lifetime.Scoped);
 
             builder.Register<WorldSetupService>(Lifetime.Scoped);
             builder.Register<WorldLoader>(Lifetime.Scoped);
 
-            builder.RegisterEntryPoint<WorldEditorInitiator>();
+            builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
     }
 }

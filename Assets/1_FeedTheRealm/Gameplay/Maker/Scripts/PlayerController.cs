@@ -2,7 +2,7 @@ using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
 using VContainer;
 
-public class MakerController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [Header("Editor Control Configuration")]
     [SerializeField]
@@ -31,7 +31,7 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent += OnMoveInput;
             inputReader.LookEvent += OnLookInput;
             inputReader.MoveVerticalEvent += OnMoveVertical;
-            logger.Log("MakerController subscribed to events.", this);
+            logger.Log("PlayerController subscribed to events.", this);
         }
     }
 
@@ -43,7 +43,7 @@ public class MakerController : MonoBehaviour
             inputReader.MoveEvent -= OnMoveInput;
             inputReader.LookEvent -= OnLookInput;
             inputReader.MoveVerticalEvent -= OnMoveVertical;
-            logger.Log("MakerController unsubscribed from events.", this);
+            logger.Log("PlayerController unsubscribed from events.", this);
         }
     }
 

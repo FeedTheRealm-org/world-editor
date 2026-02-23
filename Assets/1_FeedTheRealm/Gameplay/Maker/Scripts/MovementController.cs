@@ -1,23 +1,17 @@
+using FeedTheRealm.Core.EventChannels.Ticks;
 using UnityEngine;
+using VContainer;
 
 public class MovementController : MonoBehaviour
 {
-    // TODO: move all numeric fields to a Config SO for better tuning and reuse
+    [SerializeField]
+    private MovementConfig config;
 
     [SerializeField]
-    float moveSpeed = 5f;
+    private Transform playerObject;
 
-    [SerializeField]
-    Transform playerObject;
-
-    [SerializeField]
-    float acceleration = 10f;
-
-    [SerializeField]
-    float deceleration = 10f;
-
-    [SerializeField]
-    float vertialSpeed = 3f;
+    [Inject]
+    private TickEvent tickEvent;
 
     private Vector3 currentVelocity = Vector3.zero;
     private Vector2 inputDirection = Vector2.zero;
@@ -33,11 +27,22 @@ public class MovementController : MonoBehaviour
         verticalInput = direction;
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        float targetSpeed = inputDirection.magnitude > 0 ? moveSpeed : 0;
+        tickEvent.OnRaised += Tick;
+    }
+
+    private void OnDisable()
+    {
+        tickEvent.OnRaised -= Tick;
+    }
+
+    private void Tick()
+    {
+        float targetSpeed = inputDirection.magnitude > 0 ? config.moveSpeed : 0;
         float currentSpeed = currentVelocity.magnitude;
-        float accelerationRate = inputDirection.magnitude > 0 ? acceleration : deceleration;
+        float accelerationRate =
+            inputDirection.magnitude > 0 ? config.acceleration : config.deceleration;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, accelerationRate * Time.deltaTime);
 
         if (inputDirection.magnitude > 0)
@@ -56,6 +61,6 @@ public class MovementController : MonoBehaviour
 
         playerObject.transform.position += currentVelocity * Time.deltaTime;
         playerObject.transform.position +=
-            verticalInput * vertialSpeed * Time.deltaTime * Vector3.up;
+            verticalInput * config.verticalSpeed * Time.deltaTime * Vector3.up;
     }
 }

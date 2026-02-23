@@ -5,16 +5,16 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class BaseplateSetupService : ISetup
     {
-        private readonly WorldControllerV2 worldController;
+        private readonly GameObject worldPrefab;
 
-        public BaseplateSetupService(WorldControllerV2 worldController)
+        public BaseplateSetupService(WorldPrefabProvider worldPrefabProvider)
         {
-            this.worldController = worldController;
+            worldPrefab = worldPrefabProvider.worldPrefab;
         }
 
         public void Setup()
         {
-            WorldControllerV2 worldInstance = Object.Instantiate(worldController);
+            var worldInstance = Object.Instantiate(worldPrefab);
             worldInstance.gameObject.name = "World";
             worldInstance.gameObject.transform.position = Vector3.zero;
         }
