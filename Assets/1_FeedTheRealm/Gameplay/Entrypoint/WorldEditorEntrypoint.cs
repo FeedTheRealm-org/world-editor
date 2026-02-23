@@ -23,7 +23,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(InputReader);
 
             builder.RegisterInstance(WorldControllerV2Prefab);
-            builder.Register<WorldCreatorService>(Lifetime.Scoped);
+            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
             builder.Register<LightingSetupService>(Lifetime.Scoped);
 

@@ -1,18 +1,16 @@
+using FeedTheRealm.Core.Interfaces;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class LightingSetupService
+    public class LightingSetupService : ISetup
     {
-        public Light Setup()
+        public void Setup()
         {
             var lightGO = new GameObject("Directional Light");
             var light = lightGO.AddComponent<Light>();
-
             light.type = LightType.Directional;
             light.transform.rotation = Quaternion.Euler(50, -30, 0);
-
-            return light;
         }
     }
 }

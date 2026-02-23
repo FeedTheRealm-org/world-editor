@@ -17,7 +17,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 
         public void Start()
         {
-            worldSetup.Setup();
+            worldSetup.ExecuteSetup();
             worldLoader.Load();
         }
     }

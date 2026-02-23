@@ -1,28 +1,20 @@
+using FeedTheRealm.Core.Interfaces;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class CameraSetupService
+    public class CameraSetupService : ISetup
     {
-        public Camera Setup()
+        public void Setup()
         {
-            // Create main camera
             var cameraGO = new GameObject("Main Camera");
             var camera = cameraGO.AddComponent<Camera>();
             camera.tag = "MainCamera";
-
-            // Add Cinemachine Brain
             cameraGO.AddComponent<CinemachineBrain>();
-
-            // Create virtual camera
             var vcamGO = new GameObject("World Virtual Camera");
             var virtualCamera = vcamGO.AddComponent<CinemachineCamera>();
-
-            // Position the virtual camera
             virtualCamera.transform.position = new Vector3(0, 10, -10);
-
-            return camera;
         }
     }
 }

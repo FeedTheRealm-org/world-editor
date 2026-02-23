@@ -1,22 +1,22 @@
+using FeedTheRealm.Core.Interfaces;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class WorldCreatorService
+    public class BaseplateSetupService : ISetup
     {
         private readonly WorldControllerV2 worldController;
 
-        public WorldCreatorService(WorldControllerV2 worldPrefab)
+        public BaseplateSetupService(WorldControllerV2 worldController)
         {
-            this.worldController = worldPrefab;
+            this.worldController = worldController;
         }
 
-        public GameObject Create()
+        public void Setup()
         {
             WorldControllerV2 worldInstance = Object.Instantiate(worldController);
             worldInstance.gameObject.name = "World";
             worldInstance.gameObject.transform.position = Vector3.zero;
-            return worldInstance.gameObject;
         }
     }
 }
