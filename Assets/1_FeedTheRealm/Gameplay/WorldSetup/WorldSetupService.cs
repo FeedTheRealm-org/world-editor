@@ -12,7 +12,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             BaseplateSetupService worldCreator,
             CameraSetupService cameraSetup,
             LightingSetupService lightingSetup,
-            PlayerSetupService playerSetup
+            PlayerSetupService playerSetup,
+            UISetupService uiSetup
         )
         {
             setupServices = new List<ISetup>
@@ -21,6 +22,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 cameraSetup,
                 lightingSetup,
                 playerSetup,
+                uiSetup,
             };
         }
 

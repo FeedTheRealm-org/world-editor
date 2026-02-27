@@ -76,7 +76,7 @@ MonoBehaviour:
   menuOptions: []
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   worldEditorScene:
-    sceneName: WorldEditorV2
+    sceneName: WorldEditor
     sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
 --- !u!114 &-1102919887559925370
 MonoBehaviour:
