@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.Gameplay::MovementConfig
   positionX: 0
   positionY: 20
+  positionZ: 0
   moveSpeed: 30
   acceleration: 10
   deceleration: 10
-  verticalSpeed: 3
+  verticalSpeed: 12
   lookSensitivity: {x: 1, y: 1}
   pitchLimit: 85

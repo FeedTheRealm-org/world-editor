@@ -1,5 +1,6 @@
 using FeedTheRealm.Core;
 using FeedTheRealm.Core.EventChannels.Ticks;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.WorldSetup;
 using UnityEngine;
@@ -31,11 +32,15 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private PlayerConfig playerConfig;
 
+        [SerializeField]
+        private UIObjectProvider uIObjectProvider;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(InputReader);
             builder.RegisterInstance(worldPrefabProvider);
+            builder.RegisterInstance(uIObjectProvider);
 
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
@@ -47,6 +52,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.Register<LightingSetupService>(Lifetime.Scoped);
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
+            builder.Register<UISetupService>(Lifetime.Scoped);
 
             builder.Register<WorldSetupService>(Lifetime.Scoped);
             builder.Register<WorldLoader>(Lifetime.Scoped);

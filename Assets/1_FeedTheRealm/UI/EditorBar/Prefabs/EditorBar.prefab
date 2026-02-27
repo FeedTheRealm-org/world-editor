@@ -45,13 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec85779ea7a5d629b77baeb5b27e418, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.EditorBarController
-  logger: {fileID: 0}
-  menuBarUI: {fileID: 0}
-  fileOptionController: {fileID: 0}
-  editOptionController: {fileID: 0}
-  subscriptionsOptionController: {fileID: 0}
-  helpOptionController: {fileID: 0}
-  aboutOptionController: {fileID: 0}
+  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+  menuBarUI: {fileID: 5259271317908515787, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+  ZoneOption: {fileID: 0}
+  PlacementOption: {fileID: 8460830210770891682, guid: a6cc5a598cab5593bbfc43afc8d328a5, type: 3}
+  ElementOption: {fileID: -7251970769835033095, guid: 9eae8d8b0ec4797ebb934189ff43b1fa, type: 3}
 --- !u!114 &875738810445274930
 MonoBehaviour:
   m_ObjectHideFlags: 0

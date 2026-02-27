@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup

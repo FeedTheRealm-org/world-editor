@@ -68,9 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bccd2bf9311ec26eb39a1780c27784b, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::OpenMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   gameScene:
-    sceneName: WorldEditorV2
+    sceneName: WorldEditor
     sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
