@@ -10,5 +10,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
     {
         public GameObject playerPrefab;
         public GameObject worldPrefab;
+        public GameObject worldEditorPrefab;
     }
 }

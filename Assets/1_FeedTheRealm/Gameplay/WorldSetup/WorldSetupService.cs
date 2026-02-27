@@ -14,6 +14,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             LightingSetupService lightingSetup,
             PlayerSetupService playerSetup,
             LibrarySetupService librarySetup,
+            WorldEditorSetupService worldEditorSetup,
             UISetupService uiSetup
         )
         {
@@ -24,6 +25,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 lightingSetup,
                 playerSetup,
                 librarySetup,
+                worldEditorSetup,
                 uiSetup,
             };
         }

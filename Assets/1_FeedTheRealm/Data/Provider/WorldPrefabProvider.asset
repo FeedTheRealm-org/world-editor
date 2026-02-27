@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.Core::WorldPrefabProvider
   playerPrefab: {fileID: 7716978049392081773, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
   worldPrefab: {fileID: 5180060565708909657, guid: 0ebf5ea53eb4fd013bc753d6ab180207, type: 3}
-  menuBarPrefab: {fileID: 3578506303314259915, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+  worldEditorPrefab: {fileID: 6012702040579960072, guid: 6d7686df63f30be61b96e27573d65070, type: 3}
