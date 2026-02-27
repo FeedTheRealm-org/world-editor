@@ -1,9 +1,14 @@
+using Models;
 using UnityEngine;
+using VContainer;
 
 namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldLoader
     {
+        [Inject]
+        private readonly DataPersistenceManagerSO dataPersistenceManager;
+
         public WorldLoader()
         {
             Debug.Log("WorldLoader constructed");
@@ -12,6 +17,16 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         public void Load()
         {
             Debug.Log("WorldLoader.Load() called");
+            WorldData worldData = dataPersistenceManager.CurrentWorldData;
+            LoadWorld(worldData);
+        }
+
+        // TODO: consider adding a loading screen or something to avoid having the user
+        //see how the world is being populated.
+        public void LoadWorld(WorldData worldData)
+        {
+            Debug.Log("Raising world selected event...");
+            //SelectionRaiser.RaiseSelected(worldData);
         }
     }
 }

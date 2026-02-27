@@ -35,12 +35,20 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private UIObjectProvider uIObjectProvider;
 
+        [SerializeField]
+        private PlaceableObjectsLibrarySO placeableObjectLibrary;
+
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(InputReader);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(uIObjectProvider);
+            builder.RegisterInstance(placeableObjectLibrary);
+            builder.RegisterInstance(creatorObjectLibrary);
 
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
@@ -50,6 +58,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.Register<CameraSetupService>(Lifetime.Scoped);
             builder.Register<LightingSetupService>(Lifetime.Scoped);
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
+            builder.Register<LibrarySetupService>(Lifetime.Scoped);
             builder.Register<UISetupService>(Lifetime.Scoped);
 
             builder.Register<WorldSetupService>(Lifetime.Scoped);

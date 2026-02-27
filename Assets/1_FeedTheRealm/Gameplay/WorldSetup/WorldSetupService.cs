@@ -13,6 +13,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             CameraSetupService cameraSetup,
             LightingSetupService lightingSetup,
             PlayerSetupService playerSetup,
+            LibrarySetupService librarySetup,
             UISetupService uiSetup
         )
         {
@@ -22,6 +23,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 cameraSetup,
                 lightingSetup,
                 playerSetup,
+                librarySetup,
                 uiSetup,
             };
         }

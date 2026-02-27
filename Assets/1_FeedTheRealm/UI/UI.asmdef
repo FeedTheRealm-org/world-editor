@@ -6,6 +6,7 @@
     "FTR.Gameplay",
     "UnityEngine",
     "Unity.InputSystem",
+    "VContainer",
     "SimpleFileBrowser.Runtime"
   ],
   "includePlatforms": [

@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: UIObjectProvider
   m_EditorClassIdentifier: FTR.Core::UISceneProvider
   menuBarGameObject: {fileID: 3578506303314259915, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+  editorBarGameObject: {fileID: 274167244099775154, guid: 50b1820f7e5a84da3a3770617e130217, type: 3}
+  placeableDisplayObject: {fileID: 4078320561103496463, guid: cfb5d465ede5e5951a2e403fad83f5ca, type: 3}
+  editorSettingsMenuObject: {fileID: 3092455468846421062, guid: 94f969e5809956a63bcd99343969cdb4, type: 3}

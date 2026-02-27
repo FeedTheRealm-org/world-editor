@@ -12,8 +12,6 @@ public class PlaceableObjectDisplayController : MonoBehaviour
 
     void Start()
     {
-        // TODO: review a better way to initialize the library it shouldnt have to be done here
-        placeableObjectLibrary.Initialize();
         UIDocument hudVisualDocument = GetComponent<UIDocument>();
         if (hudVisualDocument == null)
         {

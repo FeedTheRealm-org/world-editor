@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
 [RequireComponent(typeof(UIDocument))]
 public class LoadMenu : MonoBehaviour
@@ -17,7 +18,7 @@ public class LoadMenu : MonoBehaviour
     [SerializeField]
     private SceneReference gameScene;
 
-    [SerializeField]
+    [Inject]
     private DataPersistenceManagerSO dataPersistenceManager;
 
     private List<string> loadedWorlds;
