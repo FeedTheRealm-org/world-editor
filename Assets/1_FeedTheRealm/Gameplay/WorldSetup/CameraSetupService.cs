@@ -6,6 +6,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class CameraSetupService : ISetup
     {
+        public Camera MainCamera { get; private set; }
+
         public void Setup()
         {
             var cameraGO = new GameObject("Main Camera");
@@ -15,6 +17,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             var vcamGO = new GameObject("World Virtual Camera");
             var virtualCamera = vcamGO.AddComponent<CinemachineCamera>();
             virtualCamera.transform.position = new Vector3(0, 10, -10);
+            MainCamera = camera;
         }
     }
 }
