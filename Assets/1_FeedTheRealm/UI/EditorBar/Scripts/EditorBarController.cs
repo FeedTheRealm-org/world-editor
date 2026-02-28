@@ -25,9 +25,26 @@ namespace FeedTheRealm.UI.MenuBar
         private VisualElement root;
         private MenuStack menuStack;
 
-        void Awake()
+        void Start()
         {
+            if (menuBarUI == null)
+            {
+                logger.Log("menuBarUI (UIDocument) is not assigned.", this, Logging.LogType.Error);
+                return;
+            }
+
             root = menuBarUI.rootVisualElement;
+
+            if (root == null)
+            {
+                logger.Log(
+                    "UIDocument.rootVisualElement is null. Make sure the UIDocument has a PanelSettings and a VisualTreeAsset assigned.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return;
+            }
+
             menuStack = new MenuStack(root);
 
             //BindButton("Zone", ZoneOption);

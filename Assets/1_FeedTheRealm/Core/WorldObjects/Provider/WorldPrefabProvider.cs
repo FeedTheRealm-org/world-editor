@@ -4,7 +4,7 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
 {
     [CreateAssetMenu(
         fileName = "WorldPrefabProvider",
-        menuName = "Scriptable Objects/WorldPrefabProvider"
+        menuName = "Scriptable Objects/Providers/WorldPrefabProvider"
     )]
     public class WorldPrefabProvider : ScriptableObject
     {

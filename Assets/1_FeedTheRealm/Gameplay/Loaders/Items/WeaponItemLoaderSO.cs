@@ -6,7 +6,7 @@ using UnityEngine;
     fileName = "WeaponItemLoader",
     menuName = "Scriptable Objects/Loaders/Items/WeaponItemLoader"
 )]
-public class WeaponItemLoader : ItemLoader<WeaponItemData>
+public class WeaponItemLoaderSO : ItemLoader<WeaponItemData>
 {
     protected override IEnumerable<WeaponItemData> GetData(WorldData worldData)
     {

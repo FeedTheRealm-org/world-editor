@@ -4,7 +4,7 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
 {
     [CreateAssetMenu(
         fileName = "UIObjectProvider",
-        menuName = "Scriptable Objects/UIObjectProvider"
+        menuName = "Scriptable Objects/Providers/UIObjectProvider"
     )]
     public class UIObjectProvider : ScriptableObject
     {

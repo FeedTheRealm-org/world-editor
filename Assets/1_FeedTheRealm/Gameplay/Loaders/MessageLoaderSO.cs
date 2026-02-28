@@ -4,7 +4,7 @@ using Models;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MessageLoader", menuName = "Scriptable Objects/Loaders/MessageLoader")]
-public class MessageLoader : ScriptableObject, ILoadable, ICreatableLoader
+public class MessageLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
     private Logging.Logger logger;

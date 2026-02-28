@@ -3,8 +3,8 @@ using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
-public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
+[CreateAssetMenu(fileName = "DialogLoader", menuName = "Scriptable Objects/Loaders/DialogLoader")]
+public class DialogLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
     private Logging.Logger logger;
@@ -12,7 +12,7 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
     [SerializeField]
     private WorldSelectedEvent worldSelectedEvent;
 
-    private List<CreatorObject> enemies = new();
+    private List<CreatorObject> dialogs = new();
 
     void OnEnable()
     {
@@ -26,42 +26,41 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
 
     public List<CreatorObject> GetCreatables()
     {
-        return enemies.FindAll(item => !item.IsDeleted);
+        return dialogs.FindAll(item => !item.IsDeleted);
     }
 
     public void AddCreatable(CreatorObject creatable)
     {
-        enemies.Add(creatable);
+        dialogs.Add(creatable);
     }
 
     public void RemoveCreatable(CreatorObject creatable)
     {
         creatable.Delete();
-        enemies.Remove(creatable);
+        dialogs.Remove(creatable);
     }
 
     public void UpdateCreatable(CreatorObject creatable)
     {
-        int index = enemies.FindIndex(item => item.ObjectId == creatable.ObjectId);
+        int index = dialogs.FindIndex(item => item.ObjectId == creatable.ObjectId);
         if (index != -1)
         {
-            enemies[index] = creatable;
+            dialogs[index] = creatable;
         }
     }
 
     public void LoadWorld(WorldData worldData)
     {
-        enemies.Clear();
+        dialogs.Clear();
         if (worldData == null)
         {
-            logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
+            logger.Log("DialogLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
             return;
         }
 
-        foreach (EnemyData itemData in worldData.enemies ?? new List<EnemyData>())
+        foreach (DialogData itemData in worldData.dialogs ?? new List<DialogData>())
         {
-            enemies.Add(new GenericEnemy(itemData));
+            dialogs.Add(new Dialog(itemData));
         }
-        logger.Log($"Loaded {enemies.Count} enemies from world data.", this, Logging.LogType.Info);
     }
 }

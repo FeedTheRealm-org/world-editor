@@ -6,7 +6,7 @@ using UnityEngine;
     fileName = "ConsumableItemLoader",
     menuName = "Scriptable Objects/Loaders/Items/ConsumableItemLoader"
 )]
-public class ConsumableItemLoader : ItemLoader<ConsumableItemData>
+public class ConsumableItemLoaderSO : ItemLoader<ConsumableItemData>
 {
     protected override IEnumerable<ConsumableItemData> GetData(WorldData worldData)
     {

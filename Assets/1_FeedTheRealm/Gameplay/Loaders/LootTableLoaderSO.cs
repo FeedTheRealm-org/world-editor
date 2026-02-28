@@ -7,7 +7,7 @@ using UnityEngine;
     fileName = "LootTableLoader",
     menuName = "Scriptable Objects/Loaders/LootTableLoader"
 )]
-public class LootTableLoader : ScriptableObject, ILoadable, ICreatableLoader
+public class LootTableLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
     private Logging.Logger logger;
