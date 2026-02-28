@@ -15,6 +15,8 @@ namespace FeedTheRealm.Gameplay.Inputs
         public event Action<float> MoveVerticalEvent;
         public event Action RemoveEvent;
         public event Action<Vector2> ScrollEvent;
+        public Vector2 LastClickPosition { get; private set; }
+
         private MakerControls controls;
 
         private void OnEnable()
@@ -108,6 +110,10 @@ namespace FeedTheRealm.Gameplay.Inputs
         {
             if (context.performed)
             {
+                if (Mouse.current != null)
+                {
+                    LastClickPosition = Mouse.current.position.ReadValue();
+                }
                 PrimaryInteractionEvent?.Invoke();
             }
         }

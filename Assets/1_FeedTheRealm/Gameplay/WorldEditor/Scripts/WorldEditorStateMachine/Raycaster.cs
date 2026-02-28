@@ -11,9 +11,7 @@ public static class Raycaster
         float maxDistance = DefaultMaxDistance
     )
     {
-        //Vector2 mousePos = Mouse.current.position.ReadValue();
-        Debug.Log("FIX THIS TO NOT USE MOUSE!");
-        Ray ray = maker.playerCamera.ScreenPointToRay(Vector2.zero);
+        Ray ray = maker.playerCamera.ScreenPointToRay(maker.inputReader.LastClickPosition);
         return Physics.Raycast(ray, out hit, maxDistance, layermask);
     }
 

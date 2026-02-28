@@ -38,18 +38,20 @@ public class CameraController : MonoBehaviour
         if (lookInput.magnitude == 0)
             return;
 
-        // Vertical rotation (pitch) - clamped
-        currentPitch -= lookInput.y * config.lookSensitivity.y;
-        currentPitch = Mathf.Clamp(currentPitch, -config.pitchLimit, config.pitchLimit);
-        playerObject.transform.localRotation = Quaternion.Euler(
-            currentPitch,
-            playerObject.transform.localEulerAngles.y,
-            0f
-        );
+        currentPitch = CalculatePitch();
+        float yaw = CalculateYaw();
 
-        // Horizontal rotation (yaw)
-        float yaw = playerObject.transform.localEulerAngles.y;
-        yaw += lookInput.x * config.lookSensitivity.x;
         playerObject.transform.localRotation = Quaternion.Euler(currentPitch, yaw, 0f);
+    }
+
+    private float CalculatePitch()
+    {
+        float newPitch = currentPitch - lookInput.y * config.lookSensitivity.y;
+        return Mathf.Clamp(newPitch, -config.pitchLimit, config.pitchLimit);
+    }
+
+    private float CalculateYaw()
+    {
+        return playerObject.transform.localEulerAngles.y + lookInput.x * config.lookSensitivity.x;
     }
 }
