@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [CreateAssetMenu(fileName = "ShopManager", menuName = "Scriptable Objects/ShopManager")]
 public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
@@ -12,16 +12,19 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
     [SerializeField]
     private CreatorObjectLibrarySO creatorObjectLibrary;
 
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
     private readonly ShopObject shop = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public List<ProductObject> GetProducts()

@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &247404046
+--- !u!1001 &857327317
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -129,15 +129,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1003181699395781433, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.05929
+      value: 0.84064
       objectReference: {fileID: 0}
     - target: {fileID: 1003181699395781433, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.27556
+      value: -5.28685
       objectReference: {fileID: 0}
     - target: {fileID: 1003181699395781433, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.37925
+      value: 2.83993
       objectReference: {fileID: 0}
     - target: {fileID: 1003181699395781433, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -171,34 +171,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenu
       objectReference: {fileID: 0}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: gameScene.sceneName
-      value: Game_POC
-      objectReference: {fileID: 0}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: gameScene.sceneAsset
-      value: 
-      objectReference: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: dataPersistenceManager
-      value: 
-      objectReference: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: newWorldScene.sceneName
-      value: WorldEditorV2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: loadWorldScene.sceneName
-      value: LoadWorld
-      objectReference: {fileID: 0}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: newWorldScene.sceneAsset
-      value: 
-      objectReference: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
-    - target: {fileID: 5199863625276805917, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
-      propertyPath: loadWorldScene.sceneAsset
-      value: 
-      objectReference: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -208,4 +180,4 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 247404046}
+  - {fileID: 857327317}

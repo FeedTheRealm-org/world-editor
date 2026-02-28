@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
 public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
@@ -9,16 +9,19 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
     [SerializeField]
     private Logging.Logger logger;
 
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
     private List<CreatorObject> enemies = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public List<CreatorObject> GetCreatables()
@@ -59,5 +62,6 @@ public class EnemyLoader : ScriptableObject, ILoadable, ICreatableLoader
         {
             enemies.Add(new GenericEnemy(itemData));
         }
+        logger.Log($"Loaded {enemies.Count} enemies from world data.", this, Logging.LogType.Info);
     }
 }

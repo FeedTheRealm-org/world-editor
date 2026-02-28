@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: LootTableLoader
   m_EditorClassIdentifier: Assembly-CSharp::LootTableLoader
   logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}

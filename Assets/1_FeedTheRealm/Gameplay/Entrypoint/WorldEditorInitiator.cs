@@ -41,6 +41,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
 
+        [SerializeField]
+        private WorldSelectedEvent worldSelectedEvent;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(dataPersistenceManager);
@@ -49,6 +52,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(uIObjectProvider);
             builder.RegisterInstance(placeableObjectLibrary);
             builder.RegisterInstance(creatorObjectLibrary);
+            builder.RegisterInstance(worldSelectedEvent);
 
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);

@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2247707332323767312
 Transform:
   m_ObjectHideFlags: 0
@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ff2134fdf0fc727fb6cd71084515ee6, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WorldEditorStateMachine
+  logger: {fileID: 11400000, guid: 7b0bb14026012c73d913e7c47f2e93ed, type: 2}
   inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   playerCamera: {fileID: 0}
-  logger: {fileID: 11400000, guid: 7b0bb14026012c73d913e7c47f2e93ed, type: 2}

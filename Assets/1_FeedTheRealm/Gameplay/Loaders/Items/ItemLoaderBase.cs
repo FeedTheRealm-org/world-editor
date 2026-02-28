@@ -1,23 +1,26 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 public abstract class ItemLoader<TItemData> : ScriptableObject, ILoadable, ICreatableLoader
 {
     [SerializeField]
     protected Logging.Logger logger;
 
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
     protected List<CreatorObject> items = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public List<CreatorObject> GetCreatables()

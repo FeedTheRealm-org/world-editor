@@ -18,7 +18,7 @@ public class LoadMenu : MonoBehaviour
     [SerializeField]
     private SceneReference gameScene;
 
-    [Inject]
+    [SerializeField]
     private DataPersistenceManagerSO dataPersistenceManager;
 
     private List<string> loadedWorlds;

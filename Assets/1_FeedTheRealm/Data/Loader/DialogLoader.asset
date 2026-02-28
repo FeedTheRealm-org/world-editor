@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e0b0c098b194954a95dd72defb5d78b, type: 3}
   m_Name: DialogLoader
   m_EditorClassIdentifier: Assembly-CSharp::DialogLoader
-  logger: {fileID: 0}
+  logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}

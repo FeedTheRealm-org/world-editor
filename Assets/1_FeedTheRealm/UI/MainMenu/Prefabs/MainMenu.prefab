@@ -68,3 +68,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e035184f4d6601210b2d4fe55b922e04, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
+  newWorldScene:
+    sceneName: WorldEditor
+    sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
+  loadWorldScene:
+    sceneName: LoadWorld
+    sceneAsset: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}

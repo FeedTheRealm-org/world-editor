@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [CreateAssetMenu(
     fileName = "LootTableLoader",
@@ -12,16 +12,19 @@ public class LootTableLoader : ScriptableObject, ILoadable, ICreatableLoader
     [SerializeField]
     private Logging.Logger logger;
 
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
     private List<CreatorObject> lootTables = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public List<CreatorObject> GetCreatables()

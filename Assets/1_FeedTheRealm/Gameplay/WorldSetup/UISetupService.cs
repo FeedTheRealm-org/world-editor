@@ -35,33 +35,28 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 Debug.LogError("MenuBar GameObject not set in UIObjectProvider!");
                 return;
             }
-            objectResolver.InjectGameObject(menuBarGameObject);
-            GameObject menuBarInstance = Object.Instantiate(menuBarGameObject);
-            menuBarInstance.name = "MenuBar";
+            objectResolver.Instantiate(menuBarGameObject).name = "MenuBar";
 
             if (editorBarGameObject == null)
             {
                 Debug.LogError("EditorBar GameObject not set in UIObjectProvider!");
                 return;
             }
-            objectResolver.InjectGameObject(editorBarGameObject);
-            GameObject editorBarInstance = Object.Instantiate(editorBarGameObject);
-            editorBarInstance.name = "EditorBar";
+            objectResolver.Instantiate(editorBarGameObject).name = "EditorBar";
+
             if (placeableDisplayObject == null)
             {
                 Debug.LogError("PlaceableDisplay GameObject not set in UIObjectProvider!");
                 return;
             }
-            objectResolver.InjectGameObject(placeableDisplayObject);
-            Object.Instantiate(placeableDisplayObject).name = "PlaceableDisplay";
+            objectResolver.Instantiate(placeableDisplayObject).name = "PlaceableDisplay";
 
             if (editorSettingsMenuObject == null)
             {
                 Debug.LogError("EditorSettingsMenu GameObject not set in UIObjectProvider!");
                 return;
             }
-            objectResolver.InjectGameObject(editorSettingsMenuObject);
-            Object.Instantiate(editorSettingsMenuObject).name = "EditorSettingsMenu";
+            objectResolver.Instantiate(editorSettingsMenuObject).name = "EditorSettingsMenu";
         }
     }
 }

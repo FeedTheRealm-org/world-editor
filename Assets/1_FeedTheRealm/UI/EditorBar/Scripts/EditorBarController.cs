@@ -14,8 +14,8 @@ namespace FeedTheRealm.UI.MenuBar
         private UIDocument menuBarUI;
 
         [Header("Menu Options")]
-        [SerializeField]
-        private MenuOption ZoneOption;
+        //[SerializeField]
+        //private MenuOption ZoneOption;
 
         [SerializeField]
         private MenuOption PlacementOption;
@@ -30,7 +30,7 @@ namespace FeedTheRealm.UI.MenuBar
             root = menuBarUI.rootVisualElement;
             menuStack = new MenuStack(root);
 
-            BindButton("Zone", ZoneOption);
+            //BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);
         }

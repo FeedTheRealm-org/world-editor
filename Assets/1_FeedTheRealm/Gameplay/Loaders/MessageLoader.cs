@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [CreateAssetMenu(fileName = "MessageLoader", menuName = "Scriptable Objects/Loaders/MessageLoader")]
 public class MessageLoader : ScriptableObject, ILoadable, ICreatableLoader
@@ -9,16 +9,19 @@ public class MessageLoader : ScriptableObject, ILoadable, ICreatableLoader
     [SerializeField]
     private Logging.Logger logger;
 
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
     private List<CreatorObject> messages = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public List<CreatorObject> GetCreatables()

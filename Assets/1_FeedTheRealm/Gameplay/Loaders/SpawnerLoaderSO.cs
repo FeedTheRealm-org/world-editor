@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [CreateAssetMenu(fileName = "SpawnerLoader", menuName = "Scriptable Objects/Loaders/SpawnerLoader")]
 public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
@@ -13,17 +13,20 @@ public class SpawnerLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     private Logging.Logger logger;
 
     [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
+    [SerializeField]
     private List<SpawnerTypeGameObject> spawnerDefinitions = new();
     private Dictionary<SpawnerType, SpawnerObject> spawnerObjectsMap = new();
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public void LoadLibrary()

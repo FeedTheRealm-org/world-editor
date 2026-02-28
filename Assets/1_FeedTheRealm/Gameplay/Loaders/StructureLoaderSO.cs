@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FeedTheRealm.Core.EventChannels;
 using Models;
 using UnityEngine;
-using Utils;
 
 [Serializable]
 public class WorldObjectReferenceList
@@ -22,6 +22,9 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
     private Logging.Logger logger;
 
     [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
+    [SerializeField]
     private string libraryFilePath = "Models/models.json";
 
     [SerializeField]
@@ -33,12 +36,12 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
     void OnEnable()
     {
-        SelectionRaiser.WorldSelected += LoadWorld;
+        worldSelectedEvent.OnRaised += LoadWorld;
     }
 
     void OnDisable()
     {
-        SelectionRaiser.WorldSelected -= LoadWorld;
+        worldSelectedEvent.OnRaised -= LoadWorld;
     }
 
     public void LoadLibrary()
@@ -72,12 +75,19 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
         return System.IO.Path.Combine(PersistentModelsDirectory, structureName + ".glb");
     }
 
-    public void LoadWorld(WorldData worldData)
+    public async void LoadWorld(WorldData worldData)
     {
         if (worldData.objectPlacementData == null)
             return;
         LoadLibrary(); // we make sure the library is loaded before placing objects
-        _ = OnLoadAsync(worldData.objectPlacementData);
+        try
+        {
+            await OnLoadAsync(worldData.objectPlacementData);
+        }
+        catch (Exception e)
+        {
+            logger.Log($"Error placing structures: {e.Message}", this, Logging.LogType.Error);
+        }
     }
 
     // -------------------- Private Methods --------------------
