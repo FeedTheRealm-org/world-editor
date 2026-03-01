@@ -3,7 +3,7 @@
     <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); align-items: center; justify-content: center;">
         <ui:VisualElement name="MenuContainer" class="menu-container" style="flex-grow: 1; justify-content: flex-start;">
             <ui:VisualElement name="Header" class="header" style="display: flex;">
-                <ui:Label text="Messages" class="header-label"/>
+                <ui:Label text="Messages" name="HeaderLabel" class="header-label"/>
                 <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: flex-end; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 60%;">
                     <ui:Button text="Create Message" name="CreateMessage" class="button"/>
                     <ui:Button text="Back To Dialogs" name="BackToDialogs" class="button"/>

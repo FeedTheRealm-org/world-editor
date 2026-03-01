@@ -35,7 +35,34 @@ public class MessagesMenuController : MenuController
         dialogBackButton.clicked += BackToDialogs;
         closeButton.clicked += CloseMenu;
 
+        SetHeaderLabel();
         PopulateMessagesList();
+    }
+
+    private void SetHeaderLabel()
+    {
+        var root = GetComponent<UIDocument>().rootVisualElement;
+        var headerLabel = root.Q<Label>("HeaderLabel");
+        if (headerLabel != null)
+        {
+            string dialogName = "";
+            if (!string.IsNullOrEmpty(PendingDialogId) && creatorObjectLibrary != null)
+            {
+                var dialog =
+                    creatorObjectLibrary
+                        .GetCreatables(CreatorObjectCategories.Dialog)
+                        .Find(d => d.ObjectId == PendingDialogId) as Dialog;
+                if (dialog != null)
+                {
+                    dialogName = dialog.DisplayName;
+                    if (dialogName.Length > 20)
+                        dialogName = dialogName.Substring(0, 20) + "...";
+                }
+            }
+            headerLabel.text = string.IsNullOrEmpty(dialogName)
+                ? "Messages"
+                : $"Messages (Dialog: {dialogName})";
+        }
     }
 
     private void PopulateMessagesList()
@@ -54,6 +81,10 @@ public class MessagesMenuController : MenuController
             var headerLabel = entry.Q<Label>("Header");
             headerLabel.text = message.DisplayName;
 
+            var typeLabel = entry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "Message";
+
             var editButton = entry.Q<Button>("Edit");
             var deleteButton = entry.Q<Button>("Delete");
 
@@ -67,6 +98,9 @@ public class MessagesMenuController : MenuController
     void OnEditMessage(Message message)
     {
         logger.Log("Editing message: " + message.DisplayName, this, Logging.LogType.Info);
+        EditContext.SetObjectToEdit(message);
+        MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
+        OpenMenu(createMessageMenuPrefab);
     }
 
     void OnDeleteMessage(Message message, VisualElement entry)

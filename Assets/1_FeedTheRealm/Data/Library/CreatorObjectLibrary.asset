@@ -28,3 +28,5 @@ MonoBehaviour:
     loader: {fileID: 11400000, guid: 7472414e9e8666741bd2a05479961f77, type: 2}
   - category: 6
     loader: {fileID: 11400000, guid: 7068ac77ba30ef787a8f2634a368fe57, type: 2}
+  - category: 7
+    loader: {fileID: 11400000, guid: cc4faad67a73bfb50a4be9ff21e2db2d, type: 2}

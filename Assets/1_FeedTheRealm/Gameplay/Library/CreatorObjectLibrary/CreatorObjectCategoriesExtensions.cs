@@ -12,6 +12,7 @@ public static class CreatorObjectCategoriesExtensions
         { CreatorObjectCategories.Dialog, "Dialog" },
         { CreatorObjectCategories.Message, "Message" },
         { CreatorObjectCategories.NPC, "NPC" },
+        { CreatorObjectCategories.Quest, "Quest" },
     };
 
     public static string GetDisplayName(this CreatorObjectCategories category)

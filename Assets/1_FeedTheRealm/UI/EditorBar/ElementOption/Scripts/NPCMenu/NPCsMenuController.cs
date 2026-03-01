@@ -63,6 +63,10 @@ public class NPCsMenuController : MenuController
             var editButton = npcEntry.Q<Button>("Edit");
             var deleteButton = npcEntry.Q<Button>("Delete");
 
+            var typeLabel = npcEntry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "NPC";
+
             if (editButton != null)
                 editButton.clicked += () => OnEditNPC(npc);
             if (deleteButton != null)

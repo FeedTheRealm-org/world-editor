@@ -49,6 +49,10 @@ public class EnemiesMenuController : MenuController
             var editButton = enemyEntry.Q<Button>("Edit");
             var deleteButton = enemyEntry.Q<Button>("Delete");
 
+            var typeLabel = enemyEntry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = "Enemy";
+
             editButton.clicked += () => OnEditEnemy(enemy);
             deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
 

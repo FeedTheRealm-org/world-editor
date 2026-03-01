@@ -1,15 +1,9 @@
-using System.Collections.Generic;
 using Models;
 
 public class Dialog : CreatorObject
 {
-    public string npc;
-
     public Dialog(DialogData dialogData)
-        : base(dialogData.name, dialogData.id, "")
-    {
-        npc = dialogData.npc;
-    }
+        : base(dialogData.name, dialogData.id, "") { }
 
     public override void DeleteObject(ref WorldData worldData)
     {
@@ -18,7 +12,7 @@ public class Dialog : CreatorObject
 
     public override void SaveObject(ref WorldData worldData)
     {
-        DialogData dialogData = new(ObjectId, name, npc);
+        DialogData dialogData = new(ObjectId, name);
         worldData.dialogs.Add(dialogData);
     }
 }
