@@ -68,6 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c49b29607feb9e9f5a9c0c5e93d7d23d, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SaveMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
