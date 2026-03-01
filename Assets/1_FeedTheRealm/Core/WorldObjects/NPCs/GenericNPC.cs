@@ -6,7 +6,7 @@ public class GenericNPC : CreatorObject
     public string description;
 
     public GenericNPC(NPCData npcData)
-        : base(npcData.name, npcData.id, npcData.spriteFilepath)
+        : base(npcData.name, npcData.id, npcData.spriteFilePath)
     {
         description = npcData.description;
     }

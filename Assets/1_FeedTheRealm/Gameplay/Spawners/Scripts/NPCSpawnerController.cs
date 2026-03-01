@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FeedTheRealm.Gameplay.Inputs;
 using Models;
 using UnityEngine;
@@ -35,7 +36,7 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
 
     void OnEnable()
     {
-        NPCSpawnData = new NPCSpawnerData(transform.position, transform.localScale.x);
+        NPCSpawnData = new NPCSpawnerData(transform.position, transform.localScale.x, string.Empty);
         editorMenu = GetComponent<UIDocument>();
         var root = editorMenu.rootVisualElement;
 
