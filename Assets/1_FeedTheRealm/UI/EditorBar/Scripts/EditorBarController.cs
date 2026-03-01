@@ -22,6 +22,11 @@ namespace FeedTheRealm.UI.MenuBar
 
         [SerializeField]
         private MenuOption ElementOption;
+
+        [Header("Events")]
+        [SerializeField]
+        private CategorySelectedEvent categorySelectedEvent;
+
         private VisualElement root;
         private MenuStack menuStack;
 
@@ -55,6 +60,11 @@ namespace FeedTheRealm.UI.MenuBar
             }
 
             button.text = option.Label;
+            foreach (var subOption in option.MenuOptions)
+            {
+                if (subOption is ICategoryOption categoryOption)
+                    categoryOption.SetCategoryEvent(categorySelectedEvent);
+            }
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)

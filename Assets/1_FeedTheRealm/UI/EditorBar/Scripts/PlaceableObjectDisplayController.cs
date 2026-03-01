@@ -6,6 +6,9 @@ public class PlaceableObjectDisplayController : MonoBehaviour
 {
     [SerializeField]
     private PlaceableObjectsLibrarySO placeableObjectLibrary;
+
+    [SerializeField]
+    private CategorySelectedEvent categorySelectedEvent;
     private ListView libraryBar;
     private List<IPlaceable> currentObjectList = new();
     private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
@@ -26,8 +29,15 @@ public class PlaceableObjectDisplayController : MonoBehaviour
             return;
         }
 
+        categorySelectedEvent.OnRaised += LoadObjectsForCategory;
+
         InitializeLibraryBar();
         LoadObjectsForCategory(PlaceableObjectCategories.Structure);
+    }
+
+    void OnDestroy()
+    {
+        categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
     }
 
     private void InitializeLibraryBar()

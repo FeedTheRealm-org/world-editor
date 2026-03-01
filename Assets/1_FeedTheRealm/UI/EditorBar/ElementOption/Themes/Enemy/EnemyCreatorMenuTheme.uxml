@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/GameMenus/Themes/gameMenuUSS.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#gameMenuUSS"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
     <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="max-height: 55%; height: 540px;">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="max-height: 55%; height: 540px;">
             <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
                 <ui:Label text="Generic Enemy" class="header-label"/>
                 <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">

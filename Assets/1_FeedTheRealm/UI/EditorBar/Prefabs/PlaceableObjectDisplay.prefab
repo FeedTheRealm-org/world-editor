@@ -69,3 +69,4 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::HudLibraryController
   placeableObjectLibrary: {fileID: 11400000, guid: 51ebf47e2e4d2821d8ca16824de73818, type: 2}
+  categorySelectedEvent: {fileID: 11400000, guid: 9c40dcb755848f4249665728d6806c50, type: 2}
