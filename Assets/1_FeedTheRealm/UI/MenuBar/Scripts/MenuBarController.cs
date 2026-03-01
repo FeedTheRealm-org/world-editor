@@ -68,7 +68,7 @@ namespace FeedTheRealm.UI.MenuBar
             {
                 if (option.MenuOptions.Count == 0)
                     return;
-                menuStack.Open(button, option.MenuOptions);
+                menuStack.Toggle(button, option.MenuOptions);
             };
         }
     }
