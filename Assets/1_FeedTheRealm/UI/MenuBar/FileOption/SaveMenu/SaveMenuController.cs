@@ -20,6 +20,7 @@ public class SaveMenuController : MenuController
         saveButton = root.Q<Button>("Save");
         closeButton = root.Q<Button>("Close");
         nameInput = root.Q<TextField>("NameInput");
+
         WorldData worldData = dataPersistenceManager.CurrentWorldData;
         if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
         {
@@ -42,14 +43,14 @@ public class SaveMenuController : MenuController
         if (string.IsNullOrEmpty(worldName))
         {
             Debug.LogWarning("SaveMenuController: No world name entered!");
-            ToastNotification.Show("World name is required", "error", Color.red);
+            // ToastNotification.Show("World name is required", "error", Color.red);
             return;
         }
 
         Debug.Log($"SaveMenuController: Saving world '{worldName}'");
         dataPersistenceManager.SaveWorld(worldName);
 
-        ToastNotification.Show("World saved successfully", "success", Color.green);
+        // ToastNotification.Show("World saved successfully", "success", Color.green);
 
         CloseMenu();
     }
