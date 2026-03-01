@@ -46,8 +46,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.EditorBarController
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  menuBarUI: {fileID: 5259271317908515787, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
-  ZoneOption: {fileID: 0}
+  menuBarUI: {fileID: 875738810445274930}
   PlacementOption: {fileID: 8460830210770891682, guid: a6cc5a598cab5593bbfc43afc8d328a5, type: 3}
   ElementOption: {fileID: -7251970769835033095, guid: 9eae8d8b0ec4797ebb934189ff43b1fa, type: 3}
 --- !u!114 &875738810445274930
@@ -65,7 +64,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 7d881be72de7bd64f9794bf865dfc6ef, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 400
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
