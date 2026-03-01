@@ -11,6 +11,7 @@ public static class CreatorObjectCategoriesExtensions
         { CreatorObjectCategories.LootTable, "Loot Table" },
         { CreatorObjectCategories.Dialog, "Dialog" },
         { CreatorObjectCategories.Message, "Message" },
+        { CreatorObjectCategories.NPC, "NPC" },
     };
 
     public static string GetDisplayName(this CreatorObjectCategories category)

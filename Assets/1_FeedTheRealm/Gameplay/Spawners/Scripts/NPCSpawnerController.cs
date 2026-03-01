@@ -9,8 +9,12 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
 {
     [SerializeField]
     private InputReader inputReader;
+
+    [SerializeField]
+    private CreatorObjectLibrarySO creatorObjectLibrary;
     private UIDocument editorMenu;
     private Slider radiusSlider;
+    private DropdownField npcDropdown;
     private Button closeButton;
     private NPCSpawnerData _npcSpawnData;
 
@@ -36,7 +40,14 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
         var root = editorMenu.rootVisualElement;
 
         radiusSlider = root.Q<Slider>("SpawnerRadius");
+        npcDropdown = root.Q<DropdownField>("NPCDropdown");
         closeButton = root.Q<Button>("Close");
+
+        if (creatorObjectLibrary == null)
+        {
+            Debug.LogError("NPCSpawnerController: CreatorObjectLibrarySO reference is missing.");
+            return;
+        }
 
         radiusSlider.value = NPCSpawnData.Radius;
 
@@ -59,6 +70,37 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
     {
         inputReader.ToggleInput(false);
         radiusSlider.value = NPCSpawnData.Radius;
+
+        if (npcDropdown != null && creatorObjectLibrary != null)
+        {
+            var npcs = creatorObjectLibrary
+                .GetCreatables(CreatorObjectCategories.NPC)
+                .Cast<GenericNPC>()
+                .ToList();
+
+            npcDropdown.choices = npcs.Select(npc => npc.DisplayName).ToList();
+
+            if (!string.IsNullOrEmpty(NPCSpawnData.npcId))
+            {
+                var selectedNPC = npcs.FirstOrDefault(npc => npc.ObjectId == NPCSpawnData.npcId);
+                if (selectedNPC != null)
+                {
+                    npcDropdown.value = selectedNPC.DisplayName;
+                }
+            }
+
+            npcDropdown.RegisterValueChangedCallback(e =>
+            {
+                var selectedNPC = npcs.FirstOrDefault(npc => npc.DisplayName == e.newValue);
+                if (selectedNPC != null)
+                {
+                    NPCSpawnData.npcId = selectedNPC.ObjectId;
+                    Debug.Log(
+                        $"NPCSpawnerController: Selected NPC '{selectedNPC.DisplayName}' (ID: {selectedNPC.ObjectId})"
+                    );
+                }
+            });
+        }
 
         editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
 
