@@ -51,6 +51,9 @@ public class MenuStack
         menu.style.position = Position.Absolute;
         menu.style.flexDirection = FlexDirection.Column;
 
+        // Track which anchor spawned this menu so we can toggle later
+        menu.userData = anchor;
+
         menu.RegisterCallback<PointerDownEvent>(e => e.StopPropagation());
         menu.RegisterCallback<PointerLeaveEvent>(_ => CloseFromDepth(depth));
 
@@ -96,6 +99,30 @@ public class MenuStack
             menu.style.left = bounds.xMax + menuSpacingX;
             menu.style.top = bounds.y;
         }
+    }
+
+    /// <summary>
+    /// Returns true if the menu at the given depth (default 0) was opened by the specified anchor.
+    /// </summary>
+    public bool IsOpenForAnchor(VisualElement anchor, int depth = 0)
+    {
+        if (openMenus.Count > depth)
+        {
+            var menu = openMenus[depth];
+            return menu.userData == anchor;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Toggle the dropdown for an anchor. If already open, closes it; otherwise opens a new one.
+    /// </summary>
+    public void Toggle(VisualElement anchor, IReadOnlyList<MenuOption> options)
+    {
+        if (IsOpenForAnchor(anchor))
+            CloseAll();
+        else
+            Open(anchor, options);
     }
 
     public void CloseFromDepth(int depth)

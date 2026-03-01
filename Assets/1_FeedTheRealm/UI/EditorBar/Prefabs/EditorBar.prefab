@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.EditorBarController
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   menuBarUI: {fileID: 5259271317908515787, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
-  ZoneOption: {fileID: 0}
+  ZoneOption: {fileID: -7251970769835033095, guid: 9eae8d8b0ec4797ebb934189ff43b1fa, type: 3}
   PlacementOption: {fileID: 8460830210770891682, guid: a6cc5a598cab5593bbfc43afc8d328a5, type: 3}
   ElementOption: {fileID: -7251970769835033095, guid: 9eae8d8b0ec4797ebb934189ff43b1fa, type: 3}
 --- !u!114 &875738810445274930

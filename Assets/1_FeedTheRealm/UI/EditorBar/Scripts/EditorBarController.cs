@@ -14,8 +14,8 @@ namespace FeedTheRealm.UI.MenuBar
         private UIDocument menuBarUI;
 
         [Header("Menu Options")]
-        //[SerializeField]
-        //private MenuOption ZoneOption;
+        [SerializeField]
+        private MenuOption ZoneOption;
 
         [SerializeField]
         private MenuOption PlacementOption;
@@ -47,7 +47,7 @@ namespace FeedTheRealm.UI.MenuBar
 
             menuStack = new MenuStack(root);
 
-            //BindButton("Zone", ZoneOption);
+            BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);
         }
@@ -76,8 +76,15 @@ namespace FeedTheRealm.UI.MenuBar
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)
+                {
+                    logger.Log(
+                        $"MenuOption '{option.Label}' has no submenu options defined.",
+                        this,
+                        Logging.LogType.Warning
+                    );
                     return;
-                menuStack.Open(button, option.MenuOptions);
+                }
+                menuStack.Toggle(button, option.MenuOptions);
             };
         }
     }
