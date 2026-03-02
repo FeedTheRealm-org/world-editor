@@ -92,4 +92,5 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   spriteService: {fileID: 11400000, guid: c00c8d635be048806b011b2f8365dcea, type: 2}
   modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
+  itemService: {fileID: 11400000, guid: 9289716798ab6784d84277304e6f1987, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
