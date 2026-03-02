@@ -18,7 +18,7 @@ public class WorldEditorStateMachine : MonoBehaviour
     public InputReader inputReader;
     public Camera playerCamera;
     public IPlaceable SelectedObject { get; private set; }
-    public bool IsEditorEnabled { get; private set; }
+    public bool IsEditorEnabled { get; private set; } = true;
     private IWorldEditorState currentState;
 
     // ------ States ------
@@ -95,7 +95,7 @@ public class WorldEditorStateMachine : MonoBehaviour
 
     private void ToggleEditor(bool locked)
     {
-        IsEditorEnabled = locked;
+        IsEditorEnabled = !locked;
         if (locked)
             currentState?.Exit();
         Debug.Log($"Interaction {(locked ? "locked" : "unlocked")}.");
@@ -115,7 +115,7 @@ public class WorldEditorStateMachine : MonoBehaviour
 
     private void Update()
     {
-        if (IsEditorEnabled)
+        if (!IsEditorEnabled)
             return;
         currentState?.Tick();
     }

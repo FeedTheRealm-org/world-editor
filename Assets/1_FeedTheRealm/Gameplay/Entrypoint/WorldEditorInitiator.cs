@@ -15,7 +15,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private DataPersistenceManagerSO dataPersistenceManager;
 
         [SerializeField]
-        private InputReader InputReader;
+        private InputReader inputReader;
 
         [SerializeField]
         private WorldPrefabProvider worldPrefabProvider;
@@ -40,7 +40,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             ValidateSerializedFields();
 
             builder.RegisterInstance(dataPersistenceManager);
-            builder.RegisterInstance(InputReader);
+            builder.RegisterInstance(inputReader);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(uIObjectProvider);
             builder.RegisterInstance(placeableObjectLibrary);
@@ -69,9 +69,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor
                 Debug.LogError(
                     $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
                 );
-            if (InputReader == null)
+            if (inputReader == null)
                 Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(InputReader)} is not assigned in the Inspector."
+                    $"[WorldEditorInitiator] {nameof(inputReader)} is not assigned in the Inspector."
                 );
             if (worldPrefabProvider == null)
                 Debug.LogError(

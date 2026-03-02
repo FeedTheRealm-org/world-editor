@@ -30,13 +30,13 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public void Setup()
         {
-            playerPrefab.name = "Player";
-            playerPrefab.SetActive(false);
             GameObject playerInstance = Object.Instantiate(
                 playerPrefab,
                 new Vector3(playerConfig.positionX, playerConfig.positionY, playerConfig.positionZ),
                 Quaternion.identity
             );
+            playerInstance.name = "Player";
+            playerInstance.SetActive(false);
             objectResolver.InjectGameObject(playerInstance);
             playerInstance.SetActive(true);
         }
