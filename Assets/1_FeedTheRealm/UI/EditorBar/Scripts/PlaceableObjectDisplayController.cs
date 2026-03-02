@@ -14,6 +14,9 @@ public class PlaceableObjectDisplayController : MonoBehaviour
 
     [Inject]
     private ObjectSelectedEvent objectSelectedEvent;
+
+    [Inject]
+    private EnableInputEvent enableInputEvent;
     private ListView libraryBar;
     private List<IPlaceable> currentObjectList = new();
     private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
@@ -59,6 +62,16 @@ public class PlaceableObjectDisplayController : MonoBehaviour
         var button = new Button();
         button.AddToClassList("placeableObjectOption");
         button.style.width = Length.Percent(100);
+
+        button.RegisterCallback<MouseEnterEvent>(evt =>
+        {
+            enableInputEvent.Raise(false);
+        });
+        button.RegisterCallback<MouseLeaveEvent>(evt =>
+        {
+            enableInputEvent.Raise(true);
+        });
+
         return button;
     }
 

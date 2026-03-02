@@ -28,8 +28,18 @@ namespace FeedTheRealm.UI.Common
 
         public virtual void Execute()
         {
-            if (menuToOpen)
-                Instantiate(menuToOpen);
+            if (menuToOpen != null)
+            {
+                Transform parent = FindFirstObjectByType<Canvas>()?.transform;
+                if (parent != null)
+                {
+                    MenuController instance = Instantiate(menuToOpen, parent);
+                }
+                else
+                {
+                    MenuController instance = Instantiate(menuToOpen);
+                }
+            }
         }
     }
 }

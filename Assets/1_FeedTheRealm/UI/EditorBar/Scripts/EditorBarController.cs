@@ -24,9 +24,11 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private MenuOption ElementOption;
 
-        [Header("Events")]
-        [SerializeField]
+        [Inject]
         private CategorySelectedEvent categorySelectedEvent;
+
+        [Inject]
+        private EnableInputEvent enableInputEvent;
 
         [Inject]
         private EnableEditorEvent enableEditorEvent;
@@ -72,6 +74,16 @@ namespace FeedTheRealm.UI.MenuBar
                 if (subOption is ICategoryOption categoryOption)
                     categoryOption.SetCategoryEvent(categorySelectedEvent);
             }
+
+            button.RegisterCallback<MouseEnterEvent>(evt =>
+            {
+                enableInputEvent.Raise(false);
+            });
+            button.RegisterCallback<MouseLeaveEvent>(evt =>
+            {
+                enableInputEvent.Raise(true);
+            });
+
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)

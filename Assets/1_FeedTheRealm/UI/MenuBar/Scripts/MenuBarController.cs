@@ -15,6 +15,9 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private IObjectResolver resolver;
 
+        [Inject]
+        private EnableInputEvent enableInputEvent;
+
         [SerializeField]
         private Logging.Logger logger;
 
@@ -71,6 +74,14 @@ namespace FeedTheRealm.UI.MenuBar
             }
 
             button.text = option.Label;
+            button.RegisterCallback<MouseEnterEvent>(evt =>
+            {
+                enableInputEvent.Raise(false);
+            });
+            button.RegisterCallback<MouseLeaveEvent>(evt =>
+            {
+                enableInputEvent.Raise(true);
+            });
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)

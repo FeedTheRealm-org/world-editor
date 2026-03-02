@@ -31,13 +31,13 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public void Setup()
         {
-            worldEditorPrefab.name = "World Editor";
-            worldEditorPrefab.SetActive(false);
             GameObject worldEditorInstance = Object.Instantiate(
                 worldEditorPrefab,
                 Vector3.zero,
                 Quaternion.identity
             );
+            worldEditorInstance.name = "World Editor";
+            worldEditorInstance.SetActive(false);
             objectResolver.InjectGameObject(worldEditorInstance);
             worldEditorInstance.GetComponent<WorldEditorStateMachine>().playerCamera =
                 cameraSetup.MainCamera;

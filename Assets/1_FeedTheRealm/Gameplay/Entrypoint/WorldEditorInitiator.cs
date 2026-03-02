@@ -15,7 +15,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private DataPersistenceManagerSO dataPersistenceManager;
 
         [SerializeField]
-        private InputReader InputReader;
+        private InputReader inputReader;
 
         [SerializeField]
         private WorldPrefabProvider worldPrefabProvider;
@@ -38,7 +38,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         protected override void Awake()
         {
             base.Awake(); // builds the container
-            Container.Inject(InputReader); // RegisterInstance skips injection, so call it manually
+            Container.Inject(inputReader); // RegisterInstance skips injection, so call it manually
         }
 
         protected override void Configure(IContainerBuilder builder)
@@ -46,7 +46,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             ValidateSerializedFields();
 
             builder.RegisterInstance(dataPersistenceManager);
-            builder.RegisterInstance(InputReader);
+            builder.RegisterInstance(inputReader);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(uIObjectProvider);
             builder.RegisterInstance(placeableObjectLibrary);
@@ -75,7 +75,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
                 Debug.LogError(
                     $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
                 );
-            if (InputReader == null)
+            if (inputReader == null)
                 Debug.LogError(
                     $"[WorldEditorInitiator] {nameof(InputReader)} is not assigned in the Inspector."
                 );
