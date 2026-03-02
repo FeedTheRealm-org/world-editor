@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FeedTheRealm.Gameplay.Inputs;
 using Models;
 using UnityEngine;
@@ -17,6 +18,10 @@ public class EnemySpawnerController : SpawnerController, IPersistent, IEditable
     private IntegerField resetDelayField;
     private Button closeButton;
     private EnemySpawnerData _enemySpawnData;
+    private DropdownField enemyDropdown;
+
+    [SerializeField]
+    private CreatorObjectLibrarySO creatorObjectLibrary;
 
     public EnemySpawnerData EnemySpawnData
     {
@@ -52,6 +57,7 @@ public class EnemySpawnerController : SpawnerController, IPersistent, IEditable
         resetAfterKillsField = root.Q<IntegerField>("ResetAfterKills");
         resetDelayField = root.Q<IntegerField>("ResetDelay");
         closeButton = root.Q<Button>("Close");
+        enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
 
         radiusSlider.value = EnemySpawnData.Radius;
         maxEnemiesField.value = EnemySpawnData.MaxEnemies;
@@ -81,6 +87,42 @@ public class EnemySpawnerController : SpawnerController, IPersistent, IEditable
         spawnRateField.value = (int)EnemySpawnData.SpawnRate;
         resetAfterKillsField.value = EnemySpawnData.ResetAfterKills;
         resetDelayField.value = (int)EnemySpawnData.ResetDelay;
+
+        if (enemyDropdown != null && creatorObjectLibrary != null)
+        {
+            var enemies = creatorObjectLibrary
+                .GetCreatables(CreatorObjectCategories.Enemy)
+                .Cast<GenericEnemy>()
+                .ToList();
+
+            enemyDropdown.choices = enemies.Select(enemy => enemy.DisplayName).ToList();
+
+            if (!string.IsNullOrEmpty(EnemySpawnData.EnemyId))
+            {
+                var selectedEnemy = enemies.FirstOrDefault(enemy =>
+                    enemy.ObjectId == EnemySpawnData.EnemyId
+                );
+                if (selectedEnemy != null)
+                {
+                    enemyDropdown.value = selectedEnemy.DisplayName;
+                }
+            }
+
+            enemyDropdown.RegisterValueChangedCallback(e =>
+            {
+                var selectedEnemy = enemies.FirstOrDefault(enemy =>
+                    enemy.DisplayName == e.newValue
+                );
+                if (selectedEnemy != null)
+                {
+                    EnemySpawnData.EnemyId = selectedEnemy.ObjectId;
+                    Debug.Log(
+                        $"EnemySpawnerController: Selected Enemy '{selectedEnemy.DisplayName}' (ID: {selectedEnemy.ObjectId})"
+                    );
+                }
+            });
+        }
+
         editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
         closeButton.clicked += () =>
         {
