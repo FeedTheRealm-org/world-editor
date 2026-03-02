@@ -56,7 +56,6 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 Debug.LogError("EditorSettingsMenu GameObject not set in UIObjectProvider!");
                 return;
             }
-            objectResolver.Instantiate(editorSettingsMenuObject).name = "EditorSettingsMenu";
         }
     }
 }

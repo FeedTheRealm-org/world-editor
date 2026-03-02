@@ -334,7 +334,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
-  InputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
   worldPrefabProvider: {fileID: 11400000, guid: 36f48e688128bc65b8af8d71ef86f3f1, type: 2}
   playerConfig: {fileID: 11400000, guid: 9be0a812fb45d8140aecf73b2291aa13, type: 2}
   uIObjectProvider: {fileID: 11400000, guid: 522c26f378da6490e906908c0d09b9c6, type: 2}

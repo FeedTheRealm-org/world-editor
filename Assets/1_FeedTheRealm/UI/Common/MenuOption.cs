@@ -24,6 +24,7 @@ namespace FeedTheRealm.UI.Common
         private List<MenuOption> menuOptions = new();
         public string Label => label;
         public IReadOnlyList<MenuOption> MenuOptions => menuOptions;
+        public MenuController MenuToOpen => menuToOpen;
 
         public virtual void Execute()
         {

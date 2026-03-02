@@ -35,6 +35,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
+        protected override void Awake()
+        {
+            base.Awake(); // builds the container
+            Container.Inject(inputReader); // RegisterInstance skips injection, so call it manually
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateSerializedFields();

@@ -24,12 +24,17 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private MenuOption ElementOption;
 
-        [Header("Events")]
-        [SerializeField]
+        [Inject]
         private CategorySelectedEvent categorySelectedEvent;
 
         [Inject]
+        private EnableInputEvent enableInputEvent;
+
+        [Inject]
         private EnableEditorEvent enableEditorEvent;
+
+        [Inject]
+        private IObjectResolver resolver;
 
         private VisualElement root;
         private MenuStack menuStack;
@@ -37,7 +42,7 @@ namespace FeedTheRealm.UI.MenuBar
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root, enableEditorEvent);
+            menuStack = new MenuStack(root, enableEditorEvent, resolver);
             BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);
@@ -69,6 +74,16 @@ namespace FeedTheRealm.UI.MenuBar
                 if (subOption is ICategoryOption categoryOption)
                     categoryOption.SetCategoryEvent(categorySelectedEvent);
             }
+
+            button.RegisterCallback<MouseEnterEvent>(evt =>
+            {
+                enableInputEvent.Raise(false);
+            });
+            button.RegisterCallback<MouseLeaveEvent>(evt =>
+            {
+                enableInputEvent.Raise(true);
+            });
+
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)
