@@ -74,3 +74,4 @@ MonoBehaviour:
   loadWorldScene:
     sceneName: LoadWorld
     sceneAsset: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
