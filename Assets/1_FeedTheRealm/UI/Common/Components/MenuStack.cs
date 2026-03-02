@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
+using VContainer.Unity;
 
 /// <summary>
 /// Manages a stack of dropdown menus for the UI. Allows opening submenus on hover and ensures only one menu is open at a time.
@@ -9,15 +11,21 @@ using UnityEngine.UIElements;
 public class MenuStack
 {
     private readonly VisualElement root;
+    private readonly IObjectResolver resolver;
     private readonly List<VisualElement> openMenus = new();
     private int menuSpacingX = 20;
     private int menuSpacingY = 6;
 
     private bool enabled = true;
 
-    public MenuStack(VisualElement root, EnableEditorEvent enableEditorEvent)
+    public MenuStack(
+        VisualElement root,
+        EnableEditorEvent enableEditorEvent,
+        IObjectResolver resolver
+    )
     {
         this.root = root;
+        this.resolver = resolver;
         enableEditorEvent.OnRaised += ToggleMenuStack;
     }
 
@@ -74,7 +82,10 @@ public class MenuStack
                 button.clicked += () =>
                 {
                     CloseAll();
-                    option.Execute();
+                    if (option.MenuToOpen != null && resolver != null)
+                        resolver.Instantiate(option.MenuToOpen.gameObject);
+                    else
+                        option.Execute();
                 };
             }
 

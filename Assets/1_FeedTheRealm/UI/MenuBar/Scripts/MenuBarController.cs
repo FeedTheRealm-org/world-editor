@@ -12,6 +12,9 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private EnableEditorEvent enableEditorEvent;
 
+        [Inject]
+        private IObjectResolver resolver;
+
         [SerializeField]
         private Logging.Logger logger;
 
@@ -39,7 +42,7 @@ namespace FeedTheRealm.UI.MenuBar
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root, enableEditorEvent);
+            menuStack = new MenuStack(root, enableEditorEvent, resolver);
             BindButton("File", fileOptionController);
             BindButton("Edit", editOptionController);
             BindButton("Subscriptions", subscriptionsOptionController);

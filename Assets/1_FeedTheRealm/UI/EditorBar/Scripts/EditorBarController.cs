@@ -31,13 +31,16 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private EnableEditorEvent enableEditorEvent;
 
+        [Inject]
+        private IObjectResolver resolver;
+
         private VisualElement root;
         private MenuStack menuStack;
 
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root, enableEditorEvent);
+            menuStack = new MenuStack(root, enableEditorEvent, resolver);
             BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);

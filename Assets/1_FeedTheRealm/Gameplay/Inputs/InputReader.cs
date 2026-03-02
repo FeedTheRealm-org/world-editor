@@ -8,7 +8,6 @@ namespace FeedTheRealm.Gameplay.Inputs
     [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
     public class InputReader : ScriptableObject, MakerControls.IPlayerActions
     {
-        [Inject]
         private EnableInputEvent enableInputEvent;
         public event Action<Vector2> MoveEvent;
         public event Action<Vector2> LookEvent;
@@ -21,6 +20,17 @@ namespace FeedTheRealm.Gameplay.Inputs
 
         private MakerControls controls;
 
+        [Inject]
+        private void Construct(EnableInputEvent evt)
+        {
+            if (enableInputEvent != null)
+            {
+                enableInputEvent.OnRaised -= ToggleInput;
+            }
+            enableInputEvent = evt;
+            enableInputEvent.OnRaised += ToggleInput;
+        }
+
         private void OnEnable()
         {
             if (controls == null)
@@ -28,8 +38,6 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls = new MakerControls();
                 controls.Player.SetCallbacks(this);
             }
-            if (enableInputEvent != null)
-                enableInputEvent.OnRaised += ToggleInput;
             controls.Player.Enable();
         }
 
