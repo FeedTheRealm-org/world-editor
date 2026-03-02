@@ -37,6 +37,8 @@ public class QuestCreatorMenuController : BaseCreatorMenuController<GenericQuest
         if (questTypeDropdown != null)
         {
             questTypeDropdown.choices = Enum.GetNames(typeof(QuestType)).ToList();
+            if (questTypeDropdown.choices.Count > 0)
+                questTypeDropdown.value = questTypeDropdown.choices[0];
             questTypeDropdown.RegisterValueChangedCallback(OnQuestTypeChanged);
         }
 

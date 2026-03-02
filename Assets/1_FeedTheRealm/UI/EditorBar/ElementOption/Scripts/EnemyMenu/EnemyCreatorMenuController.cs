@@ -58,8 +58,8 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
         speedInput.value = currentObject.speed;
         rangeInput.value = currentObject.range;
 
-        if (currentObject.lootTable != null)
-            lootTableInput.value = currentObject.lootTable.name;
+        if (currentObject.objectId != null)
+            lootTableInput.value = currentObject.name;
 
         LoadExistingSprite(currentObject.spriteFile);
     }
@@ -92,14 +92,6 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
             lt.DisplayName == lootTableInput.value
         );
 
-        LootTableData lootTableData = new LootTableData(
-            selectedLootTable.ObjectId,
-            selectedLootTable.DisplayName,
-            selectedLootTable.minGoldDropAmount,
-            selectedLootTable.maxGoldDropAmount,
-            selectedLootTable.lootItems
-        );
-
         var enemyData = new EnemyData(
             null,
             nameInput.value,
@@ -109,7 +101,7 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
             speedInput.value,
             rangeInput.value,
             pendingSpriteSourcePath,
-            lootTableData
+            lootTableID: selectedLootTable.ObjectId
         );
 
         currentObject = new GenericEnemy(enemyData);
@@ -127,21 +119,13 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
             lt.DisplayName == lootTableInput.value
         );
 
-        LootTableData lootTableData = new LootTableData(
-            selectedLootTable.ObjectId,
-            selectedLootTable.DisplayName,
-            selectedLootTable.minGoldDropAmount,
-            selectedLootTable.maxGoldDropAmount,
-            selectedLootTable.lootItems
-        );
-
         currentObject.name = nameInput.value;
         currentObject.description = descriptionInput.value;
         currentObject.healthPoints = healthPointsInput.value;
         currentObject.damage = damageInput.value;
         currentObject.speed = speedInput.value;
         currentObject.range = rangeInput.value;
-        currentObject.lootTable = lootTableData;
+        currentObject.lootTableID = selectedLootTable.ObjectId;
 
         if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
         {

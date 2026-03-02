@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 98898599094516240}
   - component: {fileID: 3916881692968771639}
   - component: {fileID: -1703900619815832400}
+  - component: {fileID: 4619736483548598808}
+  - component: {fileID: -5979143776995738706}
   m_Layer: 0
   m_Name: ElementOption
   m_TagString: Untagged
@@ -57,6 +59,8 @@ MonoBehaviour:
   - {fileID: 98898599094516240}
   - {fileID: 3916881692968771639}
   - {fileID: -1703900619815832400}
+  - {fileID: 4619736483548598808}
+  - {fileID: -5979143776995738706}
 --- !u!114 &6620227208176240371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,4 +135,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
   label: Shop
   menuToOpen: {fileID: 6748489813826923316, guid: cfe15a1ae987b9ae9ac0c6bfc24ef983, type: 3}
+  menuOptions: []
+--- !u!114 &4619736483548598808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: NPC
+  menuToOpen: {fileID: -1537716657621255143, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
+  menuOptions: []
+--- !u!114 &-5979143776995738706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: Quest
+  menuToOpen: {fileID: 6002012647832702426, guid: 36f2a1fea5a9d123f8ca85e5760a80a0, type: 3}
   menuOptions: []
