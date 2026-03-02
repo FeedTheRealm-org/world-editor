@@ -7,7 +7,7 @@ public abstract class Item : CreatorObject
     protected ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
 
     public Item(ItemData itemData)
-        : base(itemData.name, itemData.id, itemData.spriteFilepath)
+        : base(itemData.name, itemData.id, itemData.spriteFilePath)
     {
         description = itemData.description;
     }

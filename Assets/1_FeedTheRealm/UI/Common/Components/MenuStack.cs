@@ -15,10 +15,10 @@ public class MenuStack
 
     private bool enabled = true;
 
-    public MenuStack(VisualElement root)
+    public MenuStack(VisualElement root, EnableEditorEvent enableEditorEvent)
     {
         this.root = root;
-        Utils.SelectionRaiser.EnableEditor += ToggleMenuStack;
+        enableEditorEvent.OnRaised += ToggleMenuStack;
     }
 
     public void Open(VisualElement anchor, IReadOnlyList<MenuOption> options, int depth = 0)

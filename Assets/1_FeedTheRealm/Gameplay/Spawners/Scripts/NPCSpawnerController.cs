@@ -81,9 +81,9 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
 
             npcDropdown.choices = npcs.Select(npc => npc.DisplayName).ToList();
 
-            if (!string.IsNullOrEmpty(NPCSpawnData.npcId))
+            if (!string.IsNullOrEmpty(NPCSpawnData.NpcId))
             {
-                var selectedNPC = npcs.FirstOrDefault(npc => npc.ObjectId == NPCSpawnData.npcId);
+                var selectedNPC = npcs.FirstOrDefault(npc => npc.ObjectId == NPCSpawnData.NpcId);
                 if (selectedNPC != null)
                 {
                     npcDropdown.value = selectedNPC.DisplayName;
@@ -95,7 +95,7 @@ public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
                 var selectedNPC = npcs.FirstOrDefault(npc => npc.DisplayName == e.newValue);
                 if (selectedNPC != null)
                 {
-                    NPCSpawnData.npcId = selectedNPC.ObjectId;
+                    NPCSpawnData.NpcId = selectedNPC.ObjectId;
                     Debug.Log(
                         $"NPCSpawnerController: Selected NPC '{selectedNPC.DisplayName}' (ID: {selectedNPC.ObjectId})"
                     );

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar
 {
     public class MenuBarController : MonoBehaviour
     {
+        [Inject]
+        private EnableEditorEvent enableEditorEvent;
+
         [SerializeField]
         private Logging.Logger logger;
 
@@ -35,7 +39,7 @@ namespace FeedTheRealm.UI.MenuBar
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root);
+            menuStack = new MenuStack(root, enableEditorEvent);
             BindButton("File", fileOptionController);
             BindButton("Edit", editOptionController);
             BindButton("Subscriptions", subscriptionsOptionController);

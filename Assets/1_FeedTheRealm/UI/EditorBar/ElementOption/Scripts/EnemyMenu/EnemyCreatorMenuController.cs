@@ -101,7 +101,7 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
             speedInput.value,
             rangeInput.value,
             pendingSpriteSourcePath,
-            lootTableID: selectedLootTable.ObjectId
+            lootTableId: selectedLootTable.ObjectId
         );
 
         currentObject = new GenericEnemy(enemyData);
@@ -125,7 +125,7 @@ public class EnemyCreatorMenuController : BaseCreatorMenuController<GenericEnemy
         currentObject.damage = damageInput.value;
         currentObject.speed = speedInput.value;
         currentObject.range = rangeInput.value;
-        currentObject.lootTableID = selectedLootTable.ObjectId;
+        currentObject.lootTableId = selectedLootTable.ObjectId;
 
         if (!string.IsNullOrEmpty(pendingSpriteSourcePath))
         {

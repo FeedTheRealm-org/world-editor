@@ -1,14 +1,19 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 public class PlaceableObjectDisplayController : MonoBehaviour
 {
     [SerializeField]
     private PlaceableObjectsLibrarySO placeableObjectLibrary;
 
-    [SerializeField]
+    [Inject]
     private CategorySelectedEvent categorySelectedEvent;
+
+    [Inject]
+    private ObjectSelectedEvent objectSelectedEvent;
     private ListView libraryBar;
     private List<IPlaceable> currentObjectList = new();
     private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
@@ -65,7 +70,7 @@ public class PlaceableObjectDisplayController : MonoBehaviour
             button.text = placeable.DisplayName;
             button.clicked += () =>
             {
-                Utils.SelectionRaiser.RaiseSelected(placeable);
+                objectSelectedEvent.Raise(placeable);
             };
         }
     }

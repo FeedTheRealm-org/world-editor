@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Utils
 {
+    //TODO: suppoused to be LEGACY, check if it can be deleted
     public static class SelectionRaiser
     {
         public static event Action<IPlaceable> ObjectSelected;

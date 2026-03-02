@@ -1,11 +1,19 @@
 using System;
+using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
+using VContainer;
 
 public class WorldEditorStateMachine : MonoBehaviour
 {
     [SerializeField]
     private Logging.Logger logger;
+
+    [Inject]
+    private ObjectSelectedEvent objectSelectedEvent;
+
+    [Inject]
+    private EnableEditorEvent enableEditorEvent;
 
     public InputReader inputReader;
     public Camera playerCamera;
@@ -67,8 +75,10 @@ public class WorldEditorStateMachine : MonoBehaviour
     {
         inputReader.PrimaryInteractionEvent += OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent += OnSecondaryInteraction;
-        Utils.SelectionRaiser.ObjectSelected += OnWorldObjectSelected;
-        Utils.SelectionRaiser.EnableEditor += ToggleEditor;
+        if (objectSelectedEvent != null)
+            objectSelectedEvent.OnRaised += OnWorldObjectSelected;
+        if (enableEditorEvent != null)
+            enableEditorEvent.OnRaised += ToggleEditor;
         inputReader.RemoveEvent += OnRemoveAction;
     }
 
@@ -76,8 +86,10 @@ public class WorldEditorStateMachine : MonoBehaviour
     {
         inputReader.PrimaryInteractionEvent -= OnPrimaryInteraction;
         inputReader.SecondaryInteractionEvent -= OnSecondaryInteraction;
-        Utils.SelectionRaiser.ObjectSelected -= OnWorldObjectSelected;
-        Utils.SelectionRaiser.EnableEditor -= ToggleEditor;
+        if (objectSelectedEvent != null)
+            objectSelectedEvent.OnRaised -= OnWorldObjectSelected;
+        if (enableEditorEvent != null)
+            enableEditorEvent.OnRaised -= ToggleEditor;
         inputReader.RemoveEvent -= OnRemoveAction;
     }
 

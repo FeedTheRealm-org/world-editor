@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utils;
+using VContainer;
 
 namespace FeedTheRealm.Gameplay.Inputs
 {
     [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
     public class InputReader : ScriptableObject, MakerControls.IPlayerActions
     {
+        [Inject]
+        private EnableInputEvent enableInputEvent;
         public event Action<Vector2> MoveEvent;
         public event Action<Vector2> LookEvent;
         public event Action PrimaryInteractionEvent;
@@ -26,14 +28,16 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls = new MakerControls();
                 controls.Player.SetCallbacks(this);
             }
-            SelectionRaiser.EnableInput += ToggleInput;
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised += ToggleInput;
             controls.Player.Enable();
         }
 
         private void OnDisable()
         {
             controls.Player.Disable();
-            SelectionRaiser.EnableInput -= ToggleInput;
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised -= ToggleInput;
         }
 
         public void ToggleInput(bool isEnabled)

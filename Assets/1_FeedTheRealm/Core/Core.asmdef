@@ -3,7 +3,8 @@
   "references": [
     "FeedTheRealm_Shared",
     "UnityEngine",
-    "glTFast"
+    "glTFast",
+    "VContainer"
 ],
   "includePlatforms": [
     "Editor",

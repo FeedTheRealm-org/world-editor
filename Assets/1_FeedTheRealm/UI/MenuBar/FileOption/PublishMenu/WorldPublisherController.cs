@@ -60,10 +60,10 @@ public class WorldPublisherController : MonoBehaviour
             foreach (var item in worldData.consumableItems)
             {
                 if (
-                    !string.IsNullOrEmpty(item.spriteFilepath)
+                    !string.IsNullOrEmpty(item.spriteFilePath)
                     && !consumableSpriteData.ContainsKey(item.id)
                 )
-                    consumableSpriteData[item.id] = item.spriteFilepath;
+                    consumableSpriteData[item.id] = item.spriteFilePath;
             }
         }
 
@@ -73,10 +73,10 @@ public class WorldPublisherController : MonoBehaviour
             foreach (var item in worldData.weaponItems)
             {
                 if (
-                    !string.IsNullOrEmpty(item.spriteFilepath)
+                    !string.IsNullOrEmpty(item.spriteFilePath)
                     && !weaponSpriteData.ContainsKey(item.id)
                 )
-                    weaponSpriteData[item.id] = item.spriteFilepath;
+                    weaponSpriteData[item.id] = item.spriteFilePath;
             }
         }
 

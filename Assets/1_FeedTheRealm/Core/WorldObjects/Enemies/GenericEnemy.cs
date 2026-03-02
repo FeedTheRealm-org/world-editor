@@ -8,17 +8,17 @@ public class GenericEnemy : CreatorObject
     public int damage;
     public int speed;
     public int range;
-    public string lootTableID;
+    public string lootTableId;
 
     public GenericEnemy(EnemyData enemyData)
-        : base(enemyData.name, enemyData.id, enemyData.spriteFilepath)
+        : base(enemyData.name, enemyData.id, enemyData.spriteFilePath)
     {
         description = enemyData.description;
         healthPoints = enemyData.healthPoints;
         damage = enemyData.damage;
         speed = enemyData.speed;
         range = enemyData.range;
-        lootTableID = enemyData.lootTableID;
+        lootTableId = enemyData.lootTableId;
     }
 
     public override void DeleteObject(ref WorldData worldData)
@@ -37,7 +37,7 @@ public class GenericEnemy : CreatorObject
             speed,
             range,
             spriteFile,
-            lootTableID
+            lootTableId
         );
         worldData.enemies.Add(enemyData);
     }

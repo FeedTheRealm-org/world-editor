@@ -9,17 +9,17 @@ public class GenericQuest : CreatorObject
     public int targetAmount;
 
     public GenericQuest(QuestData questData)
-        : base(questData.Title, questData.Id)
+        : base(questData.title, questData.id)
     {
-        content = questData.Content;
-        questType = questData.Type;
-        targetId = questData.TargetId;
-        targetAmount = questData.TargetAmount;
+        content = questData.content;
+        questType = questData.type;
+        targetId = questData.targetId;
+        targetAmount = questData.targetAmount;
     }
 
     public override void DeleteObject(ref WorldData worldData)
     {
-        worldData.quests.RemoveAll(quest => quest.Id == ObjectId);
+        worldData.quests.RemoveAll(quest => quest.id == ObjectId);
     }
 
     public override void SaveObject(ref WorldData worldData)

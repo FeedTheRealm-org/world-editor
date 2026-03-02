@@ -1,25 +1,36 @@
-using System;
 using UnityEngine;
-using Utils;
+using VContainer;
+using VContainer.Unity;
 
 public class MenuController : MonoBehaviour
 {
+    [Inject]
+    protected EnableInputEvent enableInputEvent;
+
+    [Inject]
+    protected EnableEditorEvent enableEditorEvent;
+
+    [Inject]
+    private IObjectResolver resolver;
+
     void Awake()
     {
-        SelectionRaiser.RaiseEnableInput(false);
-        SelectionRaiser.RaiseEnableEditor(false);
+        enableInputEvent?.Raise(false);
+        enableEditorEvent?.Raise(false);
     }
 
     public void CloseMenu()
     {
-        SelectionRaiser.RaiseEnableInput(true);
-        SelectionRaiser.RaiseEnableEditor(true);
+        enableInputEvent?.Raise(true);
+        enableEditorEvent?.Raise(true);
         Destroy(gameObject);
     }
 
-    public void OpenMenu(GameObject menuprefab)
+    public void OpenMenu(GameObject menuPrefab)
     {
-        CloseMenu();
-        Instantiate(menuprefab);
+        enableInputEvent?.Raise(true);
+        enableEditorEvent?.Raise(true);
+        resolver.Instantiate(menuPrefab);
+        Destroy(gameObject);
     }
 }

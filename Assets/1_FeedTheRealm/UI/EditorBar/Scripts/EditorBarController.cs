@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar
 {
@@ -27,13 +28,16 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private CategorySelectedEvent categorySelectedEvent;
 
+        [Inject]
+        private EnableEditorEvent enableEditorEvent;
+
         private VisualElement root;
         private MenuStack menuStack;
 
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root);
+            menuStack = new MenuStack(root, enableEditorEvent);
             BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);
