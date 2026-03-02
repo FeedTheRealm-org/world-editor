@@ -74,7 +74,6 @@ namespace FeedTheRealm.UI.MenuBar
                 if (subOption is ICategoryOption categoryOption)
                     categoryOption.SetCategoryEvent(categorySelectedEvent);
             }
-
             button.RegisterCallback<MouseEnterEvent>(evt =>
             {
                 enableInputEvent.Raise(false);
@@ -83,7 +82,6 @@ namespace FeedTheRealm.UI.MenuBar
             {
                 enableInputEvent.Raise(true);
             });
-
             button.clicked += () =>
             {
                 if (option.MenuOptions.Count == 0)

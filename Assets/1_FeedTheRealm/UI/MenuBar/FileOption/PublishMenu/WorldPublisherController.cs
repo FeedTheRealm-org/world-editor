@@ -121,16 +121,23 @@ public class WorldPublisherController : MonoBehaviour
     /// </summary>
     private async Task<string> PublishModels(WorldData worldData, string worldId)
     {
-        // if (worldData.objectPlacementData.Count == 0)
-        //     return null;
+        if (worldData.objectPlacementData.Count == 0)
+            return null;
 
-        // var uniqueStructures = worldData.objectPlacementData.DistinctBy(s => s.id).ToList();
+        Debug.Log(
+            $"Publishing models for world {worldId}, total structures: {worldData.objectPlacementData.Count}"
+        );
 
-        // foreach (var structure in uniqueStructures)
-        // {
-        //     structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
-        // }
-        return await Task.FromResult<string>(null); // TODO: Implement model upload when API is ready
+        var uniqueStructures = worldData
+            .objectPlacementData.GroupBy(s => s.id)
+            .Select(g => g.First())
+            .ToList();
+
+        foreach (var structure in uniqueStructures)
+        {
+            structure.structureFilepath = structureLoader.GetModelFilePath(structure.structureName);
+        }
+        return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
     }
 
     /// <summary>
@@ -149,28 +156,5 @@ public class WorldPublisherController : MonoBehaviour
             categoryId,
             session.APIToken
         );
-    }
-
-    /// <summary>
-    ///  Uploads sprite files for a world.
-    ///  The sprites are composed of tuples with (sprite_id, sprite_filepath)
-    ///  If an error occurs, returns the error message.
-    /// </summary>
-    private async Task<string> PublishSprites(List<(string, string)> spriteData, string worldId)
-    {
-        if (spriteData.Count == 0)
-            return null;
-        string result = await spriteService.UploadSprites(spriteData, worldId, session.APIToken);
-        // Ignores error 409 (conflict) due to duplicate key
-        if (!string.IsNullOrEmpty(result) && result.Contains("409"))
-        {
-            logger.Log(
-                "Some sprites already exist on the server (409 conflict). Continuing with publication.",
-                this,
-                Logging.LogType.Warning
-            );
-            return null;
-        }
-        return result;
     }
 }

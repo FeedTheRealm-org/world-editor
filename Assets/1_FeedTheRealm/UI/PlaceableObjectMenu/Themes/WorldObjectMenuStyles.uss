@@ -35,10 +35,19 @@
     -unity-text-align: upper-left;
 }
 
+
 .formText {
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
     -unity-text-align: middle-left;
+}
+
+IntegerField > .unity-base-text-field__input {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: rgb(255, 255, 255);
 }
 
 
