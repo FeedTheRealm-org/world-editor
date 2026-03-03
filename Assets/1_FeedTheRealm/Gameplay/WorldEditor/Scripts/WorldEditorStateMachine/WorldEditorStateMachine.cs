@@ -93,12 +93,14 @@ public class WorldEditorStateMachine : MonoBehaviour
         inputReader.RemoveEvent -= OnRemoveAction;
     }
 
-    private void ToggleEditor(bool locked)
+    private void ToggleEditor(bool enabled)
     {
-        IsEditorEnabled = !locked;
-        if (locked)
+        IsEditorEnabled = enabled;
+        if (!enabled)
             currentState?.Exit();
-        Debug.Log($"Interaction {(locked ? "locked" : "unlocked")}.");
+        else
+            SetState(SelectingState);
+        Debug.Log($"Interaction {(enabled ? "enabled" : "disabled")}.");
     }
 
     private void OnWorldObjectSelected(IPlaceable reference)
