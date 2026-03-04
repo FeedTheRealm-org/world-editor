@@ -6,70 +6,76 @@ using FeedTheRealm.Core.WorldObjects.Dialogs;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MessageLoader", menuName = "Scriptable Objects/Loaders/MessageLoader")]
-public class MessageLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
+namespace FeedTheRealm.Gameplay.Loaders
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private WorldSelectedEvent worldSelectedEvent;
-
-    private List<CreatorObject> messages = new();
-
-    void OnEnable()
+    [CreateAssetMenu(
+        fileName = "MessageLoader",
+        menuName = "Scriptable Objects/Loaders/MessageLoader"
+    )]
+    public class MessageLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
     {
-        worldSelectedEvent.OnRaised += LoadWorld;
-    }
+        [SerializeField]
+        private Logging.Logger logger;
 
-    void OnDisable()
-    {
-        worldSelectedEvent.OnRaised -= LoadWorld;
-    }
+        [SerializeField]
+        private WorldSelectedEvent worldSelectedEvent;
 
-    public List<CreatorObject> GetCreatables()
-    {
-        return messages.FindAll(item => !item.IsDeleted);
-    }
+        private List<CreatorObject> messages = new();
 
-    public void AddCreatable(CreatorObject creatable)
-    {
-        messages.Add(creatable);
-    }
-
-    public void RemoveCreatable(CreatorObject creatable)
-    {
-        creatable.Delete();
-        messages.Remove(creatable);
-    }
-
-    public void UpdateCreatable(CreatorObject creatable)
-    {
-        int index = messages.FindIndex(item => item.ObjectId == creatable.ObjectId);
-        if (index != -1)
+        void OnEnable()
         {
-            messages[index] = creatable;
-        }
-    }
-
-    public void LoadWorld(WorldData worldData)
-    {
-        messages.Clear();
-        if (worldData == null)
-        {
-            logger.Log(
-                "MessageLoader.LoadWorld: worldData is null.",
-                this,
-                Logging.LogType.Warning
-            );
-            return;
+            worldSelectedEvent.OnRaised += LoadWorld;
         }
 
-        foreach (var dialog in worldData.dialogs ?? new List<DialogData>())
+        void OnDisable()
         {
-            foreach (MessageData messageData in dialog.messages ?? new List<MessageData>())
+            worldSelectedEvent.OnRaised -= LoadWorld;
+        }
+
+        public List<CreatorObject> GetCreatables()
+        {
+            return messages.FindAll(item => !item.IsDeleted);
+        }
+
+        public void AddCreatable(CreatorObject creatable)
+        {
+            messages.Add(creatable);
+        }
+
+        public void RemoveCreatable(CreatorObject creatable)
+        {
+            creatable.Delete();
+            messages.Remove(creatable);
+        }
+
+        public void UpdateCreatable(CreatorObject creatable)
+        {
+            int index = messages.FindIndex(item => item.ObjectId == creatable.ObjectId);
+            if (index != -1)
             {
-                messages.Add(new Message(messageData, dialog.id));
+                messages[index] = creatable;
+            }
+        }
+
+        public void LoadWorld(WorldData worldData)
+        {
+            messages.Clear();
+            if (worldData == null)
+            {
+                logger.Log(
+                    "MessageLoader.LoadWorld: worldData is null.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            foreach (var dialog in worldData.dialogs ?? new List<DialogData>())
+            {
+                foreach (MessageData messageData in dialog.messages ?? new List<MessageData>())
+                {
+                    messages.Add(new Message(messageData, dialog.id));
+                }
             }
         }
     }

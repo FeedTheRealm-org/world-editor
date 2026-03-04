@@ -6,65 +6,76 @@ using FeedTheRealm.Core.WorldObjects.Enemies;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
-public class EnemyLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
+namespace FeedTheRealm.Gameplay.Loaders
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private WorldSelectedEvent worldSelectedEvent;
-
-    private List<CreatorObject> enemies = new();
-
-    void OnEnable()
+    [CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
+    public class EnemyLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
     {
-        worldSelectedEvent.OnRaised += LoadWorld;
-    }
+        [SerializeField]
+        private Logging.Logger logger;
 
-    void OnDisable()
-    {
-        worldSelectedEvent.OnRaised -= LoadWorld;
-    }
+        [SerializeField]
+        private WorldSelectedEvent worldSelectedEvent;
 
-    public List<CreatorObject> GetCreatables()
-    {
-        return enemies.FindAll(item => !item.IsDeleted);
-    }
+        private List<CreatorObject> enemies = new();
 
-    public void AddCreatable(CreatorObject creatable)
-    {
-        enemies.Add(creatable);
-    }
-
-    public void RemoveCreatable(CreatorObject creatable)
-    {
-        creatable.Delete();
-        enemies.Remove(creatable);
-    }
-
-    public void UpdateCreatable(CreatorObject creatable)
-    {
-        int index = enemies.FindIndex(item => item.ObjectId == creatable.ObjectId);
-        if (index != -1)
+        void OnEnable()
         {
-            enemies[index] = creatable;
-        }
-    }
-
-    public void LoadWorld(WorldData worldData)
-    {
-        enemies.Clear();
-        if (worldData == null)
-        {
-            logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
-            return;
+            worldSelectedEvent.OnRaised += LoadWorld;
         }
 
-        foreach (EnemyData itemData in worldData.enemies ?? new List<EnemyData>())
+        void OnDisable()
         {
-            enemies.Add(new GenericEnemy(itemData));
+            worldSelectedEvent.OnRaised -= LoadWorld;
         }
-        logger.Log($"Loaded {enemies.Count} enemies from world data.", this, Logging.LogType.Info);
+
+        public List<CreatorObject> GetCreatables()
+        {
+            return enemies.FindAll(item => !item.IsDeleted);
+        }
+
+        public void AddCreatable(CreatorObject creatable)
+        {
+            enemies.Add(creatable);
+        }
+
+        public void RemoveCreatable(CreatorObject creatable)
+        {
+            creatable.Delete();
+            enemies.Remove(creatable);
+        }
+
+        public void UpdateCreatable(CreatorObject creatable)
+        {
+            int index = enemies.FindIndex(item => item.ObjectId == creatable.ObjectId);
+            if (index != -1)
+            {
+                enemies[index] = creatable;
+            }
+        }
+
+        public void LoadWorld(WorldData worldData)
+        {
+            enemies.Clear();
+            if (worldData == null)
+            {
+                logger.Log(
+                    "ItemLoader.LoadWorld: worldData is null.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            foreach (EnemyData itemData in worldData.enemies ?? new List<EnemyData>())
+            {
+                enemies.Add(new GenericEnemy(itemData));
+            }
+            logger.Log(
+                $"Loaded {enemies.Count} enemies from world data.",
+                this,
+                Logging.LogType.Info
+            );
+        }
     }
 }

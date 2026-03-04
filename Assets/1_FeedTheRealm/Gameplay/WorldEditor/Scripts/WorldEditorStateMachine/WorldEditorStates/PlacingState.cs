@@ -1,56 +1,62 @@
 using System.Threading.Tasks;
 using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class PlacingState : IWorldEditorState
+namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates
 {
-    private WorldEditorStateMachine worldEditor;
-
-    private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
-    private const float PLACEMENT_OFFSET = 1.0f;
-
-    public PlacingState(WorldEditorStateMachine worldEditor)
+    public class PlacingState : IWorldEditorState
     {
-        this.worldEditor = worldEditor;
-    }
+        private WorldEditorStateMachine worldEditor;
 
-    public void Enter()
-    {
-        worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.DisplayName}");
-    }
+        private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
+        private const float PLACEMENT_OFFSET = 1.0f;
 
-    public void Exit() { }
+        public PlacingState(WorldEditorStateMachine worldEditor)
+        {
+            this.worldEditor = worldEditor;
+        }
 
-    public void Tick()
-    {
-        // Preview ghost, raycast cursor, snap grid, etc (later)
-    }
+        public void Enter()
+        {
+            worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.DisplayName}");
+        }
 
-    public void OnPrimaryAction()
-    {
-        _ = OnPrimaryActionAsync();
-    }
+        public void Exit() { }
 
-    private async Task OnPrimaryActionAsync()
-    {
-        if (!Raycaster.TryGetPlacementPoint(worldEditor, placementLayerMask, out RaycastHit hit))
-            return;
+        public void Tick()
+        {
+            // Preview ghost, raycast cursor, snap grid, etc (later)
+        }
 
-        GameObject instance = await worldEditor.SelectedObject.GetPlaceableObject(
-            WorldLayers.WorldObjectLayer
-        );
-        instance.transform.position = hit.point;
-        var collider = instance.GetComponentInChildren<Collider>();
-        float bottomY = collider.bounds.min.y;
-        float desiredBottomY = hit.point.y;
-        float correction = desiredBottomY - bottomY - PLACEMENT_OFFSET;
-        instance.transform.position += Vector3.up * correction;
-    }
+        public void OnPrimaryAction()
+        {
+            _ = OnPrimaryActionAsync();
+        }
 
-    public void OnSecondaryAction()
-    {
-        worldEditor.Log("Cancel placement");
-        worldEditor.SetState(worldEditor.SelectingState);
+        private async Task OnPrimaryActionAsync()
+        {
+            if (
+                !Raycaster.TryGetPlacementPoint(worldEditor, placementLayerMask, out RaycastHit hit)
+            )
+                return;
+
+            GameObject instance = await worldEditor.SelectedObject.GetPlaceableObject(
+                WorldLayers.WorldObjectLayer
+            );
+            instance.transform.position = hit.point;
+            var collider = instance.GetComponentInChildren<Collider>();
+            float bottomY = collider.bounds.min.y;
+            float desiredBottomY = hit.point.y;
+            float correction = desiredBottomY - bottomY - PLACEMENT_OFFSET;
+            instance.transform.position += Vector3.up * correction;
+        }
+
+        public void OnSecondaryAction()
+        {
+            worldEditor.Log("Cancel placement");
+            worldEditor.SetState(worldEditor.SelectingState);
+        }
     }
 }

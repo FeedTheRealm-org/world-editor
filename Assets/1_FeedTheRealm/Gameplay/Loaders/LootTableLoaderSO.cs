@@ -6,77 +6,82 @@ using FeedTheRealm.Core.WorldObjects.LootTable;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "LootTableLoader",
-    menuName = "Scriptable Objects/Loaders/LootTableLoader"
-)]
-public class LootTableLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
+namespace FeedTheRealm.Gameplay.Loaders
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private WorldSelectedEvent worldSelectedEvent;
-
-    private List<CreatorObject> lootTables = new();
-
-    void OnEnable()
+    [CreateAssetMenu(
+        fileName = "LootTableLoader",
+        menuName = "Scriptable Objects/Loaders/LootTableLoader"
+    )]
+    public class LootTableLoaderSO : ScriptableObject, ILoadable, ICreatableLoader
     {
-        worldSelectedEvent.OnRaised += LoadWorld;
-    }
+        [SerializeField]
+        private Logging.Logger logger;
 
-    void OnDisable()
-    {
-        worldSelectedEvent.OnRaised -= LoadWorld;
-    }
+        [SerializeField]
+        private WorldSelectedEvent worldSelectedEvent;
 
-    public List<CreatorObject> GetCreatables()
-    {
-        logger.Log($"Retrieving {lootTables.Count} loot tables", this, Logging.LogType.Info);
-        return lootTables.FindAll(table => !table.IsDeleted);
-    }
+        private List<CreatorObject> lootTables = new();
 
-    public void AddCreatable(CreatorObject creatable)
-    {
-        lootTables.Add(creatable);
-        logger.Log(
-            $"Added new loot table: {creatable.DisplayName} (ID: {creatable.ObjectId})",
-            this,
-            Logging.LogType.Info
-        );
-    }
-
-    public void RemoveCreatable(CreatorObject creatable)
-    {
-        creatable.Delete();
-        lootTables.Remove(creatable);
-    }
-
-    public void UpdateCreatable(CreatorObject creatable)
-    {
-        int index = lootTables.FindIndex(table => table.ObjectId == creatable.ObjectId);
-        if (index != -1)
+        void OnEnable()
         {
-            lootTables[index] = creatable;
+            worldSelectedEvent.OnRaised += LoadWorld;
         }
-    }
 
-    public void LoadWorld(WorldData worldData)
-    {
-        lootTables.Clear();
-        if (worldData == null)
+        void OnDisable()
         {
+            worldSelectedEvent.OnRaised -= LoadWorld;
+        }
+
+        public List<CreatorObject> GetCreatables()
+        {
+            logger.Log($"Retrieving {lootTables.Count} loot tables", this, Logging.LogType.Info);
+            return lootTables.FindAll(table => !table.IsDeleted);
+        }
+
+        public void AddCreatable(CreatorObject creatable)
+        {
+            lootTables.Add(creatable);
             logger.Log(
-                "LootTableLoader.LoadWorld: worldData is null.",
+                $"Added new loot table: {creatable.DisplayName} (ID: {creatable.ObjectId})",
                 this,
-                Logging.LogType.Warning
+                Logging.LogType.Info
             );
-            return;
         }
 
-        foreach (LootTableData lootTableData in worldData.lootTables ?? new List<LootTableData>())
+        public void RemoveCreatable(CreatorObject creatable)
         {
-            lootTables.Add(new LootTable(lootTableData));
+            creatable.Delete();
+            lootTables.Remove(creatable);
+        }
+
+        public void UpdateCreatable(CreatorObject creatable)
+        {
+            int index = lootTables.FindIndex(table => table.ObjectId == creatable.ObjectId);
+            if (index != -1)
+            {
+                lootTables[index] = creatable;
+            }
+        }
+
+        public void LoadWorld(WorldData worldData)
+        {
+            lootTables.Clear();
+            if (worldData == null)
+            {
+                logger.Log(
+                    "LootTableLoader.LoadWorld: worldData is null.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            foreach (
+                LootTableData lootTableData in worldData.lootTables ?? new List<LootTableData>()
+            )
+            {
+                lootTables.Add(new LootTable(lootTableData));
+            }
         }
     }
 }

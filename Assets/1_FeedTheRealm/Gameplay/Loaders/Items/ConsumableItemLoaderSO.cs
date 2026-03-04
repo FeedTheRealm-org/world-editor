@@ -4,19 +4,22 @@ using FeedTheRealm.Core.WorldObjects.Items;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "ConsumableItemLoader",
-    menuName = "Scriptable Objects/Loaders/Items/ConsumableItemLoader"
-)]
-public class ConsumableItemLoaderSO : ItemLoader<ConsumableItemData>
+namespace FeedTheRealm.Gameplay.Loaders.Items
 {
-    protected override IEnumerable<ConsumableItemData> GetData(WorldData worldData)
+    [CreateAssetMenu(
+        fileName = "ConsumableItemLoader",
+        menuName = "Scriptable Objects/Loaders/Items/ConsumableItemLoader"
+    )]
+    public class ConsumableItemLoaderSO : ItemLoader<ConsumableItemData>
     {
-        return worldData.consumableItems ?? new List<ConsumableItemData>();
-    }
+        protected override IEnumerable<ConsumableItemData> GetData(WorldData worldData)
+        {
+            return worldData.consumableItems ?? new List<ConsumableItemData>();
+        }
 
-    protected override CreatorObject CreateItem(ConsumableItemData data)
-    {
-        return new ConsumableItem(data);
+        protected override CreatorObject CreateItem(ConsumableItemData data)
+        {
+            return new ConsumableItem(data);
+        }
     }
 }

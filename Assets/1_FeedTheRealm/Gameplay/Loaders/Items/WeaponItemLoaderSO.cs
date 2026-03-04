@@ -4,19 +4,22 @@ using FeedTheRealm.Core.WorldObjects.Items;
 using Models;
 using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "WeaponItemLoader",
-    menuName = "Scriptable Objects/Loaders/Items/WeaponItemLoader"
-)]
-public class WeaponItemLoaderSO : ItemLoader<WeaponItemData>
+namespace FeedTheRealm.Gameplay.Loaders.Items
 {
-    protected override IEnumerable<WeaponItemData> GetData(WorldData worldData)
+    [CreateAssetMenu(
+        fileName = "WeaponItemLoader",
+        menuName = "Scriptable Objects/Loaders/Items/WeaponItemLoader"
+    )]
+    public class WeaponItemLoaderSO : ItemLoader<WeaponItemData>
     {
-        return worldData.weaponItems ?? new List<WeaponItemData>();
-    }
+        protected override IEnumerable<WeaponItemData> GetData(WorldData worldData)
+        {
+            return worldData.weaponItems ?? new List<WeaponItemData>();
+        }
 
-    protected override CreatorObject CreateItem(WeaponItemData data)
-    {
-        return new WeaponItem(data);
+        protected override CreatorObject CreateItem(WeaponItemData data)
+        {
+            return new WeaponItem(data);
+        }
     }
 }

@@ -6,72 +6,79 @@ using FeedTheRealm.Core.WorldObjects.Items;
 using Models;
 using UnityEngine;
 
-public abstract class ItemLoader<TItemData> : ScriptableObject, ILoadable, ICreatableLoader
+namespace FeedTheRealm.Gameplay.Loaders.Items
 {
-    [SerializeField]
-    protected Logging.Logger logger;
-
-    [SerializeField]
-    private WorldSelectedEvent worldSelectedEvent;
-
-    protected List<CreatorObject> items = new();
-
-    void OnEnable()
+    public abstract class ItemLoader<TItemData> : ScriptableObject, ILoadable, ICreatableLoader
     {
-        worldSelectedEvent.OnRaised += LoadWorld;
-    }
+        [SerializeField]
+        protected Logging.Logger logger;
 
-    void OnDisable()
-    {
-        worldSelectedEvent.OnRaised -= LoadWorld;
-    }
+        [SerializeField]
+        private WorldSelectedEvent worldSelectedEvent;
 
-    public List<CreatorObject> GetCreatables()
-    {
-        logger.Log($"Retrieving {items.Count} items", this, Logging.LogType.Info);
-        return items.FindAll(item => !item.IsDeleted);
-    }
+        protected List<CreatorObject> items = new();
 
-    public void AddCreatable(CreatorObject creatable)
-    {
-        items.Add(creatable);
-        logger.Log(
-            $"Added new creatable: {creatable.DisplayName} (ID: {creatable.ObjectId})",
-            this,
-            Logging.LogType.Info
-        );
-    }
-
-    public void RemoveCreatable(CreatorObject creatable)
-    {
-        creatable.Delete();
-        items.Remove(creatable);
-    }
-
-    public void UpdateCreatable(CreatorObject creatable)
-    {
-        int index = items.FindIndex(item => item.ObjectId == creatable.ObjectId);
-        if (index != -1)
+        void OnEnable()
         {
-            items[index] = creatable;
-        }
-    }
-
-    public void LoadWorld(WorldData worldData)
-    {
-        items.Clear();
-        if (worldData == null)
-        {
-            logger.Log("ItemLoader.LoadWorld: worldData is null.", this, Logging.LogType.Warning);
-            return;
+            worldSelectedEvent.OnRaised += LoadWorld;
         }
 
-        foreach (var itemData in GetData(worldData) ?? new List<TItemData>())
+        void OnDisable()
         {
-            items.Add(CreateItem(itemData));
+            worldSelectedEvent.OnRaised -= LoadWorld;
         }
-    }
 
-    protected abstract IEnumerable<TItemData> GetData(WorldData worldData);
-    protected abstract CreatorObject CreateItem(TItemData data);
+        public List<CreatorObject> GetCreatables()
+        {
+            logger.Log($"Retrieving {items.Count} items", this, Logging.LogType.Info);
+            return items.FindAll(item => !item.IsDeleted);
+        }
+
+        public void AddCreatable(CreatorObject creatable)
+        {
+            items.Add(creatable);
+            logger.Log(
+                $"Added new creatable: {creatable.DisplayName} (ID: {creatable.ObjectId})",
+                this,
+                Logging.LogType.Info
+            );
+        }
+
+        public void RemoveCreatable(CreatorObject creatable)
+        {
+            creatable.Delete();
+            items.Remove(creatable);
+        }
+
+        public void UpdateCreatable(CreatorObject creatable)
+        {
+            int index = items.FindIndex(item => item.ObjectId == creatable.ObjectId);
+            if (index != -1)
+            {
+                items[index] = creatable;
+            }
+        }
+
+        public void LoadWorld(WorldData worldData)
+        {
+            items.Clear();
+            if (worldData == null)
+            {
+                logger.Log(
+                    "ItemLoader.LoadWorld: worldData is null.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            foreach (var itemData in GetData(worldData) ?? new List<TItemData>())
+            {
+                items.Add(CreateItem(itemData));
+            }
+        }
+
+        protected abstract IEnumerable<TItemData> GetData(WorldData worldData);
+        protected abstract CreatorObject CreateItem(TItemData data);
+    }
 }

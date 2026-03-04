@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldObjects.Items;
 using FeedTheRealm.Core.WorldObjects.LootTable;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
