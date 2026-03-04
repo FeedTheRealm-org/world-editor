@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FeedTheRealm.Core.EventChannels;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using Models;
 using UnityEngine;
 

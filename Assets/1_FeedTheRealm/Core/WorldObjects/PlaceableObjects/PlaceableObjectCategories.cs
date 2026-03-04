@@ -1,5 +1,8 @@
-public enum PlaceableObjectCategories
+namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects
 {
-    Structure,
-    Spawner,
+    public enum PlaceableObjectCategories
+    {
+        Structure,
+        Spawner,
+    }
 }

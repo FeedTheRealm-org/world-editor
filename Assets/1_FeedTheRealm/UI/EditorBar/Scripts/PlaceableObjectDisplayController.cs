@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;

@@ -1,5 +1,8 @@
 using FeedTheRealm.Core.EventChannels;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Events/EnableEditorEvent")]
-public class EnableEditorEvent : EventChannelSO<bool> { }
+namespace FeedTheRealm.Core.EventChannels.WorldEvents
+{
+    [CreateAssetMenu(menuName = "Events/EnableEditorEvent")]
+    public class EnableEditorEvent : EventChannelSO<bool> { }
+}

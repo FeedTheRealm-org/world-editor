@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;

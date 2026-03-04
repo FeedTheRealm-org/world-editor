@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FeedTheRealm.Core.WorldObjects.Items;
+using FeedTheRealm.Core.WorldObjects.LootTable;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
