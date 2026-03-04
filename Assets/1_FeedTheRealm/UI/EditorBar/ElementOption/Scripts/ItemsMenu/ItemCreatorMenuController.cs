@@ -1,33 +1,37 @@
 using System;
 using FeedTheRealm.Core.WorldObjects.Items;
+using FeedTheRealm.UI.EditorBar.ElementOption.Base;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
 
-[RequireComponent(typeof(UIDocument))]
-public abstract class ItemCreatorMenuController<TItem> : BaseCreatorMenuController<TItem>
-    where TItem : Item
+namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 {
-    protected TextField descriptionInput;
-
-    protected override bool RequiresSprite => true;
-
-    protected override void InitializeSpecificFields(VisualElement root)
+    [RequireComponent(typeof(UIDocument))]
+    public abstract class ItemCreatorMenuController<TItem> : BaseCreatorMenuController<TItem>
+        where TItem : Item
     {
-        descriptionInput = root.Q<TextField>("DescriptionField");
-        LogIfNull(descriptionInput, "Description input field");
+        protected TextField descriptionInput;
 
-        InitializeItemSpecificFields(root);
-    }
+        protected override bool RequiresSprite => true;
 
-    protected abstract void InitializeItemSpecificFields(VisualElement root);
-
-    protected void ReturnToItemsMenu()
-    {
-        if (returnMenuPrefab != null)
+        protected override void InitializeSpecificFields(VisualElement root)
         {
-            OpenMenu(returnMenuPrefab);
+            descriptionInput = root.Q<TextField>("DescriptionField");
+            LogIfNull(descriptionInput, "Description input field");
+
+            InitializeItemSpecificFields(root);
+        }
+
+        protected abstract void InitializeItemSpecificFields(VisualElement root);
+
+        protected void ReturnToItemsMenu()
+        {
+            if (returnMenuPrefab != null)
+            {
+                OpenMenu(returnMenuPrefab);
+            }
         }
     }
 }

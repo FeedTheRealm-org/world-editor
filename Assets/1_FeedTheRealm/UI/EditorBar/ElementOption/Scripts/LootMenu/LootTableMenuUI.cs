@@ -7,96 +7,99 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using LootEntryData = Models.LootTableData.LootEntryData;
 
-public static class LootTableMenuUI
+namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 {
-    public static Sprite LoadSpriteFromDisk(string path)
+    public static class LootTableMenuUI
     {
-        if (!FileBrowserHelpers.FileExists(path))
-            return null;
-
-        byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(path);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(bytes))
-            return null;
-
-        texture.filterMode = FilterMode.Bilinear;
-        texture.wrapMode = TextureWrapMode.Clamp;
-
-        return Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100f
-        );
-    }
-
-    public static void UpdateSpritePreview(
-        UnityEngine.UIElements.Image spritePreview,
-        string spriteId
-    )
-    {
-        if (string.IsNullOrEmpty(spriteId))
+        public static Sprite LoadSpriteFromDisk(string path)
         {
-            spritePreview.sprite = null;
-            return;
+            if (!FileBrowserHelpers.FileExists(path))
+                return null;
+
+            byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(path);
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+
+            if (!texture.LoadImage(bytes))
+                return null;
+
+            texture.filterMode = FilterMode.Bilinear;
+            texture.wrapMode = TextureWrapMode.Clamp;
+
+            return Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                100f
+            );
         }
 
-        string cleanId = Path.GetFileNameWithoutExtension(spriteId);
+        public static void UpdateSpritePreview(
+            UnityEngine.UIElements.Image spritePreview,
+            string spriteId
+        )
+        {
+            if (string.IsNullOrEmpty(spriteId))
+            {
+                spritePreview.sprite = null;
+                return;
+            }
 
-        string spritePath = Path.Combine(
-            Application.streamingAssetsPath,
-            "Sprites",
-            cleanId + ".png"
-        );
-        Sprite sprite = LoadSpriteFromDisk(spritePath);
-        spritePreview.sprite =
-            (FileBrowserHelpers.FileExists(spritePath) && sprite != null) ? sprite : null;
-    }
+            string cleanId = Path.GetFileNameWithoutExtension(spriteId);
 
-    public static VisualElement CreateLootItemElement(
-        LootEntryData entry,
-        string itemDisplayName,
-        System.Action<LootEntryData> onRemove
-    )
-    {
-        var itemContainer = new VisualElement();
-        itemContainer.style.flexDirection = FlexDirection.Row;
-        itemContainer.style.justifyContent = Justify.SpaceBetween;
-        itemContainer.style.alignItems = Align.Center;
-        itemContainer.style.marginBottom = 5;
-        itemContainer.style.paddingLeft = 5;
-        itemContainer.style.paddingRight = 5;
-        itemContainer.style.paddingTop = 3;
-        itemContainer.style.paddingBottom = 3;
-        itemContainer.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
-        itemContainer.style.borderBottomLeftRadius = 3;
-        itemContainer.style.borderBottomRightRadius = 3;
-        itemContainer.style.borderTopLeftRadius = 3;
-        itemContainer.style.borderTopRightRadius = 3;
+            string spritePath = Path.Combine(
+                Application.streamingAssetsPath,
+                "Sprites",
+                cleanId + ".png"
+            );
+            Sprite sprite = LoadSpriteFromDisk(spritePath);
+            spritePreview.sprite =
+                (FileBrowserHelpers.FileExists(spritePath) && sprite != null) ? sprite : null;
+        }
 
-        var infoContainer = new VisualElement();
-        infoContainer.style.flexDirection = FlexDirection.Column;
+        public static VisualElement CreateLootItemElement(
+            LootEntryData entry,
+            string itemDisplayName,
+            System.Action<LootEntryData> onRemove
+        )
+        {
+            var itemContainer = new VisualElement();
+            itemContainer.style.flexDirection = FlexDirection.Row;
+            itemContainer.style.justifyContent = Justify.SpaceBetween;
+            itemContainer.style.alignItems = Align.Center;
+            itemContainer.style.marginBottom = 5;
+            itemContainer.style.paddingLeft = 5;
+            itemContainer.style.paddingRight = 5;
+            itemContainer.style.paddingTop = 3;
+            itemContainer.style.paddingBottom = 3;
+            itemContainer.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+            itemContainer.style.borderBottomLeftRadius = 3;
+            itemContainer.style.borderBottomRightRadius = 3;
+            itemContainer.style.borderTopLeftRadius = 3;
+            itemContainer.style.borderTopRightRadius = 3;
 
-        var itemLabel = new Label(itemDisplayName);
-        itemLabel.style.color = Color.white;
-        itemLabel.style.fontSize = 14;
+            var infoContainer = new VisualElement();
+            infoContainer.style.flexDirection = FlexDirection.Column;
 
-        var probabilityLabel = new Label($"Drop Probability: {entry.dropProbability}%");
-        probabilityLabel.style.color = new Color(0.8f, 0.8f, 0.8f);
-        probabilityLabel.style.fontSize = 12;
+            var itemLabel = new Label(itemDisplayName);
+            itemLabel.style.color = Color.white;
+            itemLabel.style.fontSize = 14;
 
-        infoContainer.Add(itemLabel);
-        infoContainer.Add(probabilityLabel);
+            var probabilityLabel = new Label($"Drop Probability: {entry.dropProbability}%");
+            probabilityLabel.style.color = new Color(0.8f, 0.8f, 0.8f);
+            probabilityLabel.style.fontSize = 12;
 
-        var removeButton = new Button(() => onRemove(entry));
-        removeButton.text = "Remove";
-        removeButton.style.backgroundColor = new Color(0.8f, 0.2f, 0.2f, 0.8f);
-        removeButton.style.color = Color.white;
+            infoContainer.Add(itemLabel);
+            infoContainer.Add(probabilityLabel);
 
-        itemContainer.Add(infoContainer);
-        itemContainer.Add(removeButton);
+            var removeButton = new Button(() => onRemove(entry));
+            removeButton.text = "Remove";
+            removeButton.style.backgroundColor = new Color(0.8f, 0.2f, 0.2f, 0.8f);
+            removeButton.style.color = Color.white;
 
-        return itemContainer;
+            itemContainer.Add(infoContainer);
+            itemContainer.Add(removeButton);
+
+            return itemContainer;
+        }
     }
 }

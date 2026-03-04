@@ -4,135 +4,139 @@ using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Shop;
+using FeedTheRealm.UI.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
 
-[RequireComponent(typeof(UIDocument))]
-public class ShopMenuController : MenuController
+namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private ShopManagerSO shopManager;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private VisualTreeAsset itemListTemplate;
-    private Button closeButton;
-    private DropdownField itemSelector;
-    private ListView itemContainer;
-    private const string Placeholder = "Select an item";
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class ShopMenuController : MenuController
     {
-        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        [SerializeField]
+        private Logging.Logger logger;
 
-        closeButton = root.Q<Button>("Close");
-        itemSelector = root.Q<DropdownField>("ItemSelector");
-        itemContainer = root.Q<ListView>("ItemContainer");
+        [SerializeField]
+        private ShopManagerSO shopManager;
 
-        closeButton.clicked += CloseMenu;
-        itemSelector.RegisterValueChangedCallback(OnItemSelected);
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
 
-        SetupDropdown();
-        SetupListView();
-    }
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
+        private Button closeButton;
+        private DropdownField itemSelector;
+        private ListView itemContainer;
+        private const string Placeholder = "Select an item";
 
-    private void SetupListView()
-    {
-        itemContainer.itemsSource = shopManager.GetProducts();
-        itemContainer.fixedItemHeight = 120;
-        itemContainer.selectionType = SelectionType.None;
-
-        itemContainer.makeItem = () =>
+        void OnEnable()
         {
-            VisualElement ve = itemListTemplate.Instantiate();
-            ve.style.marginBottom = 8;
-            return ve;
-        };
+            VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
-        itemContainer.bindItem = (ve, index) =>
-        {
-            ProductObject product = shopManager.GetProducts()[index];
-            CreatorObject item = product.item;
+            closeButton = root.Q<Button>("Close");
+            itemSelector = root.Q<DropdownField>("ItemSelector");
+            itemContainer = root.Q<ListView>("ItemContainer");
 
-            ve.Q<Label>("ProductName").text = item.DisplayName;
+            closeButton.clicked += CloseMenu;
+            itemSelector.RegisterValueChangedCallback(OnItemSelected);
 
-            Image image = ve.Q<Image>("Preview");
-            LoadItemSprite(item, image);
-
-            IntegerField priceField = ve.Q<IntegerField>("ProductPrice");
-            priceField.SetValueWithoutNotify(product.price);
-            priceField.RegisterValueChangedCallback(evt =>
-            {
-                product.price = evt.newValue;
-            });
-
-            ve.Q<Button>("Delete").clicked += () =>
-            {
-                shopManager.RemoveProduct(product.id);
-                itemContainer.RefreshItems();
-            };
-        };
-    }
-
-    private void SetupDropdownByCategory(CreatorObjectCategories category)
-    {
-        List<CreatorObject> items = creatorObjectLibrary.GetCreatables(category);
-        List<string> itemNames = items.Select(item => item.DisplayName).ToList();
-
-        itemNames.Insert(0, Placeholder);
-        itemSelector.choices.AddRange(itemNames);
-        itemSelector.value = Placeholder;
-    }
-
-    private void SetupDropdown()
-    {
-        SetupDropdownByCategory(CreatorObjectCategories.WeaponItem);
-        SetupDropdownByCategory(CreatorObjectCategories.ConsumableItem);
-    }
-
-    private void LoadItemSprite(CreatorObject item, Image image)
-    {
-        Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(item.spriteFile, true);
-        if (sprite == null)
-        {
-            logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
-            return;
+            SetupDropdown();
+            SetupListView();
         }
-        image.sprite = sprite;
-    }
 
-    private void OnItemSelected(ChangeEvent<string> evt)
-    {
-        if (evt.newValue == Placeholder)
-            return;
+        private void SetupListView()
+        {
+            itemContainer.itemsSource = shopManager.GetProducts();
+            itemContainer.fixedItemHeight = 120;
+            itemContainer.selectionType = SelectionType.None;
 
-        CreatorObject selectedItem = creatorObjectLibrary
-            .GetAllCreatorObjects()
-            .FirstOrDefault(item => item.DisplayName == evt.newValue);
+            itemContainer.makeItem = () =>
+            {
+                VisualElement ve = itemListTemplate.Instantiate();
+                ve.style.marginBottom = 8;
+                return ve;
+            };
 
-        if (selectedItem == null)
-            return;
+            itemContainer.bindItem = (ve, index) =>
+            {
+                ProductObject product = shopManager.GetProducts()[index];
+                CreatorObject item = product.item;
 
-        AddItemToProducts(selectedItem);
+                ve.Q<Label>("ProductName").text = item.DisplayName;
 
-        itemSelector.SetValueWithoutNotify(Placeholder);
-    }
+                Image image = ve.Q<Image>("Preview");
+                LoadItemSprite(item, image);
 
-    private void AddItemToProducts(CreatorObject item)
-    {
-        shopManager.AddProduct(item, 0);
-        itemContainer.RefreshItems();
-    }
+                IntegerField priceField = ve.Q<IntegerField>("ProductPrice");
+                priceField.SetValueWithoutNotify(product.price);
+                priceField.RegisterValueChangedCallback(evt =>
+                {
+                    product.price = evt.newValue;
+                });
 
-    void OnDisable()
-    {
-        closeButton.clicked -= CloseMenu;
+                ve.Q<Button>("Delete").clicked += () =>
+                {
+                    shopManager.RemoveProduct(product.id);
+                    itemContainer.RefreshItems();
+                };
+            };
+        }
+
+        private void SetupDropdownByCategory(CreatorObjectCategories category)
+        {
+            List<CreatorObject> items = creatorObjectLibrary.GetCreatables(category);
+            List<string> itemNames = items.Select(item => item.DisplayName).ToList();
+
+            itemNames.Insert(0, Placeholder);
+            itemSelector.choices.AddRange(itemNames);
+            itemSelector.value = Placeholder;
+        }
+
+        private void SetupDropdown()
+        {
+            SetupDropdownByCategory(CreatorObjectCategories.WeaponItem);
+            SetupDropdownByCategory(CreatorObjectCategories.ConsumableItem);
+        }
+
+        private void LoadItemSprite(CreatorObject item, Image image)
+        {
+            Sprite sprite = CustomFileBrowser.LoadSpriteFromDisk(item.spriteFile, true);
+            if (sprite == null)
+            {
+                logger.Log("Failed to load sprite for preview", this, Logging.LogType.Error);
+                return;
+            }
+            image.sprite = sprite;
+        }
+
+        private void OnItemSelected(ChangeEvent<string> evt)
+        {
+            if (evt.newValue == Placeholder)
+                return;
+
+            CreatorObject selectedItem = creatorObjectLibrary
+                .GetAllCreatorObjects()
+                .FirstOrDefault(item => item.DisplayName == evt.newValue);
+
+            if (selectedItem == null)
+                return;
+
+            AddItemToProducts(selectedItem);
+
+            itemSelector.SetValueWithoutNotify(Placeholder);
+        }
+
+        private void AddItemToProducts(CreatorObject item)
+        {
+            shopManager.AddProduct(item, 0);
+            itemContainer.RefreshItems();
+        }
+
+        void OnDisable()
+        {
+            closeButton.clicked -= CloseMenu;
+        }
     }
 }

@@ -1,78 +1,82 @@
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.UI.Common;
 using Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class OpenMenuController : MenuController
+namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 {
-    [SerializeField]
-    private DataPersistenceManagerSO dataPersistenceManager;
-
-    [SerializeField]
-    private SceneReference gameScene;
-
-    private Button closeButton;
-    private ListView worldsListView;
-    private VisualElement root;
-    private List<string> loadedWorlds;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class OpenMenuController : MenuController
     {
-        var uiDocument = GetComponent<UIDocument>();
-        root = uiDocument.rootVisualElement;
-        closeButton = root.Q<Button>("Close");
-        worldsListView = root.Q<ListView>("WorldsList");
+        [SerializeField]
+        private DataPersistenceManagerSO dataPersistenceManager;
 
-        loadedWorlds = dataPersistenceManager.ListAllWorlds();
+        [SerializeField]
+        private SceneReference gameScene;
 
-        closeButton.clicked += CloseMenu;
+        private Button closeButton;
+        private ListView worldsListView;
+        private VisualElement root;
+        private List<string> loadedWorlds;
 
-        // Configure ListView
-        worldsListView.makeItem = () =>
+        void OnEnable()
         {
-            var button = new Button();
-            button.AddToClassList("open-world-button");
-            return button;
-        };
+            var uiDocument = GetComponent<UIDocument>();
+            root = uiDocument.rootVisualElement;
+            closeButton = root.Q<Button>("Close");
+            worldsListView = root.Q<ListView>("WorldsList");
 
-        worldsListView.bindItem = (element, index) =>
-        {
-            var button = element as Button;
-            button.text = PrettifyName(loadedWorlds[index]);
+            loadedWorlds = dataPersistenceManager.ListAllWorlds();
 
-            button.clicked -= () => { };
-            button.clicked += () =>
+            closeButton.clicked += CloseMenu;
+
+            // Configure ListView
+            worldsListView.makeItem = () =>
             {
-                OnLoadWorldClicked(loadedWorlds[index]);
+                var button = new Button();
+                button.AddToClassList("open-world-button");
+                return button;
             };
-        };
 
-        worldsListView.itemsSource = loadedWorlds;
-        worldsListView.selectionType = SelectionType.None;
-        worldsListView.reorderable = false;
-    }
+            worldsListView.bindItem = (element, index) =>
+            {
+                var button = element as Button;
+                button.text = PrettifyName(loadedWorlds[index]);
 
-    private void OnDisable()
-    {
-        closeButton.clicked -= CloseMenu;
-    }
+                button.clicked -= () => { };
+                button.clicked += () =>
+                {
+                    OnLoadWorldClicked(loadedWorlds[index]);
+                };
+            };
 
-    private void OnLoadWorldClicked(string worldName)
-    {
-        dataPersistenceManager.SetActiveWorld(worldName);
-        SceneManager.LoadScene(gameScene.SceneName);
-        CloseMenu();
-    }
+            worldsListView.itemsSource = loadedWorlds;
+            worldsListView.selectionType = SelectionType.None;
+            worldsListView.reorderable = false;
+        }
 
-    private string PrettifyName(string name)
-    {
-        return string.Join(
-            " ",
-            name.Split('_').Select(word => char.ToUpper(word[0]) + word.Substring(1))
-        );
+        private void OnDisable()
+        {
+            closeButton.clicked -= CloseMenu;
+        }
+
+        private void OnLoadWorldClicked(string worldName)
+        {
+            dataPersistenceManager.SetActiveWorld(worldName);
+            SceneManager.LoadScene(gameScene.SceneName);
+            CloseMenu();
+        }
+
+        private string PrettifyName(string name)
+        {
+            return string.Join(
+                " ",
+                name.Split('_').Select(word => char.ToUpper(word[0]) + word.Substring(1))
+            );
+        }
     }
 }

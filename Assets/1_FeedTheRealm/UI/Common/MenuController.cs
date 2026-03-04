@@ -4,49 +4,52 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-public class MenuController : MonoBehaviour
+namespace FeedTheRealm.UI.Common
 {
-    [Inject]
-    protected EnableInputEvent enableInputEvent;
-
-    [Inject]
-    protected EnableEditorEvent enableEditorEvent;
-
-    [Inject]
-    private IObjectResolver resolver;
-
-    void Awake()
+    public class MenuController : MonoBehaviour
     {
-        if (enableInputEvent != null)
-            enableInputEvent.OnRaised += OnInputEventRaised;
-        enableInputEvent?.Raise(false);
-        enableEditorEvent?.Raise(false);
-    }
+        [Inject]
+        protected EnableInputEvent enableInputEvent;
 
-    void OnDestroy()
-    {
-        if (enableInputEvent != null)
-            enableInputEvent.OnRaised -= OnInputEventRaised;
-    }
+        [Inject]
+        protected EnableEditorEvent enableEditorEvent;
 
-    private void OnInputEventRaised(bool isEnabled)
-    {
-        if (isEnabled)
+        [Inject]
+        private IObjectResolver resolver;
+
+        void Awake()
+        {
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised += OnInputEventRaised;
             enableInputEvent?.Raise(false);
-    }
+            enableEditorEvent?.Raise(false);
+        }
 
-    public void CloseMenu()
-    {
-        if (enableInputEvent != null)
-            enableInputEvent.OnRaised -= OnInputEventRaised;
-        enableInputEvent?.Raise(true);
-        enableEditorEvent?.Raise(true);
-        Destroy(gameObject);
-    }
+        void OnDestroy()
+        {
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised -= OnInputEventRaised;
+        }
 
-    public void OpenMenu(GameObject menuPrefab)
-    {
-        resolver.Instantiate(menuPrefab);
-        Destroy(gameObject);
+        private void OnInputEventRaised(bool isEnabled)
+        {
+            if (isEnabled)
+                enableInputEvent?.Raise(false);
+        }
+
+        public void CloseMenu()
+        {
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised -= OnInputEventRaised;
+            enableInputEvent?.Raise(true);
+            enableEditorEvent?.Raise(true);
+            Destroy(gameObject);
+        }
+
+        public void OpenMenu(GameObject menuPrefab)
+        {
+            resolver.Instantiate(menuPrefab);
+            Destroy(gameObject);
+        }
     }
 }

@@ -3,107 +3,113 @@ using System.Linq;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.NPCs;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class NPCsMenuController : MenuController
+namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GameObject createNPCMenuPrefab;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private VisualTreeAsset itemListTemplate;
-    private Button closeButton;
-    private Button addNPCButton;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class NPCsMenuController : MenuController
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        closeButton = root.Q<Button>("Close");
-        addNPCButton = root.Q<Button>("AddNPC");
+        [SerializeField]
+        private Logging.Logger logger;
 
-        addNPCButton.clicked += AddNPC;
-        closeButton.clicked += CloseMenu;
+        [SerializeField]
+        private GameObject createNPCMenuPrefab;
 
-        PopulateNPCsList();
-    }
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
 
-    private void PopulateNPCsList()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        var npcsList = root.Q<ListView>("NPCList");
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
+        private Button closeButton;
+        private Button addNPCButton;
 
-        if (npcsList == null)
+        void OnEnable()
         {
-            logger?.Log("NPCList ListView not found in UI", this, Logging.LogType.Error);
-            return;
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            closeButton = root.Q<Button>("Close");
+            addNPCButton = root.Q<Button>("AddNPC");
+
+            addNPCButton.clicked += AddNPC;
+            closeButton.clicked += CloseMenu;
+
+            PopulateNPCsList();
         }
 
-        npcsList.Clear();
-
-        if (itemListTemplate == null)
+        private void PopulateNPCsList()
         {
-            logger?.Log("itemListTemplate is not assigned", this, Logging.LogType.Error);
-            return;
-        }
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var npcsList = root.Q<ListView>("NPCList");
 
-        foreach (GenericNPC npc in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.NPC))
-        {
-            VisualElement npcEntry = itemListTemplate.Instantiate();
-            var headerLabel = npcEntry.Q<Label>("Header");
-            if (headerLabel != null)
+            if (npcsList == null)
             {
-                headerLabel.text = npc.DisplayName;
+                logger?.Log("NPCList ListView not found in UI", this, Logging.LogType.Error);
+                return;
             }
 
-            var editButton = npcEntry.Q<Button>("Edit");
-            var deleteButton = npcEntry.Q<Button>("Delete");
+            npcsList.Clear();
 
-            var typeLabel = npcEntry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = "NPC";
+            if (itemListTemplate == null)
+            {
+                logger?.Log("itemListTemplate is not assigned", this, Logging.LogType.Error);
+                return;
+            }
 
-            if (editButton != null)
-                editButton.clicked += () => OnEditNPC(npc);
-            if (deleteButton != null)
-                deleteButton.clicked += () => OnDeleteNPC(npc, npcEntry);
+            foreach (
+                GenericNPC npc in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.NPC)
+            )
+            {
+                VisualElement npcEntry = itemListTemplate.Instantiate();
+                var headerLabel = npcEntry.Q<Label>("Header");
+                if (headerLabel != null)
+                {
+                    headerLabel.text = npc.DisplayName;
+                }
 
-            npcsList.hierarchy.Add(npcEntry);
+                var editButton = npcEntry.Q<Button>("Edit");
+                var deleteButton = npcEntry.Q<Button>("Delete");
+
+                var typeLabel = npcEntry.Q<Label>("Type");
+                if (typeLabel != null)
+                    typeLabel.text = "NPC";
+
+                if (editButton != null)
+                    editButton.clicked += () => OnEditNPC(npc);
+                if (deleteButton != null)
+                    deleteButton.clicked += () => OnDeleteNPC(npc, npcEntry);
+
+                npcsList.hierarchy.Add(npcEntry);
+            }
         }
-    }
 
-    void OnEditNPC(CreatorObject npc)
-    {
-        logger.Log("Editing NPC: " + npc.DisplayName, this, Logging.LogType.Info);
+        void OnEditNPC(CreatorObject npc)
+        {
+            logger.Log("Editing NPC: " + npc.DisplayName, this, Logging.LogType.Info);
 
-        EditContext.SetObjectToEdit(npc);
+            EditContext.SetObjectToEdit(npc);
 
-        OpenMenu(createNPCMenuPrefab);
-    }
+            OpenMenu(createNPCMenuPrefab);
+        }
 
-    void OnDeleteNPC(CreatorObject npc, VisualElement npcListEntry)
-    {
-        logger.Log("Deleting NPC: " + npc.DisplayName, this, Logging.LogType.Info);
-        creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.NPC, npc);
-        npcListEntry.RemoveFromHierarchy();
-    }
+        void OnDeleteNPC(CreatorObject npc, VisualElement npcListEntry)
+        {
+            logger.Log("Deleting NPC: " + npc.DisplayName, this, Logging.LogType.Info);
+            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.NPC, npc);
+            npcListEntry.RemoveFromHierarchy();
+        }
 
-    void OnDisable()
-    {
-        addNPCButton.clicked -= AddNPC;
-        closeButton.clicked -= CloseMenu;
-    }
+        void OnDisable()
+        {
+            addNPCButton.clicked -= AddNPC;
+            closeButton.clicked -= CloseMenu;
+        }
 
-    private void AddNPC()
-    {
-        logger.Log("Opening Create NPC Menu", this, Logging.LogType.Info);
-        OpenMenu(createNPCMenuPrefab);
+        private void AddNPC()
+        {
+            logger.Log("Opening Create NPC Menu", this, Logging.LogType.Info);
+            OpenMenu(createNPCMenuPrefab);
+        }
     }
 }

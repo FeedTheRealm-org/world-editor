@@ -1,58 +1,62 @@
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.UI.Common;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class SaveMenuController : MenuController
+namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
 {
-    [SerializeField]
-    private DataPersistenceManagerSO dataPersistenceManager;
-
-    private Button saveButton;
-    private Button closeButton;
-    private TextField nameInput;
-    private VisualElement root;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class SaveMenuController : MenuController
     {
-        var uiDocument = GetComponent<UIDocument>();
-        root = uiDocument.rootVisualElement;
-        saveButton = root.Q<Button>("Save");
-        closeButton = root.Q<Button>("Close");
-        nameInput = root.Q<TextField>("NameInput");
+        [SerializeField]
+        private DataPersistenceManagerSO dataPersistenceManager;
 
-        WorldData worldData = dataPersistenceManager.CurrentWorldData;
-        if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
+        private Button saveButton;
+        private Button closeButton;
+        private TextField nameInput;
+        private VisualElement root;
+
+        void OnEnable()
         {
-            nameInput.value = worldData.worldName;
+            var uiDocument = GetComponent<UIDocument>();
+            root = uiDocument.rootVisualElement;
+            saveButton = root.Q<Button>("Save");
+            closeButton = root.Q<Button>("Close");
+            nameInput = root.Q<TextField>("NameInput");
+
+            WorldData worldData = dataPersistenceManager.CurrentWorldData;
+            if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
+            {
+                nameInput.value = worldData.worldName;
+            }
+
+            saveButton.clicked += OnSaveClicked;
+            closeButton.clicked += CloseMenu;
         }
 
-        saveButton.clicked += OnSaveClicked;
-        closeButton.clicked += CloseMenu;
-    }
-
-    private void OnDisable()
-    {
-        saveButton.clicked -= OnSaveClicked;
-        closeButton.clicked -= CloseMenu;
-    }
-
-    private void OnSaveClicked()
-    {
-        string worldName = nameInput?.value?.Trim();
-        if (string.IsNullOrEmpty(worldName))
+        private void OnDisable()
         {
-            Debug.LogWarning("SaveMenuController: No world name entered!");
-            ToastNotification.Show("World name is required", "error", Color.red);
-            return;
+            saveButton.clicked -= OnSaveClicked;
+            closeButton.clicked -= CloseMenu;
         }
 
-        Debug.Log($"SaveMenuController: Saving world '{worldName}'");
-        dataPersistenceManager.SaveWorld(worldName);
+        private void OnSaveClicked()
+        {
+            string worldName = nameInput?.value?.Trim();
+            if (string.IsNullOrEmpty(worldName))
+            {
+                Debug.LogWarning("SaveMenuController: No world name entered!");
+                ToastNotification.Show("World name is required", "error", Color.red);
+                return;
+            }
 
-        ToastNotification.Show("World saved successfully", "success", Color.green);
+            Debug.Log($"SaveMenuController: Saving world '{worldName}'");
+            dataPersistenceManager.SaveWorld(worldName);
 
-        CloseMenu();
+            ToastNotification.Show("World saved successfully", "success", Color.green);
+
+            CloseMenu();
+        }
     }
 }
