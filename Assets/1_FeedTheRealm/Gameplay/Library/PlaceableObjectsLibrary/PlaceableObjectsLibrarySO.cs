@@ -15,8 +15,8 @@ public class PlaceableObjectsLibrarySO : ScriptableObject
     [SerializeField]
     private List<Loaders> loaders;
 
-    [Inject]
-    private ModelsRepository modelsRepository;
+    // [Inject]
+    // private ModelsRepository modelsRepository;
 
     private Dictionary<PlaceableObjectCategories, IPlaceableLoader> loaderCache;
 
