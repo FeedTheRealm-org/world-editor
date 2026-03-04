@@ -92,6 +92,16 @@ public class WorldPublisherController : MonoBehaviour
             c.category_name == "weapons"
         );
 
+        if (consumableCategory == null)
+        {
+            return (null, "Item category 'consumables' not found on server.", 0);
+        }
+
+        if (weaponCategory == null)
+        {
+            return (null, "Item category 'weapons' not found on server.", 0);
+        }
+
         var consumableSpriteList = consumableSpriteData
             .Select(kvp => (kvp.Key, kvp.Value))
             .ToList();
