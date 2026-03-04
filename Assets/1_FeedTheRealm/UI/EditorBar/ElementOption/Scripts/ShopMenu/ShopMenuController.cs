@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
@@ -19,29 +18,70 @@ public class ShopMenuController : MenuController
 
     [SerializeField]
     private VisualTreeAsset itemListTemplate;
+
+    [SerializeField]
+    private GameObject createShopMenuPrefab;
+
     private Button closeButton;
+    private Button createShopButton;
+    private DropdownField shopSelector;
     private DropdownField itemSelector;
     private ListView itemContainer;
-    private const string Placeholder = "Select an item";
+    private Label noShopLabel;
+
+    private const string ShopPlaceholder = "No shop selected";
+    private const string ItemPlaceholder = "Select an item";
+    private string selectedShopId;
 
     void OnEnable()
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         closeButton = root.Q<Button>("Close");
-        itemSelector = root.Q<DropdownField>("ItemSelector");
+        createShopButton = root.Q<Button>("CreateShop");
+        shopSelector = root.Q<DropdownField>("ShopDropdown");
+        itemSelector = root.Q<DropdownField>("AddItemContaier");
         itemContainer = root.Q<ListView>("ItemContainer");
+        noShopLabel = root.Q<Label>("NoShopLabel");
 
         closeButton.clicked += CloseMenu;
+        createShopButton.clicked += OpenCreateShopMenu;
+        shopSelector.RegisterValueChangedCallback(OnShopSelected);
         itemSelector.RegisterValueChangedCallback(OnItemSelected);
 
-        SetupDropdown();
+        PopulateShopDropdown();
+        SetupItemDropdown();
         SetupListView();
+        UpdateShopState();
+    }
+
+    private void PopulateShopDropdown()
+    {
+        shopSelector.choices.Clear();
+        shopSelector.choices.Add(ShopPlaceholder);
+        foreach (var shop in shopManager.GetShops())
+            shopSelector.choices.Add(shop.displayName);
+        shopSelector.SetValueWithoutNotify(ShopPlaceholder);
+        selectedShopId = null;
+    }
+
+    private void SetupItemDropdown()
+    {
+        itemSelector.choices.Clear();
+        itemSelector.choices.Add(ItemPlaceholder);
+        AddItemsByCategory(CreatorObjectCategories.WeaponItem);
+        AddItemsByCategory(CreatorObjectCategories.ConsumableItem);
+        itemSelector.SetValueWithoutNotify(ItemPlaceholder);
+    }
+
+    private void AddItemsByCategory(CreatorObjectCategories category)
+    {
+        List<CreatorObject> items = creatorObjectLibrary.GetCreatables(category);
+        itemSelector.choices.AddRange(items.Select(item => item.DisplayName));
     }
 
     private void SetupListView()
     {
-        itemContainer.itemsSource = shopManager.GetProducts();
         itemContainer.fixedItemHeight = 120;
         itemContainer.selectionType = SelectionType.None;
 
@@ -54,7 +94,13 @@ public class ShopMenuController : MenuController
 
         itemContainer.bindItem = (ve, index) =>
         {
-            ProductObject product = shopManager.GetProducts()[index];
+            if (selectedShopId == null)
+                return;
+            var products = shopManager.GetProducts(selectedShopId);
+            if (products == null || index >= products.Count)
+                return;
+
+            ProductObject product = products[index];
             CreatorObject item = product.item;
 
             ve.Q<Label>("ProductName").text = item.DisplayName;
@@ -64,33 +110,60 @@ public class ShopMenuController : MenuController
 
             IntegerField priceField = ve.Q<IntegerField>("ProductPrice");
             priceField.SetValueWithoutNotify(product.price);
-            priceField.RegisterValueChangedCallback(evt =>
-            {
-                product.price = evt.newValue;
-            });
+            priceField.RegisterValueChangedCallback(evt => product.price = evt.newValue);
 
             ve.Q<Button>("Delete").clicked += () =>
             {
-                shopManager.RemoveProduct(product.id);
+                shopManager.RemoveProduct(selectedShopId, product.id);
                 itemContainer.RefreshItems();
             };
         };
     }
 
-    private void SetupDropdownByCategory(CreatorObjectCategories category)
+    private void UpdateShopState()
     {
-        List<CreatorObject> items = creatorObjectLibrary.GetCreatables(category);
-        List<string> itemNames = items.Select(item => item.DisplayName).ToList();
+        bool hasShop = selectedShopId != null;
+        noShopLabel.style.display = hasShop ? DisplayStyle.None : DisplayStyle.Flex;
+        itemContainer.style.display = hasShop ? DisplayStyle.Flex : DisplayStyle.None;
+        itemSelector.SetEnabled(hasShop);
 
-        itemNames.Insert(0, Placeholder);
-        itemSelector.choices.AddRange(itemNames);
-        itemSelector.value = Placeholder;
+        if (hasShop)
+        {
+            itemContainer.itemsSource = shopManager.GetProducts(selectedShopId);
+            itemContainer.RefreshItems();
+        }
     }
 
-    private void SetupDropdown()
+    private void OnShopSelected(ChangeEvent<string> evt)
     {
-        SetupDropdownByCategory(CreatorObjectCategories.WeaponItem);
-        SetupDropdownByCategory(CreatorObjectCategories.ConsumableItem);
+        if (evt.newValue == ShopPlaceholder)
+        {
+            selectedShopId = null;
+            UpdateShopState();
+            return;
+        }
+
+        ShopObject shop = shopManager.GetShops().FirstOrDefault(s => s.displayName == evt.newValue);
+        selectedShopId = shop?.id;
+        UpdateShopState();
+    }
+
+    private void OnItemSelected(ChangeEvent<string> evt)
+    {
+        if (selectedShopId == null || evt.newValue == ItemPlaceholder)
+            return;
+
+        CreatorObject selectedItem = creatorObjectLibrary
+            .GetAllCreatorObjects()
+            .FirstOrDefault(item => item.DisplayName == evt.newValue);
+
+        if (selectedItem == null)
+            return;
+
+        shopManager.AddProduct(selectedShopId, selectedItem, 0);
+        itemContainer.itemsSource = shopManager.GetProducts(selectedShopId);
+        itemContainer.RefreshItems();
+        itemSelector.SetValueWithoutNotify(ItemPlaceholder);
     }
 
     private void LoadItemSprite(CreatorObject item, Image image)
@@ -104,31 +177,14 @@ public class ShopMenuController : MenuController
         image.sprite = sprite;
     }
 
-    private void OnItemSelected(ChangeEvent<string> evt)
+    private void OpenCreateShopMenu()
     {
-        if (evt.newValue == Placeholder)
-            return;
-
-        CreatorObject selectedItem = creatorObjectLibrary
-            .GetAllCreatorObjects()
-            .FirstOrDefault(item => item.DisplayName == evt.newValue);
-
-        if (selectedItem == null)
-            return;
-
-        AddItemToProducts(selectedItem);
-
-        itemSelector.SetValueWithoutNotify(Placeholder);
-    }
-
-    private void AddItemToProducts(CreatorObject item)
-    {
-        shopManager.AddProduct(item, 0);
-        itemContainer.RefreshItems();
+        OpenMenu(createShopMenuPrefab);
     }
 
     void OnDisable()
     {
         closeButton.clicked -= CloseMenu;
+        createShopButton.clicked -= OpenCreateShopMenu;
     }
 }
