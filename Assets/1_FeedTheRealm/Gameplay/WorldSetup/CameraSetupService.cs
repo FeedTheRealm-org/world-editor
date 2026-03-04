@@ -14,9 +14,6 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             var camera = cameraGO.AddComponent<Camera>();
             camera.tag = "MainCamera";
             cameraGO.AddComponent<CinemachineBrain>();
-            var vcamGO = new GameObject("World Virtual Camera");
-            var virtualCamera = vcamGO.AddComponent<CinemachineCamera>();
-            virtualCamera.transform.position = new Vector3(0, 10, -10);
             MainCamera = camera;
         }
     }
