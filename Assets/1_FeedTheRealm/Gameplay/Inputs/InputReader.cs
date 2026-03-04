@@ -138,6 +138,11 @@ namespace FeedTheRealm.Gameplay.Inputs
             }
         }
 
+        public void RaiseSecondaryInteraction()
+        {
+            SecondaryInteractionEvent?.Invoke();
+        }
+
         public void OnRemoveAction(InputAction.CallbackContext context)
         {
             if (context.performed)
