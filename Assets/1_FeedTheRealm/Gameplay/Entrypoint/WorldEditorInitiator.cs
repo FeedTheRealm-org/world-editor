@@ -64,5 +64,41 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
+
+        private void ValidateSerializedFields()
+        {
+            if (dataPersistenceManager == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
+                );
+            if (inputReader == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(inputReader)} is not assigned in the Inspector."
+                );
+            if (worldPrefabProvider == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(worldPrefabProvider)} is not assigned in the Inspector."
+                );
+            if (uIObjectProvider == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(uIObjectProvider)} is not assigned in the Inspector."
+                );
+            if (placeableObjectLibrary == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(placeableObjectLibrary)} is not assigned in the Inspector."
+                );
+            if (creatorObjectLibrary == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(creatorObjectLibrary)} is not assigned in the Inspector."
+                );
+            if (playerConfig == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(playerConfig)} is not assigned in the Inspector."
+                );
+            if (eventChannelRegistry == null)
+                throw new System.NullReferenceException(
+                    $"[WorldEditorInitiator] {nameof(eventChannelRegistry)} is not assigned in the Inspector."
+                );
+        }
     }
 }
