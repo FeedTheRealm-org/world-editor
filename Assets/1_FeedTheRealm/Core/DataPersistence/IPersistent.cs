@@ -1,6 +1,9 @@
 using Models;
 
-public interface IPersistent
+namespace FeedTheRealm.Core.DataPersistence
 {
-    void SaveData(ref WorldData worldData);
+    public interface IPersistent
+    {
+        void SaveData(ref WorldData worldData);
+    }
 }

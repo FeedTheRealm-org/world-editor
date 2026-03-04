@@ -1,8 +1,12 @@
 using System.Threading.Tasks;
+using FeedTheRealm.Core.Interfaces;
 using UnityEngine;
 
-public interface IPlaceable
+namespace FeedTheRealm.Core.Interfaces
 {
-    string DisplayName { get; }
-    Task<GameObject> GetPlaceableObject(int layerMask);
+    public interface IPlaceable
+    {
+        string DisplayName { get; }
+        Task<GameObject> GetPlaceableObject(int layerMask);
+    }
 }

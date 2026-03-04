@@ -1,3 +1,5 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 

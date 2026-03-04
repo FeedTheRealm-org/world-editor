@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using UnityEngine;
 
 [CreateAssetMenu(
