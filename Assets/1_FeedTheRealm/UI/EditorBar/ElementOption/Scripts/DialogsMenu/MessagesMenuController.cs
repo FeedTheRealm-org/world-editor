@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.WorldObjects.Dialogs;
 using UnityEngine;
 using UnityEngine.UIElements;
 

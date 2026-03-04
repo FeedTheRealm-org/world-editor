@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using FeedTheRealm.Core.WorldObjects.Enemies;
+using FeedTheRealm.Core.WorldObjects.LootTable;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;

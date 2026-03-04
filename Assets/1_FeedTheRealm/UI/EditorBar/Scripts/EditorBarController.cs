@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -42,7 +44,7 @@ namespace FeedTheRealm.UI.MenuBar
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root, enableEditorEvent, resolver);
+            menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
             BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
             BindButton("Element", ElementOption);
@@ -80,7 +82,8 @@ namespace FeedTheRealm.UI.MenuBar
             });
             button.RegisterCallback<MouseLeaveEvent>(evt =>
             {
-                enableInputEvent.Raise(true);
+                if (menuStack == null || !menuStack.AnyOpen)
+                    enableInputEvent.Raise(true);
             });
             button.clicked += () =>
             {

@@ -1,3 +1,5 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

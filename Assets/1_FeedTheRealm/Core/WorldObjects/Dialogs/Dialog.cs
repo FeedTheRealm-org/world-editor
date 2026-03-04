@@ -1,18 +1,22 @@
+using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using Models;
 
-public class Dialog : CreatorObject
+namespace FeedTheRealm.Core.WorldObjects.Dialogs
 {
-    public Dialog(DialogData dialogData)
-        : base(dialogData.name, dialogData.id, "") { }
-
-    public override void DeleteObject(ref WorldData worldData)
+    public class Dialog : CreatorObject
     {
-        worldData.dialogs.RemoveAll(d => d.id == ObjectId);
-    }
+        public Dialog(DialogData dialogData)
+            : base(dialogData.name, dialogData.id, "") { }
 
-    public override void SaveObject(ref WorldData worldData)
-    {
-        DialogData dialogData = new(ObjectId, name);
-        worldData.dialogs.Add(dialogData);
+        public override void DeleteObject(ref WorldData worldData)
+        {
+            worldData.dialogs.RemoveAll(d => d.id == ObjectId);
+        }
+
+        public override void SaveObject(ref WorldData worldData)
+        {
+            DialogData dialogData = new(ObjectId, name);
+            worldData.dialogs.Add(dialogData);
+        }
     }
 }

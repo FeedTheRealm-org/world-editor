@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +14,7 @@ public class MenuStack
 {
     private readonly VisualElement root;
     private readonly IObjectResolver resolver;
+    private readonly EnableInputEvent enableInputEvent;
     private readonly List<VisualElement> openMenus = new();
     private int menuSpacingX = 20;
     private int menuSpacingY = 6;
@@ -21,11 +24,13 @@ public class MenuStack
     public MenuStack(
         VisualElement root,
         EnableEditorEvent enableEditorEvent,
+        EnableInputEvent enableInputEvent,
         IObjectResolver resolver
     )
     {
         this.root = root;
         this.resolver = resolver;
+        this.enableInputEvent = enableInputEvent;
         enableEditorEvent.OnRaised += ToggleMenuStack;
     }
 
@@ -34,6 +39,7 @@ public class MenuStack
         if (!enabled)
             return;
         CloseFromDepth(depth);
+        enableInputEvent?.Raise(false);
         var menu = CreateMenu(anchor, options, depth);
         root.Add(menu);
         openMenus.Add(menu);
@@ -143,6 +149,8 @@ public class MenuStack
             openMenus[i].RemoveFromHierarchy();
             openMenus.RemoveAt(i);
         }
+        if (openMenus.Count == 0)
+            enableInputEvent?.Raise(true);
     }
 
     public void CloseAll()

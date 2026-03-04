@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -127,6 +128,11 @@ namespace FeedTheRealm.Gameplay.Inputs
             {
                 SecondaryInteractionEvent?.Invoke();
             }
+        }
+
+        public void RaiseSecondaryInteraction()
+        {
+            SecondaryInteractionEvent?.Invoke();
         }
 
         public void OnRemoveAction(InputAction.CallbackContext context)
