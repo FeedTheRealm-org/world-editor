@@ -98,6 +98,7 @@ public class CreatorObjectLibrarySO : ScriptableObject, IPersistent
         );
     }
 
+    // TODO: REMOVE: the data persistence manager is in charge of handleing save operations
     public void SaveData(ref WorldData worldData)
     {
         foreach (var loader in loaderCache.Values)

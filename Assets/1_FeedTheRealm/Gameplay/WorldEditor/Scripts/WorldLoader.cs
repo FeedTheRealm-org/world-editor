@@ -7,7 +7,6 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldLoader
     {
-        [Inject]
         private readonly DataPersistenceManagerSO dataPersistenceManager;
         private readonly WorldSelectedEvent worldSelectedEvent;
 

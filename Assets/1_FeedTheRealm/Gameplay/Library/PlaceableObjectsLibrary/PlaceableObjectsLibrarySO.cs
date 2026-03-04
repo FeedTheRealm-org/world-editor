@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 [CreateAssetMenu(
     fileName = "PlaceableObjectsLibrary",
@@ -13,6 +14,9 @@ public class PlaceableObjectsLibrarySO : ScriptableObject
 
     [SerializeField]
     private List<Loaders> loaders;
+
+    [Inject]
+    private ModelsRepository modelsRepository;
 
     private Dictionary<PlaceableObjectCategories, IPlaceableLoader> loaderCache;
 

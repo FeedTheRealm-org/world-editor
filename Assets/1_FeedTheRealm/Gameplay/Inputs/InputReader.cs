@@ -29,6 +29,7 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.SetCallbacks(this);
             }
             controls.Player.Enable();
+            enableInputEvent.OnRaised += ToggleInput;
         }
 
         private void OnDisable()
