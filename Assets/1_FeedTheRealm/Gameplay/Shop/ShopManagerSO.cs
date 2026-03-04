@@ -5,6 +5,7 @@ using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Loaders;
 using Models;
 using UnityEngine;
 

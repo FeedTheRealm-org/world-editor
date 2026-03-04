@@ -1,7 +1,0 @@
-namespace FeedTheRealm.Core.Interfaces
-{
-    public interface ISetup
-    {
-        void Setup();
-    }
-}
