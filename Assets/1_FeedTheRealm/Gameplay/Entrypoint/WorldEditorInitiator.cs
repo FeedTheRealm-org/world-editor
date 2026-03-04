@@ -42,6 +42,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 
         protected override void Configure(IContainerBuilder builder)
         {
+            ValidateSerializedFields();
             builder.RegisterInstance(inputReader);
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(worldPrefabProvider);
