@@ -43,9 +43,29 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
+        // Internal Classes
+        private readonly SetupServices setupServices = new();
+
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateSerializedFields();
+            RegisterSerializedFields(builder);
+            eventChannelRegistry.RegisterAll(builder);
+            setupServices.RegisterAll(builder);
+            builder.Register<WorldLoader>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<WorldEditorEntrypoint>();
+        }
+
+        private void RegisterSerializedFields(IContainerBuilder builder)
+        {
+            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
+            ValidateField(inputReader, nameof(inputReader));
+            ValidateField(worldPrefabProvider, nameof(worldPrefabProvider));
+            ValidateField(uIObjectProvider, nameof(uIObjectProvider));
+            ValidateField(placeableObjectLibrary, nameof(placeableObjectLibrary));
+            ValidateField(creatorObjectLibrary, nameof(creatorObjectLibrary));
+            ValidateField(playerConfig, nameof(playerConfig));
+            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
+
             builder.RegisterInstance(inputReader);
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(worldPrefabProvider);
@@ -53,56 +73,13 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(placeableObjectLibrary);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
-
-            eventChannelRegistry.RegisterAll(builder);
-
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
-            builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
-            builder.Register<PlayerSetupService>(Lifetime.Scoped);
-            builder.Register<LibrarySetupService>(Lifetime.Scoped);
-            builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
-            builder.Register<UISetupService>(Lifetime.Scoped);
-
-            builder.Register<WorldSetupService>(Lifetime.Scoped);
-            builder.Register<WorldLoader>(Lifetime.Scoped);
-
-            builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
-        private void ValidateSerializedFields()
+        private void ValidateField(object field, string fieldName)
         {
-            if (dataPersistenceManager == null)
+            if (field == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
-                );
-            if (inputReader == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(inputReader)} is not assigned in the Inspector."
-                );
-            if (worldPrefabProvider == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(worldPrefabProvider)} is not assigned in the Inspector."
-                );
-            if (uIObjectProvider == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(uIObjectProvider)} is not assigned in the Inspector."
-                );
-            if (placeableObjectLibrary == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(placeableObjectLibrary)} is not assigned in the Inspector."
-                );
-            if (creatorObjectLibrary == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(creatorObjectLibrary)} is not assigned in the Inspector."
-                );
-            if (playerConfig == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(playerConfig)} is not assigned in the Inspector."
-                );
-            if (eventChannelRegistry == null)
-                throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(eventChannelRegistry)} is not assigned in the Inspector."
+                    $"[WorldEditorInitiator] {fieldName} is not assigned in the Inspector."
                 );
         }
     }

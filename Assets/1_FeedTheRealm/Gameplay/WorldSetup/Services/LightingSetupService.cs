@@ -1,11 +1,14 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class LightingSetupService : ISetup
+    public class LightingSetupService : SetupService
     {
-        public void Setup()
+        public LightingSetupService(WorldSetupEvent setupEvent)
+            : base(setupEvent) { }
+
+        public override void Setup()
         {
             var lightGO = new GameObject("Directional Light");
             var light = lightGO.AddComponent<Light>();
