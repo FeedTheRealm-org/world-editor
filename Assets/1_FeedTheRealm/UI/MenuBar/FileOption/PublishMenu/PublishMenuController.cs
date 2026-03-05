@@ -75,7 +75,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     descriptionInput.value
                 );
 
-            if (!string.IsNullOrEmpty(error))
+            if (!string.IsNullOrEmpty(error) && error != "No assets to upload.")
             {
                 logger.Log(
                     $"PublishMenuController: Error publishing world (status {statusCode}): {error}",
@@ -91,6 +91,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 ToastNotification.Show(message, "error", color);
                 return;
             }
+
             worldData.id = worldId;
             dataPersistenceManager.SaveWorld(worldData.worldName);
             ToastNotification.Show("World published successfully", "success", Color.green);
