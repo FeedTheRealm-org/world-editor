@@ -80,7 +80,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 logger.Log(
                     $"PublishMenuController: Error publishing world (status {statusCode}): {error}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 string message = error;
                 Color color = Color.red;
