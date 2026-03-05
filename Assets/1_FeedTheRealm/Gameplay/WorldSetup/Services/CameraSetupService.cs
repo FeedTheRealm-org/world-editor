@@ -1,14 +1,17 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class CameraSetupService : ISetup
+    public class CameraSetupService : SetupService
     {
         public Camera MainCamera { get; private set; }
 
-        public void Setup()
+        public CameraSetupService(WorldSetupEvent setupEvent)
+            : base(setupEvent) { }
+
+        public override void Setup()
         {
             var cameraGO = new GameObject("Main Camera");
             var camera = cameraGO.AddComponent<Camera>();

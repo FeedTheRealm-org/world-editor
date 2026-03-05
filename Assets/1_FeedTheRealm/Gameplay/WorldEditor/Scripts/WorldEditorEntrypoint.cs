@@ -7,8 +7,8 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {
-        private readonly WorldLoader worldLoader;
         private readonly WorldSetupService worldSetup;
+        private readonly WorldLoader worldLoader;
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;

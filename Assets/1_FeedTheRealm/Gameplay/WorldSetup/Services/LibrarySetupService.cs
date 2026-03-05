@@ -1,19 +1,21 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class LibrarySetupService : ISetup
+    public class LibrarySetupService : SetupService
     {
         private readonly PlaceableObjectsLibrarySO placeableObjectLibrary;
         private readonly CreatorObjectLibrarySO creatorObjectLibrary;
 
         public LibrarySetupService(
             PlaceableObjectsLibrarySO placeableObjectLibrary,
-            CreatorObjectLibrarySO creatorObjectLibrary
+            CreatorObjectLibrarySO creatorObjectLibrary,
+            WorldSetupEvent setupEvent
         )
+            : base(setupEvent)
         {
             if (placeableObjectLibrary == null)
             {
@@ -29,7 +31,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.creatorObjectLibrary = creatorObjectLibrary;
         }
 
-        public void Setup()
+        public override void Setup()
         {
             placeableObjectLibrary.Initialize();
             creatorObjectLibrary.Initialize();

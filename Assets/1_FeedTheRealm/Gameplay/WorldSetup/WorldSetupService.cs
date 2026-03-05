@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Interfaces;
 using UnityEngine;
 
@@ -6,36 +7,19 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class WorldSetupService
     {
-        private readonly List<ISetup> setupServices;
+        private readonly WorldSetupEvent setupEvent;
+        private readonly IEnumerable<ISetup> setupServices;
 
-        public WorldSetupService(
-            BaseplateSetupService worldCreator,
-            CameraSetupService cameraSetup,
-            LightingSetupService lightingSetup,
-            PlayerSetupService playerSetup,
-            LibrarySetupService librarySetup,
-            WorldEditorSetupService worldEditorSetup,
-            UISetupService uiSetup
-        )
+        public WorldSetupService(WorldSetupEvent setupEvent, IEnumerable<ISetup> setupServices)
         {
-            setupServices = new List<ISetup>
-            {
-                worldCreator,
-                cameraSetup,
-                lightingSetup,
-                playerSetup,
-                librarySetup,
-                worldEditorSetup,
-                uiSetup,
-            };
+            this.setupEvent = setupEvent;
+            this.setupServices = setupServices;
         }
 
         public void ExecuteSetup()
         {
-            foreach (var service in setupServices)
-            {
-                service.Setup();
-            }
+            Debug.Log("Executing World Setup...");
+            setupEvent.Raise();
         }
     }
 }
