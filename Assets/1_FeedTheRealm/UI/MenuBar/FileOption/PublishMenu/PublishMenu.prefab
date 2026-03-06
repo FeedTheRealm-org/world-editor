@@ -72,7 +72,7 @@ MonoBehaviour:
   logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   worldPublisherController: {fileID: 3696031326296672572}
-  loginMenuPrefab: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
+  worldUIObjectProvider: {fileID: 11400000, guid: 522c26f378da6490e906908c0d09b9c6, type: 2}
 --- !u!114 &3696031326296672572
 MonoBehaviour:
   m_ObjectHideFlags: 0

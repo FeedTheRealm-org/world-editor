@@ -20,7 +20,6 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 typeof(LibrarySetupService),
                 typeof(WorldEditorSetupService),
                 typeof(WorldUISetupService),
-                typeof(MainMenuUISetupService),
             };
 
             foreach (var serviceType in setupServices)

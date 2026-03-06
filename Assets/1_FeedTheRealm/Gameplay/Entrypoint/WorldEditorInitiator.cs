@@ -73,21 +73,6 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(placeableObjectLibrary);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
-
-            eventChannelRegistry.RegisterAll(builder);
-
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
-            builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
-            builder.Register<PlayerSetupService>(Lifetime.Scoped);
-            builder.Register<LibrarySetupService>(Lifetime.Scoped);
-            builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
-            builder.Register<WorldUISetupService>(Lifetime.Scoped);
-
-            builder.Register<WorldSetupService>(Lifetime.Scoped);
-            builder.Register<WorldLoader>(Lifetime.Scoped);
-
-            builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
         private void ValidateField(object field, string fieldName)

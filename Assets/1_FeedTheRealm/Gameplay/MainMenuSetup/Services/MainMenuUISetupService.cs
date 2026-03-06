@@ -58,7 +58,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
             loginMenu.name = "LogingMenu";
             LoginController loginController = loginMenu.GetComponent<LoginController>();
             if (loginController != null)
-                loginController.InitializeBackground(true);
+                loginController.showBackground = true;
 
             if (signUpMenuObject == null)
                 throw new System.Exception(

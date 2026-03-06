@@ -91,7 +91,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     loginMenu.name = "LogingMenu";
                     LoginController loginController = loginMenu.GetComponent<LoginController>();
                     if (loginController != null)
-                        loginController.InitializeBackground(false);
+                        loginController.showBackground = false;
                 }
                 else if (statusCode >= 500 || statusCode == 0)
                     message = "Unable to connect to server. Please try again later.";
