@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
-using LootEntryData = Models.LootTableData.LootEntryData;
+using FTRShared.Runtime.Models;
+using LootEntryData = FTRShared.Runtime.Models.LootTableData.LootEntryData;
 
 namespace FeedTheRealm.Core.WorldObjects.LootTable
 {

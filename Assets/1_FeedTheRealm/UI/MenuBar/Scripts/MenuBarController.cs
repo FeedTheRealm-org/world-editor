@@ -5,6 +5,7 @@ using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.Common.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;

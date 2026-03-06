@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 846cebe1cf154b4808cceba705a4c633, type: 3}
   m_Name: EventChannelRegistry
   m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.EventChannels.EventChannelRegistry
+  setupEvent: {fileID: 11400000, guid: 379b5518c943c327db4c31d55a6ea662, type: 2}
+  loadWorldEvent: {fileID: 11400000, guid: 7d804ceddaa20b3e4930db8529b2cd18, type: 2}
   worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}
   objectSelectedEvent: {fileID: 11400000, guid: 63a090ff7d2d67b59b90b4c80039ce86, type: 2}
   enableEditorEvent: {fileID: 11400000, guid: da8ed595ac86d4deda9a9fff9185ee49, type: 2}

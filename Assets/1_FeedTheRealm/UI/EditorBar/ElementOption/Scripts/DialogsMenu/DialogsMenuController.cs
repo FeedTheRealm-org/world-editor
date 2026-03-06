@@ -2,104 +2,109 @@ using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Dialogs;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class DialogsMenuController : MenuController
+namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GameObject createDialogMenuPrefab;
-
-    [SerializeField]
-    private GameObject messagesMenuPrefab;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private VisualTreeAsset itemListTemplate;
-    private Button closeButton;
-    private Button addDialogButton;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class DialogsMenuController : MenuController
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        closeButton = root.Q<Button>("Close");
-        addDialogButton = root.Q<Button>("AddDialog");
+        [SerializeField]
+        private Logging.Logger logger;
 
-        addDialogButton.clicked += AddDialog;
-        closeButton.clicked += CloseMenu;
+        [SerializeField]
+        private GameObject createDialogMenuPrefab;
 
-        PopulateDialogsList();
-    }
+        [SerializeField]
+        private GameObject messagesMenuPrefab;
 
-    private void PopulateDialogsList()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        var dialogsList = root.Q<ListView>("DialogsList");
-        dialogsList.Clear();
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
 
-        foreach (
-            Dialog dialog in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog)
-        )
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
+        private Button closeButton;
+        private Button addDialogButton;
+
+        void OnEnable()
         {
-            VisualElement dialogEntry = itemListTemplate.Instantiate();
-            var headerLabel = dialogEntry.Q<Label>("Header");
-            headerLabel.text = dialog.DisplayName;
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            closeButton = root.Q<Button>("Close");
+            addDialogButton = root.Q<Button>("AddDialog");
 
-            var editButton = dialogEntry.Q<Button>("Edit");
-            var editMessagesButton = dialogEntry.Q<Button>("EditMessages");
-            var deleteButton = dialogEntry.Q<Button>("Delete");
+            addDialogButton.clicked += AddDialog;
+            closeButton.clicked += CloseMenu;
 
-            var typeLabel = dialogEntry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = "Dialog";
-
-            editButton.clicked += () => OnEditDialog(dialog);
-            editMessagesButton.clicked += () => OnEditMessages(dialog);
-            deleteButton.clicked += () => OnDeleteDialog(dialog, dialogEntry);
-
-            dialogsList.hierarchy.Add(dialogEntry);
+            PopulateDialogsList();
         }
-    }
 
-    void OnEditDialog(Dialog dialog)
-    {
-        EditContext.SetObjectToEdit(dialog);
-        OpenMenu(createDialogMenuPrefab);
-    }
+        private void PopulateDialogsList()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var dialogsList = root.Q<ListView>("DialogsList");
+            dialogsList.Clear();
 
-    void OnEditMessages(Dialog dialog)
-    {
-        logger.Log(
-            "Opening messages for dialog: " + dialog.DisplayName,
-            this,
-            Logging.LogType.Info
-        );
-        MessagesMenuController.PendingDialogId = dialog.ObjectId;
-        OpenMenu(messagesMenuPrefab);
-    }
+            foreach (
+                Dialog dialog in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog)
+            )
+            {
+                VisualElement dialogEntry = itemListTemplate.Instantiate();
+                var headerLabel = dialogEntry.Q<Label>("Header");
+                headerLabel.text = dialog.DisplayName;
 
-    void OnDeleteDialog(Dialog dialog, VisualElement dialogListEntry)
-    {
-        logger.Log("Deleting dialog: " + dialog.DisplayName, this, Logging.LogType.Info);
-        creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Dialog, dialog);
-        dialogListEntry.RemoveFromHierarchy();
-    }
+                var editButton = dialogEntry.Q<Button>("Edit");
+                var editMessagesButton = dialogEntry.Q<Button>("EditMessages");
+                var deleteButton = dialogEntry.Q<Button>("Delete");
 
-    void OnDisable()
-    {
-        addDialogButton.clicked -= AddDialog;
-        closeButton.clicked -= CloseMenu;
-    }
+                var typeLabel = dialogEntry.Q<Label>("Type");
+                if (typeLabel != null)
+                    typeLabel.text = "Dialog";
 
-    private void AddDialog()
-    {
-        logger.Log("Opening Create Dialog Menu", this, Logging.LogType.Info);
-        OpenMenu(createDialogMenuPrefab);
+                editButton.clicked += () => OnEditDialog(dialog);
+                editMessagesButton.clicked += () => OnEditMessages(dialog);
+                deleteButton.clicked += () => OnDeleteDialog(dialog, dialogEntry);
+
+                dialogsList.hierarchy.Add(dialogEntry);
+            }
+        }
+
+        void OnEditDialog(Dialog dialog)
+        {
+            EditContext.SetObjectToEdit(dialog);
+            OpenMenu(createDialogMenuPrefab);
+        }
+
+        void OnEditMessages(Dialog dialog)
+        {
+            logger.Log(
+                "Opening messages for dialog: " + dialog.DisplayName,
+                this,
+                Logging.LogType.Info
+            );
+            MessagesMenuController.PendingDialogId = dialog.ObjectId;
+            OpenMenu(messagesMenuPrefab);
+        }
+
+        void OnDeleteDialog(Dialog dialog, VisualElement dialogListEntry)
+        {
+            logger.Log("Deleting dialog: " + dialog.DisplayName, this, Logging.LogType.Info);
+            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Dialog, dialog);
+            dialogListEntry.RemoveFromHierarchy();
+        }
+
+        void OnDisable()
+        {
+            addDialogButton.clicked -= AddDialog;
+            closeButton.clicked -= CloseMenu;
+        }
+
+        private void AddDialog()
+        {
+            logger.Log("Opening Create Dialog Menu", this, Logging.LogType.Info);
+            OpenMenu(createDialogMenuPrefab);
+        }
     }
 }

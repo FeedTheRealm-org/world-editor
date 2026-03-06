@@ -3,14 +3,17 @@ using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 
-public class StructureOptionController : MenuOption, ICategoryOption
+namespace FeedTheRealm.UI.EditorBar.PlacementOption
 {
-    private CategorySelectedEvent categorySelectedEvent;
-
-    public void SetCategoryEvent(CategorySelectedEvent evt) => categorySelectedEvent = evt;
-
-    public override void Execute()
+    public class StructureOptionController : MenuOption, ICategoryOption
     {
-        categorySelectedEvent?.Raise(PlaceableObjectCategories.Structure);
+        private CategorySelectedEvent categorySelectedEvent;
+
+        public void SetCategoryEvent(CategorySelectedEvent evt) => categorySelectedEvent = evt;
+
+        public override void Execute()
+        {
+            categorySelectedEvent?.Raise(PlaceableObjectCategories.Structure);
+        }
     }
 }

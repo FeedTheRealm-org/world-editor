@@ -1,35 +1,38 @@
 using FeedTheRealm.Core.DataPersistence;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
-public class SpawnerController : MonoBehaviour, IPersistent
+namespace FeedTheRealm.Gameplay.Spawners
 {
-    [SerializeField]
-    private Color spawnerColor = Color.white;
-
-    void Awake()
+    public class SpawnerController : MonoBehaviour, IPersistent
     {
-        ApplyColor();
-    }
+        [SerializeField]
+        private Color spawnerColor = Color.white;
 
-    void OnValidate()
-    {
-        if (!isActiveAndEnabled)
-            return;
-        ApplyColor();
-    }
-
-    private void ApplyColor()
-    {
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null && renderer.material != null)
+        void Awake()
         {
-            renderer.material.color = spawnerColor;
+            ApplyColor();
         }
-    }
 
-    public virtual void SaveData(ref WorldData worldData)
-    {
-        throw new System.NotImplementedException();
+        void OnValidate()
+        {
+            if (!isActiveAndEnabled)
+                return;
+            ApplyColor();
+        }
+
+        private void ApplyColor()
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null && renderer.material != null)
+            {
+                renderer.material.color = spawnerColor;
+            }
+        }
+
+        public virtual void SaveData(ref WorldData worldData)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

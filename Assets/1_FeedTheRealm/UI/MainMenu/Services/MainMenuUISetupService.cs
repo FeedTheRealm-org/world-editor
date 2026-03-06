@@ -1,12 +1,13 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Gameplay.WorldSetup;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MainMenu.Services
 {
-    public class MainMenuUISetupService : ISetup
+    public class MainMenuUISetupService : SetupService
     {
         private readonly GameObject mainMenuGameObject;
         private readonly GameObject menuBarGameObject;
@@ -17,8 +18,10 @@ namespace FeedTheRealm.UI.MainMenu.Services
 
         public MainMenuUISetupService(
             MainMenuUIObjectProvider mainMenuUIObjectProvider,
-            IObjectResolver objectResolver
+            IObjectResolver objectResolver,
+            WorldSetupEvent setupEvent
         )
+            : base(setupEvent)
         {
             if (mainMenuUIObjectProvider == null)
             {
@@ -33,7 +36,7 @@ namespace FeedTheRealm.UI.MainMenu.Services
             this.objectResolver = objectResolver;
         }
 
-        public void Setup()
+        public override void Setup()
         {
             if (mainMenuGameObject == null)
                 throw new System.Exception(

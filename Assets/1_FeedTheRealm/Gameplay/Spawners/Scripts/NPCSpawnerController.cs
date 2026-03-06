@@ -5,137 +5,149 @@ using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.Dialogs;
 using FeedTheRealm.Core.WorldObjects.NPCs;
 using FeedTheRealm.Gameplay.Inputs;
-using Models;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
+namespace FeedTheRealm.Gameplay.Spawners
 {
-    [SerializeField]
-    private InputReader inputReader;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-    private UIDocument editorMenu;
-    private Slider radiusSlider;
-    private DropdownField npcDropdown;
-    private Button closeButton;
-    private NPCSpawnerData _npcSpawnData;
-
-    public NPCSpawnerData NPCSpawnData
+    [RequireComponent(typeof(UIDocument))]
+    public class NPCSpawnerController : SpawnerController, IPersistent, IEditable
     {
-        get { return _npcSpawnData; }
-        set
+        [SerializeField]
+        private InputReader inputReader;
+
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private UIDocument editorMenu;
+        private Slider radiusSlider;
+        private DropdownField npcDropdown;
+        private Button closeButton;
+        private NPCSpawnerData _npcSpawnData;
+
+        public NPCSpawnerData NPCSpawnData
         {
-            _npcSpawnData = value;
-            transform.position = _npcSpawnData.Position;
-            transform.localScale = new Vector3(
-                _npcSpawnData.Radius,
-                transform.localScale.y,
-                _npcSpawnData.Radius
-            );
-        }
-    }
-
-    void OnEnable()
-    {
-        NPCSpawnData = new NPCSpawnerData(transform.position, transform.localScale.x, string.Empty);
-        editorMenu = GetComponent<UIDocument>();
-        var root = editorMenu.rootVisualElement;
-
-        radiusSlider = root.Q<Slider>("SpawnerRadius");
-        npcDropdown = root.Q<DropdownField>("NPCDropdown");
-        closeButton = root.Q<Button>("Close");
-
-        if (creatorObjectLibrary == null)
-        {
-            Debug.LogError("NPCSpawnerController: CreatorObjectLibrarySO reference is missing.");
-            return;
-        }
-
-        radiusSlider.value = NPCSpawnData.Radius;
-
-        radiusSlider.RegisterValueChangedCallback(e =>
-        {
-            NPCSpawnData.Radius = e.newValue;
-            transform.localScale = new Vector3(e.newValue, transform.localScale.y, e.newValue);
-        });
-        closeButton.clicked += CloseMenu;
-
-        editorMenu.rootVisualElement.style.display = DisplayStyle.None;
-    }
-
-    void OnDisable()
-    {
-        closeButton.clicked -= CloseMenu;
-    }
-
-    private void RenderMenu(Action CloseEditorCallback)
-    {
-        inputReader.ToggleInput(false);
-        radiusSlider.value = NPCSpawnData.Radius;
-
-        if (npcDropdown != null && creatorObjectLibrary != null)
-        {
-            var npcs = creatorObjectLibrary
-                .GetCreatables(CreatorObjectCategories.NPC)
-                .Cast<GenericNPC>()
-                .ToList();
-
-            npcDropdown.choices = npcs.Select(npc => npc.DisplayName).ToList();
-
-            if (!string.IsNullOrEmpty(NPCSpawnData.NpcId))
+            get { return _npcSpawnData; }
+            set
             {
-                var selectedNPC = npcs.FirstOrDefault(npc => npc.ObjectId == NPCSpawnData.NpcId);
-                if (selectedNPC != null)
-                {
-                    npcDropdown.value = selectedNPC.DisplayName;
-                }
+                _npcSpawnData = value;
+                transform.position = _npcSpawnData.Position;
+                transform.localScale = new Vector3(
+                    _npcSpawnData.Radius,
+                    transform.localScale.y,
+                    _npcSpawnData.Radius
+                );
+            }
+        }
+
+        void OnEnable()
+        {
+            NPCSpawnData = new NPCSpawnerData(
+                transform.position,
+                transform.localScale.x,
+                string.Empty
+            );
+            editorMenu = GetComponent<UIDocument>();
+            var root = editorMenu.rootVisualElement;
+
+            radiusSlider = root.Q<Slider>("SpawnerRadius");
+            npcDropdown = root.Q<DropdownField>("NPCDropdown");
+            closeButton = root.Q<Button>("Close");
+
+            if (creatorObjectLibrary == null)
+            {
+                Debug.LogError(
+                    "NPCSpawnerController: CreatorObjectLibrarySO reference is missing."
+                );
+                return;
             }
 
-            npcDropdown.RegisterValueChangedCallback(e =>
+            radiusSlider.value = NPCSpawnData.Radius;
+
+            radiusSlider.RegisterValueChangedCallback(e =>
             {
-                var selectedNPC = npcs.FirstOrDefault(npc => npc.DisplayName == e.newValue);
-                if (selectedNPC != null)
-                {
-                    NPCSpawnData.NpcId = selectedNPC.ObjectId;
-                    Debug.Log(
-                        $"NPCSpawnerController: Selected NPC '{selectedNPC.DisplayName}' (ID: {selectedNPC.ObjectId})"
-                    );
-                }
+                NPCSpawnData.Radius = e.newValue;
+                transform.localScale = new Vector3(e.newValue, transform.localScale.y, e.newValue);
             });
+            closeButton.clicked += CloseMenu;
+
+            editorMenu.rootVisualElement.style.display = DisplayStyle.None;
         }
 
-        editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+        void OnDisable()
+        {
+            closeButton.clicked -= CloseMenu;
+        }
 
-        closeButton.clicked += () =>
+        private void RenderMenu(Action CloseEditorCallback)
+        {
+            inputReader.ToggleInput(false);
+            radiusSlider.value = NPCSpawnData.Radius;
+
+            if (npcDropdown != null && creatorObjectLibrary != null)
+            {
+                var npcs = creatorObjectLibrary
+                    .GetCreatables(CreatorObjectCategories.NPC)
+                    .Cast<GenericNPC>()
+                    .ToList();
+
+                npcDropdown.choices = npcs.Select(npc => npc.DisplayName).ToList();
+
+                if (!string.IsNullOrEmpty(NPCSpawnData.NpcId))
+                {
+                    var selectedNPC = npcs.FirstOrDefault(npc =>
+                        npc.ObjectId == NPCSpawnData.NpcId
+                    );
+                    if (selectedNPC != null)
+                    {
+                        npcDropdown.value = selectedNPC.DisplayName;
+                    }
+                }
+
+                npcDropdown.RegisterValueChangedCallback(e =>
+                {
+                    var selectedNPC = npcs.FirstOrDefault(npc => npc.DisplayName == e.newValue);
+                    if (selectedNPC != null)
+                    {
+                        NPCSpawnData.NpcId = selectedNPC.ObjectId;
+                        Debug.Log(
+                            $"NPCSpawnerController: Selected NPC '{selectedNPC.DisplayName}' (ID: {selectedNPC.ObjectId})"
+                        );
+                    }
+                });
+            }
+
+            editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+
+            closeButton.clicked += () =>
+            {
+                CloseMenu();
+                CloseEditorCallback?.Invoke();
+            };
+        }
+
+        private void CloseMenu()
+        {
+            Debug.Log("NPCSpawnerController: Closing editor menu");
+            inputReader.ToggleInput(true);
+            editorMenu.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        public override void SaveData(ref WorldData worldData)
+        {
+            if (!gameObject.activeSelf)
+                return;
+
+            _npcSpawnData.Position = transform.position;
+            worldData.npcSpawnAreas.Add(NPCSpawnData);
+        }
+
+        public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
+
+        public void OnObjectDeselected()
         {
             CloseMenu();
-            CloseEditorCallback?.Invoke();
-        };
-    }
-
-    private void CloseMenu()
-    {
-        Debug.Log("NPCSpawnerController: Closing editor menu");
-        inputReader.ToggleInput(true);
-        editorMenu.rootVisualElement.style.display = DisplayStyle.None;
-    }
-
-    public override void SaveData(ref WorldData worldData)
-    {
-        if (!gameObject.activeSelf)
-            return;
-
-        _npcSpawnData.Position = transform.position;
-        worldData.npcSpawnAreas.Add(NPCSpawnData);
-    }
-
-    public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
-
-    public void OnObjectDeselected()
-    {
-        CloseMenu();
+        }
     }
 }

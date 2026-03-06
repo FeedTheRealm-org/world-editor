@@ -2,91 +2,98 @@ using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Enemies;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class EnemiesMenuController : MenuController
+namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private GameObject createEnemyMenuPrefab;
-
-    [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
-    private VisualTreeAsset itemListTemplate;
-    private Button closeButton;
-    private Button addEnemyButton;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class EnemiesMenuController : MenuController
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        closeButton = root.Q<Button>("Close");
-        addEnemyButton = root.Q<Button>("AddEnemy");
+        [SerializeField]
+        private Logging.Logger logger;
 
-        addEnemyButton.clicked += AddEnemy;
-        closeButton.clicked += CloseMenu;
+        [SerializeField]
+        private GameObject createEnemyMenuPrefab;
 
-        PopulateEnemysList();
-    }
+        [SerializeField]
+        private CreatorObjectLibrarySO creatorObjectLibrary;
 
-    private void PopulateEnemysList()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        var enemiesList = root.Q<ListView>("EnemiesList");
-        enemiesList.Clear();
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
+        private Button closeButton;
+        private Button addEnemyButton;
 
-        foreach (
-            GenericEnemy enemy in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Enemy)
-        )
+        void OnEnable()
         {
-            VisualElement enemyEntry = itemListTemplate.Instantiate();
-            var headerLabel = enemyEntry.Q<Label>("Header");
-            headerLabel.text = enemy.DisplayName;
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            closeButton = root.Q<Button>("Close");
+            addEnemyButton = root.Q<Button>("AddEnemy");
 
-            var editButton = enemyEntry.Q<Button>("Edit");
-            var deleteButton = enemyEntry.Q<Button>("Delete");
+            addEnemyButton.clicked += AddEnemy;
+            closeButton.clicked += CloseMenu;
 
-            var typeLabel = enemyEntry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = "Enemy";
-
-            editButton.clicked += () => OnEditEnemy(enemy);
-            deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
-
-            enemiesList.hierarchy.Add(enemyEntry);
+            PopulateEnemysList();
         }
-    }
 
-    void OnEditEnemy(CreatorObject enemy)
-    {
-        logger.Log("Editing enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+        private void PopulateEnemysList()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var enemiesList = root.Q<ListView>("EnemiesList");
+            enemiesList.Clear();
 
-        EditContext.SetObjectToEdit(enemy);
+            foreach (
+                GenericEnemy enemy in creatorObjectLibrary.GetCreatables(
+                    CreatorObjectCategories.Enemy
+                )
+            )
+            {
+                VisualElement enemyEntry = itemListTemplate.Instantiate();
+                var headerLabel = enemyEntry.Q<Label>("Header");
+                headerLabel.text = enemy.DisplayName;
 
-        OpenMenu(createEnemyMenuPrefab);
-    }
+                var editButton = enemyEntry.Q<Button>("Edit");
+                var deleteButton = enemyEntry.Q<Button>("Delete");
 
-    void OnDeleteEnemy(CreatorObject enemy, VisualElement enemyListEntry)
-    {
-        logger.Log("Deleting enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
-        creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Enemy, enemy);
-        enemyListEntry.RemoveFromHierarchy();
-    }
+                var typeLabel = enemyEntry.Q<Label>("Type");
+                if (typeLabel != null)
+                    typeLabel.text = "Enemy";
 
-    void OnDisable()
-    {
-        addEnemyButton.clicked -= AddEnemy;
-        closeButton.clicked -= CloseMenu;
-    }
+                editButton.clicked += () => OnEditEnemy(enemy);
+                deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
 
-    private void AddEnemy()
-    {
-        logger.Log("Opening Create Enemy Menu", this, Logging.LogType.Info);
-        OpenMenu(createEnemyMenuPrefab);
+                enemiesList.hierarchy.Add(enemyEntry);
+            }
+        }
+
+        void OnEditEnemy(CreatorObject enemy)
+        {
+            logger.Log("Editing enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+
+            EditContext.SetObjectToEdit(enemy);
+
+            OpenMenu(createEnemyMenuPrefab);
+        }
+
+        void OnDeleteEnemy(CreatorObject enemy, VisualElement enemyListEntry)
+        {
+            logger.Log("Deleting enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Enemy, enemy);
+            enemyListEntry.RemoveFromHierarchy();
+        }
+
+        void OnDisable()
+        {
+            addEnemyButton.clicked -= AddEnemy;
+            closeButton.clicked -= CloseMenu;
+        }
+
+        private void AddEnemy()
+        {
+            logger.Log("Opening Create Enemy Menu", this, Logging.LogType.Info);
+            OpenMenu(createEnemyMenuPrefab);
+        }
     }
 }

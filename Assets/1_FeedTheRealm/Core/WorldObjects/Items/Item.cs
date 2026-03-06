@@ -1,6 +1,6 @@
 using Builders;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.WorldObjects.Items
 {

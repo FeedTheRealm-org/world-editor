@@ -1,36 +1,39 @@
 using System;
 using System.Collections.Generic;
 
-public static class CreatorObjectCategoriesExtensions
+namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
 {
-    private static readonly Dictionary<CreatorObjectCategories, string> CategoryNames = new()
+    public static class CreatorObjectCategoriesExtensions
     {
-        { CreatorObjectCategories.ConsumableItem, "Consumable Item" },
-        { CreatorObjectCategories.WeaponItem, "Weapon Item" },
-        { CreatorObjectCategories.Enemy, "Enemy" },
-        { CreatorObjectCategories.LootTable, "Loot Table" },
-        { CreatorObjectCategories.Dialog, "Dialog" },
-        { CreatorObjectCategories.Message, "Message" },
-        { CreatorObjectCategories.NPC, "NPC" },
-        { CreatorObjectCategories.Quest, "Quest" },
-    };
-
-    public static string GetDisplayName(this CreatorObjectCategories category)
-    {
-        return CategoryNames.TryGetValue(category, out var name) ? name : category.ToString();
-    }
-
-    public static bool TryGetCategory(string name, out CreatorObjectCategories category)
-    {
-        foreach (var kvp in CategoryNames)
+        private static readonly Dictionary<CreatorObjectCategories, string> CategoryNames = new()
         {
-            if (kvp.Value == name)
-            {
-                category = kvp.Key;
-                return true;
-            }
+            { CreatorObjectCategories.ConsumableItem, "Consumable Item" },
+            { CreatorObjectCategories.WeaponItem, "Weapon Item" },
+            { CreatorObjectCategories.Enemy, "Enemy" },
+            { CreatorObjectCategories.LootTable, "Loot Table" },
+            { CreatorObjectCategories.Dialog, "Dialog" },
+            { CreatorObjectCategories.Message, "Message" },
+            { CreatorObjectCategories.NPC, "NPC" },
+            { CreatorObjectCategories.Quest, "Quest" },
+        };
+
+        public static string GetDisplayName(this CreatorObjectCategories category)
+        {
+            return CategoryNames.TryGetValue(category, out var name) ? name : category.ToString();
         }
-        category = default;
-        return false;
+
+        public static bool TryGetCategory(string name, out CreatorObjectCategories category)
+        {
+            foreach (var kvp in CategoryNames)
+            {
+                if (kvp.Value == name)
+                {
+                    category = kvp.Key;
+                    return true;
+                }
+            }
+            category = default;
+            return false;
+        }
     }
 }

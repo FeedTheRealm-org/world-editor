@@ -1,4 +1,4 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using UnityEngine;
 using VContainer;
@@ -6,7 +6,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class WorldUISetupService : ISetup
+    public class WorldUISetupService : SetupService
     {
         private readonly GameObject menuBarGameObject;
         private readonly GameObject editorBarGameObject;
@@ -19,8 +19,10 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public WorldUISetupService(
             WorldUIObjectProvider WorldUIObjectProvider,
-            IObjectResolver objectResolver
+            IObjectResolver objectResolver,
+            WorldSetupEvent setupEvent
         )
+            : base(setupEvent)
         {
             if (WorldUIObjectProvider == null)
             {
@@ -37,7 +39,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.objectResolver = objectResolver;
         }
 
-        public void Setup()
+        public override void Setup()
         {
             if (menuBarGameObject == null)
                 throw new System.Exception("MenuBar GameObject not set in WorldUIObjectProvider!");

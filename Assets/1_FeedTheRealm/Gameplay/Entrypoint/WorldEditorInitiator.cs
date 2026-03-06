@@ -3,6 +3,9 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
+using FeedTheRealm.Gameplay.Player;
 using FeedTheRealm.Gameplay.WorldSetup;
 using UnityEngine;
 using VContainer;
@@ -40,9 +43,29 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
+        // Internal Classes
+        private readonly SetupServices setupServices = new();
+
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateSerializedFields();
+            RegisterSerializedFields(builder);
+            eventChannelRegistry.RegisterAll(builder);
+            setupServices.RegisterAll(builder);
+            builder.Register<WorldLoader>(Lifetime.Scoped);
+            builder.RegisterEntryPoint<WorldEditorEntrypoint>();
+        }
+
+        private void RegisterSerializedFields(IContainerBuilder builder)
+        {
+            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
+            ValidateField(inputReader, nameof(inputReader));
+            ValidateField(worldPrefabProvider, nameof(worldPrefabProvider));
+            ValidateField(WorldUIObjectProvider, nameof(WorldUIObjectProvider));
+            ValidateField(placeableObjectLibrary, nameof(placeableObjectLibrary));
+            ValidateField(creatorObjectLibrary, nameof(creatorObjectLibrary));
+            ValidateField(playerConfig, nameof(playerConfig));
+            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
+
             builder.RegisterInstance(inputReader);
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(worldPrefabProvider);
@@ -67,9 +90,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
-        private void ValidateSerializedFields()
+        private void ValidateField(object field, string fieldName)
         {
-            if (dataPersistenceManager == null)
+            if (field == null)
                 throw new System.NullReferenceException(
                     $"{nameof(dataPersistenceManager)} is not assigned in the Inspector."
                 );

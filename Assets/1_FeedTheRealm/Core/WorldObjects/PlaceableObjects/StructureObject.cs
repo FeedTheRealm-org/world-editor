@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects

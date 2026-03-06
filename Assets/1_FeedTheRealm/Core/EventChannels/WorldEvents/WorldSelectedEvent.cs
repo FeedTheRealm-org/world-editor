@@ -1,5 +1,5 @@
 using FeedTheRealm.Core.EventChannels;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.WorldEvents
