@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Gameplay.MainMenuSetup.Services;
 using UnityEngine;
 using VContainer;
 
@@ -18,7 +19,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 typeof(PlayerSetupService),
                 typeof(LibrarySetupService),
                 typeof(WorldEditorSetupService),
-                typeof(UISetupService),
+                typeof(WorldUISetupService),
+                typeof(MainMenuUISetupService),
             };
 
             foreach (var serviceType in setupServices)

@@ -5,7 +5,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.MainMenu.Services
+namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
 {
     public class MainMenuUISetupService : SetupService
     {

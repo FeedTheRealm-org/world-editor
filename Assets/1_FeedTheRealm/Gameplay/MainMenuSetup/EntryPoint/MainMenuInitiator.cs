@@ -1,12 +1,12 @@
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using FeedTheRealm.UI.MainMenu.Services;
+using FeedTheRealm.Gameplay.MainMenuSetup.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.MainMenu.Entrypoint
+namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
 {
     public class MainMenuInitiator : LifetimeScope
     {

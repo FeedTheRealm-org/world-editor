@@ -1,9 +1,9 @@
 using FeedTheRealm.Core.EventChannels.Ticks;
-using FeedTheRealm.UI.MainMenu.Services;
+using FeedTheRealm.Gameplay.MainMenuSetup.Services;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.MainMenu.Entrypoint
+namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
 {
     public class MainMenuEntrypoint : IStartable //, ITickable, IFixedTickable, ILateTickable
     {
