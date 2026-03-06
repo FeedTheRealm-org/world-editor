@@ -14,7 +14,7 @@ namespace FeedTheRealm.Core.WorldObjects.Enemies
         public string lootTableId;
 
         public GenericEnemy(EnemyData enemyData)
-            : base(enemyData.name, enemyData.id, enemyData.spriteFilepath)
+            : base(enemyData.name, enemyData.id, enemyData.spriteFilePath)
         {
             description = enemyData.description;
             healthPoints = enemyData.healthPoints;

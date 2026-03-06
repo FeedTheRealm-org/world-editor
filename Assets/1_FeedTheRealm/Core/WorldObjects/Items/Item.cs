@@ -10,7 +10,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
         protected ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
 
         public Item(ItemData itemData)
-            : base(itemData.name, itemData.id, itemData.spriteFilepath)
+            : base(itemData.name, itemData.id, itemData.spriteFilePath)
         {
             description = itemData.description;
         }

@@ -10,7 +10,7 @@ namespace FeedTheRealm.Core.WorldObjects.NPCs
         public NPCDialogData npcDialog;
 
         public GenericNPC(NPCData npcData)
-            : base(npcData.name, npcData.id, npcData.spriteFilepath)
+            : base(npcData.name, npcData.id, npcData.spriteFilePath)
         {
             description = npcData.description;
             npcDialog = npcData.npcDialog;
