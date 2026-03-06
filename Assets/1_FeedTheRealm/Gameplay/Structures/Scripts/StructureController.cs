@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FeedTheRealm.Gameplay.Inputs;
 using Models;
 using UnityEngine;
@@ -21,7 +22,11 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     [SerializeField]
     private float scaleScrollSensitivity = 1f;
 
+    [SerializeField]
+    private ShopManagerSO shopManager;
+
     public bool isShop = false;
+    public string shopId;
 
     // Data
     public GameObject Structure =>
@@ -34,6 +39,7 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
     private Vector3Field scaleField;
     private Button closeButton;
     private Toggle shopToggle;
+    private DropdownField shopDropdown;
 
     private FloatField focusedAxisField;
     private Vector3Field focusedVectorField;
@@ -48,6 +54,7 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         scaleField = root.Q<Vector3Field>("Scale");
         closeButton = root.Q<Button>("Close");
         shopToggle = root.Q<Toggle>("ShopToggle");
+        shopDropdown = root.Q<DropdownField>("ShopDropdown");
     }
 
     public void SaveData(ref WorldData worldData)
@@ -71,7 +78,8 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
             transform.position,
             isShop,
             colliderSize,
-            colliderCenter
+            colliderCenter,
+            isShop ? shopId : null
         );
 
         worldData.objectPlacementData.Add(structureData);
@@ -97,10 +105,22 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
         scaleField.value = transform.localScale;
         shopToggle.value = isShop;
 
-        shopToggle.RegisterValueChangedCallback(e => isShop = e.newValue);
+        shopToggle.RegisterValueChangedCallback(e =>
+        {
+            isShop = e.newValue;
+            UpdateShopDropdownVisibility(e.newValue);
+        });
         positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
         rotationField.RegisterValueChangedCallback(e => transform.localEulerAngles = e.newValue);
         scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);
+
+        PopulateShopDropdown();
+        UpdateShopDropdownVisibility(isShop);
+        shopDropdown.RegisterValueChangedCallback(e =>
+        {
+            var shop = shopManager?.GetShops().Find(s => s.displayName == e.newValue);
+            shopId = shop?.id;
+        });
 
         RegisterAxisHandlers(positionField);
         RegisterAxisHandlers(rotationField);
@@ -112,6 +132,44 @@ public class StructureController : MonoBehaviour, IPersistent, IEditable
             CloseMenu();
             CloseEditorCallback?.Invoke();
         };
+    }
+
+    private void PopulateShopDropdown()
+    {
+        if (shopManager == null || shopDropdown == null)
+            return;
+
+        shopDropdown.choices.Clear();
+        foreach (var shop in shopManager.GetShops())
+            shopDropdown.choices.Add(shop.displayName);
+
+        if (!string.IsNullOrEmpty(shopId))
+        {
+            var current = shopManager.GetShops().Find(s => s.id == shopId);
+            if (current != null)
+            {
+                shopDropdown.SetValueWithoutNotify(current.displayName);
+            }
+            else if (shopDropdown.choices.Count > 0)
+            {
+                var first = shopManager.GetShops().FirstOrDefault();
+                shopId = first?.id;
+                shopDropdown.SetValueWithoutNotify(shopDropdown.choices[0]);
+            }
+        }
+        else if (shopDropdown.choices.Count > 0)
+        {
+            var first = shopManager.GetShops().FirstOrDefault();
+            shopId = first?.id;
+            shopDropdown.SetValueWithoutNotify(shopDropdown.choices[0]);
+        }
+    }
+
+    private void UpdateShopDropdownVisibility(bool visible)
+    {
+        if (shopDropdown == null)
+            return;
+        shopDropdown.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
     private void CloseMenu()

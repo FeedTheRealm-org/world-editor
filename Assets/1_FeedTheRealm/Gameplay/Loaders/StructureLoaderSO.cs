@@ -206,6 +206,7 @@ public class StructureLoaderSO : ScriptableObject, ILoadable, IPlaceableLoader
 
             StructureController controller = structureInstance.GetComponent<StructureController>();
             controller.isShop = structureData.isShop;
+            controller.shopId = structureData.shopId;
         }
     }
 }
