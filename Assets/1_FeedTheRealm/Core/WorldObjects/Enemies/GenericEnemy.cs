@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.WorldObjects.Enemies
 {
@@ -14,7 +14,7 @@ namespace FeedTheRealm.Core.WorldObjects.Enemies
         public string lootTableId;
 
         public GenericEnemy(EnemyData enemyData)
-            : base(enemyData.name, enemyData.id, enemyData.spriteFilePath)
+            : base(enemyData.name, enemyData.id, enemyData.spriteFilepath)
         {
             description = enemyData.description;
             healthPoints = enemyData.healthPoints;

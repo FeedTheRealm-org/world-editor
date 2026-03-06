@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Core.DataPersistence

@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Loaders;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Shop

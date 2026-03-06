@@ -3,7 +3,7 @@ using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Quests;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Loaders

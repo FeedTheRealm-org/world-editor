@@ -1,6 +1,6 @@
 using Builders;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.WorldObjects.Items
 {
@@ -10,7 +10,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
         protected ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
 
         public Item(ItemData itemData)
-            : base(itemData.name, itemData.id, itemData.spriteFilePath)
+            : base(itemData.name, itemData.id, itemData.spriteFilepath)
         {
             description = itemData.description;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using FeedTheRealm.Core.WorldObjects.Dialogs;
 using FeedTheRealm.Core.WorldObjects.NPCs;
 using FeedTheRealm.UI.EditorBar.ElementOption.Base;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 

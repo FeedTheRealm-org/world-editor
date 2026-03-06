@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.UI.Common;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;

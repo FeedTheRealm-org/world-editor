@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.UI.Common;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 

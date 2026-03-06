@@ -1,5 +1,5 @@
 using FeedTheRealm.Core.DataPersistence;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Spawners

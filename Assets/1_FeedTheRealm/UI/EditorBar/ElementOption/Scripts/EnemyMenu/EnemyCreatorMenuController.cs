@@ -3,7 +3,7 @@ using System.Linq;
 using FeedTheRealm.Core.WorldObjects.Enemies;
 using FeedTheRealm.Core.WorldObjects.LootTable;
 using FeedTheRealm.UI.EditorBar.ElementOption.Base;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 

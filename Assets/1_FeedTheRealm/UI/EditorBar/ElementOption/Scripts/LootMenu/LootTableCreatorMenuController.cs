@@ -5,10 +5,10 @@ using FeedTheRealm.Core.WorldObjects.Items;
 using FeedTheRealm.Core.WorldObjects.LootTable;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.UI.EditorBar.ElementOption.Base;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using LootEntryData = Models.LootTableData.LootEntryData;
+using LootEntryData = FTRShared.Runtime.Models.LootTableData.LootEntryData;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 {

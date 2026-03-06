@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Gameplay.Loaders
 {

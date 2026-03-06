@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using FeedTheRealm.Core.DataPersistence;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using Utils;
 

@@ -4,7 +4,7 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Gameplay.Loaders;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary

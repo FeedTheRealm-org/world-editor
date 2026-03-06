@@ -1,4 +1,4 @@
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.DataPersistence
 {

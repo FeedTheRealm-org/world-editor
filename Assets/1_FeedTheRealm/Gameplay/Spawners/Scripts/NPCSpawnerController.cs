@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.Dialogs;
 using FeedTheRealm.Core.WorldObjects.NPCs;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 

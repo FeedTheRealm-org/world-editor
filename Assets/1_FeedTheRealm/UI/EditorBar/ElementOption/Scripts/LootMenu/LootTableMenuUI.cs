@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Models;
+using FTRShared.Runtime.Models;
 using SimpleFileBrowser;
 using UnityEngine;
 using UnityEngine.UIElements;
-using LootEntryData = Models.LootTableData.LootEntryData;
+using LootEntryData = FTRShared.Runtime.Models.LootTableData.LootEntryData;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 {

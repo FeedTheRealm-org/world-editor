@@ -3,7 +3,7 @@ using System.Linq;
 using Builders;
 using FeedTheRealm.Core.WorldObjects.Items;
 using FeedTheRealm.UI.EditorBar.ElementOption.Base;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 

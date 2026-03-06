@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.WorldObjects.NPCs
 {
@@ -10,7 +10,7 @@ namespace FeedTheRealm.Core.WorldObjects.NPCs
         public NPCDialogData npcDialog;
 
         public GenericNPC(NPCData npcData)
-            : base(npcData.name, npcData.id, npcData.spriteFilePath)
+            : base(npcData.name, npcData.id, npcData.spriteFilepath)
         {
             description = npcData.description;
             npcDialog = npcData.npcDialog;

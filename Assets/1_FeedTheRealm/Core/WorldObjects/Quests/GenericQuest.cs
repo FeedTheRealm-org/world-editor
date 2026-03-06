@@ -1,6 +1,6 @@
 using Enums;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using Models;
+using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Core.WorldObjects.Quests
 {
@@ -12,17 +12,17 @@ namespace FeedTheRealm.Core.WorldObjects.Quests
         public int targetAmount;
 
         public GenericQuest(QuestData questData)
-            : base(questData.title, questData.id)
+            : base(questData.Title, questData.Id)
         {
-            content = questData.content;
-            questType = questData.type;
-            targetId = questData.targetId;
-            targetAmount = questData.targetAmount;
+            content = questData.Content;
+            questType = questData.Type;
+            targetId = questData.TargetId;
+            targetAmount = questData.TargetAmount;
         }
 
         public override void DeleteObject(ref WorldData worldData)
         {
-            worldData.quests.RemoveAll(quest => quest.id == ObjectId);
+            worldData.quests.RemoveAll(quest => quest.Id == ObjectId);
         }
 
         public override void SaveObject(ref WorldData worldData)

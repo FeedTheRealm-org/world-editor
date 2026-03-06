@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Loaders;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
