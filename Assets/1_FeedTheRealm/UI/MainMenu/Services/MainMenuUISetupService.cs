@@ -51,7 +51,11 @@ namespace FeedTheRealm.UI.MainMenu.Services
                 throw new System.Exception(
                     "LogingMenu GameObject not set in mainMenuUIObjectProvider!"
                 );
-            objectResolver.Instantiate(logingMenuObject).name = "LogingMenu";
+            GameObject loginMenu = objectResolver.Instantiate(logingMenuObject);
+            loginMenu.name = "LogingMenu";
+            LoginController loginController = loginMenu.GetComponent<LoginController>();
+            if (loginController != null)
+                loginController.InitializeBackground(true);
 
             if (signUpMenuObject == null)
                 throw new System.Exception(

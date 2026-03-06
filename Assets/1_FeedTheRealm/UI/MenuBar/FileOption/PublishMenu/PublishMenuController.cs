@@ -89,7 +89,11 @@ public class PublishMenuController : MenuController
             if (statusCode == 401)
             {
                 message = "Session expired. Please log in again.";
-                Instantiate(WorldUIObjectProvider.logingMenuObject).name = "LogingMenu";
+                GameObject loginMenu = Instantiate(WorldUIObjectProvider.logingMenuObject);
+                loginMenu.name = "LogingMenu";
+                LoginController loginController = loginMenu.GetComponent<LoginController>();
+                if (loginController != null)
+                    loginController.InitializeBackground(false);
             }
             else if (statusCode >= 500 || statusCode == 0)
                 message = "Unable to connect to server. Please try again later.";
