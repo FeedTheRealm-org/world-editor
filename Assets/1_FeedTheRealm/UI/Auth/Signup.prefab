@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: e0f6148e9702b5f8ab88476eb3dbcbaf, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: d333889fd36943442848becf806dfc7a, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 700
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -70,10 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::SignUpController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  targetScene:
-    sceneName: VerifyCode
-    sceneAsset: {fileID: 102900000, guid: f37098309a5dfe64493d8f80366c4a51, type: 3}
-  otherFormScene:
-    sceneName: Login
-    sceneAsset: {fileID: 102900000, guid: 40766490bb28063229218af1b0175161, type: 3}
+  loginUI: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
+  verifyCodeUI: {fileID: 2433370806483395245, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}

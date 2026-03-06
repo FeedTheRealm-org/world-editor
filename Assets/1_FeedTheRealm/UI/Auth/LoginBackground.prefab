@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2795755946988542685
+--- !u!1 &6544328675534064428
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,38 +8,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1003181699395781433}
-  - component: {fileID: 508691191958339391}
-  - component: {fileID: 5199863625276805917}
-  m_Layer: 5
-  m_Name: MainMenu
+  - component: {fileID: 5316474399397349568}
+  - component: {fileID: 3031622491567790045}
+  m_Layer: 0
+  m_Name: LoginBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1003181699395781433
+--- !u!4 &5316474399397349568
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795755946988542685}
+  m_GameObject: {fileID: 6544328675534064428}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.46173, y: -0, z: -33.38683}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &508691191958339391
+--- !u!114 &3031622491567790045
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795755946988542685}
+  m_GameObject: {fileID: 6544328675534064428}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -47,8 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 2addeaafb4f3397e0b817b17351a0323, type: 3}
-  m_SortingOrder: 200
+  sourceAsset: {fileID: 9197481963319205126, guid: 6ea4960696cabf803a936e17ccf5e2b3, type: 3}
+  m_SortingOrder: 600
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -56,22 +55,3 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &5199863625276805917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2795755946988542685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e035184f4d6601210b2d4fe55b922e04, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  newWorldScene:
-    sceneName: WorldEditor
-    sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
-  loadWorldScene:
-    sceneName: LoadWorld
-    sceneAsset: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}
-  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}

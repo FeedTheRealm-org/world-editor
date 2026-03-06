@@ -15,7 +15,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             PlayerSetupService playerSetup,
             LibrarySetupService librarySetup,
             WorldEditorSetupService worldEditorSetup,
-            UISetupService uiSetup
+            WorldUISetupService uiSetup
         )
         {
             setupServices = new List<ISetup>

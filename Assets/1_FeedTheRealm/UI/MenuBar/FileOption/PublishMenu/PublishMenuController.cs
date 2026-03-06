@@ -3,9 +3,11 @@ using System.IO;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 [RequireComponent(typeof(UIDocument))]
 public class PublishMenuController : MenuController
@@ -18,6 +20,9 @@ public class PublishMenuController : MenuController
 
     [SerializeField]
     private WorldPublisherController worldPublisherController;
+
+    [Inject]
+    private WorldUIObjectProvider WorldUIObjectProvider;
 
     // -------- Ui related elements --------
     private Button publishButton;
@@ -82,7 +87,10 @@ public class PublishMenuController : MenuController
             string message = error;
             Color color = Color.red;
             if (statusCode == 401)
+            {
                 message = "Session expired. Please log in again.";
+                Instantiate(WorldUIObjectProvider.logingMenuObject).name = "LogingMenu";
+            }
             else if (statusCode >= 500 || statusCode == 0)
                 message = "Unable to connect to server. Please try again later.";
             ToastNotification.Show(message, "error", color);

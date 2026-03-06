@@ -69,11 +69,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c0c1a3b3b900413ab2474653acedec, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PublishMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
   logger: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
   dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
   worldPublisherController: {fileID: 3696031326296672572}
+  loginMenuPrefab: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
 --- !u!114 &3696031326296672572
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -27,7 +27,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private WorldPrefabProvider worldPrefabProvider;
 
         [SerializeField]
-        private UIObjectProvider uIObjectProvider;
+        private WorldUIObjectProvider WorldUIObjectProvider;
 
         [Header("Libraries")]
         [SerializeField]
@@ -46,7 +46,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(inputReader);
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(worldPrefabProvider);
-            builder.RegisterInstance(uIObjectProvider);
+            builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(placeableObjectLibrary);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
@@ -59,7 +59,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<LibrarySetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
-            builder.Register<UISetupService>(Lifetime.Scoped);
+            builder.Register<WorldUISetupService>(Lifetime.Scoped);
 
             builder.Register<WorldSetupService>(Lifetime.Scoped);
             builder.Register<WorldLoader>(Lifetime.Scoped);
@@ -71,35 +71,35 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         {
             if (dataPersistenceManager == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
+                    $"{nameof(dataPersistenceManager)} is not assigned in the Inspector."
                 );
             if (inputReader == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(inputReader)} is not assigned in the Inspector."
+                    $"{nameof(inputReader)} is not assigned in the Inspector."
                 );
             if (worldPrefabProvider == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(worldPrefabProvider)} is not assigned in the Inspector."
+                    $"{nameof(worldPrefabProvider)} is not assigned in the Inspector."
                 );
-            if (uIObjectProvider == null)
+            if (WorldUIObjectProvider == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(uIObjectProvider)} is not assigned in the Inspector."
+                    $"{nameof(WorldUIObjectProvider)} is not assigned in the Inspector."
                 );
             if (placeableObjectLibrary == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(placeableObjectLibrary)} is not assigned in the Inspector."
+                    $"{nameof(placeableObjectLibrary)} is not assigned in the Inspector."
                 );
             if (creatorObjectLibrary == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(creatorObjectLibrary)} is not assigned in the Inspector."
+                    $"{nameof(creatorObjectLibrary)} is not assigned in the Inspector."
                 );
             if (playerConfig == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(playerConfig)} is not assigned in the Inspector."
+                    $"{nameof(playerConfig)} is not assigned in the Inspector."
                 );
             if (eventChannelRegistry == null)
                 throw new System.NullReferenceException(
-                    $"[WorldEditorInitiator] {nameof(eventChannelRegistry)} is not assigned in the Inspector."
+                    $"{nameof(eventChannelRegistry)} is not assigned in the Inspector."
                 );
         }
     }
