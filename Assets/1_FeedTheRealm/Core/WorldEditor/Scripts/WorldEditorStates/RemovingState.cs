@@ -47,6 +47,6 @@ public class RemovingState : IWorldEditorState
     public void OnSecondaryAction()
     {
         worldEditor.Log("Cancel removing mode");
-        worldEditor.SetState(new SelectingState(worldEditor));
+        worldEditor.SetState(worldEditor.SelectingState);
     }
 }

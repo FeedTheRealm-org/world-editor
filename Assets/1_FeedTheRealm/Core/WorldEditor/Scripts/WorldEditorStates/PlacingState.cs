@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlacingState : IWorldEditorState
 {
     private WorldEditorStateMachine worldEditor;
 
     private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
+    private const float PLACEMENT_OFFSET = 1.0f;
 
     public PlacingState(WorldEditorStateMachine worldEditor)
     {
@@ -37,18 +39,17 @@ public class PlacingState : IWorldEditorState
         GameObject instance = await worldEditor.SelectedObject.GetPlaceableObject(
             WorldLayers.WorldObjectLayer
         );
-        if (instance == null)
-        {
-            worldEditor.Log("Failed to get placeable object instance.", Logging.LogType.Error);
-            return;
-        }
         instance.transform.position = hit.point;
-        instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+        var collider = instance.GetComponentInChildren<Collider>();
+        float bottomY = collider.bounds.min.y;
+        float desiredBottomY = hit.point.y;
+        float correction = desiredBottomY - bottomY - PLACEMENT_OFFSET;
+        instance.transform.position += Vector3.up * correction;
     }
 
     public void OnSecondaryAction()
     {
         worldEditor.Log("Cancel placement");
-        worldEditor.SetState(new SelectingState(worldEditor));
+        worldEditor.SetState(worldEditor.SelectingState);
     }
 }

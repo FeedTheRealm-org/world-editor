@@ -5,11 +5,16 @@ public class WorldEditorStateMachine : MonoBehaviour
     [SerializeField]
     private Logging.Logger logger;
 
-    [Header("References | DO NOT SET IN INSPECTOR")]
     public MakerInputReader inputReader;
     public Camera playerCamera;
     public IPlaceable SelectedObject { get; private set; }
-    public bool EnableEditor = true;
+    public bool EnableEditor { get; private set; } = true;
+
+    // ------ States ------
+    public SelectingState SelectingState { get; private set; }
+    public PlacingState PlacingState { get; private set; }
+    public RemovingState RemovingState { get; private set; }
+    public EditingState EditingState { get; private set; }
 
     public void ToggleEditor(bool status)
     {
@@ -22,7 +27,10 @@ public class WorldEditorStateMachine : MonoBehaviour
 
     void Start()
     {
-        SetState(new SelectingState(this));
+        SelectingState = new SelectingState(this);
+        PlacingState = new PlacingState(this);
+        RemovingState = new RemovingState(this);
+        SetState(SelectingState);
     }
 
     private void OnEnable()
