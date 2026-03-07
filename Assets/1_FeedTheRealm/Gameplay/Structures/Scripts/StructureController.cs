@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Gameplay.Inputs;
@@ -25,7 +26,11 @@ namespace FeedTheRealm.Gameplay.Structures
         [SerializeField]
         private float scaleScrollSensitivity = 1f;
 
+        [SerializeField]
+        private ShopManagerSO shopManager;
+
         public bool isShop = false;
+        public string shopId;
 
         // Data
         public GameObject Structure =>
@@ -38,6 +43,7 @@ namespace FeedTheRealm.Gameplay.Structures
         private Vector3Field scaleField;
         private Button closeButton;
         private Toggle shopToggle;
+        private DropdownField shopDropdown;
 
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
@@ -52,6 +58,45 @@ namespace FeedTheRealm.Gameplay.Structures
             scaleField = root.Q<Vector3Field>("Scale");
             closeButton = root.Q<Button>("Close");
             shopToggle = root.Q<Toggle>("ShopToggle");
+            shopDropdown = root.Q<DropdownField>("ShopDropdown");
+        }
+
+        public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
+
+        public void OnObjectDeselected()
+        {
+            CloseMenu();
+        }
+
+        private void PopulateShopDropdown()
+        {
+            if (shopManager == null || shopDropdown == null)
+                return;
+
+            shopDropdown.choices.Clear();
+            foreach (var shop in shopManager.GetShops())
+                shopDropdown.choices.Add(shop.displayName);
+
+            if (!string.IsNullOrEmpty(shopId))
+            {
+                var current = shopManager.GetShops().Find(s => s.id == shopId);
+                if (current != null)
+                {
+                    shopDropdown.SetValueWithoutNotify(current.displayName);
+                }
+                else if (shopDropdown.choices.Count > 0)
+                {
+                    var first = shopManager.GetShops().FirstOrDefault();
+                    shopId = first?.id;
+                    shopDropdown.SetValueWithoutNotify(shopDropdown.choices[0]);
+                }
+            }
+            else if (shopDropdown.choices.Count > 0)
+            {
+                var first = shopManager.GetShops().FirstOrDefault();
+                shopId = first?.id;
+                shopDropdown.SetValueWithoutNotify(shopDropdown.choices[0]);
+            }
         }
 
         public void SaveData(ref WorldData worldData)
@@ -75,20 +120,27 @@ namespace FeedTheRealm.Gameplay.Structures
                 transform.position,
                 isShop,
                 colliderSize,
-                colliderCenter
+                colliderCenter,
+                isShop ? shopId : null
             );
 
             worldData.objectPlacementData.Add(structureData);
         }
 
-        public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
-
-        public void OnObjectDeselected()
+        private void UpdateShopDropdownVisibility(bool visible)
         {
-            CloseMenu();
+            if (shopDropdown == null)
+                return;
+            shopDropdown.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        // -------------------- Private Methods --------------------
+        private void CloseMenu()
+        {
+            structureUI.rootVisualElement.style.display = DisplayStyle.None;
+            inputReader.ScrollEvent -= OnScroll;
+            focusedAxisField = null;
+            focusedVectorField = null;
+        }
 
         private void RenderMenu(Action CloseEditorCallback)
         {
@@ -101,12 +153,24 @@ namespace FeedTheRealm.Gameplay.Structures
             scaleField.value = transform.localScale;
             shopToggle.value = isShop;
 
-            shopToggle.RegisterValueChangedCallback(e => isShop = e.newValue);
+            shopToggle.RegisterValueChangedCallback(e =>
+            {
+                isShop = e.newValue;
+                UpdateShopDropdownVisibility(e.newValue);
+            });
             positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
             rotationField.RegisterValueChangedCallback(e =>
                 transform.localEulerAngles = e.newValue
             );
             scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);
+
+            PopulateShopDropdown();
+            UpdateShopDropdownVisibility(isShop);
+            shopDropdown.RegisterValueChangedCallback(e =>
+            {
+                var shop = shopManager?.GetShops().Find(s => s.displayName == e.newValue);
+                shopId = shop?.id;
+            });
 
             RegisterAxisHandlers(positionField);
             RegisterAxisHandlers(rotationField);
@@ -118,14 +182,6 @@ namespace FeedTheRealm.Gameplay.Structures
                 CloseMenu();
                 CloseEditorCallback?.Invoke();
             };
-        }
-
-        private void CloseMenu()
-        {
-            structureUI.rootVisualElement.style.display = DisplayStyle.None;
-            inputReader.ScrollEvent -= OnScroll;
-            focusedAxisField = null;
-            focusedVectorField = null;
         }
 
         private void OnScroll(Vector2 scrollValue)

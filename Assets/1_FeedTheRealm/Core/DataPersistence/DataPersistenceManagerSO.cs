@@ -103,6 +103,7 @@ namespace FeedTheRealm.Core.DataPersistence
             worldData.dialogs.Clear();
             worldData.npcs.Clear();
             worldData.quests.Clear();
+            worldData.worldShopsData.shops.Clear();
 
             // Restore identifiers on the same instance so all references remain valid
             worldData.worldName = worldName;

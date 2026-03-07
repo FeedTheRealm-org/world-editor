@@ -1,96 +1,139 @@
 using System.Collections.Generic;
+using Enums;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Shop;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Shop
+[CreateAssetMenu(fileName = "ShopManager", menuName = "Scriptable Objects/ShopManager")]
+public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
 {
-    [CreateAssetMenu(fileName = "ShopManager", menuName = "Scriptable Objects/ShopManager")]
-    public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
+    [SerializeField]
+    private Logging.Logger logger;
+
+    [SerializeField]
+    private WorldSelectedEvent worldSelectedEvent;
+
+    private readonly List<ShopObject> shops = new();
+
+    void OnEnable()
     {
-        [SerializeField]
-        private Logging.Logger logger;
+        worldSelectedEvent.OnRaised += LoadWorld;
+    }
 
-        [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+    void OnDisable()
+    {
+        worldSelectedEvent.OnRaised -= LoadWorld;
+    }
 
-        [SerializeField]
-        private WorldSelectedEvent worldSelectedEvent;
+    public ShopObject CreateShop(string displayName)
+    {
+        var shop = new ShopObject(displayName);
+        shops.Add(shop);
+        return shop;
+    }
 
-        private readonly ShopObject shop = new();
+    public void DeleteShop(string shopId)
+    {
+        var shop = FindShop(shopId);
+        if (shop != null)
+            shops.Remove(shop);
+    }
 
-        void OnEnable()
+    public ShopObject GetShop(string shopId)
+    {
+        return FindShop(shopId);
+    }
+
+    public List<ShopObject> GetShops()
+    {
+        return shops;
+    }
+
+    public List<ProductObject> GetProducts(string shopId)
+    {
+        var shop = FindShop(shopId);
+        return shop?.products;
+    }
+
+    public void AddProduct(
+        string shopId,
+        CreatorObject item,
+        int price,
+        CurrencyType currency = CurrencyType.Gold
+    )
+    {
+        var shop = FindShop(shopId);
+        if (shop == null)
+            return;
+        shop.products.Add(new ProductObject(item, price, currency));
+    }
+
+    public void RemoveProduct(string shopId, string productId)
+    {
+        var shop = FindShop(shopId);
+        if (shop == null)
+            return;
+        var product = shop.products.Find(p => p.id == productId);
+        if (product != null)
+            shop.products.Remove(product);
+        else
+            logger.Log(
+                $"Product with ID {productId} not found in shop {shopId}.",
+                this,
+                Logging.LogType.Warning
+            );
+    }
+
+    public void LoadWorld(WorldData worldData)
+    {
+        shops.Clear();
+        if (worldData == null)
         {
-            worldSelectedEvent.OnRaised += LoadWorld;
+            logger.Log("WorldData is null.", this, Logging.LogType.Warning);
+            return;
         }
 
-        void OnDisable()
+        foreach (ShopData shopData in worldData.worldShopsData.shops)
         {
-            worldSelectedEvent.OnRaised -= LoadWorld;
-        }
-
-        public List<ProductObject> GetProducts()
-        {
-            return shop.products;
-        }
-
-        public void AddProduct(CreatorObject item, int price)
-        {
-            var product = new ProductObject(item, price);
-            shop.products.Add(product);
-        }
-
-        public void RemoveProduct(string id)
-        {
-            var product = shop.products.Find(p => p.id == id);
-            if (product != null)
-                shop.products.Remove(product);
-            else
-                logger.Log($"Product with ID {id} not found.", this, Logging.LogType.Warning);
-        }
-
-        public void LoadWorld(WorldData worldData)
-        {
-            shop.products.Clear();
-            if (worldData == null)
+            var shop = new ShopObject(shopData.id, shopData.displayName);
+            foreach (ProductData productData in shopData.products)
             {
-                logger.Log("WorldData is null.", this, Logging.LogType.Warning);
-                return;
-            }
-
-            foreach (ProductData productData in worldData.shopData.products)
-            {
-                List<CreatorObject> allCreatables = creatorObjectLibrary.GetAllCreatorObjects();
-
-                CreatorObject creatorObject = allCreatables.Find(co =>
-                    co.ObjectId == productData.itemData.id
+                shop.products.Add(
+                    new ProductObject(productData.itemId, productData.price, productData.currency)
                 );
-                if (creatorObject != null)
-                    shop.products.Add(new ProductObject(creatorObject, productData.price));
-                else
-                    logger.Log(
-                        $"CreatorObject with ID {productData.itemData.id} not found.",
-                        this,
-                        Logging.LogType.Warning
-                    );
             }
+            shops.Add(shop);
         }
+    }
 
-        // TODO: this needs a validation in cases when a CreatorObject was deleted
-        public void SaveData(ref WorldData worldData)
+    // TODO: this needs a validation in cases when a CreatorObject was deleted
+    public void SaveData(ref WorldData worldData)
+    {
+        worldData.worldShopsData.shops.Clear();
+        foreach (var shop in shops)
         {
-            worldData.shopData.products.Clear();
+            ShopData shopData = new() { id = shop.id, displayName = shop.displayName };
             foreach (var product in shop.products)
-            {
-                ProductData productData = new(product.item.ToItemData(), product.price);
-                worldData.shopData.products.Add(productData);
-            }
+                shopData.products.Add(
+                    new ProductData(
+                        product.item?.ObjectId ?? product.itemId,
+                        product.price,
+                        product.currency
+                    )
+                );
+            worldData.worldShopsData.shops.Add(shopData);
         }
+    }
+
+    private ShopObject FindShop(string shopId)
+    {
+        var shop = shops.Find(s => s.id == shopId);
+        if (shop == null)
+            logger.Log($"Shop with ID {shopId} not found.", this, Logging.LogType.Warning);
+        return shop;
     }
 }
