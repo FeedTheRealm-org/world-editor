@@ -21,9 +21,12 @@ public class SpawnerController : MonoBehaviour, IPersistent
     private void ApplyColor()
     {
         Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null && renderer.material != null)
+        if (renderer != null)
         {
-            renderer.material.color = spawnerColor;
+            if (renderer.material != null)
+            {
+                renderer.material.color = spawnerColor;
+            }
         }
     }
 

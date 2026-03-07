@@ -1,3 +1,4 @@
+using UI.EditorBar.ElementOption.Scripts.ShopMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,12 +12,13 @@ public class ShopCreatorMenuController : MenuController
     private ShopManagerSO shopManager;
 
     [SerializeField]
-    private GameObject shopMenuPrefab;
+    private GameObject listShopsMenuPrefab;
 
     private TextField nameField;
     private Button saveButton;
     private Button returnButton;
     private Button closeButton;
+    private ShopObject shopBeingEdited;
 
     void OnEnable()
     {
@@ -28,8 +30,12 @@ public class ShopCreatorMenuController : MenuController
         closeButton = root.Q<Button>("Close");
 
         saveButton.clicked += OnSaveClicked;
-        returnButton.clicked += ReturnToShopMenu;
+        returnButton.clicked += ReturnToListMenu;
         closeButton.clicked += CloseMenu;
+
+        shopBeingEdited = ShopEditContext.GetAndClear();
+        if (shopBeingEdited != null)
+            nameField?.SetValueWithoutNotify(shopBeingEdited.displayName);
     }
 
     private void OnSaveClicked()
@@ -41,13 +47,17 @@ public class ShopCreatorMenuController : MenuController
             return;
         }
 
-        shopManager.CreateShop(shopName);
-        ReturnToShopMenu();
+        if (shopBeingEdited != null)
+            shopBeingEdited.displayName = shopName;
+        else
+            shopManager.CreateShop(shopName);
+
+        ReturnToListMenu();
     }
 
-    private void ReturnToShopMenu()
+    private void ReturnToListMenu()
     {
-        OpenMenu(shopMenuPrefab);
+        OpenMenu(listShopsMenuPrefab);
     }
 
     void OnDisable()
@@ -55,7 +65,7 @@ public class ShopCreatorMenuController : MenuController
         if (saveButton != null)
             saveButton.clicked -= OnSaveClicked;
         if (returnButton != null)
-            returnButton.clicked -= ReturnToShopMenu;
+            returnButton.clicked -= ReturnToListMenu;
         if (closeButton != null)
             closeButton.clicked -= CloseMenu;
     }

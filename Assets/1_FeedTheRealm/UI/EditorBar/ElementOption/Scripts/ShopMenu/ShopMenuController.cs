@@ -21,7 +21,7 @@ public class ShopMenuController : MenuController
     private VisualTreeAsset itemListTemplate;
 
     [SerializeField]
-    private GameObject createShopMenuPrefab;
+    private GameObject manageShopsMenuPrefab;
 
     [SerializeField]
     private Texture2D goldIcon;
@@ -30,7 +30,7 @@ public class ShopMenuController : MenuController
     private Texture2D gemsIcon;
 
     private Button closeButton;
-    private Button createShopButton;
+    private Button manageShopsButton;
     private DropdownField shopSelector;
     private DropdownField itemSelector;
     private ListView itemContainer;
@@ -45,14 +45,14 @@ public class ShopMenuController : MenuController
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
         closeButton = root.Q<Button>("Close");
-        createShopButton = root.Q<Button>("CreateShop");
+        manageShopsButton = root.Q<Button>("ManageShops");
         shopSelector = root.Q<DropdownField>("ShopDropdown");
         itemSelector = root.Q<DropdownField>("AddItemContaier");
         itemContainer = root.Q<ListView>("ItemContainer");
         noShopLabel = root.Q<Label>("NoShopLabel");
 
         closeButton.clicked += CloseMenu;
-        createShopButton.clicked += OpenCreateShopMenu;
+        manageShopsButton.clicked += OpenManageShopsMenu;
         shopSelector.RegisterValueChangedCallback(OnShopSelected);
         itemSelector.RegisterValueChangedCallback(OnItemSelected);
 
@@ -108,6 +108,22 @@ public class ShopMenuController : MenuController
                 return;
 
             ProductObject product = products[index];
+
+            if (product.item == null && product.itemId != null)
+                product.item = creatorObjectLibrary
+                    .GetAllCreatorObjects()
+                    .Find(co => co.ObjectId == product.itemId);
+
+            if (product.item == null)
+            {
+                logger.Log(
+                    $"Could not resolve item {product.itemId} for shop product.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
             CreatorObject item = product.item;
 
             ve.Q<Label>("ProductName").text = item.DisplayName;
@@ -200,14 +216,14 @@ public class ShopMenuController : MenuController
         image.sprite = sprite;
     }
 
-    private void OpenCreateShopMenu()
+    private void OpenManageShopsMenu()
     {
-        OpenMenu(createShopMenuPrefab);
+        OpenMenu(manageShopsMenuPrefab);
     }
 
     void OnDisable()
     {
         closeButton.clicked -= CloseMenu;
-        createShopButton.clicked -= OpenCreateShopMenu;
+        manageShopsButton.clicked -= OpenManageShopsMenu;
     }
 }

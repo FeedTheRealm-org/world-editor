@@ -70,4 +70,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.UI::ShopCreatorMenuController
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   shopManager: {fileID: 11400000, guid: e6128aa0dda0f9a9bb3d49f2416c49d7, type: 2}
-  shopMenuPrefab: {fileID: 899354125112832364, guid: cfe15a1ae987b9ae9ac0c6bfc24ef983, type: 3}
+  listShopsMenuPrefab: {fileID: 3043731294741081270, guid: fad5a1b13f5ef9f07a56ac5cab7e35ff, type: 3}

@@ -11,9 +11,6 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
     private Logging.Logger logger;
 
     [SerializeField]
-    private CreatorObjectLibrarySO creatorObjectLibrary;
-
-    [SerializeField]
     private WorldSelectedEvent worldSelectedEvent;
 
     private readonly List<ShopObject> shops = new();
@@ -96,26 +93,14 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
             return;
         }
 
-        List<CreatorObject> allCreatables = creatorObjectLibrary.GetAllCreatorObjects();
-
         foreach (ShopData shopData in worldData.worldShopsData.shops)
         {
             var shop = new ShopObject(shopData.id, shopData.displayName);
             foreach (ProductData productData in shopData.products)
             {
-                CreatorObject creatorObject = allCreatables.Find(co =>
-                    co.ObjectId == productData.itemData.id
+                shop.products.Add(
+                    new ProductObject(productData.itemId, productData.price, productData.currency)
                 );
-                if (creatorObject != null)
-                    shop.products.Add(
-                        new ProductObject(creatorObject, productData.price, productData.currency)
-                    );
-                else
-                    logger.Log(
-                        $"CreatorObject with ID {productData.itemData.id} not found.",
-                        this,
-                        Logging.LogType.Warning
-                    );
             }
             shops.Add(shop);
         }
@@ -130,7 +115,11 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
             ShopData shopData = new() { id = shop.id, displayName = shop.displayName };
             foreach (var product in shop.products)
                 shopData.products.Add(
-                    new ProductData(product.item.ToItemData(), product.price, product.currency)
+                    new ProductData(
+                        product.item?.ObjectId ?? product.itemId,
+                        product.price,
+                        product.currency
+                    )
                 );
             worldData.worldShopsData.shops.Add(shopData);
         }
