@@ -214,6 +214,7 @@ namespace FeedTheRealm.Gameplay.Loaders
                 StructureController controller =
                     structureInstance.GetComponent<StructureController>();
                 controller.isShop = structureData.isShop;
+                controller.shopId = structureData.shopId;
             }
         }
     }
