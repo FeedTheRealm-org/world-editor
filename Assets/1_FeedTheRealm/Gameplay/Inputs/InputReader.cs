@@ -1,4 +1,5 @@
 using System;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
@@ -8,6 +9,7 @@ namespace FeedTheRealm.Gameplay.Inputs
     [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
     public class InputReader : ScriptableObject, MakerControls.IPlayerActions
     {
+        [SerializeField]
         private EnableInputEvent enableInputEvent;
         public event Action<Vector2> MoveEvent;
         public event Action<Vector2> LookEvent;
@@ -20,17 +22,6 @@ namespace FeedTheRealm.Gameplay.Inputs
 
         private MakerControls controls;
 
-        [Inject]
-        private void Construct(EnableInputEvent evt)
-        {
-            if (enableInputEvent != null)
-            {
-                enableInputEvent.OnRaised -= ToggleInput;
-            }
-            enableInputEvent = evt;
-            enableInputEvent.OnRaised += ToggleInput;
-        }
-
         private void OnEnable()
         {
             if (controls == null)
@@ -39,6 +30,7 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.SetCallbacks(this);
             }
             controls.Player.Enable();
+            enableInputEvent.OnRaised += ToggleInput;
         }
 
         private void OnDisable()
@@ -136,6 +128,11 @@ namespace FeedTheRealm.Gameplay.Inputs
             {
                 SecondaryInteractionEvent?.Invoke();
             }
+        }
+
+        public void RaiseSecondaryInteraction()
+        {
+            SecondaryInteractionEvent?.Invoke();
         }
 
         public void OnRemoveAction(InputAction.CallbackContext context)

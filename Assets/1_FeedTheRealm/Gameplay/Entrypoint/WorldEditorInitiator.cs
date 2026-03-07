@@ -1,7 +1,11 @@
 using FeedTheRealm.Core;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
+using FeedTheRealm.Gameplay.Player;
 using FeedTheRealm.Gameplay.WorldSetup;
 using UnityEngine;
 using VContainer;
@@ -11,6 +15,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldEditorInitiator : LifetimeScope
     {
+        [Header("Services, Managers and Config")]
         [SerializeField]
         private DataPersistenceManagerSO dataPersistenceManager;
 
@@ -18,90 +23,91 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private InputReader inputReader;
 
         [SerializeField]
+        private PlayerConfig playerConfig;
+
+        [Header("Component Providers")]
+        [SerializeField]
         private WorldPrefabProvider worldPrefabProvider;
 
         [SerializeField]
-        private PlayerConfig playerConfig;
+        private WorldUIObjectProvider WorldUIObjectProvider;
 
-        [SerializeField]
-        private UIObjectProvider uIObjectProvider;
-
+        [Header("Libraries")]
         [SerializeField]
         private PlaceableObjectsLibrarySO placeableObjectLibrary;
 
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
 
+        [Header("Event Channels")]
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
-        protected override void Awake()
-        {
-            base.Awake(); // builds the container
-            Container.Inject(inputReader); // RegisterInstance skips injection, so call it manually
-        }
+        // Internal Classes
+        private readonly SetupServices setupServices = new();
 
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateSerializedFields();
-
-            builder.RegisterInstance(dataPersistenceManager);
-            builder.RegisterInstance(inputReader);
-            builder.RegisterInstance(worldPrefabProvider);
-            builder.RegisterInstance(uIObjectProvider);
-            builder.RegisterInstance(placeableObjectLibrary);
-            builder.RegisterInstance(creatorObjectLibrary);
-            builder.RegisterInstance(playerConfig);
-
+            RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
-
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
-            builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
-            builder.Register<PlayerSetupService>(Lifetime.Scoped);
-            builder.Register<LibrarySetupService>(Lifetime.Scoped);
-            builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
-            builder.Register<UISetupService>(Lifetime.Scoped);
-
-            builder.Register<WorldSetupService>(Lifetime.Scoped);
+            setupServices.RegisterAll(builder);
             builder.Register<WorldLoader>(Lifetime.Scoped);
-
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
-        private void ValidateSerializedFields()
+        private void RegisterSerializedFields(IContainerBuilder builder)
         {
-            if (dataPersistenceManager == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
+            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
+            ValidateField(inputReader, nameof(inputReader));
+            ValidateField(worldPrefabProvider, nameof(worldPrefabProvider));
+            ValidateField(WorldUIObjectProvider, nameof(WorldUIObjectProvider));
+            ValidateField(placeableObjectLibrary, nameof(placeableObjectLibrary));
+            ValidateField(creatorObjectLibrary, nameof(creatorObjectLibrary));
+            ValidateField(playerConfig, nameof(playerConfig));
+            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
+
+            builder.RegisterInstance(inputReader);
+            builder.RegisterInstance(dataPersistenceManager);
+            builder.RegisterInstance(worldPrefabProvider);
+            builder.RegisterInstance(WorldUIObjectProvider);
+            builder.RegisterInstance(placeableObjectLibrary);
+            builder.RegisterInstance(creatorObjectLibrary);
+            builder.RegisterInstance(playerConfig);
+        }
+
+        private void ValidateField(object field, string fieldName)
+        {
+            if (field == null)
+                throw new System.NullReferenceException(
+                    $"{nameof(dataPersistenceManager)} is not assigned in the Inspector."
                 );
             if (inputReader == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(inputReader)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(inputReader)} is not assigned in the Inspector."
                 );
             if (worldPrefabProvider == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(worldPrefabProvider)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(worldPrefabProvider)} is not assigned in the Inspector."
                 );
-            if (uIObjectProvider == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(uIObjectProvider)} is not assigned in the Inspector."
+            if (WorldUIObjectProvider == null)
+                throw new System.NullReferenceException(
+                    $"{nameof(WorldUIObjectProvider)} is not assigned in the Inspector."
                 );
             if (placeableObjectLibrary == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(placeableObjectLibrary)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(placeableObjectLibrary)} is not assigned in the Inspector."
                 );
             if (creatorObjectLibrary == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(creatorObjectLibrary)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(creatorObjectLibrary)} is not assigned in the Inspector."
                 );
             if (playerConfig == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(playerConfig)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(playerConfig)} is not assigned in the Inspector."
                 );
             if (eventChannelRegistry == null)
-                Debug.LogError(
-                    $"[WorldEditorInitiator] {nameof(eventChannelRegistry)} is not assigned in the Inspector."
+                throw new System.NullReferenceException(
+                    $"{nameof(eventChannelRegistry)} is not assigned in the Inspector."
                 );
         }
     }

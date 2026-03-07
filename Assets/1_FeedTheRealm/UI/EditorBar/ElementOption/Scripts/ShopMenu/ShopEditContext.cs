@@ -1,3 +1,5 @@
+using FeedTheRealm.Core.WorldObjects.Shop;
+
 namespace UI.EditorBar.ElementOption.Scripts.ShopMenu
 {
     /// <summary>

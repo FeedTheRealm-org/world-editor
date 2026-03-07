@@ -1,6 +1,9 @@
 using FeedTheRealm.Core.EventChannels;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Events/WorldSelectedEvent")]
-public class WorldSelectedEvent : EventChannelSO<WorldData> { }
+namespace FeedTheRealm.Core.EventChannels.WorldEvents
+{
+    [CreateAssetMenu(menuName = "Events/WorldSelectedEvent")]
+    public class WorldSelectedEvent : EventChannelSO<WorldData> { }
+}

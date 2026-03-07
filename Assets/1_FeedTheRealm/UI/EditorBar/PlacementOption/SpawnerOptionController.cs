@@ -1,14 +1,19 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 
-public class SpawnerOptionController : MenuOption, ICategoryOption
+namespace FeedTheRealm.UI.EditorBar.PlacementOption
 {
-    private CategorySelectedEvent categorySelectedEvent;
-
-    public void SetCategoryEvent(CategorySelectedEvent evt) => categorySelectedEvent = evt;
-
-    public override void Execute()
+    public class SpawnerOptionController : MenuOption, ICategoryOption
     {
-        categorySelectedEvent?.Raise(PlaceableObjectCategories.Spawner);
+        private CategorySelectedEvent categorySelectedEvent;
+
+        public void SetCategoryEvent(CategorySelectedEvent evt) => categorySelectedEvent = evt;
+
+        public override void Execute()
+        {
+            categorySelectedEvent?.Raise(PlaceableObjectCategories.Spawner);
+        }
     }
 }

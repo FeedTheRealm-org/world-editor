@@ -1,30 +1,34 @@
-using Models;
+using FeedTheRealm.Core.DataPersistence;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
-public class PlayerSpawnerController : SpawnerController, IPersistent
+namespace FeedTheRealm.Gameplay.Spawners
 {
-    PlayerSpawnerData _playerSpawnData;
-
-    public PlayerSpawnerData PlayerSpawnData
+    public class PlayerSpawnerController : SpawnerController, IPersistent
     {
-        get { return _playerSpawnData; }
-        set
+        PlayerSpawnerData _playerSpawnData;
+
+        public PlayerSpawnerData PlayerSpawnData
         {
-            _playerSpawnData = value;
-            transform.position = _playerSpawnData.Position;
-            transform.localScale = new Vector3(
-                _playerSpawnData.Radius,
-                transform.localScale.y,
-                _playerSpawnData.Radius
-            );
+            get { return _playerSpawnData; }
+            set
+            {
+                _playerSpawnData = value;
+                transform.position = _playerSpawnData.Position;
+                transform.localScale = new Vector3(
+                    _playerSpawnData.Radius,
+                    transform.localScale.y,
+                    _playerSpawnData.Radius
+                );
+            }
         }
-    }
 
-    public override void SaveData(ref WorldData worldData)
-    {
-        if (!gameObject.activeSelf)
-            return;
-        PlayerSpawnerData spawnAreaData = new(transform.position, transform.localScale.x);
-        worldData.playerSpawnAreas.Add(spawnAreaData);
+        public override void SaveData(ref WorldData worldData)
+        {
+            if (!gameObject.activeSelf)
+                return;
+            PlayerSpawnerData spawnAreaData = new(transform.position, transform.localScale.x);
+            worldData.playerSpawnAreas.Add(spawnAreaData);
+        }
     }
 }

@@ -1,4 +1,6 @@
 using FeedTheRealm.Core.EventChannels.Ticks;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
 using UnityEngine;
 using VContainer;
 
@@ -12,6 +14,10 @@ namespace FeedTheRealm.Core.EventChannels
     [CreateAssetMenu(fileName = "EventChannelRegistry", menuName = "Events/EventChannelRegistry")]
     public class EventChannelRegistry : ScriptableObject
     {
+        [Header("Setup Events")]
+        public WorldSetupEvent setupEvent;
+        public LoadWorldEvent loadWorldEvent;
+
         [Header("World Events")]
         public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
@@ -42,36 +48,28 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
+            builder.RegisterInstance(setupEvent);
+            builder.RegisterInstance(loadWorldEvent);
         }
 
         private void Validate()
         {
-            if (worldSelectedEvent == null)
-                Debug.LogError(
-                    $"[EventChannelRegistry] {nameof(worldSelectedEvent)} is not assigned."
-                );
-            if (objectSelectedEvent == null)
-                Debug.LogError(
-                    $"[EventChannelRegistry] {nameof(objectSelectedEvent)} is not assigned."
-                );
-            if (enableEditorEvent == null)
-                Debug.LogError(
-                    $"[EventChannelRegistry] {nameof(enableEditorEvent)} is not assigned."
-                );
-            if (categorySelectedEvent == null)
-                Debug.LogError(
-                    $"[EventChannelRegistry] {nameof(categorySelectedEvent)} is not assigned."
-                );
-            if (enableInputEvent == null)
-                Debug.LogError(
-                    $"[EventChannelRegistry] {nameof(enableInputEvent)} is not assigned."
-                );
-            if (tickEvent == null)
-                Debug.LogError($"[EventChannelRegistry] {nameof(tickEvent)} is not assigned.");
-            if (fixedTickEvent == null)
-                Debug.LogError($"[EventChannelRegistry] {nameof(fixedTickEvent)} is not assigned.");
-            if (lateTickEvent == null)
-                Debug.LogError($"[EventChannelRegistry] {nameof(lateTickEvent)} is not assigned.");
+            ValidateField(worldSelectedEvent, nameof(worldSelectedEvent));
+            ValidateField(objectSelectedEvent, nameof(objectSelectedEvent));
+            ValidateField(enableEditorEvent, nameof(enableEditorEvent));
+            ValidateField(categorySelectedEvent, nameof(categorySelectedEvent));
+            ValidateField(enableInputEvent, nameof(enableInputEvent));
+            ValidateField(tickEvent, nameof(tickEvent));
+            ValidateField(fixedTickEvent, nameof(fixedTickEvent));
+            ValidateField(lateTickEvent, nameof(lateTickEvent));
+            ValidateField(setupEvent, nameof(setupEvent));
+            ValidateField(loadWorldEvent, nameof(loadWorldEvent));
+        }
+
+        private void ValidateField(Object field, string fieldName)
+        {
+            if (field == null)
+                Debug.LogError($"[EventChannelRegistry] {fieldName} is not assigned.");
         }
     }
 }

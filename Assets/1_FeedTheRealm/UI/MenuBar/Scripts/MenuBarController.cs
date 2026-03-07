@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.Common.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -17,6 +22,9 @@ namespace FeedTheRealm.UI.MenuBar
 
         [Inject]
         private EnableInputEvent enableInputEvent;
+
+        [SerializeField]
+        private InputReader inputReader;
 
         [SerializeField]
         private Logging.Logger logger;
@@ -45,7 +53,7 @@ namespace FeedTheRealm.UI.MenuBar
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
-            menuStack = new MenuStack(root, enableEditorEvent, resolver);
+            menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
             BindButton("File", fileOptionController);
             BindButton("Edit", editOptionController);
             BindButton("Subscriptions", subscriptionsOptionController);
@@ -80,10 +88,13 @@ namespace FeedTheRealm.UI.MenuBar
             });
             button.RegisterCallback<MouseLeaveEvent>(evt =>
             {
-                enableInputEvent.Raise(true);
+                if (menuStack == null || !menuStack.AnyOpen)
+                    enableInputEvent.Raise(true);
             });
             button.clicked += () =>
             {
+                enableInputEvent.Raise(false);
+                inputReader?.RaiseSecondaryInteraction();
                 if (option.MenuOptions.Count == 0)
                     return;
                 menuStack.Toggle(button, option.MenuOptions);

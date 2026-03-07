@@ -1,5 +1,9 @@
 using FeedTheRealm.Core.EventChannels;
+using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Events/CategorySelectedEvent")]
-public class CategorySelectedEvent : EventChannelSO<PlaceableObjectCategories> { }
+namespace FeedTheRealm.Core.EventChannels.UIEvents
+{
+    [CreateAssetMenu(menuName = "Events/CategorySelectedEvent")]
+    public class CategorySelectedEvent : EventChannelSO<PlaceableObjectCategories> { }
+}

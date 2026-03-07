@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 using Enums;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
-using Models;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Core.WorldObjects.CreatorObjects;
+using FeedTheRealm.Core.WorldObjects.Shop;
+using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Loaders;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ShopManager", menuName = "Scriptable Objects/ShopManager")]
@@ -9,6 +15,9 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
 {
     [SerializeField]
     private Logging.Logger logger;
+
+    [SerializeField]
+    private CreatorObjectLibrarySO creatorObjectLibrary;
 
     [SerializeField]
     private WorldSelectedEvent worldSelectedEvent;
@@ -93,14 +102,26 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
             return;
         }
 
+        List<CreatorObject> allCreatables = creatorObjectLibrary.GetAllCreatorObjects();
+
         foreach (ShopData shopData in worldData.worldShopsData.shops)
         {
             var shop = new ShopObject(shopData.id, shopData.displayName);
             foreach (ProductData productData in shopData.products)
             {
-                shop.products.Add(
-                    new ProductObject(productData.itemId, productData.price, productData.currency)
+                CreatorObject creatorObject = allCreatables.Find(co =>
+                    co.ObjectId == productData.itemId
                 );
+                if (creatorObject != null)
+                    shop.products.Add(
+                        new ProductObject(creatorObject, productData.price, productData.currency)
+                    );
+                else
+                    logger.Log(
+                        $"CreatorObject with ID {productData.itemId} not found.",
+                        this,
+                        Logging.LogType.Warning
+                    );
             }
             shops.Add(shop);
         }
@@ -115,11 +136,7 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
             ShopData shopData = new() { id = shop.id, displayName = shop.displayName };
             foreach (var product in shop.products)
                 shopData.products.Add(
-                    new ProductData(
-                        product.item?.ObjectId ?? product.itemId,
-                        product.price,
-                        product.currency
-                    )
+                    new ProductData(product.item.ToItemData().id, product.price, product.currency)
                 );
             worldData.worldShopsData.shops.Add(shopData);
         }

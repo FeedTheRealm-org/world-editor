@@ -2,56 +2,60 @@ using FeedTheRealm.Core.EventChannels.Ticks;
 using UnityEngine;
 using VContainer;
 
-public class CameraController : MonoBehaviour
+namespace FeedTheRealm.Gameplay.Player
 {
-    [SerializeField]
-    private Transform playerObject;
-
-    [SerializeField]
-    private PlayerConfig config;
-
-    [SerializeField]
-    float currentPitch = 0f;
-
-    [Inject]
-    private TickEvent tickEvent;
-
-    private Vector2 lookInput = Vector2.zero;
-
-    public void Look(Vector2 input)
+    public class CameraController : MonoBehaviour
     {
-        lookInput = input;
-    }
+        [SerializeField]
+        private Transform playerObject;
 
-    private void OnEnable()
-    {
-        tickEvent.OnRaised += Tick;
-    }
+        [SerializeField]
+        private PlayerConfig config;
 
-    private void OnDisable()
-    {
-        tickEvent.OnRaised -= Tick;
-    }
+        [SerializeField]
+        float currentPitch = 0f;
 
-    private void Tick()
-    {
-        if (lookInput.magnitude == 0)
-            return;
+        [Inject]
+        private TickEvent tickEvent;
 
-        currentPitch = CalculatePitch();
-        float yaw = CalculateYaw();
+        private Vector2 lookInput = Vector2.zero;
 
-        playerObject.transform.localRotation = Quaternion.Euler(currentPitch, yaw, 0f);
-    }
+        public void Look(Vector2 input)
+        {
+            lookInput = input;
+        }
 
-    private float CalculatePitch()
-    {
-        float newPitch = currentPitch - lookInput.y * config.lookSensitivity.y;
-        return Mathf.Clamp(newPitch, -config.pitchLimit, config.pitchLimit);
-    }
+        private void OnEnable()
+        {
+            tickEvent.OnRaised += Tick;
+        }
 
-    private float CalculateYaw()
-    {
-        return playerObject.transform.localEulerAngles.y + lookInput.x * config.lookSensitivity.x;
+        private void OnDisable()
+        {
+            tickEvent.OnRaised -= Tick;
+        }
+
+        private void Tick()
+        {
+            if (lookInput.magnitude == 0)
+                return;
+
+            currentPitch = CalculatePitch();
+            float yaw = CalculateYaw();
+
+            playerObject.transform.localRotation = Quaternion.Euler(currentPitch, yaw, 0f);
+        }
+
+        private float CalculatePitch()
+        {
+            float newPitch = currentPitch - lookInput.y * config.lookSensitivity.y;
+            return Mathf.Clamp(newPitch, -config.pitchLimit, config.pitchLimit);
+        }
+
+        private float CalculateYaw()
+        {
+            return playerObject.transform.localEulerAngles.y
+                + lookInput.x * config.lookSensitivity.x;
+        }
     }
 }

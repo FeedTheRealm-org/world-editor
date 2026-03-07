@@ -1,8 +1,11 @@
 using System;
 
-public interface IEditable
+namespace FeedTheRealm.Core.Interfaces
 {
-    void OnObjectSelected(Action CloseEditorCallback);
+    public interface IEditable
+    {
+        void OnObjectSelected(Action CloseEditorCallback);
 
-    void OnObjectDeselected();
+        void OnObjectDeselected();
+    }
 }

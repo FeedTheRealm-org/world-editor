@@ -1,30 +1,33 @@
 using UnityEngine;
 
-public static class Raycaster
+namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
 {
-    private const float DefaultMaxDistance = 10000f;
-
-    public static bool TryGetPlacementPoint(
-        WorldEditorStateMachine maker,
-        LayerMask layermask,
-        out RaycastHit hit,
-        float maxDistance = DefaultMaxDistance
-    )
+    public static class Raycaster
     {
-        Ray ray = maker.playerCamera.ScreenPointToRay(maker.inputReader.LastClickPosition);
-        return Physics.Raycast(ray, out hit, maxDistance, layermask);
-    }
+        private const float DefaultMaxDistance = 10000f;
 
-    public static GameObject GetGameObject(
-        WorldEditorStateMachine maker,
-        LayerMask layermask,
-        float maxDistance = DefaultMaxDistance
-    )
-    {
-        if (TryGetPlacementPoint(maker, layermask, out RaycastHit hit, maxDistance))
+        public static bool TryGetPlacementPoint(
+            WorldEditorStateMachine maker,
+            LayerMask layermask,
+            out RaycastHit hit,
+            float maxDistance = DefaultMaxDistance
+        )
         {
-            return hit.collider.gameObject;
+            Ray ray = maker.playerCamera.ScreenPointToRay(maker.inputReader.LastClickPosition);
+            return Physics.Raycast(ray, out hit, maxDistance, layermask);
         }
-        return null;
+
+        public static GameObject GetGameObject(
+            WorldEditorStateMachine maker,
+            LayerMask layermask,
+            float maxDistance = DefaultMaxDistance
+        )
+        {
+            if (TryGetPlacementPoint(maker, layermask, out RaycastHit hit, maxDistance))
+            {
+                return hit.collider.gameObject;
+            }
+            return null;
+        }
     }
 }

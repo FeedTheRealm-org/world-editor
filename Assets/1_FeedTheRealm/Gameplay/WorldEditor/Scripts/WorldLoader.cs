@@ -1,5 +1,7 @@
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
-using Models;
+using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
 
@@ -7,7 +9,6 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldLoader
     {
-        [Inject]
         private readonly DataPersistenceManagerSO dataPersistenceManager;
         private readonly WorldSelectedEvent worldSelectedEvent;
 

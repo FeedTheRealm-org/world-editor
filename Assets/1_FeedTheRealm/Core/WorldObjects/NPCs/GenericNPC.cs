@@ -1,26 +1,30 @@
 using System.Collections.Generic;
-using Models;
+using FeedTheRealm.Core.WorldObjects.CreatorObjects;
+using FTRShared.Runtime.Models;
 
-public class GenericNPC : CreatorObject
+namespace FeedTheRealm.Core.WorldObjects.NPCs
 {
-    public string description;
-    public NPCDialogData npcDialog;
-
-    public GenericNPC(NPCData npcData)
-        : base(npcData.name, npcData.id, npcData.spriteFilePath)
+    public class GenericNPC : CreatorObject
     {
-        description = npcData.description;
-        npcDialog = npcData.npcDialog;
-    }
+        public string description;
+        public NPCDialogData npcDialog;
 
-    public override void DeleteObject(ref WorldData worldData)
-    {
-        worldData.npcs.RemoveAll(npc => npc.id == ObjectId);
-    }
+        public GenericNPC(NPCData npcData)
+            : base(npcData.name, npcData.id, npcData.spriteFilePath)
+        {
+            description = npcData.description;
+            npcDialog = npcData.npcDialog;
+        }
 
-    public override void SaveObject(ref WorldData worldData)
-    {
-        NPCData npcData = new(ObjectId, DisplayName, description, spriteFile, npcDialog);
-        worldData.npcs.Add(npcData);
+        public override void DeleteObject(ref WorldData worldData)
+        {
+            worldData.npcs.RemoveAll(npc => npc.id == ObjectId);
+        }
+
+        public override void SaveObject(ref WorldData worldData)
+        {
+            NPCData npcData = new(ObjectId, DisplayName, description, spriteFile, npcDialog);
+            worldData.npcs.Add(npcData);
+        }
     }
 }
