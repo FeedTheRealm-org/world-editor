@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Models;
 
 public class ShopObject
 {
@@ -24,11 +25,13 @@ public class ProductObject
     public string id;
     public CreatorObject item;
     public int price;
+    public CurrencyType currency;
 
-    public ProductObject(CreatorObject item, int price)
+    public ProductObject(CreatorObject item, int price, CurrencyType currency = CurrencyType.Gold)
     {
         id = System.Guid.NewGuid().ToString();
         this.item = item;
         this.price = price;
+        this.currency = currency;
     }
 }

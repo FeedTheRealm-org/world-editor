@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
@@ -21,6 +22,12 @@ public class ShopMenuController : MenuController
 
     [SerializeField]
     private GameObject createShopMenuPrefab;
+
+    [SerializeField]
+    private Texture2D goldIcon;
+
+    [SerializeField]
+    private Texture2D gemsIcon;
 
     private Button closeButton;
     private Button createShopButton;
@@ -112,6 +119,17 @@ public class ShopMenuController : MenuController
             priceField.SetValueWithoutNotify(product.price);
             priceField.RegisterValueChangedCallback(evt => product.price = evt.newValue);
 
+            DropdownField currencyDropdown = ve.Q<DropdownField>("CurrencyType");
+            currencyDropdown.choices = new List<string> { "Gold", "Gems" };
+            currencyDropdown.SetValueWithoutNotify(product.currency.ToString());
+            currencyDropdown.RegisterValueChangedCallback(evt =>
+            {
+                product.currency = (CurrencyType)
+                    System.Enum.Parse(typeof(CurrencyType), evt.newValue);
+                SetCurrencyIcon(ve.Q<Image>("CurrencyIcon"), product.currency);
+            });
+            SetCurrencyIcon(ve.Q<Image>("CurrencyIcon"), product.currency);
+
             ve.Q<Button>("Delete").clicked += () =>
             {
                 shopManager.RemoveProduct(selectedShopId, product.id);
@@ -164,6 +182,11 @@ public class ShopMenuController : MenuController
         itemContainer.itemsSource = shopManager.GetProducts(selectedShopId);
         itemContainer.RefreshItems();
         itemSelector.SetValueWithoutNotify(ItemPlaceholder);
+    }
+
+    private void SetCurrencyIcon(Image icon, CurrencyType currency)
+    {
+        icon.image = currency == CurrencyType.Gold ? goldIcon : gemsIcon;
     }
 
     private void LoadItemSprite(CreatorObject item, Image image)

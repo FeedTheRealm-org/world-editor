@@ -57,12 +57,17 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
         return shop?.products;
     }
 
-    public void AddProduct(string shopId, CreatorObject item, int price)
+    public void AddProduct(
+        string shopId,
+        CreatorObject item,
+        int price,
+        CurrencyType currency = CurrencyType.Gold
+    )
     {
         var shop = FindShop(shopId);
         if (shop == null)
             return;
-        shop.products.Add(new ProductObject(item, price));
+        shop.products.Add(new ProductObject(item, price, currency));
     }
 
     public void RemoveProduct(string shopId, string productId)
@@ -101,7 +106,9 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
                     co.ObjectId == productData.itemData.id
                 );
                 if (creatorObject != null)
-                    shop.products.Add(new ProductObject(creatorObject, productData.price));
+                    shop.products.Add(
+                        new ProductObject(creatorObject, productData.price, productData.currency)
+                    );
                 else
                     logger.Log(
                         $"CreatorObject with ID {productData.itemData.id} not found.",
@@ -121,7 +128,9 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
         {
             ShopData shopData = new() { id = shop.id, displayName = shop.displayName };
             foreach (var product in shop.products)
-                shopData.products.Add(new ProductData(product.item.ToItemData(), product.price));
+                shopData.products.Add(
+                    new ProductData(product.item.ToItemData(), product.price, product.currency)
+                );
             worldData.worldShopsData.shops.Add(shopData);
         }
     }
