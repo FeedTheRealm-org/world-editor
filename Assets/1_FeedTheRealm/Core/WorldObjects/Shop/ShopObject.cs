@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Models;
+using Enums;
 
 public class ShopObject
 {

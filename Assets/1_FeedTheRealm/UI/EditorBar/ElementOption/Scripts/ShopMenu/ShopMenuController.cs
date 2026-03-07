@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Models;
+using Enums;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
