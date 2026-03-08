@@ -66,11 +66,11 @@ namespace FeedTheRealm.Gameplay.Spawners
             closeButton = root.Q<Button>("Close");
             enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
 
-            radiusSlider.value = EnemySpawnData.Radius;
-            maxEnemiesField.value = EnemySpawnData.MaxEnemies;
-            spawnRateField.value = (int)EnemySpawnData.SpawnRate;
-            resetAfterKillsField.value = EnemySpawnData.ResetAfterKills;
-            resetDelayField.value = (int)EnemySpawnData.ResetDelay;
+            radiusSlider.SetValueWithoutNotify(EnemySpawnData.Radius);
+            maxEnemiesField.SetValueWithoutNotify(EnemySpawnData.MaxEnemies);
+            spawnRateField.SetValueWithoutNotify((int)EnemySpawnData.SpawnRate);
+            resetAfterKillsField.SetValueWithoutNotify(EnemySpawnData.ResetAfterKills);
+            resetDelayField.SetValueWithoutNotify((int)EnemySpawnData.ResetDelay);
 
             radiusSlider.RegisterValueChangedCallback(e =>
             {
@@ -87,17 +87,42 @@ namespace FeedTheRealm.Gameplay.Spawners
             resetDelayField.RegisterValueChangedCallback(e =>
                 EnemySpawnData.ResetDelay = e.newValue
             );
+
+            if (enemyDropdown != null)
+            {
+                enemyDropdown.RegisterValueChangedCallback(e =>
+                {
+                    if (creatorObjectLibrary != null)
+                    {
+                        var enemies = creatorObjectLibrary
+                            .GetCreatables(CreatorObjectCategories.Enemy)
+                            .Cast<GenericEnemy>()
+                            .ToList();
+                        var selectedEnemy = enemies.FirstOrDefault(enemy =>
+                            enemy.DisplayName == e.newValue
+                        );
+                        if (selectedEnemy != null)
+                        {
+                            EnemySpawnData.EnemyId = selectedEnemy.ObjectId;
+                            Debug.Log(
+                                $"EnemySpawnerController: Selected Enemy '{selectedEnemy.DisplayName}' (ID: {selectedEnemy.ObjectId})"
+                            );
+                        }
+                    }
+                });
+            }
+
             editorMenu.rootVisualElement.style.display = DisplayStyle.None;
         }
 
         private void RenderMenu(Action CloseEditorCallback)
         {
             inputReader.ToggleInput(false);
-            radiusSlider.value = EnemySpawnData.Radius;
-            maxEnemiesField.value = EnemySpawnData.MaxEnemies;
-            spawnRateField.value = (int)EnemySpawnData.SpawnRate;
-            resetAfterKillsField.value = EnemySpawnData.ResetAfterKills;
-            resetDelayField.value = (int)EnemySpawnData.ResetDelay;
+            radiusSlider.SetValueWithoutNotify(EnemySpawnData.Radius);
+            maxEnemiesField.SetValueWithoutNotify(EnemySpawnData.MaxEnemies);
+            spawnRateField.SetValueWithoutNotify((int)EnemySpawnData.SpawnRate);
+            resetAfterKillsField.SetValueWithoutNotify(EnemySpawnData.ResetAfterKills);
+            resetDelayField.SetValueWithoutNotify((int)EnemySpawnData.ResetDelay);
 
             if (enemyDropdown != null && creatorObjectLibrary != null)
             {
@@ -115,23 +140,9 @@ namespace FeedTheRealm.Gameplay.Spawners
                     );
                     if (selectedEnemy != null)
                     {
-                        enemyDropdown.value = selectedEnemy.DisplayName;
+                        enemyDropdown.SetValueWithoutNotify(selectedEnemy.DisplayName);
                     }
                 }
-
-                enemyDropdown.RegisterValueChangedCallback(e =>
-                {
-                    var selectedEnemy = enemies.FirstOrDefault(enemy =>
-                        enemy.DisplayName == e.newValue
-                    );
-                    if (selectedEnemy != null)
-                    {
-                        EnemySpawnData.EnemyId = selectedEnemy.ObjectId;
-                        Debug.Log(
-                            $"EnemySpawnerController: Selected Enemy '{selectedEnemy.DisplayName}' (ID: {selectedEnemy.ObjectId})"
-                        );
-                    }
-                });
             }
 
             editorMenu.rootVisualElement.style.display = DisplayStyle.Flex;

@@ -26,27 +26,23 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
         {
             ValidateSerializedFields();
             builder.RegisterInstance(mainMenuUIObjectProvider);
-
             eventChannelRegistry.RegisterAll(builder);
-
             builder.Register<MainMenuUISetupService>(Lifetime.Scoped);
-
             builder.RegisterEntryPoint<MainMenuEntrypoint>();
         }
 
         private void ValidateSerializedFields()
         {
-            if (dataPersistenceManager == null)
+            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
+            ValidateField(mainMenuUIObjectProvider, nameof(mainMenuUIObjectProvider));
+            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
+        }
+
+        private void ValidateField(object field, string fieldName)
+        {
+            if (field == null)
                 throw new System.NullReferenceException(
-                    $"[MainMenuInitiator] {nameof(dataPersistenceManager)} is not assigned in the Inspector."
-                );
-            if (mainMenuUIObjectProvider == null)
-                throw new System.NullReferenceException(
-                    $"[MainMenuInitiator] {nameof(mainMenuUIObjectProvider)} is not assigned in the Inspector."
-                );
-            if (eventChannelRegistry == null)
-                throw new System.NullReferenceException(
-                    $"[MainMenuInitiator] {nameof(eventChannelRegistry)} is not assigned in the Inspector."
+                    $"{fieldName} is not assigned in the Inspector."
                 );
         }
     }

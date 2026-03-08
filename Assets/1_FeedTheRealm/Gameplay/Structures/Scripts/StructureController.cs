@@ -59,6 +59,29 @@ namespace FeedTheRealm.Gameplay.Structures
             closeButton = root.Q<Button>("Close");
             shopToggle = root.Q<Toggle>("ShopToggle");
             shopDropdown = root.Q<DropdownField>("ShopDropdown");
+
+            shopToggle.RegisterValueChangedCallback(e =>
+            {
+                isShop = e.newValue;
+                UpdateShopDropdownVisibility(e.newValue);
+            });
+            positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
+            rotationField.RegisterValueChangedCallback(e =>
+                transform.localEulerAngles = e.newValue
+            );
+            scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);
+            shopDropdown.RegisterValueChangedCallback(e =>
+            {
+                var shop = shopManager?.GetShops().Find(s => s.displayName == e.newValue);
+                shopId = shop?.id;
+            });
+            RegisterAxisHandlers(positionField);
+            RegisterAxisHandlers(rotationField);
+            RegisterAxisHandlers(scaleField);
+            closeButton.clicked += () =>
+            {
+                CloseMenu();
+            };
         }
 
         public void OnObjectSelected(Action CloseEditorCallback) => RenderMenu(CloseEditorCallback);
@@ -148,35 +171,16 @@ namespace FeedTheRealm.Gameplay.Structures
 
             titleLabel.text = name;
 
-            positionField.value = transform.position;
-            rotationField.value = transform.localEulerAngles;
-            scaleField.value = transform.localScale;
-            shopToggle.value = isShop;
-
-            shopToggle.RegisterValueChangedCallback(e =>
-            {
-                isShop = e.newValue;
-                UpdateShopDropdownVisibility(e.newValue);
-            });
-            positionField.RegisterValueChangedCallback(e => transform.position = e.newValue);
-            rotationField.RegisterValueChangedCallback(e =>
-                transform.localEulerAngles = e.newValue
-            );
-            scaleField.RegisterValueChangedCallback(e => transform.localScale = e.newValue);
+            positionField.SetValueWithoutNotify(transform.position);
+            rotationField.SetValueWithoutNotify(transform.localEulerAngles);
+            scaleField.SetValueWithoutNotify(transform.localScale);
+            shopToggle.SetValueWithoutNotify(isShop);
 
             PopulateShopDropdown();
             UpdateShopDropdownVisibility(isShop);
-            shopDropdown.RegisterValueChangedCallback(e =>
-            {
-                var shop = shopManager?.GetShops().Find(s => s.displayName == e.newValue);
-                shopId = shop?.id;
-            });
-
-            RegisterAxisHandlers(positionField);
-            RegisterAxisHandlers(rotationField);
-            RegisterAxisHandlers(scaleField);
 
             inputReader.ScrollEvent += OnScroll;
+
             closeButton.clicked += () =>
             {
                 CloseMenu();

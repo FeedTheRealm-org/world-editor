@@ -8,17 +8,17 @@ namespace FeedTheRealm.Gameplay.Player
     {
         [Header("Editor Control Configuration")]
         [SerializeField]
-        public MovementController movementController;
+        private MovementController movementController;
 
         [SerializeField]
-        public CameraController cameraController;
+        private CameraController cameraController;
 
         [Header("General settings")]
         [SerializeField]
         private Logging.Logger logger;
 
         [SerializeField]
-        public InputReader inputReader;
+        private InputReader inputReader;
 
         [Inject]
         public void Construct(InputReader inputReader)

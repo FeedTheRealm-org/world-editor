@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
         private readonly GameObject mainMenuGameObject;
         private readonly GameObject menuBarGameObject;
         private readonly IObjectResolver objectResolver;
-        private readonly GameObject logingMenuObject;
+        private readonly GameObject loginMenuObject;
         private readonly GameObject signUpMenuObject;
         private readonly GameObject verifyCodeMenuObject;
 
@@ -30,7 +30,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
             }
             mainMenuGameObject = mainMenuUIObjectProvider.mainMenuGameObject;
             menuBarGameObject = mainMenuUIObjectProvider.menuBarGameObject;
-            logingMenuObject = mainMenuUIObjectProvider.logingMenuObject;
+            loginMenuObject = mainMenuUIObjectProvider.loginMenuObject;
             signUpMenuObject = mainMenuUIObjectProvider.signUpMenuObject;
             verifyCodeMenuObject = mainMenuUIObjectProvider.verifyCodeMenuObject;
             this.objectResolver = objectResolver;
@@ -50,12 +50,12 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 );
             objectResolver.Instantiate(menuBarGameObject).name = "MenuBar";
 
-            if (logingMenuObject == null)
+            if (loginMenuObject == null)
                 throw new System.Exception(
-                    "LogingMenu GameObject not set in mainMenuUIObjectProvider!"
+                    "LoginMenu GameObject not set in mainMenuUIObjectProvider!"
                 );
-            GameObject loginMenu = objectResolver.Instantiate(logingMenuObject);
-            loginMenu.name = "LogingMenu";
+            GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
+            loginMenu.name = "LoginMenu";
             LoginController loginController = loginMenu.GetComponent<LoginController>();
             if (loginController != null)
                 loginController.showBackground = true;

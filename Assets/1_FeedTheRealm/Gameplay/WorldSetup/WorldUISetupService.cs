@@ -13,7 +13,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         private readonly GameObject placeableDisplayObject;
         private readonly GameObject editorSettingsMenuObject;
         private readonly IObjectResolver objectResolver;
-        private readonly GameObject logingMenuObject;
+        private readonly GameObject loginMenuObject;
         private readonly GameObject signUpMenuObject;
         private readonly GameObject verifyCodeMenuObject;
 
@@ -33,7 +33,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             editorBarGameObject = WorldUIObjectProvider.editorBarGameObject;
             placeableDisplayObject = WorldUIObjectProvider.placeableDisplayObject;
             editorSettingsMenuObject = WorldUIObjectProvider.editorSettingsMenuObject;
-            logingMenuObject = WorldUIObjectProvider.logingMenuObject;
+            loginMenuObject = WorldUIObjectProvider.loginMenuObject;
             signUpMenuObject = WorldUIObjectProvider.signUpMenuObject;
             verifyCodeMenuObject = WorldUIObjectProvider.verifyCodeMenuObject;
             this.objectResolver = objectResolver;
@@ -62,9 +62,9 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                     "EditorSettingsMenu GameObject not set in WorldUIObjectProvider!"
                 );
 
-            if (logingMenuObject == null)
+            if (loginMenuObject == null)
                 throw new System.Exception(
-                    "LogingMenu GameObject not set in WorldUIObjectProvider!"
+                    "LoginMenu GameObject not set in WorldUIObjectProvider!"
                 );
 
             if (signUpMenuObject == null)

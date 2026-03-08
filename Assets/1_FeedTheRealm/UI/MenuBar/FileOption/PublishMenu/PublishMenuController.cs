@@ -87,8 +87,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (statusCode == 401)
                 {
                     message = "Session expired. Please log in again.";
-                    GameObject loginMenu = Instantiate(worldUIObjectProvider.logingMenuObject);
-                    loginMenu.name = "LogingMenu";
+                    GameObject loginMenu = Instantiate(worldUIObjectProvider.loginMenuObject);
+                    loginMenu.name = "LoginMenu";
                     LoginController loginController = loginMenu.GetComponent<LoginController>();
                     if (loginController != null)
                         loginController.showBackground = false;
