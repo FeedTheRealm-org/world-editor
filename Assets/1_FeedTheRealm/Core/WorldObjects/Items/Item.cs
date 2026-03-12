@@ -1,14 +1,18 @@
 using Builders;
-using Models;
+using FeedTheRealm.Core.WorldObjects.CreatorObjects;
+using FTRShared.Runtime.Models;
 
-public abstract class Item : CreatorObject
+namespace FeedTheRealm.Core.WorldObjects.Items
 {
-    public string description;
-    protected ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
-
-    public Item(ItemData itemData)
-        : base(itemData.name, itemData.id, itemData.spriteFilepath)
+    public abstract class Item : CreatorObject
     {
-        description = itemData.description;
+        public string description;
+        protected ItemDataBuilder itemDataBuilder = new ItemDataBuilder();
+
+        public Item(ItemData itemData)
+            : base(itemData.name, itemData.id, itemData.spriteFilePath)
+        {
+            description = itemData.description;
+        }
     }
 }

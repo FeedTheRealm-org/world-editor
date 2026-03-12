@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 2addeaafb4f3397e0b817b17351a0323, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 200
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -68,3 +68,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e035184f4d6601210b2d4fe55b922e04, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
+  newWorldScene:
+    sceneName: WorldEditor
+    sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
+  loadWorldScene:
+    sceneName: LoadWorld
+    sceneAsset: {fileID: 102900000, guid: f4f92eacc4b1ec24d8a28290ce31f6f0, type: 3}
+  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}

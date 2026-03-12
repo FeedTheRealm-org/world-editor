@@ -1,0 +1,20 @@
+{
+  "name": "FTR.Gameplay",
+  "references": [
+    "FeedTheRealm_Shared",
+    "FTR.Core",
+    "UnityEngine",
+    "Unity.Cinemachine",
+    "glTFast",
+    "VContainer",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor",
+    "WindowsStandalone64",
+    "LinuxStandalone64"
+  ],
+  "autoReferenced": false,
+  "noEngineReferences": false,
+  "languageVersion": "10.0"
+}

@@ -1,24 +1,22 @@
-using System.Collections.Generic;
-using Models;
+using FeedTheRealm.Core.WorldObjects.CreatorObjects;
+using FTRShared.Runtime.Models;
 
-public class Dialog : CreatorObject
+namespace FeedTheRealm.Core.WorldObjects.Dialogs
 {
-    public string npc;
-
-    public Dialog(DialogData dialogData)
-        : base(dialogData.name, dialogData.id, "")
+    public class Dialog : CreatorObject
     {
-        npc = dialogData.npc;
-    }
+        public Dialog(DialogData dialogData)
+            : base(dialogData.name, dialogData.id, "") { }
 
-    public override void DeleteObject(ref WorldData worldData)
-    {
-        worldData.dialogs.RemoveAll(d => d.id == ObjectId);
-    }
+        public override void DeleteObject(ref WorldData worldData)
+        {
+            worldData.dialogs.RemoveAll(d => d.id == ObjectId);
+        }
 
-    public override void SaveObject(ref WorldData worldData)
-    {
-        DialogData dialogData = new(ObjectId, name, npc);
-        worldData.dialogs.Add(dialogData);
+        public override void SaveObject(ref WorldData worldData)
+        {
+            DialogData dialogData = new(ObjectId, name);
+            worldData.dialogs.Add(dialogData);
+        }
     }
 }

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4c01b27fe29fd89bc1e67db818529f, type: 3}
+  m_Name: MainMenuUIObjectProvider
+  m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.WorldObjects.Provider.MainMenuUIObjectProvider
+  mainMenuGameObject: {fileID: 2795755946988542685, guid: cd2ff7b1f9fe3f47f806c66b5ca482e4, type: 3}
+  menuBarGameObject: {fileID: 3578506303314259915, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
+  loginMenuObject: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
+  signUpMenuObject: {fileID: 848887175973073914, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
+  verifyCodeMenuObject: {fileID: 2433370806483395245, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+  loginBackgroundObject: {fileID: 6544328675534064428, guid: 647ea82975137576baf68b9d805b6af2, type: 3}

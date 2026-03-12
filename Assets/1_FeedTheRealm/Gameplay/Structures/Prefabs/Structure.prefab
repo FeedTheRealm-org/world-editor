@@ -50,6 +50,9 @@ MonoBehaviour:
   positionScrollSensitivity: 1
   rotationScrollSensitivity: 10
   scaleScrollSensitivity: 1
+  shopManager: {fileID: 11400000, guid: e6128aa0dda0f9a9bb3d49f2416c49d7, type: 2}
+  isShop: 0
+  shopId:
 --- !u!114 &8650860572608832213
 MonoBehaviour:
   m_ObjectHideFlags: 0

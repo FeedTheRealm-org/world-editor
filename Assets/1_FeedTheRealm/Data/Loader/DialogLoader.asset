@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e0b0c098b194954a95dd72defb5d78b, type: 3}
+  m_Name: DialogLoader
+  m_EditorClassIdentifier: Assembly-CSharp::DialogLoader
+  logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}

@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="Root">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="flex-shrink: 0; width: 30%; height: 200px; margin-top: 4%; margin-left: 13%;">
+            <ui:VisualElement name="Header" class="menu-tab" style="flex-grow: 1; background-color: rgb(0, 0, 0); height: 50px; max-height: 50px; min-height: 30px; flex-direction: row; align-items: stretch; justify-content: space-between;">
+                <ui:Label text="Save Your World!" name="Title" class="text title" style="font-size: 15px;"/>
+                <ui:Button text="Close" name="Close" class="close-button"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Content" class="menu-content" style="flex-grow: 1; flex-direction: row-reverse; align-items: flex-start; justify-content: flex-end; align-self: stretch;">
+                <ui:Button text="Save World!" name="Save" enabled="true" class="cool-button" style="background-color: rgb(0, 0, 0); color: rgb(255, 255, 255); border-top-left-radius: 9px; border-top-right-radius: 9px; border-bottom-right-radius: 9px; border-bottom-left-radius: 9px;"/>
+                <ui:TextField placeholder-text="Name your world!" name="NameInput" style="flex-direction: row-reverse; align-items: flex-start; width: 417px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

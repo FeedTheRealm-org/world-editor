@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableObjectMenu/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="root" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="Menu" class="menuContainer" style="margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%;">
+            <ui:Label text="Edit your NPC Spawner!" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255);"/>
+            <ui:DropdownField label="Select NPC" name="NPCDropdown" class="formText dropdownFullWidth white-dropdown" style="margin-top: 20px; margin-right: 0; margin-bottom: 5px; margin-left: 0;"/>
+            <ui:Slider label="Spawner Radius" value="0.44" high-value="50" low-value="3" fill="true" name="SpawnerRadius" show-input-field="true" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+            <ui:GroupBox style="flex-direction: row-reverse;">
+                <ui:Button text="Close" name="Close" enable-rich-text="true" class="closeButton"/>
+            </ui:GroupBox>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

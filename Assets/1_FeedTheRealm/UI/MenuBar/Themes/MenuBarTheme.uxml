@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/MenuBar/Themes/MenuBarStyles.uss?fileID=7433441132597879392&amp;guid=347ad0bb551b2105e8a27e59f2fd69d7&amp;type=3#MenuBarStyles"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/ComponentStyles.uss?fileID=7433441132597879392&amp;guid=78cd8282557353f929016873bb4d2434&amp;type=3#ComponentStyles"/>
+    <ui:VisualElement name="MenuBarContainer" class="menu-bar">
+        <ui:Button text="File" name="File"/>
+        <ui:Button text="Edit" name="Edit"/>
+        <ui:Button text="Subscriptions" name="Subscriptions"/>
+        <ui:Button text="Help" name="Help"/>
+        <ui:Button text="About" name="About"/>
+    </ui:VisualElement>
+</ui:UXML>

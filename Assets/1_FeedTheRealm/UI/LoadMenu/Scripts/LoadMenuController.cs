@@ -1,84 +1,89 @@
 using System.Collections.Generic;
 using System.Linq;
+using FeedTheRealm.Core.DataPersistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
-[RequireComponent(typeof(UIDocument))]
-public class LoadMenu : MonoBehaviour
+namespace FeedTheRealm.UI.LoadMenu
 {
-    public VisualElement ui;
-    public Button _mainMenuButton;
-    public ListView _listView;
-
-    [SerializeField]
-    private SceneReference mainMenuScene;
-
-    [SerializeField]
-    private SceneReference gameScene;
-
-    [SerializeField]
-    private DataPersistenceManagerSO dataPersistenceManager;
-
-    private List<string> loadedWorlds;
-
-    private void Awake()
+    [RequireComponent(typeof(UIDocument))]
+    public class LoadMenu : MonoBehaviour
     {
-        ui = GetComponent<UIDocument>().rootVisualElement;
-    }
+        public VisualElement ui;
+        public Button _mainMenuButton;
+        public ListView _listView;
 
-    private void OnEnable()
-    {
-        // Get UI elements
-        _mainMenuButton = ui.Q<Button>("MainMenu");
-        _listView = ui.Q<ListView>();
+        [SerializeField]
+        private SceneReference mainMenuScene;
 
-        loadedWorlds = dataPersistenceManager.ListAllWorlds();
+        [SerializeField]
+        private SceneReference gameScene;
 
-        _mainMenuButton.clicked += OnMainMenuClicked;
+        [SerializeField]
+        private DataPersistenceManagerSO dataPersistenceManager;
 
-        // Configure ListView
-        _listView.makeItem = () =>
+        private List<string> loadedWorlds;
+
+        private void Awake()
         {
-            // Create a button styled with the USS class
-            var button = new Button();
-            button.AddToClassList("load-world-button");
-            return button;
-        };
+            ui = GetComponent<UIDocument>().rootVisualElement;
+        }
 
-        _listView.bindItem = (element, index) =>
+        private void OnEnable()
         {
-            var button = element as Button;
-            button.text = PrettifyName(loadedWorlds[index]);
+            // Get UI elements
+            _mainMenuButton = ui.Q<Button>("MainMenu");
+            _listView = ui.Q<ListView>();
 
-            button.clicked -= () => { };
-            button.clicked += () =>
+            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+
+            _mainMenuButton.clicked += OnMainMenuClicked;
+
+            // Configure ListView
+            _listView.makeItem = () =>
             {
-                OnLoadWorldClicked(loadedWorlds[index]);
+                // Create a button styled with the USS class
+                var button = new Button();
+                button.AddToClassList("load-world-button");
+                return button;
             };
-        };
 
-        _listView.itemsSource = loadedWorlds;
-        _listView.selectionType = SelectionType.None;
-        _listView.reorderable = false;
-    }
+            _listView.bindItem = (element, index) =>
+            {
+                var button = element as Button;
+                button.text = PrettifyName(loadedWorlds[index]);
 
-    private void OnMainMenuClicked()
-    {
-        SceneManager.LoadScene(mainMenuScene.SceneName);
-    }
+                button.clicked -= () => { };
+                button.clicked += () =>
+                {
+                    OnLoadWorldClicked(loadedWorlds[index]);
+                };
+            };
 
-    private void OnLoadWorldClicked(string worldName)
-    {
-        dataPersistenceManager.SetActiveWorld(worldName);
-        SceneManager.LoadScene(gameScene.SceneName);
-    }
+            _listView.itemsSource = loadedWorlds;
+            _listView.selectionType = SelectionType.None;
+            _listView.reorderable = false;
+        }
 
-    private string PrettifyName(string name)
-    {
-        return string.Join(
-            " ",
-            name.Split('_').Select(word => char.ToUpper(word[0]) + word.Substring(1))
-        );
+        private void OnMainMenuClicked()
+        {
+            SceneManager.LoadScene(mainMenuScene.SceneName);
+        }
+
+        private void OnLoadWorldClicked(string worldName)
+        {
+            dataPersistenceManager.SetActiveWorld(worldName);
+            SceneManager.LoadScene(gameScene.SceneName);
+        }
+
+        private string PrettifyName(string name)
+        {
+            return string.Join(
+                " ",
+                name.Split('_').Select(word => char.ToUpper(word[0]) + word.Substring(1))
+            );
+        }
     }
 }
