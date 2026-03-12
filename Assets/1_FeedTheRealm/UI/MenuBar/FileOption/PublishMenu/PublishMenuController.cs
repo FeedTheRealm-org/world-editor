@@ -98,6 +98,11 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 ToastNotification.Show(message, "error", color);
                 return;
             }
+            logger.Log(
+                $"PublishMenuController: World published successfully with id='{worldId}'",
+                this,
+                Logging.LogType.Info
+            );
 
             worldData.id = worldId;
             dataPersistenceManager.SaveWorld(worldData.worldName);
