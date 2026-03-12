@@ -9,7 +9,10 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
     public class WorldPrefabProvider : ScriptableObject
     {
         public GameObject playerPrefab;
-        public GameObject worldPrefab;
         public GameObject worldEditorPrefab;
+
+        [Header("World Settings")]
+        public GameObject worldPrefab;
+        public LayerMask worldLayerMask;
     }
 }

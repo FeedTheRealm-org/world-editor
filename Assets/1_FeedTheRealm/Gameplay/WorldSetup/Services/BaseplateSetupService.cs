@@ -7,6 +7,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
     public class BaseplateSetupService : SetupService
     {
         private readonly GameObject worldPrefab;
+        private readonly LayerMask worldLayerMask;
 
         public BaseplateSetupService(
             WorldPrefabProvider worldPrefabProvider,
@@ -15,13 +16,15 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             : base(setupEvent)
         {
             worldPrefab = worldPrefabProvider.worldPrefab;
+            worldLayerMask = worldPrefabProvider.worldLayerMask;
         }
 
         public override void Setup()
         {
             var worldInstance = Object.Instantiate(worldPrefab);
-            worldInstance.gameObject.name = "World";
-            worldInstance.gameObject.transform.position = Vector3.zero;
+            worldInstance.name = "World";
+            worldInstance.layer = Mathf.RoundToInt(Mathf.Log(worldLayerMask.value, 2));
+            worldInstance.transform.position = Vector3.zero;
         }
     }
 }
