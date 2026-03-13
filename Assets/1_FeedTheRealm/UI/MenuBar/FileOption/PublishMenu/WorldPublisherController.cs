@@ -51,11 +51,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 description,
                 session.APIToken
             );
+
             if (!string.IsNullOrEmpty(worldError))
                 return (null, worldError, statusCode);
 
             string modelError = await PublishModels(worldData, worldId);
-            if (!string.IsNullOrEmpty(modelError))
+            if (!string.IsNullOrEmpty(modelError) && modelError != "No assets to upload.")
                 return (null, modelError, 0);
 
             var consumableSpriteData = new Dictionary<string, string>();
@@ -115,7 +116,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 worldId,
                 consumableCategory.category_id
             );
-            if (!string.IsNullOrEmpty(consumableSpriteError))
+            if (
+                !string.IsNullOrEmpty(consumableSpriteError)
+                && consumableSpriteError != "No assets to upload."
+            )
                 return (null, consumableSpriteError, 0);
 
             var weaponSpriteList = weaponSpriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
@@ -124,7 +128,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 worldId,
                 weaponCategory.category_id
             );
-            if (!string.IsNullOrEmpty(weaponSpriteError))
+            if (
+                !string.IsNullOrEmpty(weaponSpriteError)
+                && weaponSpriteError != "No assets to upload."
+            )
                 return (null, weaponSpriteError, 0);
 
             return (worldId, null, 200);

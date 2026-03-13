@@ -49,6 +49,12 @@ namespace FeedTheRealm.Core.DataPersistence
             worldData = WorldFileHandler.Load(dataFileName, saveDirectory);
         }
 
+        public void SetWorldId(string id)
+        {
+            if (worldData != null)
+                worldData.id = id;
+        }
+
         public void UnsetActiveWorld()
         {
             worldData = null;

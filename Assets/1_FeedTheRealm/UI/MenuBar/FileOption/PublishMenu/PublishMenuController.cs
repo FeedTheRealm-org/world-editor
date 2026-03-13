@@ -65,13 +65,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishWorld()
         {
-            worldData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
-            dataPersistenceManager.SaveWorld(worldData.worldName);
-            string fileName = dataPersistenceManager.GetWorldFile(worldData.worldName);
+            var currentData = dataPersistenceManager.CurrentWorldData;
+            currentData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
+
+            dataPersistenceManager.SaveWorld(currentData.worldName);
+            string fileName = dataPersistenceManager.GetWorldFile(currentData.worldName);
 
             (string worldId, string error, long statusCode) =
                 await worldPublisherController.PublishWorld(
-                    worldData,
+                    currentData,
                     fileName,
                     descriptionInput.value
                 );
@@ -114,8 +116,11 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 Logging.LogType.Info
             );
 
-            worldData.id = worldId;
-            dataPersistenceManager.SaveWorld(worldData.worldName);
+            dataPersistenceManager.CurrentWorldData.id = worldId;
+            dataPersistenceManager.SetWorldId(worldId);
+
+            dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
+
             ToastNotification.Show("World published successfully", "success", Color.green);
             CloseMenu();
         }
