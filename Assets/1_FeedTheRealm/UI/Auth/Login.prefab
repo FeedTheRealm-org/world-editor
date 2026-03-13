@@ -70,7 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::LoginController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  signUpUI: {fileID: 848887175973073914, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
-  verifyCodeUI: {fileID: 2433370806483395245, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
   loginBackgroundPrefab: {fileID: 6544328675534064428, guid: 647ea82975137576baf68b9d805b6af2, type: 3}
+  showBackground: 1
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}

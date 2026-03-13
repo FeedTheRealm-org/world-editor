@@ -3,6 +3,7 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -86,12 +87,21 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 Color color = Color.red;
                 if (statusCode == 401)
                 {
-                    message = "Session expired. Please log in again.";
-                    GameObject loginMenu = Instantiate(worldUIObjectProvider.loginMenuObject);
-                    loginMenu.name = "LoginMenu";
-                    LoginController loginController = loginMenu.GetComponent<LoginController>();
-                    if (loginController != null)
-                        loginController.showBackground = false;
+                    var loginObj = Instantiate(worldUIObjectProvider.loginMenuObject);
+                    var signUpObj = Instantiate(worldUIObjectProvider.signUpMenuObject);
+                    var verifyCodeObj = Instantiate(worldUIObjectProvider.verifyCodeMenuObject);
+
+                    var loginCtrl = loginObj.GetComponent<LoginController>();
+                    if (loginCtrl != null)
+                        loginCtrl.showBackground = false;
+
+                    loginObj.name = "LoginMenu";
+                    signUpObj.name = "SignUpMenu";
+                    verifyCodeObj.name = "VerifyCodeMenu";
+
+                    var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+                    authFlow.OnAuthComplete += () => authFlow.Destroy();
+                    authFlow.Initialize();
                 }
                 else if (statusCode >= 500 || statusCode == 0)
                     message = "Unable to connect to server. Please try again later.";

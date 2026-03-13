@@ -1,6 +1,7 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.WorldSetup;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -15,6 +16,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
         private readonly GameObject loginMenuObject;
         private readonly GameObject signUpMenuObject;
         private readonly GameObject verifyCodeMenuObject;
+        private AuthFlowManager authFlowManager;
 
         public MainMenuUISetupService(
             MainMenuUIObjectProvider mainMenuUIObjectProvider,
@@ -55,10 +57,19 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                     "LoginMenu GameObject not set in mainMenuUIObjectProvider!"
                 );
             GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
-            loginMenu.name = "LoginMenu";
-            LoginController loginController = loginMenu.GetComponent<LoginController>();
-            if (loginController != null)
-                loginController.showBackground = true;
+            var loginObj = loginMenu;
+            loginObj.name = "LoginMenu";
+            var signUpObj = objectResolver.Instantiate(signUpMenuObject);
+            signUpObj.name = "SignUpMenu";
+            var verifyCodeObj = objectResolver.Instantiate(verifyCodeMenuObject);
+            verifyCodeObj.name = "VerifyCodeMenu";
+
+            authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+            authFlowManager.OnAuthComplete += () =>
+            {
+                authFlowManager.Destroy();
+            };
+            authFlowManager.Initialize();
 
             if (signUpMenuObject == null)
                 throw new System.Exception(
