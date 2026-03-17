@@ -7,11 +7,11 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class LibrarySetupService : SetupService
     {
-        private readonly PlaceableObjectsLibrarySO placeableObjectLibrary;
+        private readonly PlaceablesLibrary placeableObjectLibrary;
         private readonly CreatorObjectLibrarySO creatorObjectLibrary;
 
         public LibrarySetupService(
-            PlaceableObjectsLibrarySO placeableObjectLibrary,
+            PlaceablesLibrary placeableObjectLibrary,
             CreatorObjectLibrarySO creatorObjectLibrary,
             WorldSetupEvent setupEvent
         )

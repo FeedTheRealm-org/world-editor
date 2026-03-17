@@ -1,3 +1,4 @@
+using System;
 using FeedTheRealm.Core;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
@@ -34,7 +35,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 
         [Header("Libraries")]
         [SerializeField]
-        private PlaceableObjectsLibrarySO placeableObjectLibrary;
+        private PlaceablesLibrary placeableObjectLibrary;
 
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
@@ -43,7 +44,6 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
-        // Internal Classes
         private readonly SetupServices setupServices = new();
 
         protected override void Configure(IContainerBuilder builder)
@@ -52,20 +52,20 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
             setupServices.RegisterAll(builder);
-            builder.Register<WorldLoader>(Lifetime.Scoped);
+            builder.Register<WorldLoaderManager>(Lifetime.Scoped);
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
         private void ValidateSerializedFields()
         {
-            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
-            ValidateField(inputReader, nameof(inputReader));
-            ValidateField(worldPrefabProvider, nameof(worldPrefabProvider));
-            ValidateField(WorldUIObjectProvider, nameof(WorldUIObjectProvider));
-            ValidateField(placeableObjectLibrary, nameof(placeableObjectLibrary));
-            ValidateField(creatorObjectLibrary, nameof(creatorObjectLibrary));
-            ValidateField(playerConfig, nameof(playerConfig));
-            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
+            ValidateField(dataPersistenceManager);
+            ValidateField(inputReader);
+            ValidateField(worldPrefabProvider);
+            ValidateField(WorldUIObjectProvider);
+            ValidateField(placeableObjectLibrary);
+            ValidateField(creatorObjectLibrary);
+            ValidateField(playerConfig);
+            ValidateField(eventChannelRegistry);
         }
 
         private void RegisterSerializedFields(IContainerBuilder builder)
@@ -79,11 +79,11 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(playerConfig);
         }
 
-        private void ValidateField(object field, string fieldName)
+        private void ValidateField(object field)
         {
             if (field == null)
-                throw new System.NullReferenceException(
-                    $"{fieldName} is not assigned in the Inspector."
+                throw new NullReferenceException(
+                    $"{nameof(field)} is not assigned in the Inspector."
                 );
         }
     }

@@ -8,20 +8,20 @@ namespace FeedTheRealm.Gameplay.WorldEditor
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {
         private readonly WorldSetupService worldSetup;
-        private readonly WorldLoader worldLoader;
+        private readonly WorldLoaderManager worldLoaderManager;
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
 
         public WorldEditorEntrypoint(
-            WorldLoader worldLoader,
+            WorldLoaderManager worldLoader,
             WorldSetupService worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,
             LateTickEvent lateTickEvent
         )
         {
-            this.worldLoader = worldLoader;
+            this.worldLoaderManager = worldLoader;
             this.worldSetup = worldSetup;
             this.tickEvent = tickEvent;
             this.fixedTickEvent = fixedTickEvent;
@@ -31,7 +31,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         public void Start()
         {
             worldSetup.ExecuteSetup();
-            worldLoader.Load();
+            worldLoaderManager.Load();
         }
 
         public void Tick()

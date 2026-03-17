@@ -14,7 +14,7 @@ namespace FeedTheRealm.UI.EditorBar
     public class PlaceableObjectDisplayController : MonoBehaviour
     {
         [SerializeField]
-        private PlaceableObjectsLibrarySO placeableObjectLibrary;
+        private PlaceablesLibrary placeableObjectLibrary;
 
         [Inject]
         private CategorySelectedEvent categorySelectedEvent;

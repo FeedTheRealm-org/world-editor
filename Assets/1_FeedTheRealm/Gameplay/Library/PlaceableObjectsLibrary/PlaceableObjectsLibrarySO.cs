@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         fileName = "PlaceableObjectsLibrary",
         menuName = "Scriptable Objects/Library/PlaceableObjectsLibrary"
     )]
-    public class PlaceableObjectsLibrarySO : ScriptableObject
+    public class PlaceablesLibrary : ScriptableObject
     {
         [SerializeField]
         private Logging.Logger logger;
