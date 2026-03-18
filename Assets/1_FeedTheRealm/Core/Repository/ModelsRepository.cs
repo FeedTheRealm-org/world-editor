@@ -2,137 +2,119 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FTRShared.Runtime.Models;
+using FTR.Core.Common.Config;
 using UnityEngine;
+using VContainer;
 
-// public class ModelsRepository
-// {
-//     private readonly string libraryFilePath = "Models/models.json";
-//     private readonly string modelsDirectory = "Models";
-//     private readonly Dictionary<string, GameObject> modelCache;
-//     private string PersistentLibraryFilePath =>
-//     Path.Combine(Application.persistentDataPath, libraryFilePath);
-
-//     private string PersistentModelsDirectory =>
-//         Path.Combine(Application.streamingAssetsPath, modelsDirectory);
-
-//     public ModelsRepository()
-//     {
-//         modelCache = new Dictionary<string, GameObject>();
-//     }
-
-//     public GameObject LoadModel(string modelPath)
-//     {
-//         if (modelCache.TryGetValue(modelPath, out var cachedModel))
-//         {
-//             return cachedModel;
-//         }
-
-//         GameObject model = Resources.Load<GameObject>(modelPath);
-
-//         if (model == null)
-//         {
-//             return null;
-//         }
-
-//         modelCache[modelPath] = model;
-//         return model;
-//     }
-
-//     public GameObject InstantiateModel(string modelPath, Vector3 position = default, Quaternion rotation = default)
-//     {
-//         GameObject model = LoadModel(modelPath);
-
-//         if (model == null)
-//             return null;
-
-//         GameObject instance = UnityEngine.Object.Instantiate(model, position, rotation);
-//         return instance;
-//     }
-
-//     public void ClearCache()
-//     {
-//         modelCache.Clear();
-//     }
-
-//     private void LoadStructureLibrary()
-//     {
-//         string json = System.IO.File.ReadAllText(PersistentLibraryFilePath);
-//         List<StructureData> structureDataList = JsonUtility
-//             .FromJson<WorldObjectReferenceList>(json)
-//             .structureData;
-//         foreach (var structureData in structureDataList)
-//         {
-//             StructureObject structureObject = new(
-//                 structureData,
-//                 structureData.structureName,
-//                 structurePrefab
-//             );
-//             structureObjects.Add(structureObject);
-//         }
-//     }
-
-//     public void LoadModels(string outputPath)
-//     {
-//         string modelsPath = PersistentModelsDirectory;
-//         if (!EnsurePathExists(modelsPath, true))
-//         {
-//             return;
-//         }
-//         string[] objectFiles = System
-//             .IO.Directory.GetFiles(modelsPath, "*.*")
-//             .Where(f => !f.EndsWith(".meta"))
-//             .ToArray();
-
-//         List<StructureData> structureDataList = objectFiles
-//             .Select(objectFile => new StructureData(
-//                 Guid.NewGuid().ToString(),
-//                 GetFileNameWithoutExtension(objectFile),
-//                 Vector3.one,
-//                 Vector3.zero,
-//                 Vector3.zero,
-//                 Vector3.zero
-//             ))
-//             .ToList();
-//         string json = JsonUtility.ToJson(
-//             new WorldObjectReferenceList { structureData = structureDataList },
-//             true
-//         );
-//         string outputDirectory = GetDirectoryName(outputPath);
-//         if (!System.IO.Directory.Exists(outputDirectory))
-//         {
-//             System.IO.Directory.CreateDirectory(outputDirectory);
-//         }
-//         System.IO.File.WriteAllText(outputPath, json);
-//     }
-
-//     private bool EnsurePathExists(string path, bool isDirectory = false)
-//     {
-//         if (isDirectory)
-//         {
-//             if (!System.IO.Directory.Exists(path))
-//             {
-//                 System.IO.Directory.CreateDirectory(path);
-//                 return false;
-//             }
-//             return true;
-//         }
-//         if (!System.IO.File.Exists(path))
-//         {
-//             string outputDirectory = GetDirectoryName(path);
-//             if (!System.IO.Directory.Exists(outputDirectory))
-//             {
-//                 System.IO.Directory.CreateDirectory(outputDirectory);
-//             }
-//             System.IO.File.WriteAllText(path, "");
-//             return false;
-//         }
-//         return true;
-//     }
-// }
-
-[Serializable]
-public class WorldObjectReferenceList
+namespace FeedTheRealm.Core.Repository
 {
-    public List<StructureData> structureData;
+    [CreateAssetMenu(fileName = "ModelsRepository", menuName = "Repository/ModelsRepository")]
+    public class ModelsRepository : ScriptableObject
+    {
+        [Inject]
+        private Config config;
+
+        [Inject]
+        private Logging.Logger logger;
+        private bool isInitialized = false;
+        private Dictionary<string, ModelData> modelsData;
+
+        public void Initialize()
+        {
+            if (config.ForceReinitialize)
+                isInitialized = false;
+
+            if (isInitialized)
+                return;
+
+            if (!File.Exists(config.ModelsDataFile))
+                GenerateDefaultFile();
+
+            var modelsList = LoadFromDisk();
+            modelsData = modelsList.ToDictionary(m => m.name, m => m);
+            logger.Log($"ModelsRepository loaded {modelsData.Count} models", Logging.LogType.Info);
+            isInitialized = true;
+        }
+
+        public ModelData GetModelData(string modelName)
+        {
+            if (modelsData.TryGetValue(modelName, out var modelData))
+                return modelData;
+            else
+                logger.Log($"Model {modelName} not found in repository", Logging.LogType.Error);
+            return null;
+        }
+
+        public List<string> ListAvailableModels()
+        {
+            return modelsData.Keys.ToList();
+        }
+
+        private void GenerateDefaultFile()
+        {
+            logger.Log(
+                $"Models data file not found at {config.ModelsDataFile}, generating default file.",
+                Logging.LogType.Warning
+            );
+            string modelsDir = config.ModelsDirectory;
+            if (!Directory.Exists(modelsDir))
+            {
+                // TODO: consider connecting this to core service in case the users doesnt have the default models
+                logger.Log(
+                    $"Models directory not found at {modelsDir}, Please make sure to add yout models here!",
+                    Logging.LogType.Warning
+                );
+                Directory.CreateDirectory(modelsDir);
+                return;
+            }
+
+            logger.Log($"Scanning models directory: {modelsDir}", Logging.LogType.Info);
+
+            var modelFiles = Directory
+                .GetFiles(modelsDir, "*.*", SearchOption.AllDirectories)
+                .Where(f => f.EndsWith(".glb", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (modelFiles.Count == 0)
+                logger.Log("No GLB models found.", Logging.LogType.Warning);
+
+            var models = modelFiles
+                .Select(filePath =>
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+                    return new ModelData
+                    {
+                        id = Guid.NewGuid().ToString(),
+                        name = fileName,
+                        filePath = filePath,
+                        defaultRotation = Vector3.zero,
+                        defaultScale = Vector3.one,
+                        colliders = new List<BoxColliderData>(),
+                    };
+                })
+                .ToList();
+
+            var serialized = new SerializedModelData { models = models };
+
+            string json = JsonUtility.ToJson(serialized, true);
+            File.WriteAllText(config.ModelsDataFile, json);
+
+            logger.Log($"Generated models file with {models.Count} models", Logging.LogType.Info);
+        }
+
+        private List<ModelData> LoadFromDisk()
+        {
+            try
+            {
+                string json = File.ReadAllText(config.ModelsDataFile);
+                var serialized = JsonUtility.FromJson<SerializedModelData>(json);
+                return serialized.models;
+            }
+            catch (Exception ex)
+            {
+                logger.Log($"Error loading models data: {ex.Message}", Logging.LogType.Error);
+                return new List<ModelData>();
+            }
+        }
+    }
 }

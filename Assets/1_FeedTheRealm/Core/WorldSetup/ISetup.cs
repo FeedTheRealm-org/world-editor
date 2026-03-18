@@ -1,6 +1,6 @@
 using System;
 
-namespace FeedTheRealm.Core.Interfaces
+namespace FeedTheRealm.Core.WorldSetup
 {
     public interface ISetup : IDisposable
     {

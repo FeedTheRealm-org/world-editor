@@ -1,7 +1,5 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Interfaces;
-using Unity.Cinemachine;
-using UnityEngine;
+using FeedTheRealm.Core.WorldSetup;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {

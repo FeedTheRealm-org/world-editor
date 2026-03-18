@@ -1,19 +1,17 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldSetup;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class WorldSetupService
+    public class WorldSetupManager
     {
         private readonly WorldSetupEvent setupEvent;
-        private readonly IEnumerable<ISetup> setupServices;
 
-        public WorldSetupService(WorldSetupEvent setupEvent, IEnumerable<ISetup> setupServices)
+        public WorldSetupManager(WorldSetupEvent setupEvent, IEnumerable<ISetup> setupServices)
         {
             this.setupEvent = setupEvent;
-            this.setupServices = setupServices;
         }
 
         public void ExecuteSetup()

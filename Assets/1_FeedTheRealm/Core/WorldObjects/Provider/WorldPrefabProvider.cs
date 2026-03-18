@@ -19,6 +19,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject structurePrefab;
         public GameObject aggresiveNPCSpawnerPrefab;
         public GameObject friendlyNPCSpawnerPrefab;
-        public GameObject playerSpawnerPrefab;
+        public GameObject playerSpawnpointPrefab;
     }
 }

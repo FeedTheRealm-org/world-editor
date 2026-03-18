@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using FeedTheRealm.Core.WorldObjects.Provider;
+using Cysharp.Threading.Tasks;
+using FeedTheRealm.Core.Library;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
@@ -7,14 +9,20 @@ namespace FeedTheRealm.Gameplay.Loaders
 {
     public class FriendlyNpcSpawnerLoader : PlaceableLoader<NPCSpawnerData>
     {
+        public FriendlyNpcSpawnerLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
+            : base(logger, placeableLibrary) { }
+
         protected override List<NPCSpawnerData> GetData(WorldData worldData)
         {
             return worldData.npcSpawnAreas;
         }
 
-        protected override GameObject GetPrefab(WorldPrefabProvider prefabProvider)
+        protected override async UniTask<GameObject> GetObject(NPCSpawnerData data)
         {
-            return prefabProvider.friendlyNPCSpawnerPrefab;
+            return await placeableLibrary.GetObject(
+                PlaceableObjectCategories.Spawner,
+                SpawnerCategories.FriendlyNPC
+            );
         }
     }
 }

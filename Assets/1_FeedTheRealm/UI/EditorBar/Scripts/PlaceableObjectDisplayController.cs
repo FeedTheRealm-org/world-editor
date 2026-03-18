@@ -26,7 +26,8 @@ namespace FeedTheRealm.UI.EditorBar
         private EnableInputEvent enableInputEvent;
         private ListView libraryBar;
         private List<IPlaceable> currentObjectList = new();
-        private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
+
+        //private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
 
         void Start()
         {
@@ -44,20 +45,20 @@ namespace FeedTheRealm.UI.EditorBar
                 return;
             }
 
-            categorySelectedEvent.OnRaised += LoadObjectsForCategory;
+            //categorySelectedEvent.OnRaised += LoadObjectsForCategory;
 
             InitializeLibraryBar();
-            LoadObjectsForCategory(PlaceableObjectCategories.Structure);
+            //LoadObjectsForCategory(PlaceableObjectCategories.Structure);
         }
 
         void OnDestroy()
         {
-            categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
+            //categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
         }
 
         private void InitializeLibraryBar()
         {
-            currentObjectList = placeableObjectLibrary.GetObjects(currentCategory);
+            //currentObjectList = placeableObjectLibrary.GetPlaceableOptions(currentCategory);
 
             libraryBar.itemsSource = currentObjectList;
             libraryBar.makeItem = MakeListItem;
@@ -95,12 +96,12 @@ namespace FeedTheRealm.UI.EditorBar
             }
         }
 
-        private void LoadObjectsForCategory(PlaceableObjectCategories category)
-        {
-            currentCategory = category;
-            currentObjectList = placeableObjectLibrary.GetObjects(category);
-            libraryBar.itemsSource = currentObjectList;
-            libraryBar.Rebuild();
-        }
+        // private void LoadObjectsForCategory(PlaceableObjectCategories category)
+        // {
+        //     currentCategory = category;
+        //     currentObjectList = placeableObjectLibrary.GetPlaceableOptions(category);
+        //     libraryBar.itemsSource = currentObjectList;
+        //     libraryBar.Rebuild();
+        // }
     }
 }

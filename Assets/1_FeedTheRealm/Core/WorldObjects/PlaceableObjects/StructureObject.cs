@@ -33,8 +33,6 @@ namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects
 
         public async Task<GameObject> GetPlaceableObject(int layerMask)
         {
-            if (!isObjectLoaded)
-                await LoadWorldObject();
             GameObject structureInstance = Object.Instantiate(structurePrefab);
             GameObject childInstance = CreateChildInstance(structureInstance);
             ConfigureGameObjectProperties(structureInstance, layerMask);
@@ -71,15 +69,6 @@ namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects
         private void SetupColliders(GameObject childInstance, GameObject structureInstance)
         {
             SetColliderLayer(childInstance, structureInstance);
-        }
-
-        private async Task LoadWorldObject()
-        {
-            worldObject = new($"Loaded_{DisplayName}");
-            await API.GltfHandler.Load(worldObject, structureFilepath);
-            isObjectLoaded = true;
-            worldObject.SetActive(false);
-            NormalizeObject(worldObject);
         }
 
         private void NormalizeObject(GameObject gameObject)

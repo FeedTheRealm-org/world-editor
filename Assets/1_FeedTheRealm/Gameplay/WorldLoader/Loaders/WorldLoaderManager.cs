@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Loaders;
-using FTR.Core.Common.Loaders;
+using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using VContainer;
 
@@ -12,32 +13,35 @@ namespace FeedTheRealm.Gameplay.WorldEditor
     {
         private readonly DataPersistenceManagerSO dataPersistenceManager;
         private readonly Logging.Logger logger;
-        private readonly IObjectResolver objectResolver;
-        private readonly WorldPrefabProvider worldPrefabProvider;
+
+        private List<ILoader> loaders;
 
         public WorldLoaderManager(
             DataPersistenceManagerSO dataPersistenceManager,
-            IObjectResolver objectResolver,
             Logging.Logger logger,
-            WorldPrefabProvider worldPrefabProvider
+            IObjectResolver resolver
         )
         {
             this.dataPersistenceManager = dataPersistenceManager;
-            this.objectResolver = objectResolver;
             this.logger = logger;
-            this.worldPrefabProvider = worldPrefabProvider;
+
+            loaders = new List<ILoader>()
+            {
+                resolver.Resolve<PlayerSpawnpointLoader>(),
+                resolver.Resolve<StructureLoader>(),
+                resolver.Resolve<AggresiveNpcSpawnerLoader>(),
+                resolver.Resolve<FriendlyNpcSpawnerLoader>(),
+            };
         }
 
-        public void Load()
+        public async UniTask Load()
         {
             WorldData worldData = dataPersistenceManager.CurrentWorldData;
-            var loaders = GetLoaders();
             for (int i = 0; i < loaders.Count; i++)
             {
                 try
                 {
-                    objectResolver.Inject(loaders[i]);
-                    loaders[i].Load(worldData, worldPrefabProvider, objectResolver);
+                    await loaders[i].Load(worldData);
                     logger.Log(
                         $"Loader {i} / {loaders.Count} | {loaders[i].GetType().Name} completed loading."
                     );
@@ -47,21 +51,6 @@ namespace FeedTheRealm.Gameplay.WorldEditor
                     logger.Log($"Error loading {loaders[i].GetType().Name}: {ex.Message}");
                 }
             }
-        }
-
-        private List<ILoader> GetLoaders()
-        {
-            var structureLoader = new StructureLoader();
-            var friendlyNpcSpawnerLoader = new FriendlyNpcSpawnerLoader();
-            var aggresiveNpcSpawnerLoader = new AggresiveNpcSpawnerLoader();
-            var playerSpawnPointLoader = new PlayerSpawnpointLoader();
-            return new List<ILoader>()
-            {
-                structureLoader,
-                friendlyNpcSpawnerLoader,
-                aggresiveNpcSpawnerLoader,
-                playerSpawnPointLoader,
-            };
         }
     }
 }

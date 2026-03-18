@@ -7,21 +7,21 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Loaders
 {
-    public class PlayerSpawnpointLoader : PlaceableLoader<PlayerSpawnerData>
+    public class AggresiveNpcSpawnerLoader : PlaceableLoader<EnemySpawnerData>
     {
-        public PlayerSpawnpointLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
+        public AggresiveNpcSpawnerLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<PlayerSpawnerData> GetData(WorldData worldData)
+        protected override List<EnemySpawnerData> GetData(WorldData worldData)
         {
-            return worldData.playerSpawnAreas;
+            return worldData.enemySpawnAreas;
         }
 
-        protected override async UniTask<GameObject> GetObject(PlayerSpawnerData data)
+        protected override async UniTask<GameObject> GetObject(EnemySpawnerData data)
         {
             return await placeableLibrary.GetObject(
                 PlaceableObjectCategories.Spawner,
-                SpawnerCategories.PlayerSpawnpoint
+                SpawnerCategories.AggresiveNPC
             );
         }
     }

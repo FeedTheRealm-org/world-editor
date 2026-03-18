@@ -1,13 +1,17 @@
 using System;
+using API;
 using FeedTheRealm.Core;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
+using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
+using FeedTheRealm.Gameplay.Loaders;
 using FeedTheRealm.Gameplay.Player;
 using FeedTheRealm.Gameplay.WorldSetup;
+using FTR.Core.Common.Config;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -16,12 +20,18 @@ namespace FeedTheRealm.Gameplay.WorldEditor
 {
     public class WorldEditorInitiator : LifetimeScope
     {
-        [Header("Services, Managers and Config")]
+        [Header("Managers and Config")]
         [SerializeField]
         private DataPersistenceManagerSO dataPersistenceManager;
 
         [SerializeField]
         private InputReader inputReader;
+
+        [SerializeField]
+        private Config config;
+
+        [SerializeField]
+        private Logging.Logger logger;
 
         [SerializeField]
         private PlayerConfig playerConfig;
@@ -33,10 +43,15 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private WorldUIObjectProvider WorldUIObjectProvider;
 
-        [Header("Libraries")]
+        [Header("API Services")]
         [SerializeField]
-        private PlaceablesLibrary placeableObjectLibrary;
+        private GltfService gltfService;
 
+        [Header("Repositories")]
+        [SerializeField]
+        private ModelsRepository modelsRepository;
+
+        [Header("Libraries")]
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
 
@@ -44,15 +59,34 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
 
-        private readonly SetupServices setupServices = new();
-
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateSerializedFields();
             RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
-            setupServices.RegisterAll(builder);
+
+            // Libraries
+            builder.Register<StructureLibrary>(Lifetime.Singleton);
+            builder.Register<SpawnerLibrary>(Lifetime.Singleton);
+            builder.Register<PlaceablesLibrary>(Lifetime.Singleton);
+
+            // Loaders
+            builder.Register<PlayerSpawnpointLoader>(Lifetime.Scoped);
+            builder.Register<StructureLoader>(Lifetime.Scoped);
+            builder.Register<AggresiveNpcSpawnerLoader>(Lifetime.Scoped);
+            builder.Register<FriendlyNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<WorldLoaderManager>(Lifetime.Scoped);
+
+            // World Setup Services
+            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
+            builder.Register<CameraSetupService>(Lifetime.Scoped);
+            builder.Register<LightingSetupService>(Lifetime.Scoped);
+            builder.Register<PlayerSetupService>(Lifetime.Scoped);
+            builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
+            builder.Register<WorldUISetupService>(Lifetime.Scoped);
+
+            builder.Register<WorldSetupManager>(Lifetime.Scoped);
+
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }
 
@@ -60,10 +94,13 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         {
             ValidateField(dataPersistenceManager);
             ValidateField(inputReader);
+            ValidateField(config);
+            ValidateField(logger);
+            ValidateField(modelsRepository);
             ValidateField(worldPrefabProvider);
             ValidateField(WorldUIObjectProvider);
-            ValidateField(placeableObjectLibrary);
             ValidateField(creatorObjectLibrary);
+            ValidateField(gltfService);
             ValidateField(playerConfig);
             ValidateField(eventChannelRegistry);
         }
@@ -74,9 +111,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             builder.RegisterInstance(dataPersistenceManager);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
-            builder.RegisterInstance(placeableObjectLibrary);
+            builder.RegisterInstance(modelsRepository);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
+            builder.RegisterInstance(gltfService);
+            builder.RegisterInstance(config);
+            builder.RegisterInstance(logger);
         }
 
         private void ValidateField(object field)

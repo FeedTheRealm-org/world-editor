@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using FTR.Core.Common.Loaders;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
+using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
@@ -11,51 +13,34 @@ namespace FeedTheRealm.Gameplay.Loaders
 {
     public abstract class PlaceableLoader<TData> : ILoader
     {
-        [Inject]
         protected Logging.Logger logger;
 
-        protected abstract List<TData> GetData(WorldData worldData);
-        protected abstract GameObject GetPrefab(WorldPrefabProvider prefabProvider);
+        protected PlaceablesLibrary placeableLibrary;
 
-        public void Load(
-            WorldData worldData,
-            WorldPrefabProvider worldPrefabProvider,
-            IObjectResolver objectResolver
-        )
+        public PlaceableLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
+        {
+            this.logger = logger;
+            this.placeableLibrary = placeableLibrary;
+        }
+
+        protected abstract List<TData> GetData(WorldData worldData);
+        protected abstract UniTask<GameObject> GetObject(TData data);
+
+        public async UniTask Load(WorldData worldData)
         {
             var dataList = GetData(worldData);
-            var prefab = GetPrefab(worldPrefabProvider);
-
-            if (prefab == null)
-            {
-                logger.Log($"Prefab for {typeof(TData).Name} is null", Logging.LogType.Error);
-                return;
-            }
 
             foreach (var data in dataList)
             {
                 try
                 {
-                    GameObject instance = objectResolver.Instantiate(prefab);
-
-                    // Find component that implements IInitializeable<TData>
-                    var initializeable = instance.GetComponent<IInitializeable<TData>>();
-
-                    if (initializeable == null)
-                    {
-                        logger.Log(
-                            $"Prefab {prefab.name} does not implement IInitializeable<{typeof(TData).Name}>",
-                            Logging.LogType.Error
-                        );
-                        continue;
-                    }
-
-                    initializeable.Initialize(data);
+                    var loadedObject = await GetObject(data);
+                    loadedObject.GetComponent<ILoadable<TData>>().Load(data);
                 }
                 catch (Exception ex)
                 {
                     logger.Log(
-                        $"Failed to load {typeof(TData).Name}: {ex.Message}",
+                        $"[Placeable Loader] Failed to load {typeof(TData).Name}: {ex.Message}",
                         Logging.LogType.Error
                     );
                 }
