@@ -4,7 +4,7 @@ using FeedTheRealm.Core.WorldObjects.Items;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders.Items
+namespace FeedTheRealm.Gameplay.WorldLoader.Items
 {
     [CreateAssetMenu(
         fileName = "WeaponItemLoader",

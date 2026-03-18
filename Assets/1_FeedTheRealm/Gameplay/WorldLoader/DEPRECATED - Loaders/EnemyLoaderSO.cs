@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.Enemies;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [CreateAssetMenu(fileName = "EnemyLoader", menuName = "Scriptable Objects/Loaders/EnemyLoader")]
     public class EnemyLoaderSO : ScriptableObject, ILoadable, ICreatableLoader

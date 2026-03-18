@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.NPCs;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [CreateAssetMenu(fileName = "NPCLoader", menuName = "Scriptable Objects/Loaders/NPCLoader")]
     public class NPCLoader : ScriptableObject, ILoadable, ICreatableLoader

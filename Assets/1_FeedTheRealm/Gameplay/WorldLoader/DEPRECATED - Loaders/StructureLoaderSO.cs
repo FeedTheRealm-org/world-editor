@@ -10,7 +10,7 @@ using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [Serializable]
     public class WorldObjectReferenceList

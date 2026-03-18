@@ -3,7 +3,7 @@ using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FTRShared.Runtime.Models;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     public interface ICreatableLoader
     {

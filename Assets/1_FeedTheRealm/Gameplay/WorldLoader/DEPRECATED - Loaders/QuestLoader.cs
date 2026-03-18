@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.Quests;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [CreateAssetMenu(fileName = "QuestLoader", menuName = "Scriptable Objects/Loaders/QuestLoader")]
     public class QuestLoader : ScriptableObject, ILoadable, ICreatableLoader

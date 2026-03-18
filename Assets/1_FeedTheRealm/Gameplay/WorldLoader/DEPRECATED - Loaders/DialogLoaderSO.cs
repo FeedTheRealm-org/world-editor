@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.Dialogs;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [CreateAssetMenu(
         fileName = "DialogLoader",

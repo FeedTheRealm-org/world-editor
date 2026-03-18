@@ -1,9 +1,9 @@
 using FeedTheRealm.Core.EventChannels.Ticks;
+using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
-using UnityEngine;
 using VContainer.Unity;
 
-namespace FeedTheRealm.Gameplay.WorldEditor
+namespace FeedTheRealm.Gameplay.Entrypoint
 {
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {

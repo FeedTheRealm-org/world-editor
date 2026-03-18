@@ -5,7 +5,7 @@ using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     public class StructureLoader : PlaceableLoader<StructureData>
     {

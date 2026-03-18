@@ -1,6 +1,5 @@
 using System;
 using API;
-using FeedTheRealm.Core;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.Repository;
@@ -8,15 +7,15 @@ using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
-using FeedTheRealm.Gameplay.Loaders;
 using FeedTheRealm.Gameplay.Player;
+using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
 using FTR.Core.Common.Config;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.Gameplay.WorldEditor
+namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
 {
     public class WorldEditorInitiator : LifetimeScope
     {

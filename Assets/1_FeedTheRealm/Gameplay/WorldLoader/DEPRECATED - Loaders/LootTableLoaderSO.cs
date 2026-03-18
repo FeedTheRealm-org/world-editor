@@ -6,7 +6,7 @@ using FeedTheRealm.Core.WorldObjects.LootTable;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     [CreateAssetMenu(
         fileName = "LootTableLoader",

@@ -9,7 +9,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.Gameplay.Loaders
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     public abstract class PlaceableLoader<TData> : ILoader
     {

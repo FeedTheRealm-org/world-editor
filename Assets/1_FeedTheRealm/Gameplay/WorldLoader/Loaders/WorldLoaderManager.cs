@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.Core.WorldObjects.Provider;
-using FeedTheRealm.Gameplay.Loaders;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using VContainer;
 
-namespace FeedTheRealm.Gameplay.WorldEditor
+namespace FeedTheRealm.Gameplay.WorldLoader
 {
     public class WorldLoaderManager
     {
