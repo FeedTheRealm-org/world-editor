@@ -15,7 +15,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private Logging.Logger logger;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         [SerializeField]
         private WorldPublisherController worldPublisherController;

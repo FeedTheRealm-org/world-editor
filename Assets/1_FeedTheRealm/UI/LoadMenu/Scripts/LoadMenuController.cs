@@ -22,7 +22,7 @@ namespace FeedTheRealm.UI.LoadMenu
         private SceneReference gameScene;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         private List<string> loadedWorlds;
 

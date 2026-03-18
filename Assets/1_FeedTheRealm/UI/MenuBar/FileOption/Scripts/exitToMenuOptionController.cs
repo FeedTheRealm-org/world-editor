@@ -11,7 +11,7 @@ namespace FeedTheRealm.UI.MenuBar
         private SceneReference mainMenuScene;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         public override void Execute()
         {

@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
     {
         [Header("Services, Managers and Config")]
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         [Header("Component Providers")]
         [SerializeField]

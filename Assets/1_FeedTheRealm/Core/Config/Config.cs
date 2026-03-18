@@ -11,16 +11,30 @@ namespace FTR.Core.Common.Config
         private bool forceReinitialize = false;
         public bool ForceReinitialize => forceReinitialize;
 
-        [Header("Persistent file paths")]
+        [Header("Persistent Model file config")]
         [SerializeField]
-        private readonly string modelsDataFile = "Models/models.json";
+        private string modelsDataFile = "Models/models.json";
 
         [SerializeField]
-        private readonly string modelsDirectory = "Models";
+        private string modelsDirectory = "Models";
+
+        [Header("Persistent World file config")]
+        [SerializeField]
+        private string worldsDirectory = "Worlds";
+
+        [SerializeField]
+        private string worldsFileExtension = ".world";
+
+        [SerializeField]
+        private string zoneFilePrefix = "zone_";
 
         public string ModelsDataFile =>
             Path.Combine(Application.persistentDataPath, modelsDataFile);
         public string ModelsDirectory =>
             Path.Combine(Application.streamingAssetsPath, modelsDirectory);
+        public string WorldDirectory =>
+            Path.Combine(Application.persistentDataPath, worldsDirectory);
+        public string WorldFileExtension => worldsFileExtension;
+        public string ZoneFilePrefix => zoneFilePrefix;
     }
 }

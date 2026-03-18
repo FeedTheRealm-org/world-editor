@@ -22,6 +22,7 @@ namespace FeedTheRealm.Core.EventChannels
         public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
+        public DataPersistenceRegistryEvent dataPersistenceRegistryEvent;
 
         [Header("UI Events")]
         public CategorySelectedEvent categorySelectedEvent;
@@ -39,7 +40,7 @@ namespace FeedTheRealm.Core.EventChannels
         public void RegisterAll(IContainerBuilder builder)
         {
             Validate();
-
+            builder.RegisterInstance(dataPersistenceRegistryEvent);
             builder.RegisterInstance(worldSelectedEvent);
             builder.RegisterInstance(objectSelectedEvent);
             builder.RegisterInstance(enableEditorEvent);
@@ -54,6 +55,7 @@ namespace FeedTheRealm.Core.EventChannels
 
         private void Validate()
         {
+            ValidateField(dataPersistenceRegistryEvent, nameof(dataPersistenceRegistryEvent));
             ValidateField(worldSelectedEvent, nameof(worldSelectedEvent));
             ValidateField(objectSelectedEvent, nameof(objectSelectedEvent));
             ValidateField(enableEditorEvent, nameof(enableEditorEvent));

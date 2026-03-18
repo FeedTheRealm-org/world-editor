@@ -21,7 +21,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
     {
         [Header("Managers and Config")]
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private WorldSelector worldSelector;
 
         [SerializeField]
         private InputReader inputReader;
@@ -64,6 +64,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
 
+            // Data persistence Manager
+            builder.Register<DataPersistenceManager>(Lifetime.Scoped);
+
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
             builder.Register<SpawnerLibrary>(Lifetime.Singleton);
@@ -91,7 +94,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
 
         private void ValidateSerializedFields()
         {
-            ValidateField(dataPersistenceManager);
+            ValidateField(worldSelector);
             ValidateField(inputReader);
             ValidateField(config);
             ValidateField(logger);
@@ -107,7 +110,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         private void RegisterSerializedFields(IContainerBuilder builder)
         {
             builder.RegisterInstance(inputReader);
-            builder.RegisterInstance(dataPersistenceManager);
+            builder.RegisterInstance(worldSelector);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(modelsRepository);

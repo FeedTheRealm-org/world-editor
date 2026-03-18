@@ -11,10 +11,10 @@ namespace FeedTheRealm.Core.Repository
     [CreateAssetMenu(fileName = "ModelsRepository", menuName = "Repository/ModelsRepository")]
     public class ModelsRepository : ScriptableObject
     {
-        [Inject]
+        [SerializeField]
         private Config config;
 
-        [Inject]
+        [SerializeField]
         private Logging.Logger logger;
         private bool isInitialized = false;
         private Dictionary<string, ModelData> modelsData;

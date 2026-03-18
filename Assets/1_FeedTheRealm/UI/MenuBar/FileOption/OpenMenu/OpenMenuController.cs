@@ -13,7 +13,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
     public class OpenMenuController : MenuController
     {
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         [SerializeField]
         private SceneReference gameScene;

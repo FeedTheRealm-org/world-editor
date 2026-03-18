@@ -10,7 +10,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
     public class SaveMenuController : MenuController
     {
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         private Button saveButton;
         private Button closeButton;

@@ -8,7 +8,7 @@ namespace FeedTheRealm.UI.MenuBar
     public class NewWorldOptionController : MenuOption
     {
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         [SerializeField]
         private SceneReference worldEditorScene;

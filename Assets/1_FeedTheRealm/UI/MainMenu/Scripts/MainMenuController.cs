@@ -20,7 +20,7 @@ namespace FeedTheRealm.UI.MainMenu
         private SceneReference loadWorldScene;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         private void Awake()
         {
