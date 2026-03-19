@@ -6,10 +6,11 @@ using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.Core.Repository
 {
-    public class WorldsRepository
+    public class WorldsRepository : IInitializable
     {
         [Inject]
         private Config config;
@@ -26,6 +27,10 @@ namespace FeedTheRealm.Core.Repository
             this.config = config;
             this.logger = logger;
         }
+
+        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
+        // We implement this interface just to ensure that the repository is created when registered.
+        public void Initialize() { }
 
         public void SaveWorldZone(WorldData worldData)
         {

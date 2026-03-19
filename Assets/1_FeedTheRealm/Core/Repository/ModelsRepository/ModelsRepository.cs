@@ -6,6 +6,7 @@ using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.Core.Repository
 {
@@ -15,7 +16,7 @@ namespace FeedTheRealm.Core.Repository
         public List<StructureData> structures = new();
     }
 
-    public class ModelsRepository
+    public class ModelsRepository : IInitializable
     {
         [Inject]
         private Config config;
@@ -29,17 +30,17 @@ namespace FeedTheRealm.Core.Repository
         {
             this.config = config;
             this.logger = logger;
+            if (!File.Exists(config.ModelsDataFile))
             {
-                if (!File.Exists(config.ModelsDataFile))
-                    GenerateDefaultFile();
-
-                modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
-                logger.Log(
-                    $"ModelsRepository loaded {modelsData.Count} models.",
-                    Logging.LogType.Info
-                );
+                GenerateDefaultFile();
             }
+            modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
+            logger.Log($"ModelsRepository loaded {modelsData.Count} models.", Logging.LogType.Info);
         }
+
+        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
+        // We implement this interface just to ensure that the repository is created when registered.
+        public void Initialize() { }
 
         public StructureData GetStructureData(string id)
         {

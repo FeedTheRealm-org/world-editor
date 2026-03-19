@@ -4,12 +4,13 @@ using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldEditor;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
 {
-    public class PlaceablesLibrary
+    public class PlaceablesLibrary : IInitializable
     {
-        private Logging.Logger logger;
+        private readonly Logging.Logger logger;
         private Dictionary<PlaceableObjectCategories, ILibrary> library = new();
 
         public PlaceablesLibrary(Logging.Logger logger, IObjectResolver objectResolver)
@@ -19,11 +20,11 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             var spawnerLibrary = objectResolver.Resolve<SpawnerLibrary>();
             library[PlaceableObjectCategories.Structure] = structureLibrary;
             library[PlaceableObjectCategories.Spawner] = spawnerLibrary;
-            logger.Log(
-                $"PlaceablesLibrary initialized with categories: {string.Join(", ", library.Keys)}",
-                Logging.LogType.Info
-            );
         }
+
+        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
+        // We implement this interface just to ensure that the repository is created when registered.
+        public void Initialize() { }
 
         public List<PlaceableOption> GetPlaceableOptions(PlaceableObjectCategories category)
         {

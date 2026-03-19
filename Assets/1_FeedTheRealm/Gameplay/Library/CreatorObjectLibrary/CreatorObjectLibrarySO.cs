@@ -23,6 +23,8 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
 
         private Dictionary<CreatorObjectCategories, ICreatableLoader> loaderCache;
 
+        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
+        // We implement this interface just to ensure that the repository is created when registered.
         public void Initialize()
         {
             logger.Log($"Initializing Creator Library", this, Logging.LogType.Info);

@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.Ticks;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
@@ -14,18 +15,13 @@ namespace FeedTheRealm.Gameplay.Entrypoint
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
-        private readonly PlaceablesLibrary placeablesLibrary;
-        private readonly WorldsRepository worldsRepository;
-        private readonly ModelsRepository modelsRepository;
 
         public WorldEditorEntrypoint(
             WorldLoaderManager worldLoaderManager,
             WorldSetupManager worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,
-            LateTickEvent lateTickEvent,
-            ModelsRepository modelsRepository,
-            PlaceablesLibrary placeablesLibrary
+            LateTickEvent lateTickEvent
         )
         {
             this.worldLoaderManager = worldLoaderManager;
@@ -33,8 +29,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint
             this.tickEvent = tickEvent;
             this.fixedTickEvent = fixedTickEvent;
             this.lateTickEvent = lateTickEvent;
-            this.modelsRepository = modelsRepository;
-            this.placeablesLibrary = placeablesLibrary;
         }
 
         public async void Start()

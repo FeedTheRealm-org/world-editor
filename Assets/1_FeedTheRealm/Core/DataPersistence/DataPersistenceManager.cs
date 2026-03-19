@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Repository;
 using FTRShared.Runtime.Models;
+using VContainer.Unity;
 
 namespace FeedTheRealm.Core.DataPersistence
 {
-    public class DataPersistenceManager
+    public class DataPersistenceManager : IInitializable
     {
         private Logging.Logger logger;
         private WorldsRepository worldsRepository;
@@ -25,6 +27,10 @@ namespace FeedTheRealm.Core.DataPersistence
             this.worldSelector = worldSelector;
             registryEvent.OnRaised += RegisterEntity;
         }
+
+        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
+        // We implement this interface just to ensure that the repository is created when registered.
+        public void Initialize() { }
 
         public void SaveWorld(string worldName, int zoneId = -1)
         {
