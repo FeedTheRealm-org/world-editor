@@ -9,21 +9,23 @@ using VContainer;
 
 namespace FeedTheRealm.Core.Repository
 {
-    [CreateAssetMenu(
-        fileName = "WorldsRepository",
-        menuName = "Scriptable Objects/Repository/WorldsRepository"
-    )]
-    public class WorldsRepository : ScriptableObject
+    public class WorldsRepository
     {
-        [SerializeField]
+        [Inject]
         private Config config;
 
-        [SerializeField]
+        [Inject]
         private Logging.Logger logger;
 
         private string extension => config.WorldFileExtension;
         private string saveDirectory => config.WorldDirectory;
         private string zoneFilePrefix => config.ZoneFilePrefix;
+
+        public WorldsRepository(Config config, Logging.Logger logger)
+        {
+            this.config = config;
+            this.logger = logger;
+        }
 
         public void SaveWorldZone(WorldData worldData)
         {

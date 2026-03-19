@@ -5,6 +5,7 @@ using System.Linq;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
+using VContainer;
 
 namespace FeedTheRealm.Core.Repository
 {
@@ -14,37 +15,30 @@ namespace FeedTheRealm.Core.Repository
         public List<StructureData> structures = new();
     }
 
-    [CreateAssetMenu(
-        fileName = "ModelsRepository",
-        menuName = "Scriptable Objects/Repository/ModelsRepository"
-    )]
-    public class ModelsRepository : ScriptableObject
+    public class ModelsRepository
     {
-        [SerializeField]
+        [Inject]
         private Config config;
 
-        [SerializeField]
+        [Inject]
         private Logging.Logger logger;
 
-        [SerializeField]
-        private bool isInitialized = false;
+        private Dictionary<string, StructureData> modelsData;
 
-        private Dictionary<string, StructureData> modelsData = new();
-
-        public void Initialize()
+        public ModelsRepository(Config config, Logging.Logger logger)
         {
-            if (config.ForceReinitialize)
-                isInitialized = false;
+            this.config = config;
+            this.logger = logger;
+            {
+                if (!File.Exists(config.ModelsDataFile))
+                    GenerateDefaultFile();
 
-            if (isInitialized)
-                return;
-
-            if (!File.Exists(config.ModelsDataFile))
-                GenerateDefaultFile();
-
-            modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
-            logger.Log($"ModelsRepository loaded {modelsData.Count} models.", Logging.LogType.Info);
-            isInitialized = true;
+                modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
+                logger.Log(
+                    $"ModelsRepository loaded {modelsData.Count} models.",
+                    Logging.LogType.Info
+                );
+            }
         }
 
         public StructureData GetStructureData(string id)

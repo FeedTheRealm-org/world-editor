@@ -1,12 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldEditor;
-using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -29,8 +25,7 @@ namespace FeedTheRealm.UI.EditorBar
         private EnableInputEvent enableInputEvent;
 
         private ListView libraryBar;
-        private List<string> currentItems = new();
-        private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
+        private List<PlaceableOption> currentItems = new();
 
         void Start()
         {
@@ -50,7 +45,6 @@ namespace FeedTheRealm.UI.EditorBar
 
             libraryBar.makeItem = MakeListItem;
             libraryBar.bindItem = BindListItem;
-            libraryBar.itemsSource = currentItems;
 
             categorySelectedEvent.OnRaised += LoadObjectsForCategory;
             LoadObjectsForCategory(PlaceableObjectCategories.Structure);
@@ -75,18 +69,15 @@ namespace FeedTheRealm.UI.EditorBar
         {
             if (element is not Button button)
                 return;
-            string id = currentItems[index];
-            button.text = id;
-            button.clicked += () =>
-                objectSelectedEvent.Raise(
-                    new SelectedPlaceable { category = currentCategory, id = id }
-                );
+
+            PlaceableOption option = currentItems[index];
+            button.text = option.displayName;
+            button.clicked += () => objectSelectedEvent.Raise(option);
         }
 
         private void LoadObjectsForCategory(PlaceableObjectCategories category)
         {
-            currentCategory = category;
-            currentItems = placeableObjectLibrary.GetPlaceableOptions(category).Keys.ToList();
+            currentItems = placeableObjectLibrary.GetPlaceableOptions(category);
             libraryBar.itemsSource = currentItems;
             libraryBar.Rebuild();
         }

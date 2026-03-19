@@ -4,6 +4,7 @@ using API;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.Repository;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -44,29 +45,39 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         /// </summary>
         public async UniTask<GameObject> GetItem(string structureId)
         {
-            if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
+            logger.Log($"GetItem called for {structureId}"); // add this first
+            try
             {
-                var modelData = modelsRepository.GetStructureData(structureId);
-                if (modelData == null)
+                if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
                 {
-                    logger.Log(
-                        $"Model data for {structureId} not found in ModelsRepository.",
-                        Logging.LogType.Error
-                    );
-                    return null;
-                }
-                await CacheStructureFromDisk(modelData);
-                cachedStructure = structuresCache[structureId];
-            }
-            var instance = resolver.Instantiate(cachedStructure);
-            instance.SetActive(true);
-            return instance;
-        }
+                    var modelData = modelsRepository.GetStructureData(structureId);
+                    if (modelData == null)
+                    {
+                        logger.Log(
+                            $"Model data for {structureId} not found.",
+                            Logging.LogType.Error
+                        );
+                        return null;
+                    }
 
-        public Dictionary<string, string> ListAvailableItems()
-        {
-            List<StructureData> models = modelsRepository.GetModelsData().Values.ToList();
-            return models.ToDictionary(model => model.id, model => model.structureName);
+                    await CacheStructureFromDisk(modelData);
+                    cachedStructure = structuresCache[structureId];
+                }
+
+                // Instantiate and load data onto the new instance
+                var instance = resolver.Instantiate(cachedStructure);
+                var modelData2 = modelsRepository.GetStructureData(structureId);
+                instance.GetComponent<ILoadable<StructureData>>().Load(modelData2);
+                instance.SetActive(true);
+
+                logger.Log($"Successfully instantiated {structureId}");
+                return instance;
+            }
+            catch (System.Exception e)
+            {
+                logger.Log($"GetItem failed for {structureId}: {e}", Logging.LogType.Error);
+                return null;
+            }
         }
 
         /// <summary>
@@ -83,6 +94,23 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             cacheInstance.GetComponent<ILoadable<StructureData>>().Load(structuredata);
             cacheInstance.SetActive(false);
             structuresCache[structuredata.id] = cacheInstance;
+        }
+
+        public List<PlaceableOption> ListAvailableItems()
+        {
+            List<StructureData> models = modelsRepository.GetModelsData().Values.ToList();
+            logger.Log(
+                $"Listing {models.Count} structures from ModelsRepository.",
+                Logging.LogType.Info
+            );
+            return models
+                .Select(model => new PlaceableOption
+                {
+                    category = PlaceableObjectCategories.Structure,
+                    id = model.id,
+                    displayName = model.structureName,
+                })
+                .ToList();
         }
     }
 }

@@ -46,13 +46,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private GltfService gltfService;
 
-        [Header("Repositories")]
-        [SerializeField]
-        private ModelsRepository modelsRepository;
-
-        [SerializeField]
-        private WorldsRepository worldsRepository;
-
         [Header("Libraries")]
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
@@ -69,6 +62,10 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
 
             // Data persistence Manager
             builder.Register<DataPersistenceManager>(Lifetime.Scoped);
+
+            // Repositories
+            builder.Register<ModelsRepository>(Lifetime.Singleton);
+            builder.Register<WorldsRepository>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -101,8 +98,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             ValidateField(inputReader);
             ValidateField(config);
             ValidateField(logger);
-            ValidateField(modelsRepository);
-            ValidateField(worldsRepository);
             ValidateField(worldPrefabProvider);
             ValidateField(WorldUIObjectProvider);
             ValidateField(creatorObjectLibrary);
@@ -117,8 +112,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(worldSelector);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
-            builder.RegisterInstance(modelsRepository);
-            builder.RegisterInstance(worldsRepository);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);

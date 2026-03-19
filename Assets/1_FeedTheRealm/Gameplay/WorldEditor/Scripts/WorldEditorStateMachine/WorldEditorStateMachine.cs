@@ -24,7 +24,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
 
         public InputReader inputReader;
         public Camera playerCamera;
-        public SelectedPlaceable SelectedObject { get; private set; }
+        public PlaceableOption SelectedObject { get; private set; }
         public bool IsEditorEnabled { get; private set; } = true;
         private IWorldEditorState currentState;
 
@@ -110,7 +110,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
             Debug.Log($"Interaction {(enabled ? "enabled" : "disabled")}.");
         }
 
-        private void OnWorldObjectSelected(SelectedPlaceable reference)
+        private void OnWorldObjectSelected(PlaceableOption reference)
         {
             if (currentState is PlacingState)
             {

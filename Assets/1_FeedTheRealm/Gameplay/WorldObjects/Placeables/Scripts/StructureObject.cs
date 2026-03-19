@@ -21,6 +21,25 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             gameObject.transform.position = data.position;
             gameObject.transform.rotation = Quaternion.Euler(data.rotation);
             gameObject.transform.localScale = data.size;
+            FitColliderToMesh();
+        }
+
+        private void FitColliderToMesh()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0)
+                return;
+
+            // Merge all renderer bounds into one
+            Bounds combined = renderers[0].bounds;
+            foreach (var r in renderers)
+                combined.Encapsulate(r.bounds);
+
+            BoxCollider collider = GetComponent<BoxCollider>();
+
+            // Convert world-space bounds to local space
+            collider.center = transform.InverseTransformPoint(combined.center);
+            collider.size = transform.InverseTransformVector(combined.size);
         }
 
         public override void SaveData(ref WorldData worldData)

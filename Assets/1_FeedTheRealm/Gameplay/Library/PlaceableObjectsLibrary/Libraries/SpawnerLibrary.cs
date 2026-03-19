@@ -3,6 +3,7 @@ using System.Linq;
 using API;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using UnityEngine;
 using VContainer;
@@ -42,14 +43,29 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             };
         }
 
-        public Dictionary<string, string> ListAvailableItems()
+        public List<PlaceableOption> ListAvailableItems()
         {
-            return new List<string>
+            return new List<PlaceableOption>
             {
-                SpawnerCategories.AggresiveNPC,
-                SpawnerCategories.FriendlyNPC,
-                SpawnerCategories.PlayerSpawnpoint,
-            }.ToDictionary(item => item, item => item);
+                new()
+                {
+                    category = PlaceableObjectCategories.Spawner,
+                    id = SpawnerCategories.AggresiveNPC,
+                    displayName = SpawnerCategories.AggresiveNPC,
+                },
+                new()
+                {
+                    category = PlaceableObjectCategories.Spawner,
+                    id = SpawnerCategories.FriendlyNPC,
+                    displayName = SpawnerCategories.FriendlyNPC,
+                },
+                new()
+                {
+                    category = PlaceableObjectCategories.Spawner,
+                    id = SpawnerCategories.PlayerSpawnpoint,
+                    displayName = SpawnerCategories.PlayerSpawnpoint,
+                },
+            };
         }
     }
 }

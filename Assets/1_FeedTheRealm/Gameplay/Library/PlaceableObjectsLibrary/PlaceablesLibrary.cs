@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
+using FeedTheRealm.Core.WorldEditor;
 using UnityEngine;
 using VContainer;
 
@@ -18,9 +19,13 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             var spawnerLibrary = objectResolver.Resolve<SpawnerLibrary>();
             library[PlaceableObjectCategories.Structure] = structureLibrary;
             library[PlaceableObjectCategories.Spawner] = spawnerLibrary;
+            logger.Log(
+                $"PlaceablesLibrary initialized with categories: {string.Join(", ", library.Keys)}",
+                Logging.LogType.Info
+            );
         }
 
-        public Dictionary<string, string> GetPlaceableOptions(PlaceableObjectCategories category)
+        public List<PlaceableOption> GetPlaceableOptions(PlaceableObjectCategories category)
         {
             if (!library.ContainsKey(category))
             {
@@ -28,7 +33,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                     $"Category {category} not found in Placeable Objects Library",
                     Logging.LogType.Error
                 );
-                return new Dictionary<string, string>();
+                return new List<PlaceableOption>();
             }
             return library[category].ListAvailableItems();
         }
