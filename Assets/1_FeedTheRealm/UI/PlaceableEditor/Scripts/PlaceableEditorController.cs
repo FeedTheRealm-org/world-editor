@@ -33,6 +33,7 @@ namespace FeedTheRealm.UI.WorldEditor
                 worldUIObjectProvider.FriendlyNpcSpawnerEditObject;
             editorPrefabs[PlaceableObjectCategories.AggresiveNpcSpawner] =
                 worldUIObjectProvider.AggresiveNpcSpawnerEditObject;
+
             editPlaceableEvent.OnRaised += HandleObjectSelected;
         }
 

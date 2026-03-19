@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1638142084274025338}
   - component: {fileID: 5062968973939956887}
   - component: {fileID: 1110971993495368520}
-  - component: {fileID: 3255907669705605545}
+  - component: {fileID: 1955632407739827998}
   m_Layer: 11
   m_Name: PlayerSpawner
   m_TagString: Untagged
@@ -113,7 +113,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &3255907669705605545
+--- !u!114 &1955632407739827998
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5537282333109391366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6ed26071d90c5005b5a53c4db700e32, type: 3}
+  m_Script: {fileID: 11500000, guid: 86e48dbc1fa20556da1b6d1c7a3326e5, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnerController
-  spawnerColor: {r: 0, g: 1, b: 0.9490197, a: 1}
+  m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldObjects.PlayerSpawnpointObject
+  data:
+    Position: {x: 0, y: 0, z: 0}
+    Radius: 0
