@@ -21,7 +21,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             return await placeableLibrary.GetObject(
                 PlaceableObjectCategories.Spawner,
-                SpawnerCategories.FriendlyNPC
+                SpawnerTypes.FriendlyNPC
             );
         }
     }

@@ -21,6 +21,7 @@ namespace FeedTheRealm.Core.EventChannels
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
         public DataPersistenceRegistryEvent dataPersistenceRegistryEvent;
+        public EditPlaceableEvent editPlaceableEvent;
 
         [Header("UI Events")]
         public CategorySelectedEvent categorySelectedEvent;
@@ -37,7 +38,7 @@ namespace FeedTheRealm.Core.EventChannels
         /// </summary>
         public void RegisterAll(IContainerBuilder builder)
         {
-            Validate();
+            builder.RegisterInstance(editPlaceableEvent);
             builder.RegisterInstance(dataPersistenceRegistryEvent);
             builder.RegisterInstance(worldSelectedEvent);
             builder.RegisterInstance(objectSelectedEvent);
@@ -48,26 +49,6 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
             builder.RegisterInstance(loadWorldEvent);
-        }
-
-        private void Validate()
-        {
-            ValidateField(dataPersistenceRegistryEvent, nameof(dataPersistenceRegistryEvent));
-            ValidateField(worldSelectedEvent, nameof(worldSelectedEvent));
-            ValidateField(objectSelectedEvent, nameof(objectSelectedEvent));
-            ValidateField(enableEditorEvent, nameof(enableEditorEvent));
-            ValidateField(categorySelectedEvent, nameof(categorySelectedEvent));
-            ValidateField(enableInputEvent, nameof(enableInputEvent));
-            ValidateField(tickEvent, nameof(tickEvent));
-            ValidateField(fixedTickEvent, nameof(fixedTickEvent));
-            ValidateField(lateTickEvent, nameof(lateTickEvent));
-            ValidateField(loadWorldEvent, nameof(loadWorldEvent));
-        }
-
-        private void ValidateField(Object field, string fieldName)
-        {
-            if (field == null)
-                Debug.LogError($"[EventChannelRegistry] {fieldName} is not assigned.");
         }
     }
 }

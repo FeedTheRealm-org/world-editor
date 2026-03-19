@@ -1,5 +1,6 @@
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Core.Library;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
@@ -27,6 +28,7 @@ namespace FeedTheRealm.Core.WorldObjects
                 registryEvent.Raise(this);
         }
 
+        public abstract PlaceableObjectCategories Category { get; }
         public abstract void SaveData(ref WorldData worldData);
     }
 }

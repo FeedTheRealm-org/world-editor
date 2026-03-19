@@ -37,7 +37,7 @@ namespace FeedTheRealm.UI.Common
                 enableInputEvent?.Raise(false);
         }
 
-        public void CloseMenu()
+        public virtual void CloseMenu()
         {
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised -= OnInputEventRaised;

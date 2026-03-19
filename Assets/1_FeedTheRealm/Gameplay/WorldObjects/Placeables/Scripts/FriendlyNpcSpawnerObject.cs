@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -8,6 +9,9 @@ namespace FeedTheRealm.Gameplay.WorldObjects
     public class FriendlyNpcSpawnerObject : WorldObjectController, ILoadable<NPCSpawnerData>
     {
         public NPCSpawnerData data;
+
+        public override PlaceableObjectCategories Category =>
+            PlaceableObjectCategories.FriendlyNpcSpawner;
 
         public void Load(NPCSpawnerData data)
         {

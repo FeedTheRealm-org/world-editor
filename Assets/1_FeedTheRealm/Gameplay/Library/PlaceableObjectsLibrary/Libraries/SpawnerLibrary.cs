@@ -30,13 +30,13 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         {
             return itemName switch
             {
-                SpawnerCategories.AggresiveNPC => UniTask.FromResult(
+                SpawnerTypes.AggresiveNPC => UniTask.FromResult(
                     resolver.Instantiate(aggresiveNpcSpawnerPrefab)
                 ),
-                SpawnerCategories.FriendlyNPC => UniTask.FromResult(
+                SpawnerTypes.FriendlyNPC => UniTask.FromResult(
                     resolver.Instantiate(friendlyNpcSpawnerPrefab)
                 ),
-                SpawnerCategories.PlayerSpawnpoint => UniTask.FromResult(
+                SpawnerTypes.PlayerSpawnpoint => UniTask.FromResult(
                     resolver.Instantiate(playerSpawnpointPrefab)
                 ),
                 _ => UniTask.FromResult<GameObject>(null),
@@ -50,20 +50,20 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerCategories.AggresiveNPC,
-                    displayName = SpawnerCategories.AggresiveNPC,
+                    id = SpawnerTypes.AggresiveNPC,
+                    displayName = SpawnerTypes.AggresiveNPC,
                 },
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerCategories.FriendlyNPC,
-                    displayName = SpawnerCategories.FriendlyNPC,
+                    id = SpawnerTypes.FriendlyNPC,
+                    displayName = SpawnerTypes.FriendlyNPC,
                 },
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerCategories.PlayerSpawnpoint,
-                    displayName = SpawnerCategories.PlayerSpawnpoint,
+                    id = SpawnerTypes.PlayerSpawnpoint,
+                    displayName = SpawnerTypes.PlayerSpawnpoint,
                 },
             };
         }

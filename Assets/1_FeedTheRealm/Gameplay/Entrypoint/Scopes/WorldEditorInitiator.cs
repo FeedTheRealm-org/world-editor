@@ -56,7 +56,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
 
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateSerializedFields();
             RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
 
@@ -86,24 +85,11 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
             builder.Register<WorldUISetupService>(Lifetime.Scoped);
+            builder.Register<PlaceableEditorSetupService>(Lifetime.Scoped);
 
             builder.Register<WorldSetupManager>(Lifetime.Scoped);
 
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
-        }
-
-        private void ValidateSerializedFields()
-        {
-            ValidateField(worldSelector);
-            ValidateField(inputReader);
-            ValidateField(config);
-            ValidateField(logger);
-            ValidateField(worldPrefabProvider);
-            ValidateField(WorldUIObjectProvider);
-            ValidateField(creatorObjectLibrary);
-            ValidateField(gltfService);
-            ValidateField(playerConfig);
-            ValidateField(eventChannelRegistry);
         }
 
         private void RegisterSerializedFields(IContainerBuilder builder)
@@ -117,14 +103,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(gltfService);
             builder.RegisterInstance(config);
             builder.RegisterInstance(logger);
-        }
-
-        private void ValidateField(object field)
-        {
-            if (field == null)
-                throw new NullReferenceException(
-                    $"{nameof(field)} is not assigned in the Inspector."
-                );
         }
     }
 }

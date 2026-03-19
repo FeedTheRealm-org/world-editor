@@ -1,23 +1,25 @@
 using System.Collections.Generic;
-using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldSetup;
-using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class WorldSetupManager
     {
-        readonly List<ISetup> setupServices;
+        private readonly List<ISetup> setupServices;
+        private readonly Logging.Logger logger;
 
         public WorldSetupManager(
+            Logging.Logger logger,
             BaseplateSetupService baseplateSetupService,
             CameraSetupService cameraSetupService,
             LightingSetupService lightingSetupService,
             PlayerSetupService playerSetupService,
             WorldEditorSetupService worldEditorSetupService,
-            WorldUISetupService worldUISetupService
+            WorldUISetupService worldUISetupService,
+            PlaceableEditorSetupService placeableEditorSetupService
         )
         {
+            this.logger = logger;
             setupServices = new List<ISetup>
             {
                 baseplateSetupService,
@@ -26,12 +28,13 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 playerSetupService,
                 worldEditorSetupService,
                 worldUISetupService,
+                placeableEditorSetupService,
             };
         }
 
         public void ExecuteSetup()
         {
-            Debug.Log("Executing World Setup...");
+            logger.Log("Starting world setup...");
             foreach (var service in setupServices)
                 service.Setup();
         }

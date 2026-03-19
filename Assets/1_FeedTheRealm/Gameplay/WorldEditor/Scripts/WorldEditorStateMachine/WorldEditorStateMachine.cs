@@ -10,7 +10,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
 {
     public class WorldEditorStateMachine : MonoBehaviour
     {
-        [SerializeField]
+        [Inject]
         private Logging.Logger logger;
 
         [Inject]
@@ -22,6 +22,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         [Inject]
         public PlaceablesLibrary placeablesLibrary;
 
+        [Inject]
+        public EditPlaceableEvent editPlaceableEvent;
+
         public InputReader inputReader;
         public Camera playerCamera;
         public PlaceableOption SelectedObject { get; private set; }
@@ -32,7 +35,8 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         public SelectingState SelectingState { get; private set; }
         public PlacingState PlacingState { get; private set; }
         public RemovingState RemovingState { get; private set; }
-        public EditingState EditingState { get; private set; }
+
+        // public EditingState EditingState { get; private set; }
 
         // -------------------- Public Methods --------------------
 

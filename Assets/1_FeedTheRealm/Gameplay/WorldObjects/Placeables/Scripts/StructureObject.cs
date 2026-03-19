@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -8,6 +9,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
     public class StructureObject : WorldObjectController, ILoadable<StructureData>
     {
         private StructureData data = new();
+
+        public override PlaceableObjectCategories Category => PlaceableObjectCategories.Structure;
 
         public void Load(StructureData data)
         {
