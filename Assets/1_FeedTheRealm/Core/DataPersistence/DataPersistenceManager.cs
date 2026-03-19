@@ -26,9 +26,17 @@ namespace FeedTheRealm.Core.DataPersistence
             registryEvent.OnRaised += RegisterEntity;
         }
 
-        public void SaveWorld()
+        public void SaveWorld(string worldName, int zoneId = -1)
         {
-            WorldData worldData = LoadRequiredWorldData();
+            if (
+                worldSelector.selectedWorld == null
+                || string.IsNullOrEmpty(worldSelector.selectedWorld)
+            )
+            {
+                logger.Log("No world selected for saving.", Logging.LogType.Warning);
+                return;
+            }
+            WorldData worldData = LoadRequiredWorldData(worldName, zoneId);
             foreach (var obj in registeredEntities)
             {
                 obj.SaveData(ref worldData);
@@ -53,19 +61,17 @@ namespace FeedTheRealm.Core.DataPersistence
         ///  Sadly, since the world ID is in the world data, we have to load it to get the ID for new zones.
         ///  If we had a separate metadata file for each zone, we could avoid this.
         /// <returns></returns>
-        private WorldData LoadRequiredWorldData()
+        private WorldData LoadRequiredWorldData(string worldName, int zoneId)
         {
-            string worldId =
-                worldsRepository
-                    .GetWorldZone(worldSelector.selectedWorld, worldSelector.selectedZoneId)
-                    ?.id
-                ?? string.Empty;
+            // TODO: change this to move the world name and id to another file
+
+            string worldId = worldsRepository.GetWorldZone(worldName, zoneId)?.id ?? string.Empty;
 
             return new WorldData
             {
                 id = worldId,
-                zone_id = worldSelector.selectedZoneId,
-                worldName = worldSelector.selectedWorld,
+                zone_id = zoneId,
+                worldName = worldName,
             };
         }
     }

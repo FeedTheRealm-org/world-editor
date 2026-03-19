@@ -12,7 +12,7 @@ namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects
     }
 
     [System.Serializable]
-    public class SpawnerObject : IPlaceable
+    public class SpawnerObject
     {
         public SpawnerType spawnerType;
         public float spawnRadius;

@@ -4,7 +4,7 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Core.WorldObjects.Shop;
-using FeedTheRealm.Gameplay.Loaders;
+using FeedTheRealm.Gameplay.WorldLoader;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 

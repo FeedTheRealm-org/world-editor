@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.EventChannels.Ticks;
+using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
 using VContainer.Unity;
@@ -12,13 +13,15 @@ namespace FeedTheRealm.Gameplay.Entrypoint
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
+        private readonly ModelsRepository modelsRepository;
 
         public WorldEditorEntrypoint(
             WorldLoaderManager worldLoaderManager,
             WorldSetupManager worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,
-            LateTickEvent lateTickEvent
+            LateTickEvent lateTickEvent,
+            ModelsRepository modelsRepository
         )
         {
             this.worldLoaderManager = worldLoaderManager;
@@ -26,10 +29,12 @@ namespace FeedTheRealm.Gameplay.Entrypoint
             this.tickEvent = tickEvent;
             this.fixedTickEvent = fixedTickEvent;
             this.lateTickEvent = lateTickEvent;
+            this.modelsRepository = modelsRepository;
         }
 
         public async void Start()
         {
+            modelsRepository.Initialize();
             worldSetup.ExecuteSetup();
             await worldLoaderManager.Load();
         }

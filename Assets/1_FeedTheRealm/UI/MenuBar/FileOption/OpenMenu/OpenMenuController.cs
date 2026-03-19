@@ -30,7 +30,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             closeButton = root.Q<Button>("Close");
             worldsListView = root.Q<ListView>("WorldsList");
 
-            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            // loadedWorlds = dataPersistenceManager.ListAllWorlds();
 
             closeButton.clicked += CloseMenu;
 
@@ -66,7 +66,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 
         private void OnLoadWorldClicked(string worldName)
         {
-            dataPersistenceManager.SetActiveWorld(worldName);
+            //  dataPersistenceManager.SetActiveWorld(worldName);
             SceneManager.LoadScene(gameScene.SceneName);
             CloseMenu();
         }

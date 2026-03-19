@@ -33,7 +33,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private void OnEnable()
         {
-            worldData = dataPersistenceManager.CurrentWorldData;
+            //worldData = dataPersistenceManager.CurrentWorldData;
             var uiDocument = GetComponent<UIDocument>();
             root = uiDocument.rootVisualElement;
 
@@ -65,64 +65,64 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishWorld()
         {
-            var currentData = dataPersistenceManager.CurrentWorldData;
-            currentData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
+            // var currentData = dataPersistenceManager.CurrentWorldData;
+            // currentData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
 
-            dataPersistenceManager.SaveWorld(currentData.worldName);
-            string fileName = dataPersistenceManager.GetWorldFile(currentData.worldName);
+            // dataPersistenceManager.SaveWorld(currentData.worldName);
+            // string fileName = dataPersistenceManager.GetWorldFile(currentData.worldName);
 
-            (string worldId, string error, long statusCode) =
-                await worldPublisherController.PublishWorld(
-                    currentData,
-                    fileName,
-                    descriptionInput.value
-                );
+            // (string worldId, string error, long statusCode) =
+            //     await worldPublisherController.PublishWorld(
+            //         currentData,
+            //         fileName,
+            //         descriptionInput.value
+            //     );
 
-            if (!string.IsNullOrEmpty(error) && error != "No assets to upload.")
-            {
-                logger.Log(
-                    $"PublishMenuController: Error publishing world (status {statusCode}): {error}",
-                    this,
-                    Logging.LogType.Warning
-                );
-                string message = error;
-                Color color = Color.red;
-                if (statusCode == 401)
-                {
-                    var loginObj = Instantiate(worldUIObjectProvider.loginMenuObject);
-                    var signUpObj = Instantiate(worldUIObjectProvider.signUpMenuObject);
-                    var verifyCodeObj = Instantiate(worldUIObjectProvider.verifyCodeMenuObject);
+            // if (!string.IsNullOrEmpty(error) && error != "No assets to upload.")
+            // {
+            //     logger.Log(
+            //         $"PublishMenuController: Error publishing world (status {statusCode}): {error}",
+            //         this,
+            //         Logging.LogType.Warning
+            //     );
+            //     string message = error;
+            //     Color color = Color.red;
+            //     if (statusCode == 401)
+            //     {
+            //         var loginObj = Instantiate(worldUIObjectProvider.loginMenuObject);
+            //         var signUpObj = Instantiate(worldUIObjectProvider.signUpMenuObject);
+            //         var verifyCodeObj = Instantiate(worldUIObjectProvider.verifyCodeMenuObject);
 
-                    var loginCtrl = loginObj.GetComponent<LoginController>();
-                    if (loginCtrl != null)
-                        loginCtrl.showBackground = false;
+            //         var loginCtrl = loginObj.GetComponent<LoginController>();
+            //         if (loginCtrl != null)
+            //             loginCtrl.showBackground = false;
 
-                    loginObj.name = "LoginMenu";
-                    signUpObj.name = "SignUpMenu";
-                    verifyCodeObj.name = "VerifyCodeMenu";
+            //         loginObj.name = "LoginMenu";
+            //         signUpObj.name = "SignUpMenu";
+            //         verifyCodeObj.name = "VerifyCodeMenu";
 
-                    var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-                    authFlow.OnAuthComplete += () => authFlow.Destroy();
-                    authFlow.Initialize();
-                }
-                else if (statusCode >= 500 || statusCode == 0)
-                    message = "Unable to connect to server. Please try again later.";
-                ToastNotification.Show(message, "error", color);
-                return;
-            }
-            logger.Log(
-                $"PublishMenuController: World published successfully with id='{worldId}'",
-                this,
-                Logging.LogType.Info
-            );
+            //         var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+            //         authFlow.OnAuthComplete += () => authFlow.Destroy();
+            //         authFlow.Initialize();
+            //     }
+            //     else if (statusCode >= 500 || statusCode == 0)
+            //         message = "Unable to connect to server. Please try again later.";
+            //     ToastNotification.Show(message, "error", color);
+            //     return;
+            // }
+            // logger.Log(
+            //     $"PublishMenuController: World published successfully with id='{worldId}'",
+            //     this,
+            //     Logging.LogType.Info
+            // );
 
-            dataPersistenceManager.CurrentWorldData.id = worldId;
-            dataPersistenceManager.SetWorldId(worldId);
+            // dataPersistenceManager.CurrentWorldData.id = worldId;
+            // dataPersistenceManager.SetWorldId(worldId);
 
-            dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
+            // dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
 
-            ToastNotification.Show("World published successfully", "success", Color.green);
-            CloseMenu();
+            // ToastNotification.Show("World published successfully", "success", Color.green);
+            // CloseMenu();
         }
     }
 }

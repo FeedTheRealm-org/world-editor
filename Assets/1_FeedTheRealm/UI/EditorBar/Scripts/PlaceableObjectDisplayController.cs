@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.Library;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.PlaceableObjects;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using UnityEngine;
@@ -13,7 +16,7 @@ namespace FeedTheRealm.UI.EditorBar
 {
     public class PlaceableObjectDisplayController : MonoBehaviour
     {
-        [SerializeField]
+        [Inject]
         private PlaceablesLibrary placeableObjectLibrary;
 
         [Inject]
@@ -24,17 +27,17 @@ namespace FeedTheRealm.UI.EditorBar
 
         [Inject]
         private EnableInputEvent enableInputEvent;
-        private ListView libraryBar;
-        private List<IPlaceable> currentObjectList = new();
 
-        //private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
+        private ListView libraryBar;
+        private List<string> currentItems = new();
+        private PlaceableObjectCategories currentCategory = PlaceableObjectCategories.Structure;
 
         void Start()
         {
-            UIDocument hudVisualDocument = GetComponent<UIDocument>();
+            var hudVisualDocument = GetComponent<UIDocument>();
             if (hudVisualDocument == null)
             {
-                Debug.LogError("UIDocument component not found on " + gameObject.name);
+                Debug.LogError("UIDocument not found on " + gameObject.name);
                 return;
             }
 
@@ -45,24 +48,17 @@ namespace FeedTheRealm.UI.EditorBar
                 return;
             }
 
-            //categorySelectedEvent.OnRaised += LoadObjectsForCategory;
+            libraryBar.makeItem = MakeListItem;
+            libraryBar.bindItem = BindListItem;
+            libraryBar.itemsSource = currentItems;
 
-            InitializeLibraryBar();
-            //LoadObjectsForCategory(PlaceableObjectCategories.Structure);
+            categorySelectedEvent.OnRaised += LoadObjectsForCategory;
+            LoadObjectsForCategory(PlaceableObjectCategories.Structure);
         }
 
         void OnDestroy()
         {
-            //categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
-        }
-
-        private void InitializeLibraryBar()
-        {
-            //currentObjectList = placeableObjectLibrary.GetPlaceableOptions(currentCategory);
-
-            libraryBar.itemsSource = currentObjectList;
-            libraryBar.makeItem = MakeListItem;
-            libraryBar.bindItem = BindListItem;
+            categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
         }
 
         private VisualElement MakeListItem()
@@ -70,38 +66,29 @@ namespace FeedTheRealm.UI.EditorBar
             var button = new Button();
             button.AddToClassList("placeableObjectOption");
             button.style.width = Length.Percent(100);
-
-            button.RegisterCallback<MouseEnterEvent>(evt =>
-            {
-                enableInputEvent.Raise(false);
-            });
-            button.RegisterCallback<MouseLeaveEvent>(evt =>
-            {
-                enableInputEvent.Raise(true);
-            });
-
+            button.RegisterCallback<MouseEnterEvent>(_ => enableInputEvent.Raise(false));
+            button.RegisterCallback<MouseLeaveEvent>(_ => enableInputEvent.Raise(true));
             return button;
         }
 
         private void BindListItem(VisualElement element, int index)
         {
-            if (element is Button button && index < currentObjectList.Count)
-            {
-                var placeable = currentObjectList[index];
-                button.text = placeable.DisplayName;
-                button.clicked += () =>
-                {
-                    objectSelectedEvent.Raise(placeable);
-                };
-            }
+            if (element is not Button button)
+                return;
+            string id = currentItems[index];
+            button.text = id;
+            button.clicked += () =>
+                objectSelectedEvent.Raise(
+                    new SelectedPlaceable { category = currentCategory, id = id }
+                );
         }
 
-        // private void LoadObjectsForCategory(PlaceableObjectCategories category)
-        // {
-        //     currentCategory = category;
-        //     currentObjectList = placeableObjectLibrary.GetPlaceableOptions(category);
-        //     libraryBar.itemsSource = currentObjectList;
-        //     libraryBar.Rebuild();
-        // }
+        private void LoadObjectsForCategory(PlaceableObjectCategories category)
+        {
+            currentCategory = category;
+            currentItems = placeableObjectLibrary.GetPlaceableOptions(category).Keys.ToList();
+            libraryBar.itemsSource = currentItems;
+            libraryBar.Rebuild();
+        }
     }
 }

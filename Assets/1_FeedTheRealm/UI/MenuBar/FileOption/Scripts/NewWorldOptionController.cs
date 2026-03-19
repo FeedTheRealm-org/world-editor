@@ -15,7 +15,7 @@ namespace FeedTheRealm.UI.MenuBar
 
         public override void Execute()
         {
-            dataPersistenceManager.NewWorld();
+            //dataPersistenceManager.NewWorld();
             SceneManager.LoadScene(worldEditorScene.SceneName);
         }
     }

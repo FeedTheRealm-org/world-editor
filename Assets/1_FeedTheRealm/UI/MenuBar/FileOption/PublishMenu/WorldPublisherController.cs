@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
-using FeedTheRealm.Gameplay.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
@@ -13,9 +12,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
     {
         [SerializeField]
         Logging.Logger logger;
-
-        [SerializeField]
-        StructureLoaderSO structureLoader;
 
         [SerializeField]
         CreatorObjectLibrarySO creatorObjectLibrary;
@@ -155,12 +151,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 .Select(g => g.First())
                 .ToList();
 
-            foreach (var structure in uniqueStructures)
-            {
-                structure.structureFilepath = structureLoader.GetModelFilePath(
-                    structure.structureName
-                );
-            }
+            // foreach (var structure in uniqueStructures)
+            // {
+            //     structure.structureFilepath = structureLoader.GetModelFilePath(
+            //         structure.structureName
+            //     );
+            // }
             return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
         }
 

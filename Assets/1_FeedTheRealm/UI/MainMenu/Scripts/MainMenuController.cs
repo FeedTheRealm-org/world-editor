@@ -43,7 +43,7 @@ namespace FeedTheRealm.UI.MainMenu
         {
             // TODO: in the future, this should be a new scene that lets
             // makers set preset values for their new world
-            dataPersistenceManager.NewWorld();
+            //dataPersistenceManager.NewWorld();
             SceneManager.LoadScene(newWorldScene.SceneName);
         }
 

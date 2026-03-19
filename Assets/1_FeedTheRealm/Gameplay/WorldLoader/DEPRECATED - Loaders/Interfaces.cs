@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using FeedTheRealm.Core.Interfaces;
 using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FTRShared.Runtime.Models;
 
@@ -16,11 +15,5 @@ namespace FeedTheRealm.Gameplay.WorldLoader
     public interface ILoadable
     {
         void LoadWorld(WorldData worldData);
-    }
-
-    public interface IPlaceableLoader
-    {
-        void LoadLibrary();
-        List<IPlaceable> GetObjects();
     }
 }

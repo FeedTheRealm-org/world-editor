@@ -1,8 +1,7 @@
-using System;
-using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates;
 using UnityEngine;
 using VContainer;
@@ -20,9 +19,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         [Inject]
         private EnableEditorEvent enableEditorEvent;
 
+        [Inject]
+        public PlaceablesLibrary placeablesLibrary;
+
         public InputReader inputReader;
         public Camera playerCamera;
-        public IPlaceable SelectedObject { get; private set; }
+        public SelectedPlaceable SelectedObject { get; private set; }
         public bool IsEditorEnabled { get; private set; } = true;
         private IWorldEditorState currentState;
 
@@ -108,23 +110,15 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
             Debug.Log($"Interaction {(enabled ? "enabled" : "disabled")}.");
         }
 
-        private void OnWorldObjectSelected(IPlaceable reference)
+        private void OnWorldObjectSelected(SelectedPlaceable reference)
         {
             if (currentState is PlacingState)
             {
                 SelectedObject = reference;
-                Log($"Switched to: {reference.DisplayName}");
                 return;
             }
             SelectedObject = reference;
             SetState(new PlacingState(this));
-        }
-
-        private void Update()
-        {
-            if (!IsEditorEnabled)
-                return;
-            currentState?.Tick();
         }
     }
 }

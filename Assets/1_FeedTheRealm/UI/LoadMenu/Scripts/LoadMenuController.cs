@@ -37,7 +37,7 @@ namespace FeedTheRealm.UI.LoadMenu
             _mainMenuButton = ui.Q<Button>("MainMenu");
             _listView = ui.Q<ListView>();
 
-            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            //loadedWorlds = dataPersistenceManager.ListAllWorlds();
 
             _mainMenuButton.clicked += OnMainMenuClicked;
 
@@ -74,7 +74,7 @@ namespace FeedTheRealm.UI.LoadMenu
 
         private void OnLoadWorldClicked(string worldName)
         {
-            dataPersistenceManager.SetActiveWorld(worldName);
+            //dataPersistenceManager.SetActiveWorld(worldName);
             SceneManager.LoadScene(gameScene.SceneName);
         }
 

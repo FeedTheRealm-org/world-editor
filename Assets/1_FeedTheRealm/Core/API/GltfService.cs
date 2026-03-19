@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using FTR.Core.Common.Config;
 using GLTFast;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ namespace API
     {
         [SerializeField]
         private ApiConfig apiConfig;
+
+        [SerializeField]
+        private Config config;
         private const string FILE_PROTOCOL = "file://";
 
         public async UniTask Load(GameObject parent, string modelFile)
@@ -28,14 +32,14 @@ namespace API
                 CreateFallback(parent);
                 return;
             }
+            var modelFilepath = $"{FILE_PROTOCOL}{config.ModelsDirectory}/{modelFile}";
             try
             {
                 var gltfImport = new GltfImport();
-                modelFile = FILE_PROTOCOL + modelFile;
-                bool success = await gltfImport.Load(modelFile);
+                bool success = await gltfImport.Load(modelFilepath);
                 if (!success)
                 {
-                    Debug.LogWarning($"Failed to load: {modelFile}");
+                    Debug.LogWarning($"Failed to load: {modelFilepath}");
                     CreateFallback(parent);
                     return;
                 }
@@ -47,7 +51,7 @@ namespace API
             }
             catch (Exception exception)
             {
-                Debug.LogWarning($"GLTF load exception for '{modelFile}': {exception.Message}");
+                Debug.LogWarning($"GLTF load exception for '{modelFilepath}': {exception.Message}");
                 CreateFallback(parent);
             }
         }

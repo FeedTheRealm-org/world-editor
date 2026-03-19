@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
 using API;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FTR.Core.Loaders;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -35,21 +38,15 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             structuresCache = new Dictionary<string, GameObject>();
         }
 
+        /// <summary>
+        /// Returns an instance of the structure with the given id.
+        /// If the structure is not cached, it loads it from disk, caches it and then returns the instance.
+        /// </summary>
         public async UniTask<GameObject> GetItem(string structureId)
-        {
-            return await GetStructureInstance(structureId);
-        }
-
-        public List<string> ListAvailableItems()
-        {
-            return new List<string>(modelsRepository.ListAvailableModels());
-        }
-
-        private async UniTask<GameObject> GetStructureInstance(string structureId)
         {
             if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
             {
-                var modelData = modelsRepository.GetModelData(structureId);
+                var modelData = modelsRepository.GetStructureData(structureId);
                 if (modelData == null)
                 {
                     logger.Log(
@@ -58,7 +55,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                     );
                     return null;
                 }
-                await LoadStructureFromDisk(modelData);
+                await CacheStructureFromDisk(modelData);
                 cachedStructure = structuresCache[structureId];
             }
             var instance = resolver.Instantiate(cachedStructure);
@@ -66,13 +63,26 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             return instance;
         }
 
-        private async UniTask LoadStructureFromDisk(ModelData modeldata)
+        public Dictionary<string, string> ListAvailableItems()
         {
-            GameObject structureInstance = resolver.Instantiate(structurePrefab);
-            await gltfService.Load(structureInstance, modeldata.filePath);
-            structureInstance.name = modeldata.id;
-            structureInstance.SetActive(false);
-            structuresCache[modeldata.id] = structureInstance;
+            List<StructureData> models = modelsRepository.GetModelsData().Values.ToList();
+            return models.ToDictionary(model => model.id, model => model.structureName);
+        }
+
+        /// <summary>
+        /// Loads the structure model from disk and caches it in memory.
+        /// This is done to avoid loading the same model multiple times from disk,
+        /// which can be costly.
+        /// </summary>
+        private async UniTask CacheStructureFromDisk(StructureData structuredata)
+        {
+            // we instanciate the prefab not with the resolver to avoid injecting the dependencies of the structure on the cache instance,
+            // when instanciating actual structures we want the dependencies to be injected, but not when we are caching the model on disk
+            GameObject cacheInstance = Object.Instantiate(structurePrefab);
+            await gltfService.Load(cacheInstance, structuredata.fileName);
+            cacheInstance.GetComponent<ILoadable<StructureData>>().Load(structuredata);
+            cacheInstance.SetActive(false);
+            structuresCache[structuredata.id] = cacheInstance;
         }
     }
 }

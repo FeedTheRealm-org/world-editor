@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using API;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
@@ -41,14 +42,14 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             };
         }
 
-        public List<string> ListAvailableItems()
+        public Dictionary<string, string> ListAvailableItems()
         {
             return new List<string>
             {
                 SpawnerCategories.AggresiveNPC,
                 SpawnerCategories.FriendlyNPC,
                 SpawnerCategories.PlayerSpawnpoint,
-            };
+            }.ToDictionary(item => item, item => item);
         }
     }
 }

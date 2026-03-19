@@ -7,7 +7,8 @@ namespace FeedTheRealm.Core.Library
 {
     public interface ILibrary
     {
-        List<string> ListAvailableItems();
+        // Returns a dictionary where the key is the item name and the value is a user-friendly display name
+        Dictionary<string, string> ListAvailableItems();
         UniTask<GameObject> GetItem(string itemName);
     }
 }

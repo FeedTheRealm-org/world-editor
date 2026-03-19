@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FTR.Core.Common.Config;
+using FTRShared.Runtime.Models;
 using UnityEngine;
-using VContainer;
 
 namespace FeedTheRealm.Core.Repository
 {
-    [CreateAssetMenu(fileName = "ModelsRepository", menuName = "Repository/ModelsRepository")]
+    [Serializable]
+    public class SerializedStructureData
+    {
+        public List<StructureData> structures = new();
+    }
+
+    [CreateAssetMenu(
+        fileName = "ModelsRepository",
+        menuName = "Scriptable Objects/Repository/ModelsRepository"
+    )]
     public class ModelsRepository : ScriptableObject
     {
         [SerializeField]
@@ -17,7 +26,7 @@ namespace FeedTheRealm.Core.Repository
         [SerializeField]
         private Logging.Logger logger;
         private bool isInitialized = false;
-        private Dictionary<string, ModelData> modelsData;
+        private Dictionary<string, StructureData> modelsData;
 
         public void Initialize()
         {
@@ -31,30 +40,33 @@ namespace FeedTheRealm.Core.Repository
                 GenerateDefaultFile();
 
             var modelsList = LoadFromDisk();
-            modelsData = modelsList.ToDictionary(m => m.name, m => m);
+            modelsData = modelsList.ToDictionary(m => m.id, m => m);
             logger.Log($"ModelsRepository loaded {modelsData.Count} models", Logging.LogType.Info);
             isInitialized = true;
         }
 
-        public ModelData GetModelData(string modelName)
+        public StructureData GetStructureData(string structureName)
         {
-            if (modelsData.TryGetValue(modelName, out var modelData))
-                return modelData;
+            if (modelsData.TryGetValue(structureName, out var structureData))
+                return structureData;
             else
-                logger.Log($"Model {modelName} not found in repository", Logging.LogType.Error);
+                logger.Log(
+                    $"Structure {structureName} not found in repository",
+                    Logging.LogType.Error
+                );
             return null;
         }
 
-        public List<string> ListAvailableModels()
+        public Dictionary<string, StructureData> GetModelsData()
         {
-            return modelsData.Keys.ToList();
+            return modelsData;
         }
 
         private void GenerateDefaultFile()
         {
             logger.Log(
                 $"Models data file not found at {config.ModelsDataFile}, generating default file.",
-                Logging.LogType.Warning
+                Logging.LogType.Error
             );
             string modelsDir = config.ModelsDirectory;
             if (!Directory.Exists(modelsDir))
@@ -62,7 +74,7 @@ namespace FeedTheRealm.Core.Repository
                 // TODO: consider connecting this to core service in case the users doesnt have the default models
                 logger.Log(
                     $"Models directory not found at {modelsDir}, Please make sure to add yout models here!",
-                    Logging.LogType.Warning
+                    Logging.LogType.Error
                 );
                 Directory.CreateDirectory(modelsDir);
                 return;
@@ -76,25 +88,25 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
 
             if (modelFiles.Count == 0)
-                logger.Log("No GLB models found.", Logging.LogType.Warning);
+                logger.Log("No GLB models found.", Logging.LogType.Error);
 
             var models = modelFiles
                 .Select(filePath =>
                 {
-                    string fileName = Path.GetFileNameWithoutExtension(filePath);
-                    return new ModelData
-                    {
-                        id = Guid.NewGuid().ToString(),
-                        name = fileName,
-                        filePath = filePath,
-                        defaultRotation = Vector3.zero,
-                        defaultScale = Vector3.one,
-                        colliders = new List<BoxColliderData>(),
-                    };
+                    string structureName = Path.GetFileNameWithoutExtension(filePath);
+                    string fileName = Path.GetFileName(filePath);
+                    var structureData = new StructureData(
+                        id: Guid.NewGuid().ToString(),
+                        structureName: structureName,
+                        size: Vector3.one,
+                        rotation: Vector3.zero,
+                        fileName: fileName
+                    );
+                    return structureData;
                 })
                 .ToList();
 
-            var serialized = new SerializedModelData { models = models };
+            var serialized = new SerializedStructureData { structures = models };
 
             string json = JsonUtility.ToJson(serialized, true);
             File.WriteAllText(config.ModelsDataFile, json);
@@ -102,18 +114,18 @@ namespace FeedTheRealm.Core.Repository
             logger.Log($"Generated models file with {models.Count} models", Logging.LogType.Info);
         }
 
-        private List<ModelData> LoadFromDisk()
+        private List<StructureData> LoadFromDisk()
         {
             try
             {
                 string json = File.ReadAllText(config.ModelsDataFile);
-                var serialized = JsonUtility.FromJson<SerializedModelData>(json);
-                return serialized.models;
+                var serialized = JsonUtility.FromJson<SerializedStructureData>(json);
+                return serialized.structures;
             }
             catch (Exception ex)
             {
                 logger.Log($"Error loading models data: {ex.Message}", Logging.LogType.Error);
-                return new List<ModelData>();
+                return new List<StructureData>();
             }
         }
     }

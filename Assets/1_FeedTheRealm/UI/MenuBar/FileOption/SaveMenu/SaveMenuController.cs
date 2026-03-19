@@ -3,6 +3,7 @@ using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
 {
@@ -10,6 +11,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
     public class SaveMenuController : MenuController
     {
         [SerializeField]
+        private WorldSelector worldSelector;
+
+        [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
         private Button saveButton;
@@ -25,10 +29,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
             closeButton = root.Q<Button>("Close");
             nameInput = root.Q<TextField>("NameInput");
 
-            WorldData worldData = dataPersistenceManager.CurrentWorldData;
-            if (worldData != null && !string.IsNullOrEmpty(worldData.worldName))
+            string worldName = worldSelector.selectedWorld;
+            if (worldName != null && !string.IsNullOrEmpty(worldName))
             {
-                nameInput.value = worldData.worldName;
+                nameInput.value = worldName;
             }
 
             saveButton.clicked += OnSaveClicked;

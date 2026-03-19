@@ -9,7 +9,10 @@ using VContainer;
 
 namespace FeedTheRealm.Core.Repository
 {
-    [CreateAssetMenu(fileName = "WorldsRepository", menuName = "Repository/WorldsRepository")]
+    [CreateAssetMenu(
+        fileName = "WorldsRepository",
+        menuName = "Scriptable Objects/Repository/WorldsRepository"
+    )]
     public class WorldsRepository : ScriptableObject
     {
         [SerializeField]

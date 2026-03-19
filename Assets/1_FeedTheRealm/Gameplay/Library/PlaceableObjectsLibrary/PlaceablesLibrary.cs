@@ -20,7 +20,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             library[PlaceableObjectCategories.Spawner] = spawnerLibrary;
         }
 
-        public List<string> GetPlaceableOptions(PlaceableObjectCategories category)
+        public Dictionary<string, string> GetPlaceableOptions(PlaceableObjectCategories category)
         {
             if (!library.ContainsKey(category))
             {
@@ -28,7 +28,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                     $"Category {category} not found in Placeable Objects Library",
                     Logging.LogType.Error
                 );
-                return new List<string>();
+                return new Dictionary<string, string>();
             }
             return library[category].ListAvailableItems();
         }

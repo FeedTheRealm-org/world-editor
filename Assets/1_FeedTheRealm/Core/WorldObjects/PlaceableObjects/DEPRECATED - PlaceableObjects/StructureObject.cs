@@ -9,7 +9,7 @@ namespace FeedTheRealm.Core.WorldObjects.PlaceableObjects
     // TODO: refactor this so that the strcuture data doesnt have implicit dependency on the GameObject,
     // just give the data to the prefab and let it handle itself
     [System.Serializable]
-    public class StructureObject : IPlaceable
+    public class StructureObject
     {
         public StructureData data;
         public string structureFilepath;

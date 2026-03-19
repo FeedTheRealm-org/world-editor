@@ -18,7 +18,7 @@ namespace FeedTheRealm.UI.MenuBar
             if (mainMenuScene != null)
             {
                 SceneManager.LoadScene(mainMenuScene.SceneName);
-                dataPersistenceManager.UnsetActiveWorld();
+                //dataPersistenceManager.UnsetActiveWorld();
             }
             else
                 Debug.LogError("ExitToMenuOptionController: MainMenuScene reference is not set!");
