@@ -7,17 +7,33 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 {
     public class WorldSetupManager
     {
-        private readonly WorldSetupEvent setupEvent;
+        readonly List<ISetup> setupServices;
 
-        public WorldSetupManager(WorldSetupEvent setupEvent, IEnumerable<ISetup> setupServices)
+        public WorldSetupManager(
+            BaseplateSetupService baseplateSetupService,
+            CameraSetupService cameraSetupService,
+            LightingSetupService lightingSetupService,
+            PlayerSetupService playerSetupService,
+            WorldEditorSetupService worldEditorSetupService,
+            WorldUISetupService worldUISetupService
+        )
         {
-            this.setupEvent = setupEvent;
+            setupServices = new List<ISetup>
+            {
+                baseplateSetupService,
+                cameraSetupService,
+                lightingSetupService,
+                playerSetupService,
+                worldEditorSetupService,
+                worldUISetupService,
+            };
         }
 
         public void ExecuteSetup()
         {
             Debug.Log("Executing World Setup...");
-            setupEvent.Raise();
+            foreach (var service in setupServices)
+                service.Setup();
         }
     }
 }

@@ -14,8 +14,6 @@ namespace FeedTheRealm.Core.EventChannels
     [CreateAssetMenu(fileName = "EventChannelRegistry", menuName = "Events/EventChannelRegistry")]
     public class EventChannelRegistry : ScriptableObject
     {
-        [Header("Setup Events")]
-        public WorldSetupEvent setupEvent;
         public LoadWorldEvent loadWorldEvent;
 
         [Header("World Events")]
@@ -49,7 +47,6 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
-            builder.RegisterInstance(setupEvent);
             builder.RegisterInstance(loadWorldEvent);
         }
 
@@ -64,7 +61,6 @@ namespace FeedTheRealm.Core.EventChannels
             ValidateField(tickEvent, nameof(tickEvent));
             ValidateField(fixedTickEvent, nameof(fixedTickEvent));
             ValidateField(lateTickEvent, nameof(lateTickEvent));
-            ValidateField(setupEvent, nameof(setupEvent));
             ValidateField(loadWorldEvent, nameof(loadWorldEvent));
         }
 

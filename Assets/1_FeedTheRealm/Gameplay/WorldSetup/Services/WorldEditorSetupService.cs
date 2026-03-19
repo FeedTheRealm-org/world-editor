@@ -1,5 +1,6 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Core.WorldSetup;
 using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine;
 using UnityEngine;
 using VContainer;
@@ -7,7 +8,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class WorldEditorSetupService : SetupService
+    public class WorldEditorSetupService : ISetup
     {
         private readonly GameObject worldEditorPrefab;
         private readonly IObjectResolver objectResolver;
@@ -16,10 +17,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         public WorldEditorSetupService(
             WorldPrefabProvider worldPrefabProvider,
             CameraSetupService cameraSetup,
-            IObjectResolver objectResolver,
-            WorldSetupEvent setupEvent
+            IObjectResolver objectResolver
         )
-            : base(setupEvent)
         {
             if (worldPrefabProvider == null)
             {
@@ -31,7 +30,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.cameraSetup = cameraSetup;
         }
 
-        public override void Setup()
+        public void Setup()
         {
             GameObject worldEditorInstance = Object.Instantiate(
                 worldEditorPrefab,

@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deed9304972fe80e38c09080c0fce80f, type: 3}
   m_Name: ModelsRepository
   m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.Repository.ModelsRepository
-  config: {fileID: 0}
-  logger: {fileID: 0}
+  config: {fileID: 11400000, guid: f6ade15aa3e7bf4c4ad3fab235451acb, type: 2}
+  logger: {fileID: 11400000, guid: 3c5c46f2f877f5f02b0d62e8fce1df59, type: 2}
+  isInitialized: 1

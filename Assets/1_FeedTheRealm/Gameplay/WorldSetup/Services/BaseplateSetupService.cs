@@ -1,25 +1,22 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Core.WorldSetup;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class BaseplateSetupService : SetupService
+    public class BaseplateSetupService : ISetup
     {
         private readonly GameObject worldPrefab;
         private readonly LayerMask worldLayerMask;
 
-        public BaseplateSetupService(
-            WorldPrefabProvider worldPrefabProvider,
-            WorldSetupEvent setupEvent
-        )
-            : base(setupEvent)
+        public BaseplateSetupService(WorldPrefabProvider worldPrefabProvider)
         {
             worldPrefab = worldPrefabProvider.worldPrefab;
             worldLayerMask = worldPrefabProvider.worldLayerMask;
         }
 
-        public override void Setup()
+        public void Setup()
         {
             var worldInstance = Object.Instantiate(worldPrefab);
             worldInstance.name = "World";

@@ -50,6 +50,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private ModelsRepository modelsRepository;
 
+        [SerializeField]
+        private WorldsRepository worldsRepository;
+
         [Header("Libraries")]
         [SerializeField]
         private CreatorObjectLibrarySO creatorObjectLibrary;
@@ -99,6 +102,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             ValidateField(config);
             ValidateField(logger);
             ValidateField(modelsRepository);
+            ValidateField(worldsRepository);
             ValidateField(worldPrefabProvider);
             ValidateField(WorldUIObjectProvider);
             ValidateField(creatorObjectLibrary);
@@ -114,6 +118,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(modelsRepository);
+            builder.RegisterInstance(worldsRepository);
             builder.RegisterInstance(creatorObjectLibrary);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);

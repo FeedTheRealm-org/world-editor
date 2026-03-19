@@ -25,8 +25,11 @@ namespace FeedTheRealm.Core.Repository
 
         [SerializeField]
         private Logging.Logger logger;
+
+        [SerializeField]
         private bool isInitialized = false;
-        private Dictionary<string, StructureData> modelsData;
+
+        private Dictionary<string, StructureData> modelsData = new();
 
         public void Initialize()
         {
@@ -39,79 +42,74 @@ namespace FeedTheRealm.Core.Repository
             if (!File.Exists(config.ModelsDataFile))
                 GenerateDefaultFile();
 
-            var modelsList = LoadFromDisk();
-            modelsData = modelsList.ToDictionary(m => m.id, m => m);
-            logger.Log($"ModelsRepository loaded {modelsData.Count} models", Logging.LogType.Info);
+            modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
+            logger.Log($"ModelsRepository loaded {modelsData.Count} models.", Logging.LogType.Info);
             isInitialized = true;
         }
 
-        public StructureData GetStructureData(string structureName)
+        public StructureData GetStructureData(string id)
         {
-            if (modelsData.TryGetValue(structureName, out var structureData))
-                return structureData;
-            else
-                logger.Log(
-                    $"Structure {structureName} not found in repository",
-                    Logging.LogType.Error
-                );
+            if (modelsData.TryGetValue(id, out var data))
+                return data;
+
+            logger.Log($"Structure '{id}' not found in repository.", Logging.LogType.Error);
             return null;
         }
 
-        public Dictionary<string, StructureData> GetModelsData()
-        {
-            return modelsData;
-        }
+        public Dictionary<string, StructureData> GetModelsData() => modelsData;
 
         private void GenerateDefaultFile()
         {
-            logger.Log(
-                $"Models data file not found at {config.ModelsDataFile}, generating default file.",
-                Logging.LogType.Error
-            );
+            string dataFileDir = Path.GetDirectoryName(config.ModelsDataFile);
+            if (!string.IsNullOrEmpty(dataFileDir))
+                Directory.CreateDirectory(dataFileDir);
+
             string modelsDir = config.ModelsDirectory;
             if (!Directory.Exists(modelsDir))
             {
-                // TODO: consider connecting this to core service in case the users doesnt have the default models
                 logger.Log(
-                    $"Models directory not found at {modelsDir}, Please make sure to add yout models here!",
-                    Logging.LogType.Error
+                    $"Models directory not found at '{modelsDir}'. Creating it — add your .glb files there.",
+                    Logging.LogType.Warning
                 );
                 Directory.CreateDirectory(modelsDir);
+                WriteToFile(new List<StructureData>());
                 return;
             }
 
             logger.Log($"Scanning models directory: {modelsDir}", Logging.LogType.Info);
 
-            var modelFiles = Directory
-                .GetFiles(modelsDir, "*.*", SearchOption.AllDirectories)
-                .Where(f => f.EndsWith(".glb", StringComparison.OrdinalIgnoreCase))
+            var models = Directory
+                .GetFiles(modelsDir, "*.glb", SearchOption.AllDirectories)
+                .Select(path => new StructureData(
+                    id: Guid.NewGuid().ToString(),
+                    structureName: Path.GetFileNameWithoutExtension(path),
+                    size: Vector3.one,
+                    rotation: Vector3.zero,
+                    fileName: Path.GetFileName(path)
+                ))
                 .ToList();
 
-            if (modelFiles.Count == 0)
-                logger.Log("No GLB models found.", Logging.LogType.Error);
+            if (models.Count == 0)
+                logger.Log("No .glb models found in models directory.", Logging.LogType.Warning);
 
-            var models = modelFiles
-                .Select(filePath =>
-                {
-                    string structureName = Path.GetFileNameWithoutExtension(filePath);
-                    string fileName = Path.GetFileName(filePath);
-                    var structureData = new StructureData(
-                        id: Guid.NewGuid().ToString(),
-                        structureName: structureName,
-                        size: Vector3.one,
-                        rotation: Vector3.zero,
-                        fileName: fileName
-                    );
-                    return structureData;
-                })
-                .ToList();
+            WriteToFile(models);
+            logger.Log($"Generated models file with {models.Count} models.", Logging.LogType.Info);
+        }
 
-            var serialized = new SerializedStructureData { structures = models };
-
-            string json = JsonUtility.ToJson(serialized, true);
-            File.WriteAllText(config.ModelsDataFile, json);
-
-            logger.Log($"Generated models file with {models.Count} models", Logging.LogType.Info);
+        private void WriteToFile(List<StructureData> models)
+        {
+            try
+            {
+                string json = JsonUtility.ToJson(
+                    new SerializedStructureData { structures = models },
+                    true
+                );
+                File.WriteAllText(config.ModelsDataFile, json);
+            }
+            catch (Exception ex)
+            {
+                logger.Log($"Failed to write models file: {ex.Message}", Logging.LogType.Error);
+            }
         }
 
         private List<StructureData> LoadFromDisk()
@@ -119,8 +117,8 @@ namespace FeedTheRealm.Core.Repository
             try
             {
                 string json = File.ReadAllText(config.ModelsDataFile);
-                var serialized = JsonUtility.FromJson<SerializedStructureData>(json);
-                return serialized.structures;
+                return JsonUtility.FromJson<SerializedStructureData>(json)?.structures
+                    ?? new List<StructureData>();
             }
             catch (Exception ex)
             {

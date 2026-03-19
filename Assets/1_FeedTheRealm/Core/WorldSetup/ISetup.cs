@@ -1,8 +1,6 @@
-using System;
-
 namespace FeedTheRealm.Core.WorldSetup
 {
-    public interface ISetup : IDisposable
+    public interface ISetup
     {
         void Setup();
     }

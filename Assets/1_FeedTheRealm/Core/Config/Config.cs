@@ -8,8 +8,7 @@ namespace FTR.Core.Common.Config
     {
         [Header("Reinitialization Options")]
         [SerializeField]
-        private bool forceReinitialize = false;
-        public bool ForceReinitialize => forceReinitialize;
+        public bool ForceReinitialize = false;
 
         [Header("Persistent Model file config")]
         [SerializeField]
