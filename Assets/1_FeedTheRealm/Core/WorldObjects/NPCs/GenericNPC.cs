@@ -16,12 +16,12 @@ namespace FeedTheRealm.Core.WorldObjects.NPCs
             npcDialog = npcData.npcDialog;
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.npcs.RemoveAll(npc => npc.id == ObjectId);
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             NPCData npcData = new(ObjectId, DisplayName, description, spriteFile, npcDialog);
             worldData.npcs.Add(npcData);

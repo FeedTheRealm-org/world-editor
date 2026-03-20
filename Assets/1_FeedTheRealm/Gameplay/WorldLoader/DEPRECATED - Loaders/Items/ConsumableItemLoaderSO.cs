@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader.Items
     )]
     public class ConsumableItemLoaderSO : ItemLoader<ConsumableItemData>
     {
-        protected override IEnumerable<ConsumableItemData> GetData(WorldData worldData)
+        protected override IEnumerable<ConsumableItemData> GetData(WorldDataOld worldData)
         {
             return worldData.consumableItems ?? new List<ConsumableItemData>();
         }

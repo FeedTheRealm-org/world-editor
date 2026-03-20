@@ -88,7 +88,7 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
             );
     }
 
-    public void LoadWorld(WorldData worldData)
+    public void LoadWorld(WorldDataOld worldData)
     {
         shops.Clear();
         if (worldData == null)
@@ -111,7 +111,7 @@ public class ShopManagerSO : ScriptableObject, ILoadable, IPersistent
     }
 
     // TODO: this needs a validation in cases when a CreatorObject was deleted
-    public void SaveData(ref WorldData worldData)
+    public void SaveData(ref WorldDataOld worldData)
     {
         worldData.worldShopsData.shops.Clear();
         foreach (var shop in shops)

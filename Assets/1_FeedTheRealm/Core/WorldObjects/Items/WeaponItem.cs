@@ -20,7 +20,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
             ammo = weaponItemData.ammo;
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             WeaponItemData weaponItemData = itemDataBuilder
                 .SetItemData(ObjectId, DisplayName, description, spriteFile)
@@ -28,7 +28,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
             worldData.weaponItems.Add(weaponItemData);
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.weaponItems.RemoveAll(item => item.id == ObjectId);
         }

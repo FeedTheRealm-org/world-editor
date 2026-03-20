@@ -107,7 +107,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
         }
 
         // TODO: REMOVE: the data persistence manager is in charge of handleing save operations
-        public void SaveData(ref WorldData worldData)
+        public void SaveData(ref WorldDataOld worldData)
         {
             foreach (var loader in loaderCache.Values)
             {

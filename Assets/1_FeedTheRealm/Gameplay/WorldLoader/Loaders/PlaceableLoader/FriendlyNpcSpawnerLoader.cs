@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         public FriendlyNpcSpawnerLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<NPCSpawnerData> GetData(WorldData worldData)
+        protected override List<NPCSpawnerData> GetData(WorldDataOld worldData)
         {
             return worldData.npcSpawnAreas;
         }

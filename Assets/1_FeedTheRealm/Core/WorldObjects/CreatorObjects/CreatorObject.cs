@@ -32,11 +32,11 @@ namespace FeedTheRealm.Core.WorldObjects.CreatorObjects
             _isDeleted = true;
         }
 
-        public abstract void SaveObject(ref WorldData worldData);
+        public abstract void SaveObject(ref WorldDataOld worldData);
 
-        public abstract void DeleteObject(ref WorldData worldData);
+        public abstract void DeleteObject(ref WorldDataOld worldData);
 
-        public void SaveData(ref WorldData worldData)
+        public void SaveData(ref WorldDataOld worldData)
         {
             Debug.Log(
                 $"Saving CreatorObject: {DisplayName} (ID: {ObjectId}), IsDeleted: {_isDeleted}"

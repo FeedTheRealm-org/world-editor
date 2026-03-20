@@ -20,12 +20,12 @@ namespace FeedTheRealm.Core.WorldObjects.Quests
             targetAmount = questData.targetAmount;
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.quests.RemoveAll(quest => quest.id == ObjectId);
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             QuestData questData = new(
                 ObjectId,

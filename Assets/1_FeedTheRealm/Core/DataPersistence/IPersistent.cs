@@ -4,6 +4,6 @@ namespace FeedTheRealm.Core.DataPersistence
 {
     public interface IPersistent
     {
-        void SaveData(ref WorldData worldData);
+        void SaveData(ref WorldDataOld worldData);
     }
 }

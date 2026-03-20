@@ -24,8 +24,6 @@ namespace FeedTheRealm.Core.Repository
         [Inject]
         private Logging.Logger logger;
 
-        private Dictionary<string, StructureData> modelsData;
-
         public ModelsRepository(Config config, Logging.Logger logger)
         {
             this.config = config;
@@ -34,24 +32,17 @@ namespace FeedTheRealm.Core.Repository
             {
                 GenerateDefaultFile();
             }
-            modelsData = LoadFromDisk().ToDictionary(m => m.id, m => m);
-            logger.Log($"ModelsRepository loaded {modelsData.Count} models.", Logging.LogType.Info);
         }
 
         // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
         // We implement this interface just to ensure that the repository is created when registered.
         public void Initialize() { }
 
-        public StructureData GetStructureData(string id)
+        public Dictionary<string, StructureData> GetModelsData()
         {
-            if (modelsData.TryGetValue(id, out var data))
-                return data;
-
-            logger.Log($"Structure '{id}' not found in repository.", Logging.LogType.Error);
-            return null;
+            return LoadFromDisk().ToDictionary(m => m.id, m => m);
+            ;
         }
-
-        public Dictionary<string, StructureData> GetModelsData() => modelsData;
 
         private void GenerateDefaultFile()
         {

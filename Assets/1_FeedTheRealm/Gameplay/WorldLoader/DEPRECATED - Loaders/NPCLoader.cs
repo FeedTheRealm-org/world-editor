@@ -64,7 +64,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             }
         }
 
-        public void LoadWorld(WorldData worldData)
+        public void LoadWorld(WorldDataOld worldData)
         {
             npcs.Clear();
             if (worldData == null)

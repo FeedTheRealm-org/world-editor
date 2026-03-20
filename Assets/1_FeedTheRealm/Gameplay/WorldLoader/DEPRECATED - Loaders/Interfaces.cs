@@ -14,6 +14,6 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
     public interface ILoadable
     {
-        void LoadWorld(WorldData worldData);
+        void LoadWorld(WorldDataOld worldData);
     }
 }

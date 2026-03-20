@@ -45,7 +45,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             collider.size = transform.InverseTransformVector(combined.size);
         }
 
-        public override void SaveData(ref WorldData worldData)
+        public override void SaveData(ref WorldDataOld worldData)
         {
             data.position = gameObject.transform.position;
             data.rotation = gameObject.transform.rotation.eulerAngles;

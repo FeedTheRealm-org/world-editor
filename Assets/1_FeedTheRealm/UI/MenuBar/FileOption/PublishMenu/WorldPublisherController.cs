@@ -36,7 +36,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         /// If any step fails, returns the error message.
         /// </summary>
         public async Task<(string, string, long)> PublishWorld(
-            WorldData worldData,
+            WorldDataOld worldData,
             string worldFile,
             string description
         )
@@ -137,7 +137,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         ///  Uploads model files for a world.
         ///  If an error occurs, returns the error message.
         /// </summary>
-        private async Task<string> PublishModels(WorldData worldData, string worldId)
+        private async Task<string> PublishModels(WorldDataOld worldData, string worldId)
         {
             if (worldData.objectPlacementData.Count == 0)
                 return null;

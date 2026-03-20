@@ -19,12 +19,12 @@ namespace FeedTheRealm.Core.WorldObjects.LootTable
             lootItems = lootTableData.lootItems;
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.lootTables.RemoveAll(lootTable => lootTable.id == ObjectId);
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             LootTableData lootTableData = new(
                 ObjectId,

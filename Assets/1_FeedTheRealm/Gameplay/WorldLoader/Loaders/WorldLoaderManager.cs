@@ -38,7 +38,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
-            WorldData worldData = worldsRepository.GetWorldZone(
+            WorldDataOld worldData = worldsRepository.GetWorldData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
             );

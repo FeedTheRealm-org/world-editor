@@ -23,10 +23,10 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             this.placeableLibrary = placeableLibrary;
         }
 
-        protected abstract List<TData> GetData(WorldData worldData);
+        protected abstract List<TData> GetData(WorldDataOld worldData);
         protected abstract UniTask<GameObject> GetObject(TData data);
 
-        public async UniTask Load(WorldData worldData)
+        public async UniTask Load(WorldDataOld worldData)
         {
             var dataList = GetData(worldData);
 

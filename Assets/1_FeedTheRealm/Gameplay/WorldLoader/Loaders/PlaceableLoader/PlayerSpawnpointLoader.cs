@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         public PlayerSpawnpointLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<PlayerSpawnerData> GetData(WorldData worldData)
+        protected override List<PlayerSpawnerData> GetData(WorldDataOld worldData)
         {
             return worldData.playerSpawnAreas;
         }

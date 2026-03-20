@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         public StructureLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<StructureData> GetData(WorldData worldData)
+        protected override List<StructureData> GetData(WorldDataOld worldData)
         {
             return worldData.objectPlacementData;
         }

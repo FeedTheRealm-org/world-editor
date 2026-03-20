@@ -25,6 +25,12 @@ namespace FTR.Core.Common.Config
         private string worldsFileExtension = ".world";
 
         [SerializeField]
+        private string worldDataFileName = "world.data";
+
+        [SerializeField]
+        private string creatablesFileName = "creatables.data";
+
+        [SerializeField]
         private string zoneFilePrefix = "zone_";
 
         public string ModelsDataFile =>
@@ -34,6 +40,8 @@ namespace FTR.Core.Common.Config
         public string WorldDirectory =>
             Path.Combine(Application.persistentDataPath, worldsDirectory);
         public string WorldFileExtension => worldsFileExtension;
+        public string WorldDataFilename => worldDataFileName;
+        public string CreatablesFileName => creatablesFileName;
         public string ZoneFilePrefix => zoneFilePrefix;
     }
 }

@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader.Items
     )]
     public class WeaponItemLoaderSO : ItemLoader<WeaponItemData>
     {
-        protected override IEnumerable<WeaponItemData> GetData(WorldData worldData)
+        protected override IEnumerable<WeaponItemData> GetData(WorldDataOld worldData)
         {
             return worldData.weaponItems ?? new List<WeaponItemData>();
         }

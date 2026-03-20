@@ -57,7 +57,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             }
         }
 
-        public void LoadWorld(WorldData worldData)
+        public void LoadWorld(WorldDataOld worldData)
         {
             messages.Clear();
             if (worldData == null)

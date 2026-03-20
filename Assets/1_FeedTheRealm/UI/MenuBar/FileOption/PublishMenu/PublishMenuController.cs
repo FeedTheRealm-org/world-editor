@@ -29,7 +29,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private Label nameInput;
         private TextField descriptionInput;
         private VisualElement root;
-        private WorldData worldData;
+        private WorldDataOld worldData;
 
         private void OnEnable()
         {

@@ -29,7 +29,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             );
         }
 
-        public override void SaveData(ref WorldData worldData)
+        public override void SaveData(ref WorldDataOld worldData)
         {
             data.Position = gameObject.transform.position;
             data.Radius = transform.localScale.x;

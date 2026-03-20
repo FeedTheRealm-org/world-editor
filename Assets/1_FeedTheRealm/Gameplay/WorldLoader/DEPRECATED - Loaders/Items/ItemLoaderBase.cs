@@ -59,7 +59,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader.Items
             }
         }
 
-        public void LoadWorld(WorldData worldData)
+        public void LoadWorld(WorldDataOld worldData)
         {
             items.Clear();
             if (worldData == null)
@@ -78,7 +78,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader.Items
             }
         }
 
-        protected abstract IEnumerable<TItemData> GetData(WorldData worldData);
+        protected abstract IEnumerable<TItemData> GetData(WorldDataOld worldData);
         protected abstract CreatorObject CreateItem(TItemData data);
     }
 }

@@ -35,7 +35,7 @@ namespace FeedTheRealm.Core.WorldObjects.Dialogs
             this.dialogId = dialogId;
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             var dialog = worldData.dialogs.Find(d => d.id == dialogId);
             if (dialog != null && dialog.messages != null)
@@ -44,7 +44,7 @@ namespace FeedTheRealm.Core.WorldObjects.Dialogs
             }
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             MessageData messageData = new(ObjectId, Sender, Content);
             var dialog = worldData.dialogs.Find(d => d.id == dialogId);

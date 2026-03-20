@@ -20,6 +20,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         private ModelsRepository modelsRepository;
         private GameObject structurePrefab;
         private Logging.Logger logger;
+        private Dictionary<string, StructureData> modelsData;
         private Dictionary<string, GameObject> structuresCache;
         private IObjectResolver resolver;
 
@@ -37,6 +38,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             this.resolver = resolver;
             structurePrefab = prefabProvider.structurePrefab;
             structuresCache = new Dictionary<string, GameObject>();
+            modelsData = modelsRepository.GetModelsData();
         }
 
         /// <summary>
@@ -45,12 +47,12 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         /// </summary>
         public async UniTask<GameObject> GetItem(string structureId)
         {
-            logger.Log($"GetItem called for {structureId}"); // add this first
+            logger.Log($"GetItem called for {structureId}");
             try
             {
                 if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
                 {
-                    var modelData = modelsRepository.GetStructureData(structureId);
+                    var modelData = modelsData.GetValueOrDefault(structureId);
                     if (modelData == null)
                     {
                         logger.Log(
@@ -59,15 +61,14 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                         );
                         return null;
                     }
-
                     await CacheStructureFromDisk(modelData);
                     cachedStructure = structuresCache[structureId];
                 }
 
                 // Instantiate and load data onto the new instance
                 var instance = resolver.Instantiate(cachedStructure);
-                var modelData2 = modelsRepository.GetStructureData(structureId);
-                instance.GetComponent<ILoadable<StructureData>>().Load(modelData2);
+                var instanceModelData = modelsData.GetValueOrDefault(structureId);
+                instance.GetComponent<ILoadable<StructureData>>().Load(instanceModelData);
                 instance.SetActive(true);
 
                 logger.Log($"Successfully instantiated {structureId}");

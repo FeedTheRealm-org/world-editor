@@ -20,7 +20,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
             maxStack = consumableItemData.maxStack;
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             ConsumableItemData consumableItemData = itemDataBuilder
                 .SetItemData(ObjectId, DisplayName, description, spriteFile)
@@ -28,7 +28,7 @@ namespace FeedTheRealm.Core.WorldObjects.Items
             worldData.consumableItems.Add(consumableItemData);
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.consumableItems.RemoveAll(item => item.id == ObjectId);
         }

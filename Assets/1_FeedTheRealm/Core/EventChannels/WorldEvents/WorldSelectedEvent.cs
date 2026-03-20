@@ -5,5 +5,5 @@ using UnityEngine;
 namespace FeedTheRealm.Core.EventChannels.WorldEvents
 {
     [CreateAssetMenu(menuName = "Events/WorldSelectedEvent")]
-    public class WorldSelectedEvent : EventChannelSO<WorldData> { }
+    public class WorldSelectedEvent : EventChannelSO<WorldDataOld> { }
 }

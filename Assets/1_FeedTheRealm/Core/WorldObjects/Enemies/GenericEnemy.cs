@@ -24,12 +24,12 @@ namespace FeedTheRealm.Core.WorldObjects.Enemies
             lootTableId = enemyData.lootTableId;
         }
 
-        public override void DeleteObject(ref WorldData worldData)
+        public override void DeleteObject(ref WorldDataOld worldData)
         {
             worldData.enemies.RemoveAll(enemy => enemy.id == ObjectId);
         }
 
-        public override void SaveObject(ref WorldData worldData)
+        public override void SaveObject(ref WorldDataOld worldData)
         {
             EnemyData enemyData = new(
                 ObjectId,

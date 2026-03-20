@@ -12,6 +12,6 @@ namespace FTR.Core.Loaders
     /// </summary>
     public interface ILoader
     {
-        UniTask Load(WorldData worldData);
+        UniTask Load(WorldDataOld worldData);
     }
 }
