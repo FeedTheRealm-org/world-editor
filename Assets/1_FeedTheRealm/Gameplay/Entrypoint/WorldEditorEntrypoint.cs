@@ -11,13 +11,13 @@ namespace FeedTheRealm.Gameplay.Entrypoint
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {
         private readonly WorldSetupManager worldSetup;
-        private readonly WorldLoaderManager worldLoaderManager;
+        private readonly ZoneLoaderManager worldLoaderManager;
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
 
         public WorldEditorEntrypoint(
-            WorldLoaderManager worldLoaderManager,
+            ZoneLoaderManager worldLoaderManager,
             WorldSetupManager worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,

@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.WorldLoader
 {
@@ -23,12 +20,25 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             this.placeableLibrary = placeableLibrary;
         }
 
-        protected abstract List<TData> GetData(WorldDataOld worldData);
+        /// <summary>
+        /// Returns the list of data to be loaded for this loader.
+        /// Classes that inherit from PlaceableLoader must implement this method to specify which data they will load.
+        /// For example, the StructureLoader will return the list of structure data from the zone data,
+        /// while the PlayerSpawnpointLoader will return the list of player spawn point data.
+        /// </summary>
+        protected abstract List<TData> GetData(ZoneData zoneData);
+
+        /// <summary>
+        /// Returns the GameObject to be instantiated for the given data.
+        /// Classes that inherit from PlaceableLoader must implement this method to specify which GameObject will be instantiated for each data.
+        /// This allows different loaders to instantiate different prefabs based on the type of data they are loading.
+        /// For example, the StructureLoader will instantiate structure prefabs based on the structure data.
+        /// <returns></returns>
         protected abstract UniTask<GameObject> GetObject(TData data);
 
-        public async UniTask Load(WorldDataOld worldData)
+        public async UniTask Load(ZoneData zoneData)
         {
-            var dataList = GetData(worldData);
+            var dataList = GetData(zoneData);
 
             foreach (var data in dataList)
             {

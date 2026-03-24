@@ -12,9 +12,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         public AggresiveNpcSpawnerLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<EnemySpawnerData> GetData(WorldDataOld worldData)
+        protected override List<EnemySpawnerData> GetData(ZoneData zoneData)
         {
-            return worldData.enemySpawnAreas;
+            return zoneData.enemySpawnAreas;
         }
 
         protected override async UniTask<GameObject> GetObject(EnemySpawnerData data)

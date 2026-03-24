@@ -30,16 +30,24 @@ namespace FeedTheRealm.Core.Repository
 
         public CreatablesData GetCreatables(string worldId)
         {
-            string path = GetCreatablesPath(worldId);
-            if (!File.Exists(path))
+            try
             {
-                logger.Log(
-                    $"No creatables found at '{path}', returning empty.",
-                    Logging.LogType.Warning
-                );
-                return new CreatablesData();
+                string path = GetCreatablesPath(worldId);
+                if (!File.Exists(path))
+                {
+                    logger.Log(
+                        $"No creatables found at '{path}', returning empty.",
+                        Logging.LogType.Warning
+                    );
+                    return null;
+                }
+                return FileSystemHelper.TryReadJson<CreatablesData>(path, logger);
             }
-            return FileSystemHelper.TryReadJson<CreatablesData>(path, logger);
+            catch (Exception e)
+            {
+                logger.Log($"Error loading creatables: {e}", Logging.LogType.Error);
+                return null;
+            }
         }
 
         private string GetCreatablesPath(string worldId) =>

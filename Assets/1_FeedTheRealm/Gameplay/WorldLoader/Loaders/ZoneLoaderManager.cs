@@ -1,30 +1,29 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.Core.Repository;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using VContainer;
 
 namespace FeedTheRealm.Gameplay.WorldLoader
 {
-    public class WorldLoaderManager
+    public class ZoneLoaderManager
     {
         private readonly WorldSelector worldSelector;
-        private readonly ZonesRepository zonesRepository;
+        private readonly DataPersistenceManager dataPersistenceManager;
         private readonly Logging.Logger logger;
 
         private List<ILoader> loaders;
 
-        public WorldLoaderManager(
+        public ZoneLoaderManager(
             WorldSelector worldSelector,
-            ZonesRepository worldsRepository,
+            DataPersistenceManager dataPersistenceManager,
             Logging.Logger logger,
             IObjectResolver resolver
         )
         {
             this.worldSelector = worldSelector;
-            this.zonesRepository = worldsRepository;
+            this.dataPersistenceManager = dataPersistenceManager;
             this.logger = logger;
 
             loaders = new List<ILoader>()
@@ -38,17 +37,17 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
-            ZoneData worldData = zonesRepository.GetZoneData(
+            ZoneData zoneData = dataPersistenceManager.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
             );
-            if (worldData == null)
+            if (zoneData == null)
                 return;
             for (int i = 0; i < loaders.Count; i++)
             {
                 try
                 {
-                    //await loaders[i].Load(worldData);
+                    await loaders[i].Load(zoneData);
                     logger.Log(
                         $"Loader {i} / {loaders.Count} | {loaders[i].GetType().Name} completed loading."
                     );

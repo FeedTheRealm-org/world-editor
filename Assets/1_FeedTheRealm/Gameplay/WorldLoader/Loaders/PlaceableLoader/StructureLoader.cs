@@ -12,9 +12,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         public StructureLoader(Logging.Logger logger, PlaceablesLibrary placeableLibrary)
             : base(logger, placeableLibrary) { }
 
-        protected override List<StructureData> GetData(WorldDataOld worldData)
+        protected override List<StructureData> GetData(ZoneData zoneData)
         {
-            return worldData.objectPlacementData;
+            return zoneData.objectPlacementData;
         }
 
         protected override async UniTask<GameObject> GetObject(StructureData data)

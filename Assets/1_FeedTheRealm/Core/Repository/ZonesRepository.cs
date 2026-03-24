@@ -42,7 +42,7 @@ namespace FeedTheRealm.Core.Repository
             {
                 string path = GetZonePath(worldId, zoneId);
                 if (!File.Exists(path))
-                    return new ZoneData(worldId, zoneId);
+                    return null;
                 using FileStream fs = new(path, FileMode.Open);
                 using StreamReader reader = new(fs);
                 string dataToLoad = reader.ReadToEnd();
