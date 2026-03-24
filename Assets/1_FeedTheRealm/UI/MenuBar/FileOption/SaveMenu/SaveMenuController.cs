@@ -56,7 +56,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
             }
 
             Debug.Log($"SaveMenuController: Saving world '{worldName}'");
-            dataPersistenceManager.SaveWorld(worldName);
+            // TODO: this will change to save zones and or creatables
+            // dataPersistenceManager.SaveWorld(worldName);
 
             ToastNotification.Show("World saved successfully", "success", Color.green);
 

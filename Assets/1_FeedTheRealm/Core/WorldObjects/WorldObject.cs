@@ -7,20 +7,20 @@ using VContainer;
 
 namespace FeedTheRealm.Core.WorldObjects
 {
-    public abstract class WorldObject : IPersistent
+    public abstract class WorldObject : IPersistent<CreatablesData>
     {
-        public WorldObject(DataPersistenceRegistryEvent registryEvent)
+        public WorldObject(CreatablesDataRegistryEvent registryEvent)
         {
             registryEvent.Raise(this);
         }
 
-        public abstract void SaveData(ref WorldDataOld worldData);
+        public abstract void SaveData(ref CreatablesData creatablesData);
     }
 
-    public abstract class WorldObjectController : MonoBehaviour, IPersistent
+    public abstract class WorldObjectController : MonoBehaviour, IPersistent<ZoneData>
     {
         [Inject]
-        private DataPersistenceRegistryEvent registryEvent;
+        private ZoneDataRegistryEvent registryEvent;
 
         private void Start()
         {
@@ -29,6 +29,6 @@ namespace FeedTheRealm.Core.WorldObjects
         }
 
         public abstract PlaceableObjectCategories Category { get; }
-        public abstract void SaveData(ref WorldDataOld worldData);
+        public abstract void SaveData(ref ZoneData zoneData);
     }
 }

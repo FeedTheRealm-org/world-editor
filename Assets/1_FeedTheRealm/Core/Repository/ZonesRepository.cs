@@ -16,7 +16,7 @@ namespace FeedTheRealm.Core.Repository
         private Logging.Logger logger;
 
         private string extension => config.WorldFileExtension;
-        private string saveDirectory => config.WorldDirectory;
+        private string worldsDirectory => config.WorldDirectory;
         private string zoneFilePrefix => config.ZoneFilePrefix;
 
         public ZonesRepository(Config config, Logging.Logger logger)
@@ -31,18 +31,18 @@ namespace FeedTheRealm.Core.Repository
 
         public void SaveZoneData(string worldDataPath, ZoneData zone)
         {
-            string path = GetZonePath(worldDataPath, zone.zone_id);
+            string path = GetZonePath(worldDataPath, zone.zoneId);
             if (FileSystemHelper.TryWriteJson(path, zone, logger))
-                logger.Log($"Saved zone {zone.zone_id} to '{path}'");
+                logger.Log($"Saved zone {zone.zoneId} to '{path}'");
         }
 
-        public ZoneData GetZoneData(string worldName, int zoneId)
+        public ZoneData GetZoneData(string worldId, int zoneId)
         {
             try
             {
-                string path = GetZonePath(worldName, zoneId);
+                string path = GetZonePath(worldId, zoneId);
                 if (!File.Exists(path))
-                    return new ZoneData();
+                    return new ZoneData(worldId, zoneId);
                 using FileStream fs = new(path, FileMode.Open);
                 using StreamReader reader = new(fs);
                 string dataToLoad = reader.ReadToEnd();
@@ -62,13 +62,13 @@ namespace FeedTheRealm.Core.Repository
             return Path.Combine(GetWorldPath(worldName), fileName);
         }
 
-        public List<int> ListZones(string worldDataDirectory)
+        public List<int> ListZones(string worldId)
         {
-            if (!Directory.Exists(worldDataDirectory))
+            if (!Directory.Exists(GetWorldPath(worldId)))
                 return new List<int>();
 
             return Directory
-                .GetFiles(worldDataDirectory, $"*{extension}")
+                .GetFiles(GetWorldPath(worldId), $"*{extension}")
                 .Select(f => Path.GetFileNameWithoutExtension(f).Replace(zoneFilePrefix, ""))
                 .Where(s => int.TryParse(s, out _))
                 .Select(int.Parse)
@@ -76,9 +76,9 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
         }
 
-        private string GetWorldPath(string worldName)
+        private string GetWorldPath(string worldId)
         {
-            return Path.Combine(saveDirectory, worldName);
+            return Path.Combine(worldsDirectory, worldId);
         }
     }
 }

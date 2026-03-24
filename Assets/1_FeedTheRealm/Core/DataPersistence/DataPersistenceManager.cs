@@ -11,35 +11,72 @@ namespace FeedTheRealm.Core.DataPersistence
     {
         private Logging.Logger logger;
         private WorldsRepository worldsRepository;
-        private List<IPersistent> registeredEntities = new();
+        private ZonesRepository zonesRepository;
+        private CreatablesRepository creatablesRepository;
+        private List<IPersistent<ZoneData>> registeredPlaceables = new();
+        private List<IPersistent<CreatablesData>> registeredCreatables = new();
 
         // ---------------- Public Methods ----------------
         public DataPersistenceManager(
             Logging.Logger logger,
             WorldsRepository worldsRepository,
-            DataPersistenceRegistryEvent registryEvent
+            ZonesRepository zonesRepository,
+            CreatablesRepository creatablesRepository,
+            ZoneDataRegistryEvent registryEvent,
+            CreatablesDataRegistryEvent creatablesRegistryEvent
         )
         {
             this.logger = logger;
             this.worldsRepository = worldsRepository;
+            this.zonesRepository = zonesRepository;
+            this.creatablesRepository = creatablesRepository;
             registryEvent.OnRaised += RegisterEntity;
+            creatablesRegistryEvent.OnRaised += RegisterEntity;
         }
 
         // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
         // We implement this interface just to ensure that the repository is created when registered.
         public void Initialize() { }
 
-        public void SaveWorld(string worldName, int zoneId = -1)
+        // --- Create/Save Methods ---
+
+        public WorldData CreateNewWorld(string worldName)
         {
-            // ZoneData zoneData = LoadRequiredWorldData(worldName, zoneId);
-            // foreach (var obj in registeredEntities)
-            // {
-            //     obj.SaveData(ref zoneData);
-            // }
-            // worldsRepository.SaveWorldZone(zoneData);
+            return new WorldData
+            {
+                worldId = Guid.NewGuid().ToString(),
+                worldName = worldName,
+                created_at = DateTime.Now,
+                last_edited_at = DateTime.Now,
+            };
         }
 
-        private void RegisterEntity(IPersistent entity)
+        public void SaveWorldMetadata(WorldData worldData)
+        {
+            worldsRepository.SaveWorldData(worldData);
+        }
+
+        public void SaveZone(string worldId, int zoneId)
+        {
+            var zoneData = new ZoneData(worldId, zoneId);
+            foreach (var obj in registeredPlaceables)
+                obj.SaveData(ref zoneData);
+
+            zonesRepository.SaveZoneData(worldId, zoneData);
+        }
+
+        public void SaveCreatables(string worldId, int zoneId)
+        {
+            var creatablesData = new CreatablesData();
+            foreach (var obj in registeredCreatables)
+                obj.SaveData(ref creatablesData);
+
+            creatablesRepository.SaveCreatables(worldId, creatablesData);
+        }
+
+        // ---- Registration Methods ----
+
+        private void RegisterEntity(IPersistent<ZoneData> entity)
         {
             if (entity == null)
             {
@@ -49,21 +86,44 @@ namespace FeedTheRealm.Core.DataPersistence
                 );
                 return;
             }
-            registeredEntities.Add(entity);
+            registeredPlaceables.Add(entity);
             logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
         }
 
-        /// <summary>
-        ///  Loads only the essential world data (world name, zone id, and world id) required
-        ///  for WorldObjects to save their data. This avoids loading unnecessary data for entities that only need to save.
-        ///  Sadly, since the world ID is in the world data, we have to load it to get the ID for new zones.
-        ///  If we had a separate metadata file for each zone, we could avoid this.
-        /// </summary>
-        private ZoneData GetZoneData(string worldName, int zoneId)
+        private void RegisterEntity(IPersistent<CreatablesData> entity)
         {
-            // string worldId = worldsRepository.GetWorldData(worldName, zoneId)?.id ?? string.Empty;
+            if (entity == null)
+            {
+                logger.Log(
+                    "[Data Persistence Manager] Attempted to register a null entity.",
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+            registeredCreatables.Add(entity);
+            logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
+        }
 
-            return new ZoneData { };
+        // ---- Get Methods ----
+
+        public ZoneData GetZoneData(string worldId, int zoneId)
+        {
+            return zonesRepository.GetZoneData(worldId, zoneId);
+        }
+
+        public CreatablesData GetCreatables(string worldId)
+        {
+            return creatablesRepository.GetCreatables(worldId);
+        }
+
+        public WorldData GetWorldData(string worldId)
+        {
+            return worldsRepository.GetWorldData(worldId);
+        }
+
+        public List<string> GetAllWorlds()
+        {
+            return worldsRepository.ListWorlds();
         }
     }
 }

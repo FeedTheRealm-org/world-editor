@@ -10,7 +10,7 @@ namespace FeedTheRealm.Core.Repository
     {
         private readonly Config config;
         private readonly Logging.Logger logger;
-
+        private string worldsDirectory => config.WorldDirectory;
         private string CreatablesFileName => config.CreatablesFileName;
 
         public CreatablesRepository(Config config, Logging.Logger logger)
@@ -21,28 +21,28 @@ namespace FeedTheRealm.Core.Repository
 
         public void Initialize() { }
 
-        public void SaveCreatables(string worldDataDirectory, WorldCreatables creatables)
+        public void SaveCreatables(string worldId, CreatablesData creatables)
         {
-            string path = GetCreatablesPath(worldDataDirectory);
+            string path = GetCreatablesPath(worldId);
             if (FileSystemHelper.TryWriteJson(path, creatables, logger))
                 logger.Log($"Saved creatables to '{path}'");
         }
 
-        public WorldCreatables GetCreatables(string worldDataDirectory)
+        public CreatablesData GetCreatables(string worldId)
         {
-            string path = GetCreatablesPath(worldDataDirectory);
+            string path = GetCreatablesPath(worldId);
             if (!File.Exists(path))
             {
                 logger.Log(
                     $"No creatables found at '{path}', returning empty.",
                     Logging.LogType.Warning
                 );
-                return new WorldCreatables();
+                return new CreatablesData();
             }
-            return FileSystemHelper.TryReadJson<WorldCreatables>(path, logger);
+            return FileSystemHelper.TryReadJson<CreatablesData>(path, logger);
         }
 
-        private string GetCreatablesPath(string worldDataDirectory) =>
-            Path.Combine(worldDataDirectory, CreatablesFileName);
+        private string GetCreatablesPath(string worldId) =>
+            Path.Combine(worldsDirectory, worldId, CreatablesFileName);
     }
 }

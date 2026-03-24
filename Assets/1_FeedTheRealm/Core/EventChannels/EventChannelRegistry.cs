@@ -20,7 +20,7 @@ namespace FeedTheRealm.Core.EventChannels
         public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
-        public DataPersistenceRegistryEvent dataPersistenceRegistryEvent;
+        public ZoneDataRegistryEvent dataPersistenceRegistryEvent;
         public EditPlaceableEvent editPlaceableEvent;
 
         [Header("UI Events")]

@@ -27,29 +27,26 @@ namespace FeedTheRealm.Core.Repository
 
         public void SaveWorldData(WorldData worldData)
         {
-            if (string.IsNullOrEmpty(worldData.worldDataDirectory))
-                worldData.worldDataDirectory = Path.Combine(
-                    worldsDirectory,
-                    Guid.NewGuid().ToString()
-                );
+            if (string.IsNullOrEmpty(worldData.worldId))
+                throw new ArgumentException("WorldData must have a worldId before saving.");
 
-            string path = GetWorldDataFilePath(worldData.worldDataDirectory);
+            string path = GetWorldDataFilePath(worldData.worldId);
             if (FileSystemHelper.TryWriteJson(path, worldData, logger))
                 logger.Log($"Saved world data to '{path}'");
         }
 
-        public WorldData GetWorldData(string worldDataDirectory)
+        public WorldData GetWorldData(string worldId)
         {
             try
             {
-                string path = GetWorldDataFilePath(worldDataDirectory);
+                string path = GetWorldDataFilePath(worldId);
                 if (!File.Exists(path))
                 {
                     logger.Log(
                         $"No world data found at '{path}', returning empty.",
                         Logging.LogType.Warning
                     );
-                    return new WorldData();
+                    return null;
                 }
 
                 string json = File.ReadAllText(path);
@@ -62,6 +59,10 @@ namespace FeedTheRealm.Core.Repository
             }
         }
 
+        /// <summary>
+        ///  Lists all worlds by their worldId (which is the name of the folder where their data is stored).
+        ///  This is used to populate the "Load World" menu.
+        /// </summary>
         public List<string> ListWorlds()
         {
             if (!Directory.Exists(worldsDirectory))
@@ -73,7 +74,7 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
         }
 
-        private string GetWorldDataFilePath(string worldDataDirectory) =>
-            Path.Combine(worldDataDirectory, worldDataFileName);
+        private string GetWorldDataFilePath(string worldId) =>
+            Path.Combine(worldsDirectory, worldId, worldDataFileName);
     }
 }

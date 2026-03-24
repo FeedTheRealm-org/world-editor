@@ -11,20 +11,20 @@ namespace FeedTheRealm.Gameplay.WorldLoader
     public class WorldLoaderManager
     {
         private readonly WorldSelector worldSelector;
-        private readonly WorldsRepository worldsRepository;
+        private readonly ZonesRepository zonesRepository;
         private readonly Logging.Logger logger;
 
         private List<ILoader> loaders;
 
         public WorldLoaderManager(
             WorldSelector worldSelector,
-            WorldsRepository worldsRepository,
+            ZonesRepository worldsRepository,
             Logging.Logger logger,
             IObjectResolver resolver
         )
         {
             this.worldSelector = worldSelector;
-            this.worldsRepository = worldsRepository;
+            this.zonesRepository = worldsRepository;
             this.logger = logger;
 
             loaders = new List<ILoader>()
@@ -38,7 +38,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
-            WorldDataOld worldData = worldsRepository.GetWorldData(
+            ZoneData worldData = zonesRepository.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
             );
@@ -48,7 +48,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             {
                 try
                 {
-                    await loaders[i].Load(worldData);
+                    //await loaders[i].Load(worldData);
                     logger.Log(
                         $"Loader {i} / {loaders.Count} | {loaders[i].GetType().Name} completed loading."
                     );
