@@ -6,34 +6,29 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class PlayerSpawnpointObject : WorldObjectController, ILoadable<PlayerSpawnerData>
+    public class PlayerSpawnpointObject : WorldObjectController<PlayerSpawnerData>
     {
         public PlayerSpawnerData data;
 
         public override PlaceableObjectCategories Category =>
             PlaceableObjectCategories.PlayerSpawnpointSpawner;
 
-        public void Load(PlayerSpawnerData data)
+        public override void SaveData(ref ZoneData worldData)
         {
-            this.data = data;
-            Setup();
+            data.Position = gameObject.transform.position;
+            data.Radius = transform.localScale.x;
+            worldData.playerSpawnAreas.Add(data);
         }
 
-        private void Setup()
+        public override void LoadData(PlayerSpawnerData data)
         {
+            this.data = data;
             gameObject.transform.position = data.Position;
             gameObject.transform.localScale = new Vector3(
                 data.Radius,
                 transform.localScale.y,
                 data.Radius
             );
-        }
-
-        public override void SaveData(ref ZoneData worldData)
-        {
-            data.Position = gameObject.transform.position;
-            data.Radius = transform.localScale.x;
-            worldData.playerSpawnAreas.Add(data);
         }
     }
 }

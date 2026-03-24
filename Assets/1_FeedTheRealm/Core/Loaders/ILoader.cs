@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
-using FeedTheRealm.Core.WorldObjects.Provider;
 using FTRShared.Runtime.Models;
-using VContainer;
 
 namespace FTR.Core.Loaders
 {

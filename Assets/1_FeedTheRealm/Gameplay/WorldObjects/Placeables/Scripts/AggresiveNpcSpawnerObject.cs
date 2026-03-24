@@ -6,34 +6,29 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class AggresiveNpcSpawnerObject : WorldObjectController, ILoadable<EnemySpawnerData>
+    public class AggresiveNpcSpawnerObject : WorldObjectController<EnemySpawnerData>
     {
         public EnemySpawnerData data;
 
         public override PlaceableObjectCategories Category =>
             PlaceableObjectCategories.AggresiveNpcSpawner;
 
-        public void Load(EnemySpawnerData data)
+        public override void SaveData(ref ZoneData worldData)
         {
-            this.data = data;
-            Setup();
+            data.Position = gameObject.transform.position;
+            data.Radius = transform.localScale.x;
+            worldData.enemySpawnAreas.Add(data);
         }
 
-        private void Setup()
+        public override void LoadData(EnemySpawnerData data)
         {
+            this.data = data;
             gameObject.transform.position = data.Position;
             gameObject.transform.localScale = new Vector3(
                 data.Radius,
                 transform.localScale.y,
                 data.Radius
             );
-        }
-
-        public override void SaveData(ref ZoneData worldData)
-        {
-            data.Position = gameObject.transform.position;
-            data.Radius = transform.localScale.x;
-            worldData.enemySpawnAreas.Add(data);
         }
     }
 }
