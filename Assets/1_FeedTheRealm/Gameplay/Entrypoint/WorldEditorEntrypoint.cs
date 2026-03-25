@@ -1,7 +1,4 @@
-using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.Ticks;
-using FeedTheRealm.Core.Repository;
-using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
 using VContainer.Unity;
@@ -11,20 +8,20 @@ namespace FeedTheRealm.Gameplay.Entrypoint
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {
         private readonly WorldSetupManager worldSetup;
-        private readonly ZoneLoaderManager worldLoaderManager;
+        private readonly ZoneLoaderManager zoneLoaderManager;
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
 
         public WorldEditorEntrypoint(
-            ZoneLoaderManager worldLoaderManager,
+            ZoneLoaderManager zoneLoaderManager,
             WorldSetupManager worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,
             LateTickEvent lateTickEvent
         )
         {
-            this.worldLoaderManager = worldLoaderManager;
+            this.zoneLoaderManager = zoneLoaderManager;
             this.worldSetup = worldSetup;
             this.tickEvent = tickEvent;
             this.fixedTickEvent = fixedTickEvent;
@@ -34,7 +31,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint
         public async void Start()
         {
             worldSetup.ExecuteSetup();
-            await worldLoaderManager.Load();
+            await zoneLoaderManager.Load();
         }
 
         public void Tick()

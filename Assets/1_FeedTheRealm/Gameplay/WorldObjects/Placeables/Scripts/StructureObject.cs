@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class StructureObject : WorldObjectController<StructureData>
+    public class StructureObject : Placeable<StructureData>
     {
         private StructureData data = new();
 

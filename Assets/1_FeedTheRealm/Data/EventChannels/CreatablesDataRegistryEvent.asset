@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ec833f4967911ec5b9105962f5778d2, type: 3}
-  m_Name: DataPersistenceRegistryEvent
-  m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.EventChannels.WorldEvents.DataPersistenceRegistryEvent
+  m_Name: CreatablesDataRegistryEvent
+  m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.EventChannels.WorldEvents.CreatablesDataRegistryEvent

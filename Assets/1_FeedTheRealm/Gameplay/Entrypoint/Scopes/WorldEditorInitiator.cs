@@ -5,6 +5,7 @@ using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.Player;
@@ -46,9 +47,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private GltfService gltfService;
 
-        [Header("Libraries")]
+        [Header("Creatables Manager")]
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatablesManager;
 
         [Header("Event Channels")]
         [SerializeField]
@@ -65,6 +66,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             // Repositories
             builder.Register<ModelsRepository>(Lifetime.Singleton);
             builder.Register<WorldsRepository>(Lifetime.Singleton);
+            builder.Register<CreatablesRepository>(Lifetime.Singleton);
+            builder.Register<ZonesRepository>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -77,6 +80,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<AggresiveNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<FriendlyNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<ZoneLoaderManager>(Lifetime.Scoped);
+            builder.Register<CreatableLoader>(Lifetime.Scoped);
 
             // World Setup Services
             builder.Register<BaseplateSetupService>(Lifetime.Scoped);
@@ -98,7 +102,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(worldSelector);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
-            builder.RegisterInstance(creatorObjectLibrary);
+            builder.RegisterInstance(creatablesManager);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);
             builder.RegisterInstance(config);

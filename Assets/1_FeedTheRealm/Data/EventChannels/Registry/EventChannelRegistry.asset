@@ -16,7 +16,8 @@ MonoBehaviour:
   worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}
   objectSelectedEvent: {fileID: 11400000, guid: 63a090ff7d2d67b59b90b4c80039ce86, type: 2}
   enableEditorEvent: {fileID: 11400000, guid: da8ed595ac86d4deda9a9fff9185ee49, type: 2}
-  dataPersistenceRegistryEvent: {fileID: 11400000, guid: 8889ee8e6fb48d9c38a0118d0b2c3357, type: 2}
+  ZoneDataRegistryEvent: {fileID: 11400000, guid: d9ba8ff6c5acf3efab692e7e82f6e06e, type: 2}
+  CreatablesDataRegistryEvent: {fileID: 11400000, guid: b8ddf3cce44998d30bb07ef23110e7a3, type: 2}
   editPlaceableEvent: {fileID: 11400000, guid: c4e7a3400f8643cd2a70d71d4f3c1552, type: 2}
   categorySelectedEvent: {fileID: 11400000, guid: 9c40dcb755848f4249665728d6806c50, type: 2}
   enableInputEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}

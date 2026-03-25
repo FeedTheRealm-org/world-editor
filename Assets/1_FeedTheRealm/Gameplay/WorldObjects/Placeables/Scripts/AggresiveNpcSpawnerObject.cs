@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class AggresiveNpcSpawnerObject : WorldObjectController<EnemySpawnerData>
+    public class AggresiveNpcSpawnerObject : Placeable<EnemySpawnerData>
     {
         public EnemySpawnerData data;
 

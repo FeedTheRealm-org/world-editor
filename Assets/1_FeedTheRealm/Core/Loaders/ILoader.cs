@@ -8,8 +8,8 @@ namespace FTR.Core.Loaders
     /// Implementations of this interface are responsible for instantiating and initializing game objects
     /// based on the provided world data and prefabs.
     /// </summary>
-    public interface ILoader
+    public interface IPlaceableLoader
     {
-        UniTask Load(ZoneData zoneData);
+        UniTask Load(ZoneData data);
     }
 }

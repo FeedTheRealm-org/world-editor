@@ -20,7 +20,8 @@ namespace FeedTheRealm.Core.EventChannels
         public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
-        public ZoneDataRegistryEvent dataPersistenceRegistryEvent;
+        public ZoneDataRegistryEvent ZoneDataRegistryEvent;
+        public CreatablesDataRegistryEvent CreatablesDataRegistryEvent;
         public EditPlaceableEvent editPlaceableEvent;
 
         [Header("UI Events")]
@@ -39,7 +40,8 @@ namespace FeedTheRealm.Core.EventChannels
         public void RegisterAll(IContainerBuilder builder)
         {
             builder.RegisterInstance(editPlaceableEvent);
-            builder.RegisterInstance(dataPersistenceRegistryEvent);
+            builder.RegisterInstance(ZoneDataRegistryEvent);
+            builder.RegisterInstance(CreatablesDataRegistryEvent);
             builder.RegisterInstance(worldSelectedEvent);
             builder.RegisterInstance(objectSelectedEvent);
             builder.RegisterInstance(enableEditorEvent);

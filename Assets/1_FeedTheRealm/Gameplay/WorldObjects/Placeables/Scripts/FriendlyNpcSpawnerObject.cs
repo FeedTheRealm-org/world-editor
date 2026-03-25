@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class FriendlyNpcSpawnerObject : WorldObjectController<NPCSpawnerData>
+    public class FriendlyNpcSpawnerObject : Placeable<NPCSpawnerData>
     {
         public NPCSpawnerData data;
 

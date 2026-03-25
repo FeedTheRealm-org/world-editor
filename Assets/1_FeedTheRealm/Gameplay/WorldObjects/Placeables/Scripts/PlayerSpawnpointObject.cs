@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldObjects
 {
-    public class PlayerSpawnpointObject : WorldObjectController<PlayerSpawnerData>
+    public class PlayerSpawnpointObject : Placeable<PlayerSpawnerData>
     {
         public PlayerSpawnerData data;
 

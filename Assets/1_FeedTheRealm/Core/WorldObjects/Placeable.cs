@@ -8,26 +8,16 @@ using VContainer;
 
 namespace FeedTheRealm.Core.WorldObjects
 {
-    public abstract class WorldObject<T> : IPersistent<CreatablesData>, ILoadable<T>
+    public interface IPlaceable
     {
-        public WorldObject(CreatablesDataRegistryEvent registryEvent)
-        {
-            registryEvent.Raise(this);
-        }
-
-        public virtual void Load(T data)
-        {
-            LoadData(data);
-        }
-
-        public abstract void SaveData(ref CreatablesData creatablesData);
-        public abstract void LoadData(T data);
+        PlaceableObjectCategories Category { get; }
     }
 
-    public abstract class WorldObjectController<T>
+    public abstract class Placeable<T>
         : MonoBehaviour,
             IPersistent<ZoneData>,
-            ILoadable<T>
+            ILoadable<T>,
+            IPlaceable
     {
         [Inject]
         private ZoneDataRegistryEvent registryEvent;

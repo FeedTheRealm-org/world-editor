@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldLoader
 {
-    public abstract class PlaceableLoader<TData> : ILoader
+    public abstract class PlaceableLoader<TData> : IPlaceableLoader
     {
         protected Logging.Logger logger;
 

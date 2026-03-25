@@ -56,7 +56,5 @@ MonoBehaviour:
   worldPrefabProvider: {fileID: 11400000, guid: 36f48e688128bc65b8af8d71ef86f3f1, type: 2}
   WorldUIObjectProvider: {fileID: 11400000, guid: 522c26f378da6490e906908c0d09b9c6, type: 2}
   gltfService: {fileID: 11400000, guid: cbcfb360fbc87c237824cc04a950d33f, type: 2}
-  modelsRepository: {fileID: 11400000, guid: f920f895016a4e8df88777e973564297, type: 2}
-  worldsRepository: {fileID: 11400000, guid: bd07849d0cb955cc8ab1755e3b5bd64b, type: 2}
-  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+  creatablesManager: {fileID: 11400000, guid: 08135c10225263a2d9af310ac5f81d4d, type: 2}
   eventChannelRegistry: {fileID: 11400000, guid: 0485cfe168ab7e2d48f3982acb4b2a85, type: 2}
