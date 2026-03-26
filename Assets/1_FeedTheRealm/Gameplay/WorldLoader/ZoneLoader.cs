@@ -52,6 +52,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             UnloadCurrentZone();
 
+            if (string.IsNullOrEmpty(worldSelector.selectedWorld))
+                return;
+
             ZoneData zoneData = dataPersistenceManager.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId

@@ -9,6 +9,7 @@ using FeedTheRealm.UI.Common.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar
 {
@@ -34,19 +35,19 @@ namespace FeedTheRealm.UI.MenuBar
 
         [Header("Menu Options")]
         [SerializeField]
-        private MenuOption fileOptionController;
+        private GameObject fileOptionController;
 
         [SerializeField]
-        private MenuOption editOptionController;
+        private GameObject editOptionController;
 
         [SerializeField]
-        private MenuOption subscriptionsOptionController;
+        private GameObject subscriptionsOptionController;
 
         [SerializeField]
-        private MenuOption helpOptionController;
+        private GameObject helpOptionController;
 
         [SerializeField]
-        private MenuOption aboutOptionController;
+        private GameObject aboutOptionController;
         private VisualElement root;
         private MenuStack menuStack;
 
@@ -61,10 +62,9 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("About", aboutOptionController);
         }
 
-        private void BindButton(string buttonName, MenuOption option)
+        private void BindButton(string buttonName, GameObject option)
         {
             Button button = root.Q<Button>(buttonName);
-
             if (button == null)
             {
                 logger.Log(
@@ -74,14 +74,26 @@ namespace FeedTheRealm.UI.MenuBar
                 );
                 return;
             }
-
             if (option == null)
             {
                 button.SetEnabled(false);
                 return;
             }
 
-            button.text = option.Label;
+            resolver.InjectGameObject(option);
+
+            if (!option.TryGetComponent<MenuOption>(out var menuOption))
+            {
+                logger.Log(
+                    $"MenuOption component not found on '{option.name}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                button.SetEnabled(false);
+                return;
+            }
+
+            button.text = menuOption.Label;
             button.RegisterCallback<MouseEnterEvent>(evt =>
             {
                 enableInputEvent.Raise(false);
@@ -95,9 +107,9 @@ namespace FeedTheRealm.UI.MenuBar
             {
                 enableInputEvent.Raise(false);
                 inputReader?.RaiseSecondaryInteraction();
-                if (option.MenuOptions.Count == 0)
+                if (menuOption.MenuOptions.Count == 0)
                     return;
-                menuStack.Toggle(button, option.MenuOptions);
+                menuStack.Toggle(button, menuOption.MenuOptions);
             };
         }
     }

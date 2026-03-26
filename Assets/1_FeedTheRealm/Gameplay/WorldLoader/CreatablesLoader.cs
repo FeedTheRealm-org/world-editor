@@ -37,6 +37,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             try
             {
+                if (string.IsNullOrEmpty(worldSelector.selectedWorld))
+                    return;
+
                 CreatablesData data = dataPersistenceManager.GetCreatables(
                     worldSelector.selectedWorld
                 );
