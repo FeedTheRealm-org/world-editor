@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
-using VContainer;
+using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldLoader
 {
@@ -23,6 +23,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         private readonly DataPersistenceManager dataPersistenceManager;
         private readonly Logging.Logger logger;
         private readonly List<IPlaceableLoader> zoneLoaders;
+        private readonly List<GameObject> loadedPlaceables = new();
 
         public ZoneLoader(
             WorldSelector worldSelector,
@@ -49,6 +50,8 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
+            UnloadCurrentZone();
+
             ZoneData zoneData = dataPersistenceManager.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
@@ -64,14 +67,24 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             {
                 try
                 {
-                    await loader.Load(zoneData);
+                    await loader.Load(zoneData, loadedPlaceables);
                     logger.Log($"[ZoneLoader] {loader.GetType().Name} completed.");
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     logger.Log($"[ZoneLoader] Error in {loader.GetType().Name}: {ex.Message}");
                 }
             }
+        }
+
+        private void UnloadCurrentZone()
+        {
+            foreach (var placeable in loadedPlaceables)
+            {
+                if (placeable != null)
+                    Object.Destroy(placeable);
+            }
+            loadedPlaceables.Clear();
         }
     }
 }

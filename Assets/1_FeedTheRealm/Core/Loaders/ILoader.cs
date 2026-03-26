@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FTRShared.Runtime.Models;
+using UnityEngine;
 
 namespace FTR.Core.Loaders
 {
@@ -10,6 +12,6 @@ namespace FTR.Core.Loaders
     /// </summary>
     public interface IPlaceableLoader
     {
-        UniTask Load(ZoneData data);
+        UniTask Load(ZoneData data, List<GameObject> loadedPlaceables);
     }
 }
