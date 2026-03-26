@@ -69,5 +69,5 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemiesMenuController
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  createEnemyMenuPrefab: {fileID: 5469601061524204739, guid: 1f5afc33a83dd0c6197045dc647c8efb, type: 3}
+  aggresiveNpcCreatorMenuPrefab: {fileID: 5469601061524204739, guid: 1f5afc33a83dd0c6197045dc647c8efb, type: 3}
   itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}

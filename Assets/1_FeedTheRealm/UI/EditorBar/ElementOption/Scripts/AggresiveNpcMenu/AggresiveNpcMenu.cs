@@ -1,20 +1,22 @@
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class EnemiesMenuController : MenuController
+    public class AggresiveNpcMenu : MenuController
     {
         [SerializeField]
         private Logging.Logger logger;
 
         [SerializeField]
-        private GameObject createEnemyMenuPrefab;
+        private GameObject aggresiveNpcCreatorMenuPrefab;
 
         [Inject]
         private CreatablesManager creatablesManager;
@@ -23,6 +25,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private VisualTreeAsset itemListTemplate;
         private Button closeButton;
         private Button addEnemyButton;
+        private AggresiveNpc editingData;
 
         void OnEnable()
         {
@@ -33,10 +36,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             addEnemyButton.clicked += AddEnemy;
             closeButton.clicked += CloseMenu;
 
-            PopulateEnemysList();
+            PopulateItemsList();
         }
 
-        private void PopulateEnemysList()
+        private void PopulateItemsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
             var enemiesList = root.Q<ListView>("EnemiesList");
@@ -55,19 +58,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 if (typeLabel != null)
                     typeLabel.text = "Enemy";
 
-                editButton.clicked += () => OnEditEnemy(enemy);
+                editButton.clicked += () => OnEdit(enemy);
                 deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
 
                 enemiesList.hierarchy.Add(enemyEntry);
             }
         }
 
-        void OnEditEnemy(AggresiveNpc enemy)
+        void OnEdit(AggresiveNpc enemy)
         {
             logger.Log("Editing enemy: " + enemy.data.name, this, Logging.LogType.Info);
-
-            // EditContext.SetObjectToEdit(enemy);
-            // OpenMenu(createEnemyMenuPrefab);
+            editingData = enemy;
+            OpenMenu(aggresiveNpcCreatorMenuPrefab);
         }
 
         void OnDeleteEnemy(AggresiveNpc enemy, VisualElement enemyListEntry)
@@ -86,7 +88,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void AddEnemy()
         {
             logger.Log("Opening Create Enemy Menu", this, Logging.LogType.Info);
-            OpenMenu(createEnemyMenuPrefab);
+            editingData = null;
+            OpenMenu(aggresiveNpcCreatorMenuPrefab);
+        }
+
+        public override void OpenMenu(GameObject menuPrefab)
+        {
+            var menuInstance = resolver.Instantiate(menuPrefab);
+            if (editingData != null)
+            {
+                var creatorMenu = menuInstance.GetComponent<AggresiveNpcCreatorMenu>();
+                creatorMenu.SetupEditor(editingData);
+                logger.Log(
+                    "Opened Edit Enemy Menu for: " + editingData.data.name,
+                    this,
+                    Logging.LogType.Info
+                );
+            }
+            Destroy(gameObject);
         }
     }
 }

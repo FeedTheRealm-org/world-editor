@@ -5,7 +5,6 @@
             <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
                 <ui:Label text="Enemy" class="header-label"/>
                 <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
-                    <ui:Button text="Return To Menu" name="Return" class="button"/>
                     <ui:Button text="Close" name="Close" class="button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
