@@ -24,10 +24,10 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private EnableInputEvent enableInputEvent;
 
-        [SerializeField]
+        [Inject]
         private InputReader inputReader;
 
-        [SerializeField]
+        [Inject]
         private Logging.Logger logger;
 
         [SerializeField]

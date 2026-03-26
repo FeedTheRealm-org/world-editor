@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4619736483548598808}
   - component: {fileID: -5979143776995738706}
   m_Layer: 0
-  m_Name: ElementOption
+  m_Name: CreatablesOption
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
-  label: Element
+  label: Creatable
   menuToOpen: {fileID: 0}
   menuOptions:
   - {fileID: 6620227208176240371}
