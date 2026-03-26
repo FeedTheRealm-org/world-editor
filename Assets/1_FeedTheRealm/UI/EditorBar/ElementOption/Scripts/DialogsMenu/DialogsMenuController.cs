@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.Dialogs;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,7 +18,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private GameObject messagesMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -47,53 +43,53 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             var dialogsList = root.Q<ListView>("DialogsList");
             dialogsList.Clear();
 
-            foreach (
-                Dialog dialog in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Dialog)
-            )
-            {
-                VisualElement dialogEntry = itemListTemplate.Instantiate();
-                var headerLabel = dialogEntry.Q<Label>("Header");
-                headerLabel.text = dialog.DisplayName;
+            // foreach (
+            //     Dialog dialog in creatorObjectLibrary.GetCreatables(CreatableObjectCategories.Dialog)
+            // )
+            // {
+            //     VisualElement dialogEntry = itemListTemplate.Instantiate();
+            //     var headerLabel = dialogEntry.Q<Label>("Header");
+            //     headerLabel.text = dialog.DisplayName;
 
-                var editButton = dialogEntry.Q<Button>("Edit");
-                var editMessagesButton = dialogEntry.Q<Button>("EditMessages");
-                var deleteButton = dialogEntry.Q<Button>("Delete");
+            //     var editButton = dialogEntry.Q<Button>("Edit");
+            //     var editMessagesButton = dialogEntry.Q<Button>("EditMessages");
+            //     var deleteButton = dialogEntry.Q<Button>("Delete");
 
-                var typeLabel = dialogEntry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "Dialog";
+            //     var typeLabel = dialogEntry.Q<Label>("Type");
+            //     if (typeLabel != null)
+            //         typeLabel.text = "Dialog";
 
-                editButton.clicked += () => OnEditDialog(dialog);
-                editMessagesButton.clicked += () => OnEditMessages(dialog);
-                deleteButton.clicked += () => OnDeleteDialog(dialog, dialogEntry);
+            //     editButton.clicked += () => OnEditDialog(dialog);
+            //     editMessagesButton.clicked += () => OnEditMessages(dialog);
+            //     deleteButton.clicked += () => OnDeleteDialog(dialog, dialogEntry);
 
-                dialogsList.hierarchy.Add(dialogEntry);
-            }
+            //     dialogsList.hierarchy.Add(dialogEntry);
+            // }
         }
 
-        void OnEditDialog(Dialog dialog)
-        {
-            EditContext.SetObjectToEdit(dialog);
-            OpenMenu(createDialogMenuPrefab);
-        }
+        // void OnEditDialog(Dialog dialog)
+        // {
+        //     EditContext.SetObjectToEdit(dialog);
+        //     OpenMenu(createDialogMenuPrefab);
+        // }
 
-        void OnEditMessages(Dialog dialog)
-        {
-            logger.Log(
-                "Opening messages for dialog: " + dialog.DisplayName,
-                this,
-                Logging.LogType.Info
-            );
-            MessagesMenuController.PendingDialogId = dialog.ObjectId;
-            OpenMenu(messagesMenuPrefab);
-        }
+        // void OnEditMessages(Dialog dialog)
+        // {
+        //     logger.Log(
+        //         "Opening messages for dialog: " + dialog.DisplayName,
+        //         this,
+        //         Logging.LogType.Info
+        //     );
+        //     MessagesMenuController.PendingDialogId = dialog.ObjectId;
+        //     OpenMenu(messagesMenuPrefab);
+        // }
 
-        void OnDeleteDialog(Dialog dialog, VisualElement dialogListEntry)
-        {
-            logger.Log("Deleting dialog: " + dialog.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Dialog, dialog);
-            dialogListEntry.RemoveFromHierarchy();
-        }
+        // void OnDeleteDialog(Dialog dialog, VisualElement dialogListEntry)
+        // {
+        //     logger.Log("Deleting dialog: " + dialog.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.Dialog, dialog);
+        //     dialogListEntry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {

@@ -1,6 +1,5 @@
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
-using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
@@ -12,25 +11,32 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         public override PlaceableObjectCategories Category => PlaceableObjectCategories.Structure;
 
-        public override void SaveData(ref ZoneData worldData)
+        public override void SaveData(ref ZoneData zoneData)
         {
-            data.position = gameObject.transform.position;
-            data.rotation = gameObject.transform.rotation.eulerAngles;
-            data.size = gameObject.transform.localScale;
             BoxCollider collider = GetComponent<BoxCollider>();
-            data.colliderSize = collider != null ? collider.size : Vector3.zero;
-            data.colliderCenter = collider != null ? collider.center : Vector3.zero;
-            worldData.objectPlacementData.Add(data);
+            StructureData data = new()
+            {
+                id = this.data.id,
+                structureName = gameObject.name,
+                position = gameObject.transform.position,
+                rotation = gameObject.transform.rotation.eulerAngles,
+                size = gameObject.transform.localScale,
+                colliderSize = collider != null ? collider.size : Vector3.zero,
+                colliderCenter = collider != null ? collider.center : Vector3.zero,
+            };
+            Debug.Log($"Saving structure data: {data}'");
+            zoneData.objectPlacementData.Add(data);
         }
 
         public override void LoadData(StructureData data)
         {
-            this.data = data;
+            this.data = data.Clone();
             gameObject.name = data.structureName;
             gameObject.transform.position = data.position;
             gameObject.transform.rotation = Quaternion.Euler(data.rotation);
             gameObject.transform.localScale = data.size;
             FitColliderToMesh();
+            this.data = data;
         }
 
         private void FitColliderToMesh()

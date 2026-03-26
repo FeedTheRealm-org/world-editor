@@ -15,8 +15,6 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public string Id => data.id;
 
-        public CreatableObjectCategories Category => CreatableObjectCategories.Dialog;
-
         public void SaveData(ref CreatablesData data)
         {
             data.dialogs.Add(this.data);

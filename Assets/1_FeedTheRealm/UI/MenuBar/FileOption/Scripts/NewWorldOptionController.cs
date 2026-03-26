@@ -1,21 +1,23 @@
+using System.Runtime.InteropServices;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar
 {
     public class NewWorldOptionController : MenuOption
     {
-        [SerializeField]
-        private DataPersistenceManager dataPersistenceManager;
+        [Inject]
+        private WorldSelector worldSelector;
 
         [SerializeField]
         private SceneReference worldEditorScene;
 
         public override void Execute()
         {
-            //dataPersistenceManager.NewWorld();
+            worldSelector.selectedWorld = null; // Clear selected world to start fresh
             SceneManager.LoadScene(worldEditorScene.SceneName);
         }
     }

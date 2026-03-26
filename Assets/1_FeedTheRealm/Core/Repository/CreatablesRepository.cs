@@ -21,18 +21,18 @@ namespace FeedTheRealm.Core.Repository
 
         public void Initialize() { }
 
-        public void SaveCreatables(string worldId, CreatablesData creatables)
+        public void SaveCreatables(string worldName, CreatablesData creatables)
         {
-            string path = GetCreatablesPath(worldId);
+            string path = GetCreatablesPath(worldName);
             if (FileSystemHelper.TryWriteJson(path, creatables, logger))
                 logger.Log($"Saved creatables to '{path}'");
         }
 
-        public CreatablesData GetCreatables(string worldId)
+        public CreatablesData GetCreatables(string worldName)
         {
             try
             {
-                string path = GetCreatablesPath(worldId);
+                string path = GetCreatablesPath(worldName);
                 if (!File.Exists(path))
                 {
                     logger.Log(
@@ -50,7 +50,7 @@ namespace FeedTheRealm.Core.Repository
             }
         }
 
-        private string GetCreatablesPath(string worldId) =>
-            Path.Combine(worldsDirectory, worldId, CreatablesFileName);
+        private string GetCreatablesPath(string worldName) =>
+            Path.Combine(worldsDirectory, worldName, CreatablesFileName);
     }
 }

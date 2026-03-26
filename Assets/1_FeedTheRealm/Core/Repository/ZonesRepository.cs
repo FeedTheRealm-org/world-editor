@@ -36,11 +36,11 @@ namespace FeedTheRealm.Core.Repository
                 logger.Log($"Saved zone {zone.zoneId} to '{path}'");
         }
 
-        public ZoneData GetZoneData(string worldId, int zoneId)
+        public ZoneData GetZoneData(string worldName, int zoneId)
         {
             try
             {
-                string path = GetZonePath(worldId, zoneId);
+                string path = GetZonePath(worldName, zoneId);
                 if (!File.Exists(path))
                     return null;
                 using FileStream fs = new(path, FileMode.Open);
@@ -62,13 +62,13 @@ namespace FeedTheRealm.Core.Repository
             return Path.Combine(GetWorldPath(worldName), fileName);
         }
 
-        public List<int> ListZones(string worldId)
+        public List<int> ListZones(string worldName)
         {
-            if (!Directory.Exists(GetWorldPath(worldId)))
+            if (!Directory.Exists(GetWorldPath(worldName)))
                 return new List<int>();
 
             return Directory
-                .GetFiles(GetWorldPath(worldId), $"*{extension}")
+                .GetFiles(GetWorldPath(worldName), $"*{extension}")
                 .Select(f => Path.GetFileNameWithoutExtension(f).Replace(zoneFilePrefix, ""))
                 .Where(s => int.TryParse(s, out _))
                 .Select(int.Parse)
@@ -76,9 +76,9 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
         }
 
-        private string GetWorldPath(string worldId)
+        private string GetWorldPath(string worldName)
         {
-            return Path.Combine(worldsDirectory, worldId);
+            return Path.Combine(worldsDirectory, worldName);
         }
     }
 }

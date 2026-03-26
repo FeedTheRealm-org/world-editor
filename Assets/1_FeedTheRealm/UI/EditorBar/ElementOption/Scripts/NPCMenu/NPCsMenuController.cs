@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.NPCs;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +17,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private GameObject createNPCMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -57,48 +55,48 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 return;
             }
 
-            foreach (
-                GenericNPC npc in creatorObjectLibrary.GetCreatables(CreatorObjectCategories.NPC)
-            )
-            {
-                VisualElement npcEntry = itemListTemplate.Instantiate();
-                var headerLabel = npcEntry.Q<Label>("Header");
-                if (headerLabel != null)
-                {
-                    headerLabel.text = npc.DisplayName;
-                }
+            // foreach (
+            //     GenericNPC npc in creatorObjectLibrary.GetCreatables(CreatableObjectCategories.NPC)
+            // )
+            // {
+            //     VisualElement npcEntry = itemListTemplate.Instantiate();
+            //     var headerLabel = npcEntry.Q<Label>("Header");
+            //     if (headerLabel != null)
+            //     {
+            //         headerLabel.text = npc.DisplayName;
+            //     }
 
-                var editButton = npcEntry.Q<Button>("Edit");
-                var deleteButton = npcEntry.Q<Button>("Delete");
+            //     var editButton = npcEntry.Q<Button>("Edit");
+            //     var deleteButton = npcEntry.Q<Button>("Delete");
 
-                var typeLabel = npcEntry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "NPC";
+            //     var typeLabel = npcEntry.Q<Label>("Type");
+            //     if (typeLabel != null)
+            //         typeLabel.text = "NPC";
 
-                if (editButton != null)
-                    editButton.clicked += () => OnEditNPC(npc);
-                if (deleteButton != null)
-                    deleteButton.clicked += () => OnDeleteNPC(npc, npcEntry);
+            //     if (editButton != null)
+            //         editButton.clicked += () => OnEditNPC(npc);
+            //     if (deleteButton != null)
+            //         deleteButton.clicked += () => OnDeleteNPC(npc, npcEntry);
 
-                npcsList.hierarchy.Add(npcEntry);
-            }
+            //     npcsList.hierarchy.Add(npcEntry);
+            // }
         }
 
-        void OnEditNPC(CreatorObject npc)
-        {
-            logger.Log("Editing NPC: " + npc.DisplayName, this, Logging.LogType.Info);
+        // void OnEditNPC(CreatorObject npc)
+        // {
+        //     logger.Log("Editing NPC: " + npc.DisplayName, this, Logging.LogType.Info);
 
-            EditContext.SetObjectToEdit(npc);
+        //     EditContext.SetObjectToEdit(npc);
 
-            OpenMenu(createNPCMenuPrefab);
-        }
+        //     OpenMenu(createNPCMenuPrefab);
+        // }
 
-        void OnDeleteNPC(CreatorObject npc, VisualElement npcListEntry)
-        {
-            logger.Log("Deleting NPC: " + npc.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.NPC, npc);
-            npcListEntry.RemoveFromHierarchy();
-        }
+        // void OnDeleteNPC(CreatorObject npc, VisualElement npcListEntry)
+        // {
+        //     logger.Log("Deleting NPC: " + npc.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.NPC, npc);
+        //     npcListEntry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {

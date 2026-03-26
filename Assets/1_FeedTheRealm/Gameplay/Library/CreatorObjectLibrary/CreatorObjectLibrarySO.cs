@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //     fileName = "CreatorObjectLibrary",
     //     menuName = "Scriptable Objects/Library/CreatorObjectLibrary"
     // )]
-    //public class CreatorObjectLibrarySO : ScriptableObject, IPersistent
+    //public class CreatablesManager : ScriptableObject, IPersistent
     // {
     //     [SerializeField]
     //     private Logging.Logger logger;
@@ -20,14 +19,14 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //     [SerializeField]
     //     private List<Loaders> loaders;
 
-    //     private Dictionary<CreatorObjectCategories, ICreatableLoader> loaderCache;
+    //     private Dictionary<CreatableObjectCategories, ICreatableLoader> loaderCache;
 
     //     // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
     //     // We implement this interface just to ensure that the repository is created when registered.
     //     public void Initialize()
     //     {
     //         logger.Log($"Initializing Creator Library", this, Logging.LogType.Info);
-    //         loaderCache = new Dictionary<CreatorObjectCategories, ICreatableLoader>();
+    //         loaderCache = new Dictionary<CreatableObjectCategories, ICreatableLoader>();
     //         foreach (var loader in loaders)
     //         {
     //             loaderCache[loader.category] = loader.loader as ICreatableLoader;
@@ -39,7 +38,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //         );
     //     }
 
-    //     public List<CreatorObject> GetCreatables(CreatorObjectCategories category)
+    //     public List<CreatorObject> GetCreatables(CreatableObjectCategories category)
     //     {
     //         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
     //         {
@@ -63,7 +62,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //         return allCreatables;
     //     }
 
-    //     public void AddCreatable(CreatorObjectCategories category, CreatorObject creatable)
+    //     public void AddCreatable(CreatableObjectCategories category, CreatorObject creatable)
     //     {
     //         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
     //         {
@@ -77,7 +76,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //         );
     //     }
 
-    //     public void RemoveCreatable(CreatorObjectCategories category, CreatorObject creatable)
+    //     public void RemoveCreatable(CreatableObjectCategories category, CreatorObject creatable)
     //     {
     //         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
     //         {
@@ -91,7 +90,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //         );
     //     }
 
-    //     public void UpdateCreatable(CreatorObjectCategories category, CreatorObject creatable)
+    //     public void UpdateCreatable(CreatableObjectCategories category, CreatorObject creatable)
     //     {
     //         if (loaderCache != null && loaderCache.TryGetValue(category, out var loader))
     //         {
@@ -120,7 +119,7 @@ namespace FeedTheRealm.Gameplay.Library.CreatorObjectLibrary
     //     [Serializable]
     //     public class Loaders
     //     {
-    //         public CreatorObjectCategories category;
+    //         public CreatableObjectCategories category;
     //         public ScriptableObject loader;
     //     }
     //}

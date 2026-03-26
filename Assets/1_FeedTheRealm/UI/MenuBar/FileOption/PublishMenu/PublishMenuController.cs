@@ -71,7 +71,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             // dataPersistenceManager.SaveWorld(currentData.worldName);
             // string fileName = dataPersistenceManager.GetWorldFile(currentData.worldName);
 
-            // (string worldId, string error, long statusCode) =
+            // (string worldName, string error, long statusCode) =
             //     await worldPublisherController.PublishWorld(
             //         currentData,
             //         fileName,
@@ -111,13 +111,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             //     return;
             // }
             // logger.Log(
-            //     $"PublishMenuController: World published successfully with id='{worldId}'",
+            //     $"PublishMenuController: World published successfully with id='{worldName}'",
             //     this,
             //     Logging.LogType.Info
             // );
 
-            // dataPersistenceManager.CurrentWorldData.id = worldId;
-            // dataPersistenceManager.SetWorldId(worldId);
+            // dataPersistenceManager.CurrentWorldData.id = worldName;
+            // dataPersistenceManager.SetWorldId(worldName);
 
             // dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
 

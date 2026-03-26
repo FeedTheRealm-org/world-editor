@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.LootTable;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +17,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         private GameObject createLootTableMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -44,45 +42,45 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             var lootTablesList = root.Q<ListView>("LootTablesList");
             lootTablesList.Clear();
 
-            foreach (
-                LootTable item in creatorObjectLibrary.GetCreatables(
-                    CreatorObjectCategories.LootTable
-                )
-            )
-            {
-                VisualElement lootTableEntry = itemListTemplate.Instantiate();
-                var headerLabel = lootTableEntry.Q<Label>("Header");
-                headerLabel.text = item.DisplayName;
+            // foreach (
+            //     LootTable item in creatorObjectLibrary.GetCreatables(
+            //         CreatableObjectCategories.LootTable
+            //     )
+            // )
+            // {
+            //     VisualElement lootTableEntry = itemListTemplate.Instantiate();
+            //     var headerLabel = lootTableEntry.Q<Label>("Header");
+            //     headerLabel.text = item.DisplayName;
 
-                var editButton = lootTableEntry.Q<Button>("Edit");
-                var deleteButton = lootTableEntry.Q<Button>("Delete");
+            //     var editButton = lootTableEntry.Q<Button>("Edit");
+            //     var deleteButton = lootTableEntry.Q<Button>("Delete");
 
-                var typeLabel = lootTableEntry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "Loot Table";
+            //     var typeLabel = lootTableEntry.Q<Label>("Type");
+            //     if (typeLabel != null)
+            //         typeLabel.text = "Loot Table";
 
-                editButton.clicked += () => OnEditItem(item);
-                deleteButton.clicked += () => OnDeleteItem(item, lootTableEntry);
+            //     editButton.clicked += () => OnEditItem(item);
+            //     deleteButton.clicked += () => OnDeleteItem(item, lootTableEntry);
 
-                lootTablesList.hierarchy.Add(lootTableEntry);
-            }
+            //     lootTablesList.hierarchy.Add(lootTableEntry);
+            // }
         }
 
-        void OnEditItem(CreatorObject lootTable)
-        {
-            logger.Log("Editing LootTable: " + lootTable.DisplayName, this, Logging.LogType.Info);
+        // void OnEditItem(CreatorObject lootTable)
+        // {
+        //     logger.Log("Editing LootTable: " + lootTable.DisplayName, this, Logging.LogType.Info);
 
-            EditContext.SetObjectToEdit(lootTable);
+        //     EditContext.SetObjectToEdit(lootTable);
 
-            OpenMenu(createLootTableMenuPrefab);
-        }
+        //     OpenMenu(createLootTableMenuPrefab);
+        // }
 
-        void OnDeleteItem(CreatorObject lootTable, VisualElement lootTableEntry)
-        {
-            logger.Log("Deleting LootTable: " + lootTable.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.LootTable, lootTable);
-            lootTableEntry.RemoveFromHierarchy();
-        }
+        // void OnDeleteItem(CreatorObject lootTable, VisualElement lootTableEntry)
+        // {
+        //     logger.Log("Deleting LootTable: " + lootTable.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.LootTable, lootTable);
+        //     lootTableEntry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {

@@ -1,4 +1,4 @@
-using FeedTheRealm.Core.WorldObjects.Shop;
+//using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.UI.Common;
 using UI.EditorBar.ElementOption.Scripts.ShopMenu;
 using UnityEngine;
@@ -20,7 +20,8 @@ public class ShopCreatorMenuController : MenuController
     private Button saveButton;
     private Button returnButton;
     private Button closeButton;
-    private ShopObject shopBeingEdited;
+
+    //private ShopObject shopBeingEdited;
 
     void OnEnable()
     {
@@ -35,9 +36,9 @@ public class ShopCreatorMenuController : MenuController
         returnButton.clicked += ReturnToListMenu;
         closeButton.clicked += CloseMenu;
 
-        shopBeingEdited = ShopEditContext.GetAndClear();
-        if (shopBeingEdited != null)
-            nameField?.SetValueWithoutNotify(shopBeingEdited.displayName);
+        // shopBeingEdited = ShopEditContext.GetAndClear();
+        // if (shopBeingEdited != null)
+        //     nameField?.SetValueWithoutNotify(shopBeingEdited.displayName);
     }
 
     private void OnSaveClicked()
@@ -49,10 +50,10 @@ public class ShopCreatorMenuController : MenuController
             return;
         }
 
-        if (shopBeingEdited != null)
-            shopBeingEdited.displayName = shopName;
-        else
-            shopManager.CreateShop(shopName);
+        // if (shopBeingEdited != null)
+        //     shopBeingEdited.displayName = shopName;
+        // else
+        //     shopManager.CreateShop(shopName);
 
         ReturnToListMenu();
     }

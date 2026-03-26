@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.Quests;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +15,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         private GameObject createQuestMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -57,50 +53,50 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 return;
             }
 
-            foreach (
-                GenericQuest quest in creatorObjectLibrary.GetCreatables(
-                    CreatorObjectCategories.Quest
-                )
-            )
-            {
-                VisualElement questEntry = itemListTemplate.Instantiate();
-                var headerLabel = questEntry.Q<Label>("Header");
-                if (headerLabel != null)
-                {
-                    headerLabel.text = quest.DisplayName;
-                }
+            // foreach (
+            //     GenericQuest quest in creatorObjectLibrary.GetCreatables(
+            //         CreatableObjectCategories.Quest
+            //     )
+            // )
+            // {
+            //     VisualElement questEntry = itemListTemplate.Instantiate();
+            //     var headerLabel = questEntry.Q<Label>("Header");
+            //     if (headerLabel != null)
+            //     {
+            //         headerLabel.text = quest.DisplayName;
+            //     }
 
-                var editButton = questEntry.Q<Button>("Edit");
-                var deleteButton = questEntry.Q<Button>("Delete");
+            //     var editButton = questEntry.Q<Button>("Edit");
+            //     var deleteButton = questEntry.Q<Button>("Delete");
 
-                var typeLabel = questEntry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "Quest";
+            //     var typeLabel = questEntry.Q<Label>("Type");
+            //     if (typeLabel != null)
+            //         typeLabel.text = "Quest";
 
-                if (editButton != null)
-                    editButton.clicked += () => OnEditQuest(quest);
-                if (deleteButton != null)
-                    deleteButton.clicked += () => OnDeleteQuest(quest, questEntry);
+            //     if (editButton != null)
+            //         editButton.clicked += () => OnEditQuest(quest);
+            //     if (deleteButton != null)
+            //         deleteButton.clicked += () => OnDeleteQuest(quest, questEntry);
 
-                questsList.hierarchy.Add(questEntry);
-            }
+            //     questsList.hierarchy.Add(questEntry);
+            // }
         }
 
-        void OnEditQuest(CreatorObject quest)
-        {
-            logger.Log("Editing quest: " + quest.DisplayName, this, Logging.LogType.Info);
+        // void OnEditQuest(CreatorObject quest)
+        // {
+        //     logger.Log("Editing quest: " + quest.DisplayName, this, Logging.LogType.Info);
 
-            EditContext.SetObjectToEdit(quest);
+        //     EditContext.SetObjectToEdit(quest);
 
-            OpenMenu(createQuestMenuPrefab);
-        }
+        //     OpenMenu(createQuestMenuPrefab);
+        // }
 
-        void OnDeleteQuest(CreatorObject quest, VisualElement questListEntry)
-        {
-            logger.Log("Deleting quest: " + quest.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Quest, quest);
-            questListEntry.RemoveFromHierarchy();
-        }
+        // void OnDeleteQuest(CreatorObject quest, VisualElement questListEntry)
+        // {
+        //     logger.Log("Deleting quest: " + quest.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.Quest, quest);
+        //     questListEntry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {

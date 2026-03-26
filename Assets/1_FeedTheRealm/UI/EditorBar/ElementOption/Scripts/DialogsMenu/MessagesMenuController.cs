@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using FeedTheRealm.Core.WorldObjects.Dialogs;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,7 +19,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private GameObject dialogMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -51,19 +50,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             if (headerLabel != null)
             {
                 string dialogName = "";
-                if (!string.IsNullOrEmpty(PendingDialogId) && creatorObjectLibrary != null)
-                {
-                    var dialog =
-                        creatorObjectLibrary
-                            .GetCreatables(CreatorObjectCategories.Dialog)
-                            .Find(d => d.ObjectId == PendingDialogId) as Dialog;
-                    if (dialog != null)
-                    {
-                        dialogName = dialog.DisplayName;
-                        if (dialogName.Length > 20)
-                            dialogName = dialogName.Substring(0, 20) + "...";
-                    }
-                }
+                // if (!string.IsNullOrEmpty(PendingDialogId) && creatorObjectLibrary != null)
+                // {
+                //     var dialog =
+                //         creatorObjectLibrary
+                //             .GetCreatables(CreatableObjectCategories.Dialog)
+                //             .Find(d => d.ObjectId == PendingDialogId) as Dialog;
+                //     if (dialog != null)
+                //     {
+                //         dialogName = dialog.DisplayName;
+                //         if (dialogName.Length > 20)
+                //             dialogName = dialogName.Substring(0, 20) + "...";
+                //     }
+                // }
                 headerLabel.text = string.IsNullOrEmpty(dialogName)
                     ? "Messages"
                     : $"Messages (Dialog: {dialogName})";
@@ -76,44 +75,44 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             var messagesList = root.Q<ListView>("MessagesList");
             messagesList.Clear();
 
-            var allMessages = creatorObjectLibrary.GetCreatables(CreatorObjectCategories.Message);
+            //var allMessages = creatorObjectLibrary.GetCreatables(CreatableObjectCategories.Message);
 
-            foreach (Message message in allMessages)
-            {
-                if (!string.IsNullOrEmpty(PendingDialogId) && message.dialogId != PendingDialogId)
-                    continue;
-                VisualElement entry = itemListTemplate.Instantiate();
-                var headerLabel = entry.Q<Label>("Header");
-                headerLabel.text = message.DisplayName;
+            // foreach (Message message in allMessages)
+            // {
+            //     if (!string.IsNullOrEmpty(PendingDialogId) && message.dialogId != PendingDialogId)
+            //         continue;
+            //     VisualElement entry = itemListTemplate.Instantiate();
+            //     var headerLabel = entry.Q<Label>("Header");
+            //     headerLabel.text = message.DisplayName;
 
-                var typeLabel = entry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "Message";
+            //     var typeLabel = entry.Q<Label>("Type");
+            //     if (typeLabel != null)
+            //         typeLabel.text = "Message";
 
-                var editButton = entry.Q<Button>("Edit");
-                var deleteButton = entry.Q<Button>("Delete");
+            //     var editButton = entry.Q<Button>("Edit");
+            //     var deleteButton = entry.Q<Button>("Delete");
 
-                editButton.clicked += () => OnEditMessage(message);
-                deleteButton.clicked += () => OnDeleteMessage(message, entry);
+            //     editButton.clicked += () => OnEditMessage(message);
+            //     deleteButton.clicked += () => OnDeleteMessage(message, entry);
 
-                messagesList.hierarchy.Add(entry);
-            }
+            //     messagesList.hierarchy.Add(entry);
+            // }
         }
 
-        void OnEditMessage(Message message)
-        {
-            logger.Log("Editing message: " + message.DisplayName, this, Logging.LogType.Info);
-            EditContext.SetObjectToEdit(message);
-            MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
-            OpenMenu(createMessageMenuPrefab);
-        }
+        // void OnEditMessage(Message message)
+        // {
+        //     logger.Log("Editing message: " + message.DisplayName, this, Logging.LogType.Info);
+        //     EditContext.SetObjectToEdit(message);
+        //     MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
+        //     OpenMenu(createMessageMenuPrefab);
+        // }
 
-        void OnDeleteMessage(Message message, VisualElement entry)
-        {
-            logger.Log("Deleting message: " + message.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Message, message);
-            entry.RemoveFromHierarchy();
-        }
+        // void OnDeleteMessage(Message message, VisualElement entry)
+        // {
+        //     logger.Log("Deleting message: " + message.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.Message, message);
+        //     entry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {
@@ -124,7 +123,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private void AddMessage()
         {
             logger.Log("Opening Create Message Menu", this, Logging.LogType.Info);
-            MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
+            //MessagesCreatorMenuController.PendingDialogId = PendingDialogId;
             OpenMenu(createMessageMenuPrefab);
         }
 

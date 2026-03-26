@@ -27,19 +27,19 @@ namespace FeedTheRealm.Core.Repository
 
         public void SaveWorldData(WorldData worldData)
         {
-            if (string.IsNullOrEmpty(worldData.worldId))
-                throw new ArgumentException("WorldData must have a worldId before saving.");
+            if (string.IsNullOrEmpty(worldData.worldName))
+                throw new ArgumentException("WorldData must have a worldName before saving.");
 
-            string path = GetWorldDataFilePath(worldData.worldId);
+            string path = GetWorldDataFilePath(worldData.worldName);
             if (FileSystemHelper.TryWriteJson(path, worldData, logger))
                 logger.Log($"Saved world data to '{path}'");
         }
 
-        public WorldData GetWorldData(string worldId)
+        public WorldData GetWorldData(string worldName)
         {
             try
             {
-                string path = GetWorldDataFilePath(worldId);
+                string path = GetWorldDataFilePath(worldName);
                 if (!File.Exists(path))
                 {
                     logger.Log(
@@ -60,7 +60,7 @@ namespace FeedTheRealm.Core.Repository
         }
 
         /// <summary>
-        ///  Lists all worlds by their worldId (which is the name of the folder where their data is stored).
+        ///  Lists all worlds by their worldName (which is the name of the folder where their data is stored).
         ///  This is used to populate the "Load World" menu.
         /// </summary>
         public List<string> ListWorlds()
@@ -74,7 +74,7 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
         }
 
-        private string GetWorldDataFilePath(string worldId) =>
-            Path.Combine(worldsDirectory, worldId, worldDataFileName);
+        private string GetWorldDataFilePath(string worldName) =>
+            Path.Combine(worldsDirectory, worldName, worldDataFileName);
     }
 }

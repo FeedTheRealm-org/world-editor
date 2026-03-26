@@ -25,13 +25,13 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         /// To avoid redundant loading of creatables in the same world but different zone, the loader checks if the creatables for the specified world are already loaded in the CreatablesManager.
         /// If they are, it skips the loading process.
         /// </summary>
-        public UniTask Load(string worldId, CreatablesData data)
+        public UniTask Load(string worldName, CreatablesData data)
         {
-            if (creatablesManager.CurrentWorldId == worldId)
+            if (creatablesManager.CurrentWorldId == worldName)
                 return UniTask.CompletedTask;
 
             creatablesManager.ClearRegistry();
-            creatablesManager.CurrentWorldId = worldId;
+            creatablesManager.CurrentWorldId = worldName;
 
             foreach (var enemy in data.enemies)
                 creatablesManager.Add(new AggresiveNpc(enemy));

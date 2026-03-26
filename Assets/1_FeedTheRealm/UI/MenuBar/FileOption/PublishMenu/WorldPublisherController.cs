@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         Logging.Logger logger;
 
         [SerializeField]
-        CreatorObjectLibrarySO creatorObjectLibrary;
+        CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         WorldService worldService;
@@ -41,17 +41,18 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             string description
         )
         {
-            (string worldId, string worldError, long statusCode) = await worldService.PublishWorld(
-                worldData,
-                worldFile,
-                description,
-                session.APIToken
-            );
+            (string worldName, string worldError, long statusCode) =
+                await worldService.PublishWorld(
+                    worldData,
+                    worldFile,
+                    description,
+                    session.APIToken
+                );
 
             if (!string.IsNullOrEmpty(worldError))
                 return (null, worldError, statusCode);
 
-            string modelError = await PublishModels(worldData, worldId);
+            string modelError = await PublishModels(worldData, worldName);
             if (!string.IsNullOrEmpty(modelError) && modelError != "No assets to upload.")
                 return (null, modelError, 0);
 
@@ -109,7 +110,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 .ToList();
             string consumableSpriteError = await PublishItems(
                 consumableSpriteList,
-                worldId,
+                worldName,
                 consumableCategory.category_id
             );
             if (
@@ -121,7 +122,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             var weaponSpriteList = weaponSpriteData.Select(kvp => (kvp.Key, kvp.Value)).ToList();
             string weaponSpriteError = await PublishItems(
                 weaponSpriteList,
-                worldId,
+                worldName,
                 weaponCategory.category_id
             );
             if (
@@ -130,20 +131,20 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             )
                 return (null, weaponSpriteError, 0);
 
-            return (worldId, null, 200);
+            return (worldName, null, 200);
         }
 
         /// <summary>
         ///  Uploads model files for a world.
         ///  If an error occurs, returns the error message.
         /// </summary>
-        private async Task<string> PublishModels(WorldDataOld worldData, string worldId)
+        private async Task<string> PublishModels(WorldDataOld worldData, string worldName)
         {
             if (worldData.objectPlacementData.Count == 0)
                 return null;
 
             Debug.Log(
-                $"Publishing models for world {worldId}, total structures: {worldData.objectPlacementData.Count}"
+                $"Publishing models for world {worldName}, total structures: {worldData.objectPlacementData.Count}"
             );
 
             var uniqueStructures = worldData
@@ -157,7 +158,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             //         structure.structureName
             //     );
             // }
-            return await modelService.UploadModels(uniqueStructures, worldId, session.APIToken);
+            return await modelService.UploadModels(uniqueStructures, worldName, session.APIToken);
         }
 
         /// <summary>
@@ -166,13 +167,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         /// </summary>
         private async Task<string> PublishItems(
             List<(string, string)> itemData,
-            string worldId,
+            string worldName,
             string categoryId
         )
         {
             return await itemService.UploadItemsByCategory(
                 itemData,
-                worldId,
+                worldName,
                 categoryId,
                 session.APIToken
             );

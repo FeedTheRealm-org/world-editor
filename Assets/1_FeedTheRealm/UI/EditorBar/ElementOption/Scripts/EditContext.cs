@@ -1,6 +1,3 @@
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using UnityEngine;
-
 namespace FeedTheRealm.UI.EditorBar.ElementOption
 {
     /// <summary>
@@ -10,43 +7,43 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption
     /// </summary>
     public static class EditContext
     {
-        private static CreatorObject objectToEdit;
+        //private static CreatorObject objectToEdit;
 
         /// <summary>
         /// Set the object that should be edited. This is called by list menu controllers
         /// before opening a creator menu in edit mode.
         /// </summary>
-        public static void SetObjectToEdit(CreatorObject obj)
-        {
-            objectToEdit = obj;
-        }
+        // public static void SetObjectToEdit(CreatorObject obj)
+        // {
+        //     objectToEdit = obj;
+        // }
 
         /// <summary>
         /// Get the object to edit and clear the context. This is called by creator menu
         /// controllers when they initialize.
         /// </summary>
-        public static T GetAndClearObjectToEdit<T>()
-            where T : CreatorObject
-        {
-            var obj = objectToEdit as T;
-            objectToEdit = null;
-            return obj;
-        }
+        // public static T GetAndClearObjectToEdit<T>()
+        //     where T : CreatorObject
+        // {
+        //     var obj = objectToEdit as T;
+        //     objectToEdit = null;
+        //     return obj;
+        // }
 
         /// <summary>
         /// Check if there's an object pending edit.
         /// </summary>
-        public static bool HasObjectToEdit()
-        {
-            return objectToEdit != null;
-        }
+        // public static bool HasObjectToEdit()
+        // {
+        //     return objectToEdit != null;
+        // }
 
         /// <summary>
         /// Clear any pending edit context.
         /// </summary>
-        public static void Clear()
-        {
-            objectToEdit = null;
-        }
+        // public static void Clear()
+        // {
+        //     objectToEdit = null;
+        // }
     }
 }

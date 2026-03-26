@@ -1,6 +1,5 @@
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
-using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 

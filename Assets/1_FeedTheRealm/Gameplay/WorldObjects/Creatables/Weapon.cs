@@ -1,4 +1,3 @@
-using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
 using FTRShared.Runtime.Models;
 
@@ -14,8 +13,6 @@ namespace FeedTheRealm.Gameplay.Creatables
         }
 
         public string Id => data.id;
-
-        public CreatableObjectCategories Category => CreatableObjectCategories.WeaponItem;
 
         public void SaveData(ref CreatablesData data)
         {

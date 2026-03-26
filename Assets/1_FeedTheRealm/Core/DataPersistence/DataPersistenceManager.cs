@@ -42,13 +42,7 @@ namespace FeedTheRealm.Core.DataPersistence
 
         public WorldData CreateNewWorld(string worldName)
         {
-            return new WorldData
-            {
-                worldId = Guid.NewGuid().ToString(),
-                worldName = worldName,
-                created_at = DateTime.Now,
-                last_edited_at = DateTime.Now,
-            };
+            return new WorldData { worldName = worldName, created_at = DateTime.Now };
         }
 
         public void SaveWorldMetadata(WorldData worldData)
@@ -56,22 +50,25 @@ namespace FeedTheRealm.Core.DataPersistence
             worldsRepository.SaveWorldData(worldData);
         }
 
-        public void SaveZone(string worldId, int zoneId)
+        public void SaveZone(string worldName, int zoneId)
         {
-            var zoneData = new ZoneData(worldId, zoneId);
+            var zoneData = new ZoneData(worldName, zoneId);
+            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
+            logger.Log($"[DataPersistenceManager] Saving: {registeredPlaceables}");
             foreach (var obj in registeredPlaceables)
                 obj.SaveData(ref zoneData);
 
-            zonesRepository.SaveZoneData(worldId, zoneData);
+            zonesRepository.SaveZoneData(worldName, zoneData);
         }
 
-        public void SaveCreatables(string worldId, int zoneId)
+        public void SaveCreatables(string worldName)
         {
             var creatablesData = new CreatablesData();
+            registeredCreatables.RemoveAll(obj => obj == null);
             foreach (var obj in registeredCreatables)
                 obj.SaveData(ref creatablesData);
 
-            creatablesRepository.SaveCreatables(worldId, creatablesData);
+            creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
         // ---- Registration Methods ----
@@ -106,22 +103,22 @@ namespace FeedTheRealm.Core.DataPersistence
 
         // ---- Get Methods ----
 
-        public ZoneData GetZoneData(string worldId, int zoneId)
+        public ZoneData GetZoneData(string worldName, int zoneId)
         {
-            return zonesRepository.GetZoneData(worldId, zoneId);
+            return zonesRepository.GetZoneData(worldName, zoneId);
         }
 
-        public CreatablesData GetCreatables(string worldId)
+        public CreatablesData GetCreatables(string worldName)
         {
-            return creatablesRepository.GetCreatables(worldId);
+            return creatablesRepository.GetCreatables(worldName);
         }
 
-        public WorldData GetWorldData(string worldId)
+        public WorldData GetWorldData(string worldName)
         {
-            return worldsRepository.GetWorldData(worldId);
+            return worldsRepository.GetWorldData(worldName);
         }
 
-        public List<string> GetAllWorlds()
+        public List<string> ListAllWorlds()
         {
             return worldsRepository.ListWorlds();
         }

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldEditor;
-using FeedTheRealm.Core.WorldObjects.Enemies;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
@@ -15,7 +14,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
     [RequireComponent(typeof(UIDocument))]
     public class AggresiveNpcSpawnerEditor : MenuController, IEditable
     {
-        // [Inject] private CreatorObjectLibrarySO creatorObjectLibrary;
+        // [Inject] private CreatablesManager creatorObjectLibrary;
         private Slider radiusSlider;
         private IntegerField maxEnemiesField;
         private IntegerField spawnRateField;
@@ -54,13 +53,13 @@ namespace FeedTheRealm.UI.PlaceableEditor
             );
             resetDelayField.RegisterValueChangedCallback(e => target.data.ResetDelay = e.newValue);
 
-            enemyDropdown.RegisterValueChangedCallback(e =>
-            {
-                var enemies = GetEnemies();
-                var selected = enemies.FirstOrDefault(enemy => enemy.DisplayName == e.newValue);
-                if (selected != null)
-                    target.data.EnemyId = selected.ObjectId;
-            });
+            // enemyDropdown.RegisterValueChangedCallback(e =>
+            // {
+            //     var enemies = GetEnemies();
+            //     var selected = enemies.FirstOrDefault(enemy => enemy.DisplayName == e.newValue);
+            //     if (selected != null)
+            //         target.data.EnemyId = selected.ObjectId;
+            // });
             closeButton.clicked += CloseMenu;
         }
 
@@ -87,20 +86,20 @@ namespace FeedTheRealm.UI.PlaceableEditor
             resetAfterKillsField.SetValueWithoutNotify(target.data.ResetAfterKills);
             resetDelayField.SetValueWithoutNotify((int)target.data.ResetDelay);
 
-            var enemies = GetEnemies();
-            enemyDropdown.choices = enemies.Select(e => e.DisplayName).ToList();
+            //var enemies = GetEnemies();
+            // enemyDropdown.choices = enemies.Select(e => e.DisplayName).ToList();
 
-            if (!string.IsNullOrEmpty(target.data.EnemyId))
-            {
-                var current = enemies.FirstOrDefault(e => e.ObjectId == target.data.EnemyId);
-                if (current != null)
-                    enemyDropdown.SetValueWithoutNotify(current.DisplayName);
-            }
+            // if (!string.IsNullOrEmpty(target.data.EnemyId))
+            // {
+            //     var current = enemies.FirstOrDefault(e => e.ObjectId == target.data.EnemyId);
+            //     if (current != null)
+            //         enemyDropdown.SetValueWithoutNotify(current.DisplayName);
+            // }
         }
 
-        private List<GenericEnemy> GetEnemies() => new();
+        //private List<GenericEnemy> GetEnemies() => new();
         // creatorObjectLibrary
-        //     .GetCreatables(CreatorObjectCategories.Enemy)
+        //     .GetCreatables(CreatableObjectCategories.Enemy)
         //     .Cast<GenericEnemy>()
         //     .ToList();
     }

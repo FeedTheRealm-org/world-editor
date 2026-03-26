@@ -15,8 +15,6 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public string Id => data.id;
 
-        public CreatableObjectCategories Category => CreatableObjectCategories.Enemy;
-
         public void SaveData(ref CreatablesData data)
         {
             data.enemies.Add(this.data);

@@ -6,13 +6,17 @@ using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 {
     [RequireComponent(typeof(UIDocument))]
     public class OpenMenuController : MenuController
     {
-        [SerializeField]
+        [Inject]
+        private WorldSelector worldSelector;
+
+        [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
         [SerializeField]
@@ -30,7 +34,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             closeButton = root.Q<Button>("Close");
             worldsListView = root.Q<ListView>("WorldsList");
 
-            // loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            loadedWorlds = dataPersistenceManager.ListAllWorlds();
 
             closeButton.clicked += CloseMenu;
 
@@ -66,7 +70,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 
         private void OnLoadWorldClicked(string worldName)
         {
-            //  dataPersistenceManager.SetActiveWorld(worldName);
+            worldSelector.selectedWorld = worldName;
+            worldSelector.selectedZoneId =
+                dataPersistenceManager.GetWorldData(worldName)?.startingZone ?? 1;
             SceneManager.LoadScene(gameScene.SceneName);
             CloseMenu();
         }

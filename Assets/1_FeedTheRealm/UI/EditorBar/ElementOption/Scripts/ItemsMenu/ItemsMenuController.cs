@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.Items;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Core.Library;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,10 +21,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private GameObject createWeaponItemMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
-        private List<CreatorObjectCategories> itemCategory;
+        private List<CreatableObjectCategories> itemCategory;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -44,68 +43,68 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             addWeaponItemButton.clicked += AddWeaponItem;
             closeButton.clicked += CloseMenu;
 
-            PopulateItemsList();
+            //PopulateItemsList();
         }
 
-        private void PopulateItemsList()
-        {
-            var root = GetComponent<UIDocument>().rootVisualElement;
-            var itemsList = root.Q<ListView>("ItemsList");
-            itemsList.Clear();
+        // private void PopulateItemsList()
+        // {
+        //     var root = GetComponent<UIDocument>().rootVisualElement;
+        //     var itemsList = root.Q<ListView>("ItemsList");
+        //     itemsList.Clear();
 
-            foreach (CreatorObjectCategories category in itemCategory)
-            {
-                foreach (Item item in creatorObjectLibrary.GetCreatables(category))
-                {
-                    VisualElement itemEntry = itemListTemplate.Instantiate();
-                    var headerLabel = itemEntry.Q<Label>("Header");
-                    headerLabel.text = item.DisplayName;
+        //     foreach (CreatableObjectCategories category in itemCategory)
+        //     {
+        //         foreach (Item item in creatorObjectLibrary.GetCreatables(category))
+        //         {
+        //             VisualElement itemEntry = itemListTemplate.Instantiate();
+        //             var headerLabel = itemEntry.Q<Label>("Header");
+        //             headerLabel.text = item.DisplayName;
 
-                    var typeLabel = itemEntry.Q<Label>("Type");
-                    if (typeLabel != null)
-                        typeLabel.text = category.GetDisplayName();
+        //             var typeLabel = itemEntry.Q<Label>("Type");
+        //             if (typeLabel != null)
+        //                 typeLabel.text = category.GetDisplayName();
 
-                    var editButton = itemEntry.Q<Button>("Edit");
-                    var deleteButton = itemEntry.Q<Button>("Delete");
+        //             var editButton = itemEntry.Q<Button>("Edit");
+        //             var deleteButton = itemEntry.Q<Button>("Delete");
 
-                    editButton.clicked += () => OnEditItem(item);
-                    deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
+        //             editButton.clicked += () => OnEditItem(item);
+        //             deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
 
-                    itemsList.hierarchy.Add(itemEntry);
-                }
-            }
-        }
+        //             itemsList.hierarchy.Add(itemEntry);
+        //         }
+        //     }
+        // }
 
-        void OnEditItem(CreatorObject item)
-        {
-            logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
+        // void OnEditItem(CreatorObject item)
+        // {
+        //     logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
 
-            EditContext.SetObjectToEdit(item);
+        //     EditContext.SetObjectToEdit(item);
 
-            if (item is ConsumableItem)
-            {
-                OpenMenu(createConsumableItemMenuPrefab);
-            }
-            else if (item is WeaponItem)
-            {
-                OpenMenu(createWeaponItemMenuPrefab);
-            }
-            else
-            {
-                logger.Log(
-                    $"Unknown item type: {item.GetType().Name}",
-                    this,
-                    Logging.LogType.Error
-                );
-            }
-        }
+        //     if (item is ConsumableItem)
+        //     {
+        //         OpenMenu(createConsumableItemMenuPrefab);
+        //     }
+        //     else if (item is WeaponItem)
+        //     {
+        //         OpenMenu(createWeaponItemMenuPrefab);
+        //     }
+        //     else
+        //     {
+        //         logger.Log(
+        //             $"Unknown item type: {item.GetType().Name}",
+        //             this,
+        //             Logging.LogType.Error
+        //         );
+        //     }
+        // }
 
-        void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)
-        {
-            logger.Log("Deleting item: " + item.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.ConsumableItem, item);
-            itemListEntry.RemoveFromHierarchy();
-        }
+        // void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)
+        // {
+        //     logger.Log("Deleting item: " + item.DisplayName, this, Logging.LogType.Info);
+        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.ConsumableItem, item);
+        //     itemListEntry.RemoveFromHierarchy();
+        // }
 
         void OnDisable()
         {

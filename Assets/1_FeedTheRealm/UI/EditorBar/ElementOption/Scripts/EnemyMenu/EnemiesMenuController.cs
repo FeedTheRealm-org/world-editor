@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using FeedTheRealm.Core.WorldObjects.CreatorObjects;
-using FeedTheRealm.Core.WorldObjects.Enemies;
-using FeedTheRealm.Gameplay.Library.CreatorObjectLibrary;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +16,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private GameObject createEnemyMenuPrefab;
 
         [SerializeField]
-        private CreatorObjectLibrarySO creatorObjectLibrary;
+        private CreatablesManager creatorObjectLibrary;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -44,15 +41,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             var enemiesList = root.Q<ListView>("EnemiesList");
             enemiesList.Clear();
 
-            foreach (
-                GenericEnemy enemy in creatorObjectLibrary.GetCreatables(
-                    CreatorObjectCategories.Enemy
-                )
-            )
+            foreach (AggresiveNpc enemy in creatorObjectLibrary.GetAll<AggresiveNpc>())
             {
                 VisualElement enemyEntry = itemListTemplate.Instantiate();
                 var headerLabel = enemyEntry.Q<Label>("Header");
-                headerLabel.text = enemy.DisplayName;
+                headerLabel.text = enemy.data.name;
 
                 var editButton = enemyEntry.Q<Button>("Edit");
                 var deleteButton = enemyEntry.Q<Button>("Delete");
@@ -68,19 +61,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             }
         }
 
-        void OnEditEnemy(CreatorObject enemy)
+        void OnEditEnemy(AggresiveNpc enemy)
         {
-            logger.Log("Editing enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
+            logger.Log("Editing enemy: " + enemy.data.name, this, Logging.LogType.Info);
 
-            EditContext.SetObjectToEdit(enemy);
-
-            OpenMenu(createEnemyMenuPrefab);
+            // EditContext.SetObjectToEdit(enemy);
+            // OpenMenu(createEnemyMenuPrefab);
         }
 
-        void OnDeleteEnemy(CreatorObject enemy, VisualElement enemyListEntry)
+        void OnDeleteEnemy(AggresiveNpc enemy, VisualElement enemyListEntry)
         {
-            logger.Log("Deleting enemy: " + enemy.DisplayName, this, Logging.LogType.Info);
-            creatorObjectLibrary.RemoveCreatable(CreatorObjectCategories.Enemy, enemy);
+            logger.Log("Deleting enemy: " + enemy.data.name, this, Logging.LogType.Info);
+            creatorObjectLibrary.Delete<AggresiveNpc>(enemy.data.id);
             enemyListEntry.RemoveFromHierarchy();
         }
 

@@ -1,3 +1,4 @@
+using System;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
@@ -10,7 +11,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
     [RequireComponent(typeof(UIDocument))]
     public class SaveMenuController : MenuController
     {
-        [SerializeField]
+        [Inject]
         private WorldSelector worldSelector;
 
         [Inject]
@@ -20,6 +21,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
         private Button closeButton;
         private TextField nameInput;
         private VisualElement root;
+
+        private WorldData currentWorldData;
 
         void OnEnable()
         {
@@ -37,6 +40,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
 
             saveButton.clicked += OnSaveClicked;
             closeButton.clicked += CloseMenu;
+
+            // TODO: when saving, we can add the bio data here and other worlds metada to later update
+            currentWorldData ??= dataPersistenceManager.GetWorldData(worldName);
         }
 
         private void OnDisable()
@@ -47,21 +53,43 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
 
         private void OnSaveClicked()
         {
-            string worldName = nameInput?.value?.Trim();
-            if (string.IsNullOrEmpty(worldName))
+            try
             {
-                Debug.LogWarning("SaveMenuController: No world name entered!");
-                ToastNotification.Show("World name is required", "error", Color.red);
-                return;
+                string worldName = nameInput?.value?.Trim();
+                ValidateWorldName(worldName);
+
+                if (currentWorldData == null)
+                    currentWorldData = dataPersistenceManager.CreateNewWorld(worldName);
+
+                currentWorldData.last_edited_at = DateTime.Now;
+                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                dataPersistenceManager.SaveZone(worldName, worldSelector.selectedZoneId);
+                dataPersistenceManager.SaveCreatables(worldName);
+                worldSelector.selectedWorld = worldName;
+                ToastNotification.Show(
+                    $"World {worldName} was saved successfully",
+                    "success",
+                    Color.green
+                );
+                Debug.Log($"World {currentWorldData} was saved successfully");
+                CloseMenu();
             }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error saving world: {ex.Message}");
+                ToastNotification.Show($"Error saving world: {ex.Message}", "error", Color.red);
+            }
+        }
 
-            Debug.Log($"SaveMenuController: Saving world '{worldName}'");
-            // TODO: this will change to save zones and or creatables
-            // dataPersistenceManager.SaveWorld(worldName);
+        private void ValidateWorldName(string worldName)
+        {
+            if (string.IsNullOrWhiteSpace(worldName))
+                throw new ArgumentException("World name is required");
 
-            ToastNotification.Show("World saved successfully", "success", Color.green);
-
-            CloseMenu();
+            if (!System.Text.RegularExpressions.Regex.IsMatch(worldName, @"^[a-zA-Z0-9\s\-_]+$"))
+                throw new ArgumentException(
+                    "World name can only contain letters, numbers, spaces, hyphens and underscores"
+                );
         }
     }
 }

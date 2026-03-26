@@ -1,4 +1,4 @@
-using FeedTheRealm.Core.WorldObjects.Shop;
+//using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.UI.Common;
 using UI.EditorBar.ElementOption.Scripts.ShopMenu;
 using UnityEngine;
@@ -44,39 +44,39 @@ public class ListShopsMenuController : MenuController
         var shopList = root.Q<ListView>("ShopList");
         shopList.Clear();
 
-        foreach (ShopObject shop in shopManager.GetShops())
-        {
-            VisualElement entry = itemListTemplate.Instantiate();
+        // foreach (ShopObject shop in shopManager.GetShops())
+        // {
+        //     VisualElement entry = itemListTemplate.Instantiate();
 
-            entry.Q<Label>("Header").text = shop.displayName;
+        //     entry.Q<Label>("Header").text = shop.displayName;
 
-            var typeLabel = entry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = "Shop";
+        //     var typeLabel = entry.Q<Label>("Type");
+        //     if (typeLabel != null)
+        //         typeLabel.text = "Shop";
 
-            var editButton = entry.Q<Button>("Edit");
-            var deleteButton = entry.Q<Button>("Delete");
+        //     var editButton = entry.Q<Button>("Edit");
+        //     var deleteButton = entry.Q<Button>("Delete");
 
-            editButton.clicked += () => OnEditShop(shop);
-            deleteButton.clicked += () => OnDeleteShop(shop, entry);
+        //     editButton.clicked += () => OnEditShop(shop);
+        //     deleteButton.clicked += () => OnDeleteShop(shop, entry);
 
-            shopList.hierarchy.Add(entry);
-        }
+        //     shopList.hierarchy.Add(entry);
+        // }
     }
 
-    private void OnEditShop(ShopObject shop)
-    {
-        logger.Log("Editing shop: " + shop.displayName, this, Logging.LogType.Info);
-        ShopEditContext.SetShopToEdit(shop);
-        OpenMenu(shopEditorMenuPrefab);
-    }
+    // private void OnEditShop(ShopObject shop)
+    // {
+    //     logger.Log("Editing shop: " + shop.displayName, this, Logging.LogType.Info);
+    //     ShopEditContext.SetShopToEdit(shop);
+    //     OpenMenu(shopEditorMenuPrefab);
+    // }
 
-    private void OnDeleteShop(ShopObject shop, VisualElement entry)
-    {
-        logger.Log("Deleting shop: " + shop.displayName, this, Logging.LogType.Info);
-        shopManager.DeleteShop(shop.id);
-        entry.RemoveFromHierarchy();
-    }
+    // private void OnDeleteShop(ShopObject shop, VisualElement entry)
+    // {
+    //     logger.Log("Deleting shop: " + shop.displayName, this, Logging.LogType.Info);
+    //     shopManager.DeleteShop(shop.id);
+    //     entry.RemoveFromHierarchy();
+    // }
 
     private void AddShop()
     {
