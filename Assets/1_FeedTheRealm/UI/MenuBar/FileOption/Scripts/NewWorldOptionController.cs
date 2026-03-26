@@ -1,5 +1,6 @@
 using System;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace FeedTheRealm.UI.MenuBar
         private SceneReference editorScene;
 
         [Inject]
+        private Logging.Logger logger;
+
+        [Inject]
         private WorldSelector worldSelector;
 
         [Inject]
@@ -22,11 +26,14 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private CreatablesLoader creatablesLoader;
 
+        [Inject]
+        private RefreshZonesEvent refreshZonesEvent;
+
         public override async void Execute()
         {
             try
             {
-                Debug.Log(
+                logger.Log(
                     $"[NewWorldOptionController] world selector: {worldSelector != null}, zone loader: {zoneLoader != null}, creatables loader: {creatablesLoader != null}"
                 );
 
@@ -35,6 +42,7 @@ namespace FeedTheRealm.UI.MenuBar
 
                 if (SceneManager.GetActiveScene().name == editorScene.SceneName)
                 {
+                    refreshZonesEvent.Raise();
                     await zoneLoader.Load();
                     await creatablesLoader.Load();
                 }
@@ -43,7 +51,7 @@ namespace FeedTheRealm.UI.MenuBar
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[NewWorldOptionController] Error executing: {ex.Message}");
+                logger.Log($"[NewWorldOptionController] Error executing: {ex.Message}");
             }
         }
     }

@@ -27,6 +27,7 @@ namespace FeedTheRealm.Core.EventChannels
         [Header("UI Events")]
         public CategorySelectedEvent categorySelectedEvent;
         public EnableInputEvent enableInputEvent;
+        public RefreshZonesEvent refreshZonesEvent;
 
         [Header("Tick Events")]
         public TickEvent tickEvent;
@@ -50,6 +51,7 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
+            builder.RegisterInstance(refreshZonesEvent);
             builder.RegisterInstance(loadWorldEvent);
         }
     }

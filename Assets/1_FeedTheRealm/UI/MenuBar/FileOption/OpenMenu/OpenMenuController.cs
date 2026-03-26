@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
@@ -29,6 +30,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
+
+        [Inject]
+        private RefreshZonesEvent refreshZonesEvent;
         private Button closeButton;
         private ListView worldsListView;
         private VisualElement root;
@@ -87,6 +91,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
                 // we can just load the new world data without reloading the scene
                 await zoneLoader.Load();
                 await creatablesLoader.Load();
+                refreshZonesEvent.Raise();
                 CloseMenu();
             }
             else

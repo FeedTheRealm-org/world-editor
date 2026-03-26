@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Gameplay.WorldLoader;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -18,6 +19,9 @@ public class ZoneOptionController : MonoBehaviour
 
     [Inject]
     private ZoneLoader zoneLoader;
+
+    [Inject]
+    private RefreshZonesEvent refreshZonesEvent;
     private DropdownField zoneDropdown;
     private VisualElement root;
 
@@ -34,6 +38,8 @@ public class ZoneOptionController : MonoBehaviour
 
         RenderDropdown();
         BindEvents();
+
+        refreshZonesEvent.OnRaised += RenderDropdown;
     }
 
     private void RenderDropdown()
