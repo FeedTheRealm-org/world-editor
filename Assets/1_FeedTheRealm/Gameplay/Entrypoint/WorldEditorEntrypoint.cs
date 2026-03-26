@@ -8,20 +8,24 @@ namespace FeedTheRealm.Gameplay.Entrypoint
     public class WorldEditorEntrypoint : IStartable, ITickable, IFixedTickable, ILateTickable
     {
         private readonly WorldSetupManager worldSetup;
-        private readonly ZoneLoaderManager zoneLoaderManager;
+        private readonly ZoneLoader zoneLoader;
+        private readonly CreatablesLoader creatablesLoader;
         private readonly TickEvent tickEvent;
         private readonly FixedTickEvent fixedTickEvent;
         private readonly LateTickEvent lateTickEvent;
 
         public WorldEditorEntrypoint(
-            ZoneLoaderManager zoneLoaderManager,
+            ZoneLoader zoneLoader,
+            CreatablesLoader creatablesLoader,
             WorldSetupManager worldSetup,
             TickEvent tickEvent,
             FixedTickEvent fixedTickEvent,
             LateTickEvent lateTickEvent
         )
         {
-            this.zoneLoaderManager = zoneLoaderManager;
+            this.zoneLoader = zoneLoader;
+            this.creatablesLoader = creatablesLoader;
+
             this.worldSetup = worldSetup;
             this.tickEvent = tickEvent;
             this.fixedTickEvent = fixedTickEvent;
@@ -31,7 +35,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint
         public async void Start()
         {
             worldSetup.ExecuteSetup();
-            await zoneLoaderManager.Load();
+            await zoneLoader.Load();
+            await creatablesLoader.Load();
         }
 
         public void Tick()

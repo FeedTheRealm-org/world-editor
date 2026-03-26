@@ -6,17 +6,18 @@ using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 {
     [RequireComponent(typeof(UIDocument))]
     public class EnemyCreatorMenuController : MenuController
     {
-        [SerializeField]
+        [Inject]
         private CreatablesManager creatblesManager;
 
         [SerializeField]
-        private GameObject enemyMenuPrefab;
+        private GameObject aggresiveNpcMenuPrefab;
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -75,12 +76,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 lt.data.name == lootTableInput.value
             );
 
-            if (selectedLootTable == null)
-            {
-                Debug.LogError("Invalid loot table selected");
-                return;
-            }
-
             var enemyData = new EnemyData(
                 Guid.NewGuid().ToString(),
                 nameInput.value,
@@ -90,7 +85,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 speedInput.value,
                 rangeInput.value,
                 null, // sprite for now
-                selectedLootTable.data.id
+                selectedLootTable?.data.id
             );
 
             var enemy = new AggresiveNpc(enemyData);
@@ -98,12 +93,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             creatblesManager.Add(enemy);
 
             Debug.Log($"Enemy created: {enemy.data.name} with ID: {enemy.data.id}");
-            OpenMenu(enemyMenuPrefab);
+            OpenMenu(aggresiveNpcMenuPrefab);
         }
 
         private void ReturnToList()
         {
-            OpenMenu(enemyMenuPrefab);
+            OpenMenu(aggresiveNpcMenuPrefab);
         }
     }
 }

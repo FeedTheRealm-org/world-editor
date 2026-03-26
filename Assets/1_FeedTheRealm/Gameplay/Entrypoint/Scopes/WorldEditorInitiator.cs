@@ -78,8 +78,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<StructureLoader>(Lifetime.Scoped);
             builder.Register<AggresiveNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<FriendlyNpcSpawnerLoader>(Lifetime.Scoped);
-            builder.Register<ZoneLoaderManager>(Lifetime.Scoped);
-            builder.Register<CreatableLoader>(Lifetime.Scoped);
+
+            builder.Register<CreatablesLoader>(Lifetime.Scoped);
+            builder.Register<ZoneLoader>(Lifetime.Scoped);
 
             // World Setup Services
             builder.Register<BaseplateSetupService>(Lifetime.Scoped);

@@ -18,6 +18,7 @@ namespace FeedTheRealm.Gameplay.Library
     ///  across zones in the same world
     public class CreatablesManager : ScriptableObject
     {
+        [SerializeField]
         private Dictionary<Type, List<ICreatable>> registry = new();
 
         [SerializeField]
@@ -25,8 +26,6 @@ namespace FeedTheRealm.Gameplay.Library
 
         [SerializeField]
         private Logging.Logger logger;
-
-        public string CurrentWorldId { get; set; }
 
         public void ClearRegistry()
         {

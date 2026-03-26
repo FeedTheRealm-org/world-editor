@@ -3,6 +3,7 @@ using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 {
@@ -15,8 +16,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         [SerializeField]
         private GameObject createEnemyMenuPrefab;
 
-        [SerializeField]
-        private CreatablesManager creatorObjectLibrary;
+        [Inject]
+        private CreatablesManager creatablesManager;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -41,7 +42,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             var enemiesList = root.Q<ListView>("EnemiesList");
             enemiesList.Clear();
 
-            foreach (AggresiveNpc enemy in creatorObjectLibrary.GetAll<AggresiveNpc>())
+            foreach (AggresiveNpc enemy in creatablesManager.GetAll<AggresiveNpc>())
             {
                 VisualElement enemyEntry = itemListTemplate.Instantiate();
                 var headerLabel = enemyEntry.Q<Label>("Header");
@@ -72,7 +73,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         void OnDeleteEnemy(AggresiveNpc enemy, VisualElement enemyListEntry)
         {
             logger.Log("Deleting enemy: " + enemy.data.name, this, Logging.LogType.Info);
-            creatorObjectLibrary.Delete<AggresiveNpc>(enemy.data.id);
+            creatablesManager.Delete<AggresiveNpc>(enemy.data.id);
             enemyListEntry.RemoveFromHierarchy();
         }
 
