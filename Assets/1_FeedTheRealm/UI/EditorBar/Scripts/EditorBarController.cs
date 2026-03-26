@@ -25,9 +25,6 @@ namespace FeedTheRealm.UI.MenuBar
 
         [Header("Menu Options")]
         [SerializeField]
-        private GameObject ZoneOption;
-
-        [SerializeField]
         private GameObject PlacementOption;
 
         [SerializeField]
@@ -52,9 +49,8 @@ namespace FeedTheRealm.UI.MenuBar
         {
             root = menuBarUI.rootVisualElement;
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
-            BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
-            BindButton("Element", CreatablesOption);
+            BindButton("Creatables", CreatablesOption);
         }
 
         private void BindButton(string buttonName, GameObject option)

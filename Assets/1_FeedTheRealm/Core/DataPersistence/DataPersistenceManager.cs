@@ -118,9 +118,34 @@ namespace FeedTheRealm.Core.DataPersistence
             return worldsRepository.GetWorldData(worldName);
         }
 
+        public int GetNextZoneId(string worldName)
+        {
+            return zonesRepository.GetNextZoneId(worldName);
+        }
+
+        // ---- List Methods ----
+
         public List<string> ListAllWorlds()
         {
             return worldsRepository.ListWorlds();
+        }
+
+        public List<int> ListZones(string worldName)
+        {
+            return zonesRepository.ListZones(worldName);
+        }
+
+        // ----- Placeable Management -----
+        public void ClearPlaceables()
+        {
+            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
+
+            foreach (var obj in registeredPlaceables)
+            {
+                var component = (UnityEngine.Component)obj;
+                UnityEngine.Object.Destroy(component.gameObject);
+            }
+            registeredPlaceables.Clear();
         }
     }
 }

@@ -23,7 +23,6 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         private readonly DataPersistenceManager dataPersistenceManager;
         private readonly Logging.Logger logger;
         private readonly List<IPlaceableLoader> zoneLoaders;
-        private readonly List<GameObject> loadedPlaceables = new();
 
         public ZoneLoader(
             WorldSelector worldSelector,
@@ -50,7 +49,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
-            UnloadCurrentZone();
+            dataPersistenceManager.ClearPlaceables();
 
             if (string.IsNullOrEmpty(worldSelector.selectedWorld))
                 return;
@@ -70,7 +69,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             {
                 try
                 {
-                    await loader.Load(zoneData, loadedPlaceables);
+                    await loader.Load(zoneData);
                     logger.Log($"[ZoneLoader] {loader.GetType().Name} completed.");
                 }
                 catch (System.Exception ex)
@@ -78,16 +77,6 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                     logger.Log($"[ZoneLoader] Error in {loader.GetType().Name}: {ex.Message}");
                 }
             }
-        }
-
-        private void UnloadCurrentZone()
-        {
-            foreach (var placeable in loadedPlaceables)
-            {
-                if (placeable != null)
-                    Object.Destroy(placeable);
-            }
-            loadedPlaceables.Clear();
         }
     }
 }

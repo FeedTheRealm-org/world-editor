@@ -36,7 +36,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         /// <returns></returns>
         protected abstract UniTask<GameObject> GetObject(TData data);
 
-        public async UniTask Load(ZoneData zoneData, List<GameObject> loadedPlaceables)
+        public async UniTask Load(ZoneData zoneData)
         {
             var dataList = GetData(zoneData);
 
@@ -46,7 +46,6 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 {
                     var loadedObject = await GetObject(data);
                     loadedObject.GetComponent<ILoadable<TData>>().Load(data);
-                    loadedPlaceables.Add(loadedObject);
                 }
                 catch (Exception ex)
                 {

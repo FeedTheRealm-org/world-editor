@@ -12,6 +12,6 @@ namespace FTR.Core.Loaders
     /// </summary>
     public interface IPlaceableLoader
     {
-        UniTask Load(ZoneData data, List<GameObject> loadedPlaceables);
+        UniTask Load(ZoneData data);
     }
 }

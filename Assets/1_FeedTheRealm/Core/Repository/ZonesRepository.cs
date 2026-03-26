@@ -76,6 +76,12 @@ namespace FeedTheRealm.Core.Repository
                 .ToList();
         }
 
+        public int GetNextZoneId(string worldName)
+        {
+            var zones = ListZones(worldName);
+            return zones.Count > 0 ? zones.Max() + 1 : 0;
+        }
+
         private string GetWorldPath(string worldName)
         {
             return Path.Combine(worldsDirectory, worldName);
