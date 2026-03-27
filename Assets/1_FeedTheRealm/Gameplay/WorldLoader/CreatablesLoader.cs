@@ -64,6 +64,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 foreach (var quest in data.quests)
                     creatablesManager.Add(new Quest(quest));
 
+                foreach (var dialog in data.dialogs)
+                    creatablesManager.Add(new Dialog(dialog));
+
                 logger.Log("[CreatableLoader] Creatables loaded successfully.");
             }
             catch (Exception ex)

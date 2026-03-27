@@ -68,10 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e0452b61c8a0e4783bbefeb019c984, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MessagesMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   createMessageMenuPrefab: {fileID: 2802280877163831150, guid: ea56cde69729ec149a20b02fe58a2b28, type: 3}
-  dialogMenuPrefab: {fileID: 2802280877163831150, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
-  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
+  dialogsMenuPrefab: {fileID: 2802280877163831150, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
   itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
