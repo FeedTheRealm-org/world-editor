@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
@@ -14,7 +15,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
     [RequireComponent(typeof(UIDocument))]
     public class AggresiveNpcSpawnerEditor : MenuController, IEditable
     {
-        // [Inject] private CreatablesManager creatorObjectLibrary;
+        [Inject]
+        private CreatablesManager creatablesManager;
         private Slider radiusSlider;
         private IntegerField maxEnemiesField;
         private IntegerField spawnRateField;
@@ -46,6 +48,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
                     e.newValue
                 );
             });
+
             maxEnemiesField.RegisterValueChangedCallback(e => target.data.MaxEnemies = e.newValue);
             spawnRateField.RegisterValueChangedCallback(e => target.data.SpawnRate = e.newValue);
             resetAfterKillsField.RegisterValueChangedCallback(e =>
@@ -53,14 +56,35 @@ namespace FeedTheRealm.UI.PlaceableEditor
             );
             resetDelayField.RegisterValueChangedCallback(e => target.data.ResetDelay = e.newValue);
 
-            // enemyDropdown.RegisterValueChangedCallback(e =>
-            // {
-            //     var enemies = GetEnemies();
-            //     var selected = enemies.FirstOrDefault(enemy => enemy.DisplayName == e.newValue);
-            //     if (selected != null)
-            //         target.data.EnemyId = selected.ObjectId;
-            // });
+            enemyDropdown.RegisterValueChangedCallback(e =>
+            {
+                var selected = creatablesManager
+                    .GetAll<AggresiveNpc>()
+                    .FirstOrDefault(enemy => enemy.data.name == e.newValue);
+                if (selected != null)
+                    target.data.EnemyId = selected.Id;
+            });
+
             closeButton.clicked += CloseMenu;
+        }
+
+        private void PopulateFields()
+        {
+            radiusSlider.SetValueWithoutNotify(target.data.Radius);
+            maxEnemiesField.SetValueWithoutNotify(target.data.MaxEnemies);
+            spawnRateField.SetValueWithoutNotify((int)target.data.SpawnRate);
+            resetAfterKillsField.SetValueWithoutNotify(target.data.ResetAfterKills);
+            resetDelayField.SetValueWithoutNotify((int)target.data.ResetDelay);
+
+            var enemies = creatablesManager.GetAll<AggresiveNpc>();
+            enemyDropdown.choices = enemies.Select(e => e.data.name).ToList();
+
+            if (!string.IsNullOrEmpty(target.data.EnemyId))
+            {
+                var current = enemies.FirstOrDefault(e => e.Id == target.data.EnemyId);
+                if (current != null)
+                    enemyDropdown.SetValueWithoutNotify(current.data.name);
+            }
         }
 
         public void Edit(GameObject placeable)
@@ -77,30 +101,5 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             PopulateFields();
         }
-
-        private void PopulateFields()
-        {
-            radiusSlider.SetValueWithoutNotify(target.data.Radius);
-            maxEnemiesField.SetValueWithoutNotify(target.data.MaxEnemies);
-            spawnRateField.SetValueWithoutNotify((int)target.data.SpawnRate);
-            resetAfterKillsField.SetValueWithoutNotify(target.data.ResetAfterKills);
-            resetDelayField.SetValueWithoutNotify((int)target.data.ResetDelay);
-
-            //var enemies = GetEnemies();
-            // enemyDropdown.choices = enemies.Select(e => e.DisplayName).ToList();
-
-            // if (!string.IsNullOrEmpty(target.data.EnemyId))
-            // {
-            //     var current = enemies.FirstOrDefault(e => e.ObjectId == target.data.EnemyId);
-            //     if (current != null)
-            //         enemyDropdown.SetValueWithoutNotify(current.DisplayName);
-            // }
-        }
-
-        //private List<GenericEnemy> GetEnemies() => new();
-        // creatorObjectLibrary
-        //     .GetCreatables(CreatableObjectCategories.Enemy)
-        //     .Cast<GenericEnemy>()
-        //     .ToList();
     }
 }

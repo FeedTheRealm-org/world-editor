@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
@@ -13,7 +14,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
     [RequireComponent(typeof(UIDocument))]
     public class FriendlyNpcSpawnerEditor : MenuController, IEditable
     {
-        // [Inject] private CreatablesManager creatorObjectLibrary;
+        [Inject]
+        private CreatablesManager CreatablesManager;
         private Slider radiusSlider;
         private DropdownField npcDropdown;
         private Button closeButton;
@@ -39,9 +41,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             npcDropdown.RegisterValueChangedCallback(e =>
             {
-                // var selected = GetNpcs().FirstOrDefault(npc => npc.DisplayName == e.newValue);
-                // if (selected != null)
-                //     target.data.NpcId = selected.ObjectId;
+                var selected = CreatablesManager
+                    .GetAll<FriendlyNpc>()
+                    .FirstOrDefault(npc => npc.data.name == e.newValue);
+                if (selected != null)
+                    target.data.NpcId = selected.Id;
             });
 
             closeButton.clicked += CloseMenu;
@@ -66,21 +70,15 @@ namespace FeedTheRealm.UI.PlaceableEditor
         {
             radiusSlider.SetValueWithoutNotify(target.data.Radius);
 
-            // var npcs = GetNpcs();
-            // npcDropdown.choices = npcs.Select(n => n.DisplayName).ToList();
+            var npcs = CreatablesManager.GetAll<FriendlyNpc>();
+            npcDropdown.choices = npcs.Select(n => n.data.name).ToList();
 
-            // if (!string.IsNullOrEmpty(target.data.NpcId))
-            // {
-            //     var current = npcs.FirstOrDefault(n => n.ObjectId == target.data.NpcId);
-            //     if (current != null)
-            //         npcDropdown.SetValueWithoutNotify(current.DisplayName);
-            // }
+            if (!string.IsNullOrEmpty(target.data.NpcId))
+            {
+                var current = npcs.FirstOrDefault(n => n.Id == target.data.NpcId);
+                if (current != null)
+                    npcDropdown.SetValueWithoutNotify(current.data.name);
+            }
         }
-
-        // private List<GenericNPC> GetNpcs() => new List<GenericNPC>();
-        // creatorObjectLibrary
-        //     .GetCreatables(CreatableObjectCategories.NPC)
-        //     .Cast<GenericNPC>()
-        //     .ToList();
     }
 }
