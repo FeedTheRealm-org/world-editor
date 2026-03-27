@@ -68,8 +68,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfce9fcb88ec781808a5322c7f4e8551, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::LootTableCreatorMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
-  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
-  returnMenuPrefab: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
+  lootMenuPrefab: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
+  lootEntryTemplate: {fileID: 0}

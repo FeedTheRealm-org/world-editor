@@ -13,7 +13,7 @@
                 <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column; height: 368px; max-height: 100%; min-height: 50%; padding-top: 1%;">
                     <ui:TextField placeholder-text="LootTable name" name="NameField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 40px; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; color: rgb(255, 255, 255);"/>
                     <ui:DropdownField label="Select Item:" name="ItemList" class="white-dropdown"/>
-                    <ui:SliderInt label="Drop Probability" name="ItemProbabilitySlider" value="42" high-value="100" style="color: rgb(255, 255, 255);"/>
+                    <ui:SliderInt label="Drop Probability" name="ItemProbabilitySlider" value="50" high-value="100" show-input-field="true" style="color: rgb(255, 255, 255);"/>
                     <ui:Button text="Add Item" name="AddItemButton" style="padding: 10px 30px; width: 240px; align-self: center; margin-top: 2%; margin-right: 0; margin-bottom: 20px; margin-left: 0; -unity-text-align: middle-center; white-space: normal; bottom: auto;"/>
                     <ui:VisualElement style="flex-grow: 1; flex-direction: row; min-width: 2%; min-height: 15%; max-height: 15%; max-width: 100%;">
                         <ui:FloatField label="Min Gold Drop Amount" value="100" name="MinGoldDropAmount" class="text unity-text-field__input" style="margin-top: 0; margin-right: 33px; margin-bottom: 0; margin-left: 0; height: 48px; width: 257px; align-items: center; align-self: auto; justify-content: flex-start; align-content: flex-start; -unity-text-align: middle-left; white-space: nowrap; text-overflow: clip;"/>
