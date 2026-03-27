@@ -22,6 +22,9 @@ namespace FTR.Core.Common.Config
         private string worldsDirectory = "Worlds";
 
         [SerializeField]
+        private string spritesDirectory = "Sprites";
+
+        [SerializeField]
         private string worldsFileExtension = ".world";
 
         [SerializeField]
@@ -37,6 +40,8 @@ namespace FTR.Core.Common.Config
             Path.Combine(Application.persistentDataPath, modelsDataFile);
         public string ModelsDirectory =>
             Path.Combine(Application.streamingAssetsPath, modelsDirectory);
+        public string SpritesDirectory =>
+            Path.Combine(Application.streamingAssetsPath, spritesDirectory);
         public string WorldDirectory =>
             Path.Combine(Application.persistentDataPath, worldsDirectory);
         public string WorldFileExtension => worldsFileExtension;

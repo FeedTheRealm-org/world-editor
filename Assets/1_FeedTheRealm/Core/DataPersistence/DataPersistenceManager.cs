@@ -67,7 +67,6 @@ namespace FeedTheRealm.Core.DataPersistence
             registeredCreatables.RemoveAll(obj => obj == null);
             foreach (var obj in registeredCreatables)
                 obj.SaveData(ref creatablesData);
-
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 

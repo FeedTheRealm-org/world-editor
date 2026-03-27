@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using FeedTheRealm.Core.Utils;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using VContainer.Unity;
@@ -24,7 +25,7 @@ namespace FeedTheRealm.Core.Repository
         public void SaveCreatables(string worldName, CreatablesData creatables)
         {
             string path = GetCreatablesPath(worldName);
-            if (FileSystemHelper.TryWriteJson(path, creatables, logger))
+            if (FileSystemHandler.TryWriteJson(path, creatables, logger))
                 logger.Log($"Saved creatables to '{path}'");
         }
 
@@ -41,7 +42,7 @@ namespace FeedTheRealm.Core.Repository
                     );
                     return null;
                 }
-                return FileSystemHelper.TryReadJson<CreatablesData>(path, logger);
+                return FileSystemHandler.TryReadJson<CreatablesData>(path, logger);
             }
             catch (Exception e)
             {

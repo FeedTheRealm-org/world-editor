@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldObjects;
-using FeedTheRealm.Gameplay.Creatables;
-using UnityEngine;
+using VContainer;
 
 namespace FeedTheRealm.Gameplay.Library
 {
-    [CreateAssetMenu(
-        fileName = "CreatablesManager",
-        menuName = "Scriptable Objects/CreatablesManager"
-    )]
-    /// We make the CreatablesManager a ScriptableObject so its data
-    /// can be persisted across zone loads in runtime, allowing creatables to be shared
-    ///  across zones in the same world
-    public class CreatablesManager : ScriptableObject
+    public class CreatablesManager
     {
-        [SerializeField]
-        private Dictionary<Type, List<ICreatable>> registry = new();
-
-        [SerializeField]
         private CreatablesDataRegistryEvent registryEvent;
-
-        [SerializeField]
         private Logging.Logger logger;
+        private IObjectResolver container;
+        private Dictionary<Type, List<Creatable>> registry = new();
+
+        public CreatablesManager(
+            IObjectResolver container,
+            CreatablesDataRegistryEvent registryEvent,
+            Logging.Logger logger
+        )
+        {
+            this.container = container;
+            this.registryEvent = registryEvent;
+            this.logger = logger;
+        }
 
         public void ClearRegistry()
         {
@@ -36,12 +34,14 @@ namespace FeedTheRealm.Gameplay.Library
         /// <summary>
         /// Adds a creatable to the registry and raises an event to notify listeners of the new addition.
         /// </summary>
-        public void Add(ICreatable creatable)
+        public void Add(Creatable creatable)
         {
             var type = creatable.GetType();
-            if (!registry.ContainsKey(type))
-                registry[type] = new List<ICreatable>();
 
+            if (!registry.ContainsKey(type))
+                registry[type] = new List<Creatable>();
+
+            container.Inject(creatable);
             registry[type].Add(creatable);
             registryEvent.Raise(creatable);
             logger.Log($"[CreatablesManager] Added {type.Name}");
@@ -57,12 +57,11 @@ namespace FeedTheRealm.Gameplay.Library
         ///
         /// </summary>
         public List<T> GetAll<T>()
-            where T : class, ICreatable
+            where T : Creatable
         {
             if (!registry.ContainsKey(typeof(T)))
                 return new List<T>();
-
-            return registry[typeof(T)].OfType<T>().ToList();
+            return registry[typeof(T)].OfType<T>().Where(c => !c.IsDeleted).ToList();
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace FeedTheRealm.Gameplay.Library
         ///     Delete<WeaponItem>("sword_001");
         /// </summary>
         public void Delete<T>(string id)
-            where T : class, ICreatable
+            where T : Creatable
         {
             if (!registry.ContainsKey(typeof(T)))
             {
@@ -82,12 +81,16 @@ namespace FeedTheRealm.Gameplay.Library
                 return;
             }
 
-            var removed = registry[typeof(T)].RemoveAll(x => x.Id == id);
-            if (removed == 0)
+            var toBeDeletedItem = registry[typeof(T)].OfType<T>().FirstOrDefault(c => c.Id == id);
+            if (toBeDeletedItem == null)
+            {
                 logger.Log(
-                    $"[CreatablesManager] Could not find id {id} in {typeof(T).Name}.",
+                    $"[CreatablesManager] No {typeof(T).Name} found with id '{id}'.",
                     Logging.LogType.Warning
                 );
+                return;
+            }
+            toBeDeletedItem.Delete();
         }
     }
 }

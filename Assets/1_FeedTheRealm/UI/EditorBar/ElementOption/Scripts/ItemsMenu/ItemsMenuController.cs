@@ -1,128 +1,125 @@
-using System.Collections.Generic;
-using System.Linq;
-using FeedTheRealm.Core.Library;
+using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class ItemsMenuController : MenuController
+    public class ItemsMenu : MenuController
     {
         [SerializeField]
         private Logging.Logger logger;
 
         [SerializeField]
-        private GameObject createConsumableItemMenuPrefab;
-
-        [SerializeField]
-        private GameObject createWeaponItemMenuPrefab;
-
-        [SerializeField]
-        private CreatablesManager creatorObjectLibrary;
-
-        [SerializeField]
-        private List<CreatableObjectCategories> itemCategory;
-
-        [SerializeField]
         private VisualTreeAsset itemListTemplate;
+
+        [SerializeField]
+        private GameObject consumableCreatorMenuPrefab;
+
+        [SerializeField]
+        private GameObject weaponCreatorMenuPrefab;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
+
         private Button closeButton;
-        private Button addConsumableItemButton;
-        private Button addWeaponItemButton;
+        private Button addConsumableButton;
+        private Button addWeaponButton;
+
+        private Creatable editingData;
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
             closeButton = root.Q<Button>("Close");
-            addConsumableItemButton = root.Q<Button>("AddConsumableItem");
-            addWeaponItemButton = root.Q<Button>("AddWeaponItem");
+            addConsumableButton = root.Q<Button>("AddConsumableItem");
+            addWeaponButton = root.Q<Button>("AddWeaponItem");
 
-            addConsumableItemButton.clicked += AddConsumableItem;
-            addWeaponItemButton.clicked += AddWeaponItem;
             closeButton.clicked += CloseMenu;
+            addConsumableButton.clicked += () => OpenCreatorMenu(consumableCreatorMenuPrefab);
+            addWeaponButton.clicked += () => OpenCreatorMenu(weaponCreatorMenuPrefab);
 
-            //PopulateItemsList();
+            PopulateList();
         }
-
-        // private void PopulateItemsList()
-        // {
-        //     var root = GetComponent<UIDocument>().rootVisualElement;
-        //     var itemsList = root.Q<ListView>("ItemsList");
-        //     itemsList.Clear();
-
-        //     foreach (CreatableObjectCategories category in itemCategory)
-        //     {
-        //         foreach (Item item in creatorObjectLibrary.GetCreatables(category))
-        //         {
-        //             VisualElement itemEntry = itemListTemplate.Instantiate();
-        //             var headerLabel = itemEntry.Q<Label>("Header");
-        //             headerLabel.text = item.DisplayName;
-
-        //             var typeLabel = itemEntry.Q<Label>("Type");
-        //             if (typeLabel != null)
-        //                 typeLabel.text = category.GetDisplayName();
-
-        //             var editButton = itemEntry.Q<Button>("Edit");
-        //             var deleteButton = itemEntry.Q<Button>("Delete");
-
-        //             editButton.clicked += () => OnEditItem(item);
-        //             deleteButton.clicked += () => OnDeleteItem(item, itemEntry);
-
-        //             itemsList.hierarchy.Add(itemEntry);
-        //         }
-        //     }
-        // }
-
-        // void OnEditItem(CreatorObject item)
-        // {
-        //     logger.Log("Editing item: " + item.DisplayName, this, Logging.LogType.Info);
-
-        //     EditContext.SetObjectToEdit(item);
-
-        //     if (item is ConsumableItem)
-        //     {
-        //         OpenMenu(createConsumableItemMenuPrefab);
-        //     }
-        //     else if (item is WeaponItem)
-        //     {
-        //         OpenMenu(createWeaponItemMenuPrefab);
-        //     }
-        //     else
-        //     {
-        //         logger.Log(
-        //             $"Unknown item type: {item.GetType().Name}",
-        //             this,
-        //             Logging.LogType.Error
-        //         );
-        //     }
-        // }
-
-        // void OnDeleteItem(CreatorObject item, VisualElement itemListEntry)
-        // {
-        //     logger.Log("Deleting item: " + item.DisplayName, this, Logging.LogType.Info);
-        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.ConsumableItem, item);
-        //     itemListEntry.RemoveFromHierarchy();
-        // }
 
         void OnDisable()
         {
-            addConsumableItemButton.clicked -= AddConsumableItem;
-            addWeaponItemButton.clicked -= AddWeaponItem;
             closeButton.clicked -= CloseMenu;
         }
 
-        private void AddConsumableItem()
+        private void PopulateList()
         {
-            logger.Log("Opening Create Consumable Item Menu", this, Logging.LogType.Info);
-            OpenMenu(createConsumableItemMenuPrefab);
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var list = root.Q<ListView>("ItemsList");
+            list.Clear();
+
+            foreach (var consumable in creatablesManager.GetAll<ConsumableItem>())
+                AddListEntry(
+                    list,
+                    consumable,
+                    consumable.data.name,
+                    "Consumable",
+                    consumableCreatorMenuPrefab
+                );
+
+            foreach (var weapon in creatablesManager.GetAll<Weapon>())
+                AddListEntry(list, weapon, weapon.data.name, "Weapon", weaponCreatorMenuPrefab);
         }
 
-        private void AddWeaponItem()
+        private void AddListEntry(
+            ListView list,
+            Creatable creatable,
+            string displayName,
+            string type,
+            GameObject creatorPrefab
+        )
         {
-            logger.Log("Opening Create Weapon Item Menu", this, Logging.LogType.Info);
-            OpenMenu(createWeaponItemMenuPrefab);
+            var entry = itemListTemplate.Instantiate();
+            entry.Q<Label>("Header").text = displayName;
+
+            var typeLabel = entry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = type;
+
+            entry.Q<Button>("Edit").clicked += () =>
+            {
+                editingData = creatable;
+                OpenMenu(creatorPrefab);
+            };
+
+            entry.Q<Button>("Delete").clicked += () =>
+            {
+                creatablesManager.Delete<ConsumableItem>(creatable.Id);
+                entry.RemoveFromHierarchy();
+            };
+
+            list.hierarchy.Add(entry);
+        }
+
+        private void OpenCreatorMenu(GameObject prefab)
+        {
+            editingData = null;
+            OpenMenu(prefab);
+        }
+
+        public override void OpenMenu(GameObject menuPrefab)
+        {
+            var menuInstance = resolver.Instantiate(menuPrefab);
+
+            if (editingData != null)
+            {
+                if (editingData is ConsumableItem consumable)
+                    menuInstance.GetComponent<ConsumableItemCreatorMenu>()?.SetupEditor(consumable);
+                else if (editingData is Weapon weapon)
+                    menuInstance.GetComponent<WeaponCreatorMenu>()?.SetupEditor(weapon);
+            }
+
+            Destroy(gameObject);
         }
     }
 }

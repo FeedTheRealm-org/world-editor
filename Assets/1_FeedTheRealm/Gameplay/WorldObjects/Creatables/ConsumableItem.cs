@@ -1,23 +1,39 @@
-using FeedTheRealm.Core.Library;
+using FeedTheRealm.Core.Utils;
 using FeedTheRealm.Core.WorldObjects;
 using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Gameplay.Creatables
 {
-    public class ConsumableItem : ICreatable
+    public class ConsumableItem : Creatable
     {
         public ConsumableItemData data { get; private set; }
+        private string persistentSpritePath;
 
         public ConsumableItem(ConsumableItemData data)
         {
             this.data = data;
+            persistentSpritePath = data.spriteFilePath;
         }
 
-        public string Id => data.id;
+        public override string Id => data.id;
 
-        public void SaveData(ref CreatablesData data)
+        public override void OnDelete()
         {
-            data.consumableItems.Add(this.data);
+            FileSystemHandler.DeleteFile(data.spriteFilePath);
+        }
+
+        public override void Save(ref CreatablesData creatablesData)
+        {
+            if (persistentSpritePath != data.spriteFilePath)
+            {
+                data.spriteFilePath = FileSystemHandler.SaveSprite(
+                    data.spriteFilePath,
+                    config.SpritesDirectory,
+                    data.id
+                );
+                persistentSpritePath = data.spriteFilePath;
+            }
+            creatablesData.consumableItems.Add(data);
         }
     }
 }

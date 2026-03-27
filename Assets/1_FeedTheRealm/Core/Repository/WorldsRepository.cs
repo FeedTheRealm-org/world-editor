@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FeedTheRealm.Core.Utils;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -31,7 +32,7 @@ namespace FeedTheRealm.Core.Repository
                 throw new ArgumentException("WorldData must have a worldName before saving.");
 
             string path = GetWorldDataFilePath(worldData.worldName);
-            if (FileSystemHelper.TryWriteJson(path, worldData, logger))
+            if (FileSystemHandler.TryWriteJson(path, worldData, logger))
                 logger.Log($"Saved world data to '{path}'");
         }
 

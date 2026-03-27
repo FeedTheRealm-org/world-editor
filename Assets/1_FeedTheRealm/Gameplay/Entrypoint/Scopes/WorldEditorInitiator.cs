@@ -46,10 +46,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private GltfService gltfService;
 
-        [Header("Creatables Manager")]
-        [SerializeField]
-        private CreatablesManager creatablesManager;
-
         [Header("Event Channels")]
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
@@ -59,8 +55,11 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             RegisterSerializedFields(builder);
             eventChannelRegistry.RegisterAll(builder);
 
+            // Creatables Manager
+            builder.Register<CreatablesManager>(Lifetime.Singleton);
+
             // Data persistence Manager
-            builder.Register<DataPersistenceManager>(Lifetime.Scoped);
+            builder.Register<DataPersistenceManager>(Lifetime.Singleton);
 
             // Repositories
             builder.Register<ModelsRepository>(Lifetime.Singleton);
@@ -102,7 +101,6 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(worldSelector);
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
-            builder.RegisterInstance(creatablesManager);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);
             builder.RegisterInstance(config);

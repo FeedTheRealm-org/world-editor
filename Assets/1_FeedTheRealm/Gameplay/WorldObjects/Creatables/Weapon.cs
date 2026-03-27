@@ -3,7 +3,7 @@ using FTRShared.Runtime.Models;
 
 namespace FeedTheRealm.Gameplay.Creatables
 {
-    public class Weapon : ICreatable
+    public class Weapon : Creatable
     {
         public WeaponItemData data { get; private set; }
 
@@ -12,9 +12,9 @@ namespace FeedTheRealm.Gameplay.Creatables
             this.data = data;
         }
 
-        public string Id => data.id;
+        public override string Id => data.id;
 
-        public void SaveData(ref CreatablesData data)
+        public override void Save(ref CreatablesData data)
         {
             data.weaponItems.Add(this.data);
         }

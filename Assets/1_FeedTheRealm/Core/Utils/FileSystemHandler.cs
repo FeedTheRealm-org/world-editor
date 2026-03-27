@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace FeedTheRealm.Core.Repository
+namespace FeedTheRealm.Core.Utils
 {
-    static class FileSystemHelper
+    public static class FileSystemHandler
     {
         public static void EnsureDirectory(string path)
         {
@@ -45,6 +45,40 @@ namespace FeedTheRealm.Core.Repository
             {
                 logger.Log($"Error reading from '{path}': {e}", Logging.LogType.Error);
                 return default;
+            }
+        }
+
+        public static string SaveSprite(string sourcePath, string spritesDirectory, string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
+                    return null;
+
+                Directory.CreateDirectory(spritesDirectory);
+                string fileExtension = Path.GetExtension(sourcePath);
+                string destPath = Path.Combine(spritesDirectory, id + fileExtension);
+                File.Copy(sourcePath, destPath, overwrite: true);
+                Debug.Log($"Sprite saved to '{destPath}'");
+                return id + fileExtension;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to save sprite: {e.Message}");
+                return null;
+            }
+        }
+
+        public static void DeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error deleting file at '{path}': {e}");
             }
         }
     }

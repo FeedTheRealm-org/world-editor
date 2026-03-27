@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.Utils;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace FeedTheRealm.Core.Repository
         public void SaveZoneData(string worldDataPath, ZoneData zone)
         {
             string path = GetZonePath(worldDataPath, zone.zoneId);
-            if (FileSystemHelper.TryWriteJson(path, zone, logger))
+            if (FileSystemHandler.TryWriteJson(path, zone, logger))
                 logger.Log($"Saved zone {zone.zoneId} to '{path}'");
         }
 
