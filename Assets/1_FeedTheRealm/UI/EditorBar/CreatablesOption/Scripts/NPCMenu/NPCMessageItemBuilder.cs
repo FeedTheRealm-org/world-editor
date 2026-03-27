@@ -1,209 +1,160 @@
 using System.Collections.Generic;
 using System.Linq;
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
+using FTRShared.Runtime.Models;
 using UnityEngine.UIElements;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 {
     public class NPCMessageItemBuilder
     {
-        private readonly CreatablesManager creatorObjectLibrary;
-        private readonly Logging.Logger logger;
+        private readonly CreatablesManager creatablesManager;
         private readonly Dictionary<string, string> messageQuestAssignments;
 
         public NPCMessageItemBuilder(
-            CreatablesManager creatorObjectLibrary,
-            Logging.Logger logger,
+            CreatablesManager creatablesManager,
             Dictionary<string, string> messageQuestAssignments
         )
         {
-            this.creatorObjectLibrary = creatorObjectLibrary;
-            this.logger = logger;
+            this.creatablesManager = creatablesManager;
             this.messageQuestAssignments = messageQuestAssignments;
         }
 
-        // public VisualElement CreateMessageItem(Message message)
-        // {
-        //     var messageContainer = CreateMessageContainer();
-        //     var messageLabel = CreateMessageLabel(message);
-        //     var rightContainer = CreateRightContainer(message);
+        public VisualElement CreateMessageItem(MessageData message)
+        {
+            var container = new VisualElement();
+            container.AddToClassList("npc-message-container");
 
-        //     messageContainer.Add(messageLabel);
-        //     messageContainer.Add(rightContainer);
+            string displayContent =
+                message.content.Length > 15
+                    ? message.content.Substring(0, 15) + "..."
+                    : message.content;
 
-        //     return messageContainer;
-        // }
+            var label = new Label(displayContent);
+            label.AddToClassList("npc-message-label");
 
-        // private VisualElement CreateMessageContainer()
-        // {
-        //     var container = new VisualElement();
-        //     container.AddToClassList("npc-message-container");
-        //     return container;
-        // }
+            var rightContainer = CreateRightContainer(message);
 
-        // private Label CreateMessageLabel(Message message)
-        // {
-        //     string displayContent =
-        //         message.Content.Length > 15
-        //             ? message.Content.Substring(0, 15) + "..."
-        //             : message.Content;
+            container.Add(label);
+            container.Add(rightContainer);
+            return container;
+        }
 
-        //     var label = new Label(displayContent);
-        //     label.AddToClassList("npc-message-label");
-        //     return label;
-        // }
+        private VisualElement CreateRightContainer(MessageData message)
+        {
+            var rightContainer = new VisualElement();
+            rightContainer.AddToClassList("npc-message-right-container");
 
-        // private VisualElement CreateRightContainer(Message message)
-        // {
-        //     var rightContainer = new VisualElement();
-        //     rightContainer.AddToClassList("npc-message-right-container");
+            string currentQuestId = messageQuestAssignments.ContainsKey(message.id)
+                ? messageQuestAssignments[message.id]
+                : "";
 
-        //     string currentQuestId = messageQuestAssignments.ContainsKey(message.ObjectId)
-        //         ? messageQuestAssignments[message.ObjectId]
-        //         : "";
+            var questDropdown = CreateQuestDropdown(message, currentQuestId);
+            var addQuestButton = CreateAddQuestButton(message, questDropdown, currentQuestId);
+            var removeQuestButton = CreateRemoveQuestButton(
+                message,
+                questDropdown,
+                addQuestButton,
+                currentQuestId
+            );
 
-        //     var questDropdown = CreateQuestDropdown(message, currentQuestId);
-        //     var addQuestButton = CreateAddQuestButton(message, questDropdown, currentQuestId);
-        //     var removeQuestButton = CreateRemoveQuestButton(
-        //         message,
-        //         questDropdown,
-        //         addQuestButton,
-        //         currentQuestId
-        //     );
+            rightContainer.Add(questDropdown);
+            rightContainer.Add(removeQuestButton);
+            rightContainer.Add(addQuestButton);
+            return rightContainer;
+        }
 
-        //     rightContainer.Add(questDropdown);
-        //     rightContainer.Add(removeQuestButton);
-        //     rightContainer.Add(addQuestButton);
+        private DropdownField CreateQuestDropdown(MessageData message, string currentQuestId)
+        {
+            var dropdown = new DropdownField();
+            dropdown.AddToClassList("npc-quest-dropdown");
+            dropdown.style.display = string.IsNullOrEmpty(currentQuestId)
+                ? DisplayStyle.None
+                : DisplayStyle.Flex;
 
-        //     return rightContainer;
-        // }
+            PopulateQuestDropdown(dropdown, currentQuestId);
 
-        // private DropdownField CreateQuestDropdown(Message message, string currentQuestId)
-        // {
-        //     var dropdown = new DropdownField();
-        //     dropdown.AddToClassList("npc-quest-dropdown");
-        //     dropdown.style.display = string.IsNullOrEmpty(currentQuestId)
-        //         ? DisplayStyle.None
-        //         : DisplayStyle.Flex;
+            dropdown.RegisterValueChangedCallback(evt =>
+            {
+                var selected = creatablesManager
+                    .GetAll<Quest>()
+                    .FirstOrDefault(q => q.data.title == evt.newValue);
+                if (selected != null)
+                    messageQuestAssignments[message.id] = selected.Id;
+            });
 
-        //     PopulateQuestDropdown(dropdown, currentQuestId);
+            return dropdown;
+        }
 
-        //     dropdown.RegisterValueChangedCallback(evt =>
-        //     {
-        //         var quests = creatorObjectLibrary
-        //             .GetCreatables(CreatableObjectCategories.Quest)
-        //             .Cast<GenericQuest>()
-        //             .ToList();
-        //         var selectedQuest = quests.FirstOrDefault(q => q.DisplayName == evt.newValue);
-        //         if (selectedQuest != null)
-        //         {
-        //             messageQuestAssignments[message.ObjectId] = selectedQuest.ObjectId;
-        //         }
-        //     });
+        private Button CreateAddQuestButton(
+            MessageData message,
+            DropdownField questDropdown,
+            string currentQuestId
+        )
+        {
+            var button = new Button { text = "add quest" };
+            button.AddToClassList("npc-add-quest-button");
 
-        //     return dropdown;
-        // }
+            button.clicked += () =>
+            {
+                questDropdown.style.display = DisplayStyle.Flex;
+                button.style.display = DisplayStyle.None;
 
-        // private Button CreateAddQuestButton(
-        //     Message message,
-        //     DropdownField questDropdown,
-        //     string currentQuestId
-        // )
-        // {
-        //     var button = new Button();
-        //     button.AddToClassList("npc-add-quest-button");
-        //     button.text = "add quest";
+                var removeButton = button.parent?.Q<Button>();
+                if (removeButton != null && removeButton.text == "✕")
+                    removeButton.style.display = DisplayStyle.Flex;
 
-        //     button.clicked += () =>
-        //     {
-        //         questDropdown.style.display = DisplayStyle.Flex;
-        //         button.style.display = DisplayStyle.None;
+                var initial = creatablesManager
+                    .GetAll<Quest>()
+                    .FirstOrDefault(q => q.data.title == questDropdown.value);
+                if (initial != null)
+                    messageQuestAssignments[message.id] = initial.Id;
+            };
 
-        //         var rightContainer = button.parent;
-        //         var removeButton = rightContainer?.Q<Button>();
-        //         if (removeButton != null && removeButton.text == "✕")
-        //         {
-        //             removeButton.style.display = DisplayStyle.Flex;
-        //         }
+            if (!string.IsNullOrEmpty(currentQuestId))
+                button.style.display = DisplayStyle.None;
 
-        //         var quests = creatorObjectLibrary
-        //             .GetCreatables(CreatableObjectCategories.Quest)
-        //             .Cast<GenericQuest>()
-        //             .ToList();
-        //         var initialQuest = quests.FirstOrDefault(q => q.DisplayName == questDropdown.value);
-        //         if (initialQuest != null)
-        //         {
-        //             messageQuestAssignments[message.ObjectId] = initialQuest.ObjectId;
-        //         }
-        //     };
+            return button;
+        }
 
-        //     if (!string.IsNullOrEmpty(currentQuestId))
-        //     {
-        //         button.style.display = DisplayStyle.None;
-        //     }
+        private Button CreateRemoveQuestButton(
+            MessageData message,
+            DropdownField questDropdown,
+            Button addQuestButton,
+            string currentQuestId
+        )
+        {
+            var button = new Button { text = "✕" };
+            button.AddToClassList("npc-remove-quest-button");
 
-        //     return button;
-        // }
+            button.clicked += () =>
+            {
+                messageQuestAssignments.Remove(message.id);
+                questDropdown.style.display = DisplayStyle.None;
+                button.style.display = DisplayStyle.None;
+                addQuestButton.style.display = DisplayStyle.Flex;
+            };
 
-        // private Button CreateRemoveQuestButton(
-        //     Message message,
-        //     DropdownField questDropdown,
-        //     Button addQuestButton,
-        //     string currentQuestId
-        // )
-        // {
-        //     var button = new Button();
-        //     button.AddToClassList("npc-remove-quest-button");
-        //     button.text = "✕";
+            if (string.IsNullOrEmpty(currentQuestId))
+                button.style.display = DisplayStyle.None;
 
-        //     button.clicked += () =>
-        //     {
-        //         if (messageQuestAssignments.ContainsKey(message.ObjectId))
-        //         {
-        //             messageQuestAssignments.Remove(message.ObjectId);
-        //         }
+            return button;
+        }
 
-        //         questDropdown.style.display = DisplayStyle.None;
-        //         button.style.display = DisplayStyle.None;
+        private void PopulateQuestDropdown(DropdownField dropdown, string currentQuestId = "")
+        {
+            var quests = creatablesManager.GetAll<Quest>();
+            dropdown.choices = quests.Select(q => q.data.title).ToList();
 
-        //         if (addQuestButton != null)
-        //         {
-        //             addQuestButton.style.display = DisplayStyle.Flex;
-        //         }
-        //     };
-
-        //     if (string.IsNullOrEmpty(currentQuestId))
-        //     {
-        //         button.style.display = DisplayStyle.None;
-        //     }
-
-        //     return button;
-        // }
-
-        // private void PopulateQuestDropdown(DropdownField dropdown, string currentQuestId = "")
-        // {
-        //     if (dropdown == null || creatorObjectLibrary == null)
-        //         return;
-
-        //     var quests = creatorObjectLibrary
-        //         .GetCreatables(CreatableObjectCategories.Quest)
-        //         .Cast<GenericQuest>()
-        //         .ToList();
-
-        //     dropdown.choices = quests.Select(q => q.DisplayName).ToList();
-
-        //     if (!string.IsNullOrEmpty(currentQuestId))
-        //     {
-        //         var currentQuest = quests.FirstOrDefault(q => q.ObjectId == currentQuestId);
-        //         if (currentQuest != null)
-        //         {
-        //             dropdown.value = currentQuest.DisplayName;
-        //         }
-        //     }
-        //     else if (dropdown.choices.Count > 0)
-        //     {
-        //         dropdown.value = dropdown.choices[0];
-        //     }
-        // }
+            if (!string.IsNullOrEmpty(currentQuestId))
+            {
+                var current = quests.FirstOrDefault(q => q.Id == currentQuestId);
+                if (current != null)
+                    dropdown.value = current.data.title;
+            }
+            else if (dropdown.choices.Count > 0)
+                dropdown.value = dropdown.choices[0];
+        }
     }
 }
