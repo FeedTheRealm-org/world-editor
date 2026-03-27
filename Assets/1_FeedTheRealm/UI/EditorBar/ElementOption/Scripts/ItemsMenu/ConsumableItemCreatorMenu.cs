@@ -1,8 +1,10 @@
 using System;
+using System.IO;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,6 +18,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
     {
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private Config config;
 
         [SerializeField]
         private GameObject itemsMenuPrefab;
@@ -119,9 +124,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
         private void LoadExistingSprite(string spritePath)
         {
+            string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
             if (string.IsNullOrEmpty(spritePath))
                 return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(spritePath);
+            var sprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
             if (sprite != null)
                 spritePreview.sprite = sprite;
         }

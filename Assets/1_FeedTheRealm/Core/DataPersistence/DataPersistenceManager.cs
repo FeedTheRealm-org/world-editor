@@ -131,6 +131,8 @@ namespace FeedTheRealm.Core.DataPersistence
 
         public List<int> ListZones(string worldName)
         {
+            if (string.IsNullOrEmpty(worldName))
+                return new List<int>();
             return zonesRepository.ListZones(worldName);
         }
 

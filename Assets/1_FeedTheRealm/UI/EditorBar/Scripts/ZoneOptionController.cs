@@ -82,9 +82,7 @@ public class ZoneOptionController : MonoBehaviour
     /// </summary>
     private async UniTask CreateNewZone()
     {
-        int newZoneId = dataPersistenceManager.GetNextZoneId(worldSelector.selectedWorld);
-
-        if (newZoneId <= 0)
+        if (worldSelector.selectedWorld == null)
         {
             ToastNotification.Show(
                 "Please save your world first before creating a new zone.",
@@ -93,6 +91,7 @@ public class ZoneOptionController : MonoBehaviour
             );
             return;
         }
+        int newZoneId = dataPersistenceManager.GetNextZoneId(worldSelector.selectedWorld);
         worldSelector.selectedZoneId = newZoneId;
         await zoneLoader.Load();
         dataPersistenceManager.SaveZone(worldSelector.selectedWorld, worldSelector.selectedZoneId);

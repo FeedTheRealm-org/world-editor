@@ -33,10 +33,6 @@ namespace FeedTheRealm.UI.MenuBar
         {
             try
             {
-                logger.Log(
-                    $"[NewWorldOptionController] world selector: {worldSelector != null}, zone loader: {zoneLoader != null}, creatables loader: {creatablesLoader != null}"
-                );
-
                 worldSelector.selectedWorld = null;
                 worldSelector.selectedZoneId = 1;
 
@@ -51,7 +47,10 @@ namespace FeedTheRealm.UI.MenuBar
             }
             catch (Exception ex)
             {
-                logger.Log($"[NewWorldOptionController] Error executing: {ex.Message}");
+                logger.Log(
+                    $"[NewWorldOptionController] Error executing: {ex.Message}",
+                    Logging.LogType.Error
+                );
             }
         }
     }
