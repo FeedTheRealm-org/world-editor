@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -23,7 +24,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
         private TextField nameInput;
         private TextField descriptionInput;
-        private EnumField weaponTypeInput;
+        private DropdownField weaponTypeInput;
         private IntegerField damageInput;
         private FloatField attackSpeedInput;
         private FloatField rangeInput;
@@ -38,17 +39,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
-            weaponTypeInput = root.Q<EnumField>("WeaponType");
-            damageInput = root.Q<IntegerField>("Damage");
-            attackSpeedInput = root.Q<FloatField>("AttackSpeed");
-            rangeInput = root.Q<FloatField>("Range");
-            ammoInput = root.Q<IntegerField>("Ammo");
+            weaponTypeInput = root.Q<DropdownField>("WeaponTypeField");
+            weaponTypeInput.choices = Enum.GetNames(typeof(WeaponType)).ToList();
+            weaponTypeInput.value = WeaponType.None.ToString();
+            damageInput = root.Q<IntegerField>("DamageField");
+            attackSpeedInput = root.Q<FloatField>("AttackSpeedField");
+            rangeInput = root.Q<FloatField>("RangeField");
+            ammoInput = root.Q<IntegerField>("AmmoField");
             spritePreview = root.Q<Image>("SpritePreview");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
 
             root.Q<Button>("LoadSprite").clicked += LoadSprite;
-            closeButton.clicked += ReturnToList;
+            root.Q<Button>("Return").clicked += ReturnToList;
+            closeButton.clicked += CloseMenu;
             saveButton.clicked += CreateNewObject;
         }
 
@@ -66,7 +70,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         {
             nameInput.value = editingData.name;
             descriptionInput.value = editingData.description;
-            weaponTypeInput.value = editingData.weaponType;
+            weaponTypeInput.value = editingData.weaponType.ToString();
             damageInput.value = editingData.damage;
             attackSpeedInput.value = editingData.attackSpeed;
             rangeInput.value = editingData.range;
@@ -81,8 +85,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 editingData.description = evt.newValue
             );
             weaponTypeInput.RegisterValueChangedCallback(evt =>
-                editingData.weaponType = (WeaponType)evt.newValue
+                editingData.weaponType = Enum.Parse<WeaponType>(evt.newValue)
             );
+
             damageInput.RegisterValueChangedCallback(evt => editingData.damage = evt.newValue);
             attackSpeedInput.RegisterValueChangedCallback(evt =>
                 editingData.attackSpeed = evt.newValue
@@ -135,7 +140,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
             var weaponData = new WeaponItemData(
                 itemData,
-                (WeaponType)weaponTypeInput.value,
+                Enum.Parse<WeaponType>(weaponTypeInput.value),
                 damageInput.value,
                 attackSpeedInput.value,
                 rangeInput.value,

@@ -91,8 +91,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             durationInput.RegisterValueChangedCallback(evt => editingData.duration = evt.newValue);
             cooldownInput.RegisterValueChangedCallback(evt => editingData.cooldown = evt.newValue);
             maxStackInput.RegisterValueChangedCallback(evt => editingData.maxStack = evt.newValue);
-            // sprite path updated when user picks a new one via LoadSprite
-            // editingData.spriteFilePath gets updated there directly
         }
 
         private void LoadSprite()
