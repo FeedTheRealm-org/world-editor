@@ -1,12 +1,15 @@
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class QuestsMenuController : MenuController
+    public class QuestsMenu : MenuController
     {
         [SerializeField]
         private Logging.Logger logger;
@@ -15,12 +18,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         private GameObject createQuestMenuPrefab;
 
         [SerializeField]
-        private CreatablesManager creatorObjectLibrary;
-
-        [SerializeField]
         private VisualTreeAsset itemListTemplate;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
+
         private Button closeButton;
         private Button addQuestButton;
+        private Quest editingQuest;
 
         void OnEnable()
         {
@@ -34,80 +39,61 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             PopulateQuestsList();
         }
 
-        private void PopulateQuestsList()
-        {
-            var root = GetComponent<UIDocument>().rootVisualElement;
-            var questsList = root.Q<ListView>("QuestsList");
-
-            if (questsList == null)
-            {
-                logger?.Log("QuestsList ListView not found in UI", this, Logging.LogType.Error);
-                return;
-            }
-
-            questsList.Clear();
-
-            if (itemListTemplate == null)
-            {
-                logger?.Log("itemListTemplate is not assigned", this, Logging.LogType.Error);
-                return;
-            }
-
-            // foreach (
-            //     GenericQuest quest in creatorObjectLibrary.GetCreatables(
-            //         CreatableObjectCategories.Quest
-            //     )
-            // )
-            // {
-            //     VisualElement questEntry = itemListTemplate.Instantiate();
-            //     var headerLabel = questEntry.Q<Label>("Header");
-            //     if (headerLabel != null)
-            //     {
-            //         headerLabel.text = quest.DisplayName;
-            //     }
-
-            //     var editButton = questEntry.Q<Button>("Edit");
-            //     var deleteButton = questEntry.Q<Button>("Delete");
-
-            //     var typeLabel = questEntry.Q<Label>("Type");
-            //     if (typeLabel != null)
-            //         typeLabel.text = "Quest";
-
-            //     if (editButton != null)
-            //         editButton.clicked += () => OnEditQuest(quest);
-            //     if (deleteButton != null)
-            //         deleteButton.clicked += () => OnDeleteQuest(quest, questEntry);
-
-            //     questsList.hierarchy.Add(questEntry);
-            // }
-        }
-
-        // void OnEditQuest(CreatorObject quest)
-        // {
-        //     logger.Log("Editing quest: " + quest.DisplayName, this, Logging.LogType.Info);
-
-        //     EditContext.SetObjectToEdit(quest);
-
-        //     OpenMenu(createQuestMenuPrefab);
-        // }
-
-        // void OnDeleteQuest(CreatorObject quest, VisualElement questListEntry)
-        // {
-        //     logger.Log("Deleting quest: " + quest.DisplayName, this, Logging.LogType.Info);
-        //     creatorObjectLibrary.RemoveCreatable(CreatableObjectCategories.Quest, quest);
-        //     questListEntry.RemoveFromHierarchy();
-        // }
-
         void OnDisable()
         {
             addQuestButton.clicked -= AddQuest;
             closeButton.clicked -= CloseMenu;
         }
 
+        private void PopulateQuestsList()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var questsList = root.Q<ListView>("QuestsList");
+            questsList.Clear();
+
+            foreach (Quest quest in creatablesManager.GetAll<Quest>())
+            {
+                var entry = itemListTemplate.Instantiate();
+                entry.Q<Label>("Header").text = quest.data.title;
+
+                var typeLabel = entry.Q<Label>("Type");
+                if (typeLabel != null)
+                    typeLabel.text = "Quest";
+
+                entry.Q<Button>("Edit").clicked += () => OnEditQuest(quest);
+                entry.Q<Button>("Delete").clicked += () => OnDeleteQuest(quest, entry);
+
+                questsList.hierarchy.Add(entry);
+            }
+        }
+
+        private void OnEditQuest(Quest quest)
+        {
+            logger.Log("Editing quest: " + quest.data.title, this, Logging.LogType.Info);
+            editingQuest = quest;
+            OpenMenu(createQuestMenuPrefab);
+        }
+
+        private void OnDeleteQuest(Quest quest, VisualElement entry)
+        {
+            logger.Log("Deleting quest: " + quest.data.title, this, Logging.LogType.Info);
+            creatablesManager.Delete<Quest>(quest.data.id);
+            entry.RemoveFromHierarchy();
+        }
+
         private void AddQuest()
         {
             logger.Log("Opening Create Quest Menu", this, Logging.LogType.Info);
+            editingQuest = null;
             OpenMenu(createQuestMenuPrefab);
+        }
+
+        public override void OpenMenu(GameObject menuPrefab)
+        {
+            var menuInstance = resolver.Instantiate(menuPrefab);
+            if (editingQuest != null)
+                menuInstance.GetComponent<QuestCreatorMenu>()?.SetupEditor(editingQuest);
+            Destroy(gameObject);
         }
     }
 }

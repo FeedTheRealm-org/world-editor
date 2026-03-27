@@ -1,246 +1,191 @@
 using System;
 using System.Linq;
 using Enums;
-using FeedTheRealm.Core.Library;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 {
-    // [RequireComponent(typeof(UIDocument))]
-    // public class QuestCreatorMenuController : BaseCreatorMenuController<GenericQuest>
-    // {
-    //     private TextField contentInput;
-    //     private DropdownField questTypeDropdown;
-    //     private DropdownField enemyDropdown;
-    //     private DropdownField npcDropdown;
-    //     private IntegerField targetAmountField;
-    //     private VisualElement enemyContainer;
-    //     private VisualElement npcContainer;
+    [RequireComponent(typeof(UIDocument))]
+    public class QuestCreatorMenu : MenuController
+    {
+        [Inject]
+        private CreatablesManager creatablesManager;
 
-    //     protected override CreatableObjectCategories Category => CreatableObjectCategories.Quest;
-    //     protected override string ObjectTypeName => "Quest";
-    //     protected override string SaveButtonName => "SaveButton";
+        [SerializeField]
+        private GameObject questsMenuPrefab;
+        private QuestData editingData;
+        private TextField nameInput;
+        private TextField contentInput;
+        private DropdownField questTypeDropdown;
+        private DropdownField enemyDropdown;
+        private DropdownField npcDropdown;
+        private IntegerField targetAmountField;
+        private VisualElement enemyContainer;
+        private VisualElement npcContainer;
+        private Button saveButton;
+        private Button closeButton;
 
-    //     protected override void InitializeSpecificFields(VisualElement root)
-    //     {
-    //         contentInput = root.Q<TextField>("ContentField");
-    //         LogIfNull(contentInput, "Content input field");
+        void OnEnable()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            nameInput = root.Q<TextField>("NameField");
+            contentInput = root.Q<TextField>("ContentField");
+            questTypeDropdown = root.Q<DropdownField>("QuestTypeDropdown");
+            enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
+            npcDropdown = root.Q<DropdownField>("NPCDropdown");
+            targetAmountField = root.Q<IntegerField>("TargetAmount");
+            enemyContainer = root.Q<VisualElement>("EnemyContainer");
+            npcContainer = root.Q<VisualElement>("NPCContainer");
+            saveButton = root.Q<Button>("SaveButton");
+            closeButton = root.Q<Button>("Close");
 
-    //         questTypeDropdown = root.Q<DropdownField>("QuestTypeDropdown");
-    //         LogIfNull(questTypeDropdown, "QuestType dropdown");
+            questTypeDropdown.choices = Enum.GetNames(typeof(QuestType)).ToList();
+            questTypeDropdown.value = QuestType.EnemySlays.ToString();
+            enemyContainer.style.display = DisplayStyle.Flex;
+            npcContainer.style.display = DisplayStyle.None;
+            PopulateEnemyDropdown();
 
-    //         enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
-    //         npcDropdown = root.Q<DropdownField>("NPCDropdown");
-    //         targetAmountField = root.Q<IntegerField>("TargetAmount");
-    //         enemyContainer = root.Q<VisualElement>("EnemyContainer");
-    //         npcContainer = root.Q<VisualElement>("NPCContainer");
+            questTypeDropdown.RegisterValueChangedCallback(OnQuestTypeChanged);
+            root.Q<Button>("Return").clicked += ReturnToList;
+            closeButton.clicked += CloseMenu;
+            saveButton.clicked += CreateNewObject;
+        }
 
-    //         if (questTypeDropdown != null)
-    //         {
-    //             questTypeDropdown.choices = Enum.GetNames(typeof(QuestType)).ToList();
-    //             if (questTypeDropdown.choices.Count > 0)
-    //                 questTypeDropdown.value = questTypeDropdown.choices[0];
-    //             questTypeDropdown.RegisterValueChangedCallback(OnQuestTypeChanged);
-    //         }
+        void OnDisable()
+        {
+            questTypeDropdown?.UnregisterValueChangedCallback(OnQuestTypeChanged);
+        }
 
-    //         if (enemyContainer != null)
-    //             enemyContainer.style.display = DisplayStyle.None;
-    //         if (npcContainer != null)
-    //             npcContainer.style.display = DisplayStyle.None;
-    //     }
+        public void SetupEditor(Quest quest)
+        {
+            editingData = quest.data;
+            PopulateFields();
+            BindEditMode();
+            saveButton.clicked -= CreateNewObject;
+            saveButton.text = "Return to List";
+            saveButton.clicked += ReturnToList;
+        }
 
-    //     protected override void PopulateFields()
-    //     {
-    //         nameInput.value = currentObject.name;
-    //         contentInput.value = currentObject.content ?? "";
-    //         questTypeDropdown.value = currentObject.questType.ToString();
-    //         targetAmountField.value = currentObject.targetAmount;
+        private void PopulateFields()
+        {
+            nameInput.value = editingData.title;
+            contentInput.value = editingData.content;
+            questTypeDropdown.value = editingData.type.ToString();
+            targetAmountField.value = editingData.targetAmount;
+            UpdateQuestTypeUI(editingData.type.ToString());
 
-    //         UpdateQuestTypeUI(currentObject.questType.ToString());
+            if (editingData.type == QuestType.EnemySlays)
+            {
+                var enemy = creatablesManager
+                    .GetAll<AggresiveNpc>()
+                    .FirstOrDefault(e => e.Id == editingData.targetId);
+                if (enemy != null)
+                    enemyDropdown.value = enemy.data.name;
+            }
+            else if (editingData.type == QuestType.NpcInteract)
+            {
+                var npc = creatablesManager
+                    .GetAll<FriendlyNpc>()
+                    .FirstOrDefault(n => n.Id == editingData.targetId);
+                if (npc != null)
+                    npcDropdown.value = npc.data.name;
+            }
+        }
 
-    //         if (currentObject.questType == QuestType.EnemySlays && enemyDropdown != null)
-    //         {
-    //             var enemies = creatorObjectLibrary
-    //                 .GetCreatables(CreatableObjectCategories.Enemy)
-    //                 .Cast<GenericEnemy>()
-    //                 .ToList();
-    //             var selectedEnemy = enemies.FirstOrDefault(e =>
-    //                 e.ObjectId == currentObject.targetId
-    //             );
-    //             if (selectedEnemy != null)
-    //                 enemyDropdown.value = selectedEnemy.DisplayName;
-    //         }
-    //         else if (currentObject.questType == QuestType.NpcInteract && npcDropdown != null)
-    //         {
-    //             var npcs = creatorObjectLibrary
-    //                 .GetCreatables(CreatableObjectCategories.NPC)
-    //                 .Cast<GenericNPC>()
-    //                 .ToList();
-    //             var selectedNPC = npcs.FirstOrDefault(n => n.ObjectId == currentObject.targetId);
-    //             if (selectedNPC != null)
-    //                 npcDropdown.value = selectedNPC.DisplayName;
-    //         }
-    //     }
+        private void BindEditMode()
+        {
+            nameInput.RegisterValueChangedCallback(evt => editingData.title = evt.newValue);
+            contentInput.RegisterValueChangedCallback(evt => editingData.content = evt.newValue);
+            targetAmountField.RegisterValueChangedCallback(evt =>
+                editingData.targetAmount = evt.newValue
+            );
+            questTypeDropdown.RegisterValueChangedCallback(evt =>
+                editingData.type = Enum.Parse<QuestType>(evt.newValue)
+            );
+            enemyDropdown.RegisterValueChangedCallback(evt =>
+                editingData.targetId = GetEnemyId(evt.newValue)
+            );
+            npcDropdown.RegisterValueChangedCallback(evt =>
+                editingData.targetId = GetNpcId(evt.newValue)
+            );
+        }
 
-    //     private void OnQuestTypeChanged(ChangeEvent<string> evt)
-    //     {
-    //         UpdateQuestTypeUI(evt.newValue);
-    //     }
+        private void OnQuestTypeChanged(ChangeEvent<string> evt)
+        {
+            UpdateQuestTypeUI(evt.newValue);
+        }
 
-    //     private void UpdateQuestTypeUI(string questTypeValue)
-    //     {
-    //         if (string.IsNullOrEmpty(questTypeValue))
-    //             return;
+        private void UpdateQuestTypeUI(string questTypeValue)
+        {
+            enemyContainer.style.display = DisplayStyle.None;
+            npcContainer.style.display = DisplayStyle.None;
 
-    //         if (enemyContainer != null)
-    //             enemyContainer.style.display = DisplayStyle.None;
-    //         if (npcContainer != null)
-    //             npcContainer.style.display = DisplayStyle.None;
+            if (!Enum.TryParse<QuestType>(questTypeValue, out var questType))
+                return;
 
-    //         if (Enum.TryParse<QuestType>(questTypeValue, out var questType))
-    //         {
-    //             if (questType == QuestType.EnemySlays && enemyContainer != null)
-    //             {
-    //                 enemyContainer.style.display = DisplayStyle.Flex;
-    //                 PopulateEnemyDropdown();
-    //             }
-    //             else if (questType == QuestType.NpcInteract && npcContainer != null)
-    //             {
-    //                 npcContainer.style.display = DisplayStyle.Flex;
-    //                 PopulateNPCDropdown();
-    //             }
-    //         }
-    //     }
+            if (questType == QuestType.EnemySlays)
+            {
+                enemyContainer.style.display = DisplayStyle.Flex;
+                PopulateEnemyDropdown();
+            }
+            else if (questType == QuestType.NpcInteract)
+            {
+                npcContainer.style.display = DisplayStyle.Flex;
+                PopulateNpcDropdown();
+            }
+        }
 
-    //     private void PopulateEnemyDropdown()
-    //     {
-    //         if (enemyDropdown == null || creatorObjectLibrary == null)
-    //             return;
+        private void PopulateEnemyDropdown()
+        {
+            enemyDropdown.choices = creatablesManager
+                .GetAll<AggresiveNpc>()
+                .Select(e => e.data.name)
+                .ToList();
+        }
 
-    //         var enemies = creatorObjectLibrary
-    //             .GetCreatables(CreatableObjectCategories.Enemy)
-    //             .Cast<GenericEnemy>()
-    //             .ToList();
+        private void PopulateNpcDropdown()
+        {
+            npcDropdown.choices = creatablesManager
+                .GetAll<FriendlyNpc>()
+                .Select(n => n.data.name)
+                .ToList();
+        }
 
-    //         enemyDropdown.choices = enemies.Select(e => e.DisplayName).ToList();
-    //         logger?.Log(
-    //             $"QuestCreator: Populated {enemies.Count} enemies",
-    //             this,
-    //             Logging.LogType.Info
-    //         );
-    //     }
+        private string GetEnemyId(string name) =>
+            creatablesManager.GetAll<AggresiveNpc>().FirstOrDefault(e => e.data.name == name)?.Id;
 
-    //     private void PopulateNPCDropdown()
-    //     {
-    //         if (npcDropdown == null || creatorObjectLibrary == null)
-    //             return;
+        private string GetNpcId(string name) =>
+            creatablesManager.GetAll<FriendlyNpc>().FirstOrDefault(n => n.data.name == name)?.Id;
 
-    //         var npcs = creatorObjectLibrary
-    //             .GetCreatables(CreatableObjectCategories.NPC)
-    //             .Cast<GenericNPC>()
-    //             .ToList();
+        private void CreateNewObject()
+        {
+            var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
+            string targetId =
+                questType == QuestType.EnemySlays
+                    ? GetEnemyId(enemyDropdown.value)
+                    : GetNpcId(npcDropdown.value);
+            int targetAmount = questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
 
-    //         npcDropdown.choices = npcs.Select(n => n.DisplayName).ToList();
-    //         logger?.Log($"QuestCreator: Populated {npcs.Count} NPCs", this, Logging.LogType.Info);
-    //     }
+            var questData = new QuestData(
+                Guid.NewGuid().ToString(),
+                nameInput.value,
+                contentInput.value ?? "",
+                questType,
+                targetId,
+                targetAmount,
+                null
+            );
 
-    //     protected override bool ValidateSpecificFields()
-    //     {
-    //         if (string.IsNullOrEmpty(questTypeDropdown?.value))
-    //         {
-    //             ShowValidationError("Quest type is required");
-    //             return false;
-    //         }
+            creatablesManager.Add(new Quest(questData));
+            ReturnToList();
+        }
 
-    //         if (!Enum.TryParse<QuestType>(questTypeDropdown.value, out var questType))
-    //         {
-    //             ShowValidationError("Invalid quest type");
-    //             return false;
-    //         }
-
-    //         if (questType == QuestType.EnemySlays && string.IsNullOrEmpty(enemyDropdown?.value))
-    //         {
-    //             ShowValidationError("Please select an enemy");
-    //             return false;
-    //         }
-
-    //         if (questType == QuestType.NpcInteract && string.IsNullOrEmpty(npcDropdown?.value))
-    //         {
-    //             ShowValidationError("Please select an NPC");
-    //             return false;
-    //         }
-
-    //         return true;
-    //     }
-
-    //     protected override void CreateNewObject()
-    //     {
-    //         var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
-    //         string targetId = GetTargetId(questType);
-    //         int targetAmount = questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
-
-    //         var questData = new QuestData(
-    //             null,
-    //             nameInput.value,
-    //             contentInput.value ?? "",
-    //             questType,
-    //             targetId,
-    //             targetAmount,
-    //             null
-    //         );
-
-    //         currentObject = new GenericQuest(questData);
-    //         creatorObjectLibrary.AddCreatable(Category, currentObject);
-    //         logger?.Log(
-    //             $"Created new quest: {currentObject.DisplayName}",
-    //             this,
-    //             Logging.LogType.Info
-    //         );
-    //     }
-
-    //     protected override void UpdateExistingObject()
-    //     {
-    //         var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
-
-    //         currentObject.name = nameInput.value;
-    //         currentObject.content = contentInput.value;
-    //         currentObject.questType = questType;
-    //         currentObject.targetId = GetTargetId(questType);
-    //         currentObject.targetAmount =
-    //             questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
-
-    //         logger?.Log($"Updated quest: {currentObject.DisplayName}", this, Logging.LogType.Info);
-    //     }
-
-    //     private string GetTargetId(QuestType questType)
-    //     {
-    //         if (questType == QuestType.EnemySlays && enemyDropdown != null)
-    //         {
-    //             var enemies = creatorObjectLibrary
-    //                 .GetCreatables(CreatableObjectCategories.Enemy)
-    //                 .Cast<GenericEnemy>()
-    //                 .ToList();
-    //             return enemies.FirstOrDefault(e => e.DisplayName == enemyDropdown.value)?.ObjectId;
-    //         }
-    //         else if (questType == QuestType.NpcInteract && npcDropdown != null)
-    //         {
-    //             var npcs = creatorObjectLibrary
-    //                 .GetCreatables(CreatableObjectCategories.NPC)
-    //                 .Cast<GenericNPC>()
-    //                 .ToList();
-    //             return npcs.FirstOrDefault(n => n.DisplayName == npcDropdown.value)?.ObjectId;
-    //         }
-    //         return null;
-    //     }
-
-    //     protected override void OnDisable()
-    //     {
-    //         base.OnDisable();
-
-    //         if (questTypeDropdown != null)
-    //             questTypeDropdown.UnregisterValueChangedCallback(OnQuestTypeChanged);
-    //     }
-    // }
+        private void ReturnToList() => OpenMenu(questsMenuPrefab);
+    }
 }
