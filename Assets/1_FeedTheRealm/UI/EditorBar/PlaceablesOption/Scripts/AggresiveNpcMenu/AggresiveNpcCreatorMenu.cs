@@ -30,21 +30,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private DropdownField lootTableInput;
         private Button closeButton;
         private Button saveButton;
-        private bool IsPopulated = false;
 
-        public void SetupEditor(AggresiveNpc aggresiveNpc)
+        public void SetupEditor(AggresiveNpc npc)
         {
-            editingEnemyData = aggresiveNpc.data;
-            PopulateFields();
-            BindEditMode();
-            saveButton.clicked += ReturnToList;
-            saveButton.text = "Return to List";
+            editingEnemyData = npc.data;
+            SetupEditMode();
         }
 
         private void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+
             InitializeFields(root);
+            PopulateLootTables();
+            SetupCreateMode();
         }
 
         private void InitializeFields(VisualElement root)
@@ -60,17 +59,28 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             closeButton = root.Q<Button>("Close");
 
             closeButton.clicked += ReturnToList;
-            saveButton.clicked += CreateNewObject;
         }
 
         private void PopulateLootTables()
         {
-            if (lootTableInput == null || IsPopulated)
-                return;
-
             var lootTables = creatblesManager.GetAll<LootTable>();
             lootTableInput.choices = lootTables.Select(lt => lt.data.name).ToList();
-            IsPopulated = true;
+        }
+
+        private void SetupCreateMode()
+        {
+            saveButton.text = "Create Enemy";
+            saveButton.clicked += CreateNewObject;
+        }
+
+        private void SetupEditMode()
+        {
+            PopulateFields();
+            BindEditMode();
+
+            saveButton.text = "Return to List";
+            saveButton.clicked -= CreateNewObject;
+            saveButton.clicked += ReturnToList;
         }
 
         private void PopulateFields()
@@ -89,8 +99,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             if (selected != null)
                 lootTableInput.value = selected.data.name;
-
-            PopulateLootTables();
         }
 
         private void BindEditMode()
@@ -136,7 +144,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 damageInput.value,
                 speedInput.value,
                 rangeInput.value,
-                null, // sprite for now
+                null,
                 selectedLootTable?.data.id
             );
 
@@ -144,7 +152,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             creatblesManager.Add(enemy);
 
-            Debug.Log($"Enemy created: {enemy.data.name} with ID: {enemy.data.id}");
+            Debug.Log($"Enemy created: {enemy.data.name}");
 
             OpenMenu(aggresiveNpcMenuPrefab);
         }
