@@ -1,6 +1,5 @@
 //using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.UI.Common;
-using UI.EditorBar.ElementOption.Scripts.ShopMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 

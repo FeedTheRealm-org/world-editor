@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 1e45744089dad54b1ba8d56d324ef73f, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: c5f76e2248fe86532a43567985d9fb72, type: 3}
   m_SortingOrder: 200
   m_Position: 0
   m_WorldSpaceSizeMode: 1
@@ -69,5 +69,5 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::ShopCreatorMenuController
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  shopManager: {fileID: 11400000, guid: e6128aa0dda0f9a9bb3d49f2416c49d7, type: 2}
-  listShopsMenuPrefab: {fileID: 3043731294741081270, guid: fad5a1b13f5ef9f07a56ac5cab7e35ff, type: 3}
+  shopsMenuPrefab: {fileID: 899354125112832364, guid: cfe15a1ae987b9ae9ac0c6bfc24ef983, type: 3}
+  productItemTemplate: {fileID: 9197481963319205126, guid: 31b329eb36e001678bedd73602ebe395, type: 3}

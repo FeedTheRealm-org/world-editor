@@ -19,7 +19,8 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public override void OnDelete()
         {
-            FileSystemHandler.DeleteFile(data.spriteFilePath);
+            if (data.spriteFilePath.StartsWith(config.SpritesDirectory))
+                FileSystemHandler.DeleteFile(data.spriteFilePath);
         }
 
         public override void Save(ref CreatablesData creatablesData)
