@@ -17,68 +17,143 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
-        private Button saveButton;
+        private Button saveAllButton;
+        private Button saveCreatablesButton;
+        private Button saveZoneButton;
+        private Button saveWorldButton;
         private Button closeButton;
         private TextField nameInput;
-        private VisualElement root;
+        private TextField descriptionInput;
 
         private WorldData currentWorldData;
 
         void OnEnable()
         {
-            var uiDocument = GetComponent<UIDocument>();
-            root = uiDocument.rootVisualElement;
-            saveButton = root.Q<Button>("Save");
-            closeButton = root.Q<Button>("Close");
+            var root = GetComponent<UIDocument>().rootVisualElement;
+
             nameInput = root.Q<TextField>("NameInput");
+            descriptionInput = root.Q<TextField>("WorldDescription");
+            saveAllButton = root.Q<Button>("SaveAll");
+            saveCreatablesButton = root.Q<Button>("SaveCreatables");
+            saveZoneButton = root.Q<Button>("SaveZone");
+            saveWorldButton = root.Q<Button>("SaveWorld");
+            closeButton = root.Q<Button>("Close");
+
+            closeButton.clicked += CloseMenu;
+            saveAllButton.clicked += OnSaveAllClicked;
+            saveCreatablesButton.clicked += OnSaveCreatablesClicked;
+            saveZoneButton.clicked += OnSaveZoneClicked;
+            saveWorldButton.clicked += OnSaveWorldClicked;
 
             string worldName = worldSelector.selectedWorld;
-            if (worldName != null && !string.IsNullOrEmpty(worldName))
+            currentWorldData = dataPersistenceManager.GetWorldData(worldName);
+
+            if (currentWorldData != null)
+            {
+                nameInput.value = currentWorldData.worldName;
+                descriptionInput.value = currentWorldData.description;
+            }
+            else if (!string.IsNullOrEmpty(worldName))
             {
                 nameInput.value = worldName;
             }
-
-            saveButton.clicked += OnSaveClicked;
-            closeButton.clicked += CloseMenu;
-
-            // TODO: when saving, we can add the bio data here and other worlds metada to later update
-            currentWorldData ??= dataPersistenceManager.GetWorldData(worldName);
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
-            saveButton.clicked -= OnSaveClicked;
             closeButton.clicked -= CloseMenu;
+            saveAllButton.clicked -= OnSaveAllClicked;
+            saveCreatablesButton.clicked -= OnSaveCreatablesClicked;
+            saveZoneButton.clicked -= OnSaveZoneClicked;
+            saveWorldButton.clicked -= OnSaveWorldClicked;
         }
 
-        private void OnSaveClicked()
+        private void OnSaveAllClicked()
         {
             try
             {
-                string worldName = nameInput?.value?.Trim();
-                ValidateWorldName(worldName);
-
-                if (currentWorldData == null)
-                    currentWorldData = dataPersistenceManager.CreateNewWorld(worldName);
-
-                currentWorldData.last_edited_at = DateTime.Now;
+                string worldName = GetValidatedWorldName();
+                EnsureWorldData(worldName);
                 dataPersistenceManager.SaveWorldMetadata(currentWorldData);
                 dataPersistenceManager.SaveZone(worldName, worldSelector.selectedZoneId);
                 dataPersistenceManager.SaveCreatables(worldName);
                 worldSelector.selectedWorld = worldName;
                 ToastNotification.Show(
-                    $"World {worldName} was saved successfully",
+                    $"World {worldName} saved successfully",
                     "success",
                     Color.green
                 );
-                Debug.Log($"World {currentWorldData} was saved successfully");
                 CloseMenu();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error saving world: {ex.Message}");
-                ToastNotification.Show($"Error saving world: {ex.Message}", "error", Color.red);
+                ShowError(ex.Message);
             }
+        }
+
+        private void OnSaveCreatablesClicked()
+        {
+            try
+            {
+                string worldName = GetValidatedWorldName();
+                dataPersistenceManager.SaveCreatables(worldName);
+                ToastNotification.Show("Creatables saved", "success", Color.green);
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private void OnSaveZoneClicked()
+        {
+            try
+            {
+                string worldName = GetValidatedWorldName();
+                dataPersistenceManager.SaveZone(worldName, worldSelector.selectedZoneId);
+                ToastNotification.Show(
+                    $"Zone {worldSelector.selectedZoneId} saved",
+                    "success",
+                    Color.green
+                );
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private void OnSaveWorldClicked()
+        {
+            try
+            {
+                string worldName = GetValidatedWorldName();
+                EnsureWorldData(worldName);
+                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                worldSelector.selectedWorld = worldName;
+                ToastNotification.Show("World data saved", "success", Color.green);
+            }
+            catch (Exception ex)
+            {
+                ShowError(ex.Message);
+            }
+        }
+
+        private string GetValidatedWorldName()
+        {
+            string worldName = nameInput?.value?.Trim();
+            ValidateWorldName(worldName);
+            return worldName;
+        }
+
+        private void EnsureWorldData(string worldName)
+        {
+            if (currentWorldData == null)
+                currentWorldData = dataPersistenceManager.CreateNewWorld(worldName);
+
+            currentWorldData.worldName = worldName;
+            currentWorldData.description = descriptionInput?.value ?? "";
+            currentWorldData.last_edited_at = DateTime.Now;
         }
 
         private void ValidateWorldName(string worldName)
@@ -90,6 +165,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
                 throw new ArgumentException(
                     "World name can only contain letters, numbers, spaces, hyphens and underscores"
                 );
+        }
+
+        private void ShowError(string message)
+        {
+            Debug.LogError($"Save error: {message}");
+            ToastNotification.Show($"Error: {message}", "error", Color.red);
         }
     }
 }

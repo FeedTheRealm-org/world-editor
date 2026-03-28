@@ -1,7 +1,9 @@
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.MainMenuSetup.Services;
+using FTR.Core.Common.Config;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,7 +14,16 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
     {
         [Header("Services, Managers and Config")]
         [SerializeField]
-        private DataPersistenceManager dataPersistenceManager;
+        private Config config;
+
+        [SerializeField]
+        private Logging.Logger logger;
+
+        [SerializeField]
+        private WorldSelector worldSelector;
+
+        [SerializeField]
+        private InputReader inputReader;
 
         [Header("Component Providers")]
         [SerializeField]
@@ -24,26 +35,17 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
 
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateSerializedFields();
-            builder.RegisterInstance(mainMenuUIObjectProvider);
             eventChannelRegistry.RegisterAll(builder);
             builder.Register<MainMenuUISetupService>(Lifetime.Scoped);
+            builder.Register<DataPersistenceManager>(Lifetime.Singleton);
+
+            builder.RegisterInstance(mainMenuUIObjectProvider);
+            builder.RegisterInstance(config);
+            builder.RegisterInstance(logger);
+            builder.RegisterInstance(worldSelector);
+            builder.RegisterInstance(inputReader);
+
             builder.RegisterEntryPoint<MainMenuEntrypoint>();
-        }
-
-        private void ValidateSerializedFields()
-        {
-            ValidateField(dataPersistenceManager, nameof(dataPersistenceManager));
-            ValidateField(mainMenuUIObjectProvider, nameof(mainMenuUIObjectProvider));
-            ValidateField(eventChannelRegistry, nameof(eventChannelRegistry));
-        }
-
-        private void ValidateField(object field, string fieldName)
-        {
-            if (field == null)
-                throw new System.NullReferenceException(
-                    $"{fieldName} is not assigned in the Inspector."
-                );
         }
     }
 }

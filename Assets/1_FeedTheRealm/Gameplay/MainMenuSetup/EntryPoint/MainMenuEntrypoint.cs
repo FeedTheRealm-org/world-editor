@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.MainMenuSetup.Entrypoint
 {
-    public class MainMenuEntrypoint : IStartable //, ITickable, IFixedTickable, ILateTickable
+    public class MainMenuEntrypoint : IStartable
     {
         private readonly MainMenuUISetupService mainMenuUISetupService;
 

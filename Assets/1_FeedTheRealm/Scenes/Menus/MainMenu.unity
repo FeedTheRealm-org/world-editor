@@ -127,6 +127,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 673363993987396426, guid: d1d9c584b4d2ff88d89c7fc4f4e3ad28, type: 3}
+      propertyPath: config
+      value: 
+      objectReference: {fileID: 11400000, guid: f6ade15aa3e7bf4c4ad3fab235451acb, type: 2}
+    - target: {fileID: 673363993987396426, guid: d1d9c584b4d2ff88d89c7fc4f4e3ad28, type: 3}
+      propertyPath: logger
+      value: 
+      objectReference: {fileID: 11400000, guid: 9450e4befa5ad10f7b9d9c670aa2c35b, type: 2}
+    - target: {fileID: 673363993987396426, guid: d1d9c584b4d2ff88d89c7fc4f4e3ad28, type: 3}
+      propertyPath: inputReader
+      value: 
+      objectReference: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
+    - target: {fileID: 673363993987396426, guid: d1d9c584b4d2ff88d89c7fc4f4e3ad28, type: 3}
+      propertyPath: worldSelector
+      value: 
+      objectReference: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}
     - target: {fileID: 5393218376672023292, guid: d1d9c584b4d2ff88d89c7fc4f4e3ad28, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.46173

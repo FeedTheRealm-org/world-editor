@@ -121,8 +121,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             // dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
 
-            // ToastNotification.Show("World published successfully", "success", Color.green);
-            // CloseMenu();
+            ToastNotification.Show("World published successfully", "success", Color.green);
+            CloseMenu();
         }
     }
 }
