@@ -37,6 +37,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             try
             {
+                dataPersistenceManager.ClearCreatables();
                 creatablesManager.ClearRegistry();
 
                 if (string.IsNullOrEmpty(worldSelector.selectedWorld))

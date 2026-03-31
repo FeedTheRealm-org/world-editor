@@ -49,6 +49,8 @@ namespace FeedTheRealm.Gameplay.WorldLoader
 
         public async UniTask Load()
         {
+            dataPersistenceManager.ClearPlaceables();
+
             if (string.IsNullOrEmpty(worldSelector.selectedWorld))
                 return;
 

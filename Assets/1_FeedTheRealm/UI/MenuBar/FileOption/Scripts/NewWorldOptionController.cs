@@ -42,7 +42,6 @@ namespace FeedTheRealm.UI.MenuBar
 
                 if (SceneManager.GetActiveScene().name == editorScene.SceneName)
                 {
-                    dataPersistenceManager.ClearRegistry();
                     refreshZonesEvent.Raise();
                     await zoneLoader.Load();
                     await creatablesLoader.Load();

@@ -147,7 +147,7 @@ namespace FeedTheRealm.Core.DataPersistence
         /// This is typically called before loading a new world to ensure
         /// that data from the previous world does not persist.
         /// </summary>
-        public void ClearRegistry()
+        public void ClearPlaceables()
         {
             registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
 
@@ -157,8 +157,14 @@ namespace FeedTheRealm.Core.DataPersistence
                 UnityEngine.Object.Destroy(component.gameObject);
             }
             registeredPlaceables.Clear();
-            registeredCreatables.Clear();
             logger.Log("[DataPersistenceManager] Registry cleared.");
+        }
+
+        public void ClearCreatables()
+        {
+            registeredCreatables.RemoveAll(obj => obj == null);
+            registeredCreatables.Clear();
+            logger.Log("[DataPersistenceManager] Creatables registry cleared.");
         }
 
         public string GetModelFilepath(string modelId)

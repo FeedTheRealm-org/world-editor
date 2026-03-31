@@ -2,6 +2,7 @@ using System.IO;
 using FeedTheRealm.Core.Utils;
 using FeedTheRealm.Core.WorldObjects;
 using FTRShared.Runtime.Models;
+using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.Creatables
 {
@@ -24,14 +25,20 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public override void Save(ref CreatablesData creatablesData)
         {
-            if (!data.spriteFilePath.StartsWith(config.SpritesDirectory))
+            if (
+                !string.IsNullOrEmpty(data.spriteFilePath) && Path.IsPathRooted(data.spriteFilePath)
+            )
             {
-                data.spriteFilePath = FileSystemHandler.SaveSprite(
+                string savedFileName = FileSystemHandler.SaveSprite(
                     data.spriteFilePath,
                     config.SpritesDirectory,
                     data.id
                 );
+
+                if (savedFileName != null)
+                    data.spriteFilePath = savedFileName;
             }
+
             creatablesData.consumableItems.Add(data);
         }
     }

@@ -180,6 +180,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         {
             try
             {
+                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                dataPersistenceManager.SaveZone(
+                    currentWorldData.worldName,
+                    worldSelector.selectedZoneId
+                );
+                dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
                 publishButton.SetEnabled(false);
                 await ValidateBeforePublish();
                 await PublishWorldData();
@@ -447,15 +453,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 modelRequests.Add(new ModelRequest { id = model.id, filePath = modelPath });
             }
 
-            logger.Log(
-                $"[WorldPublisher] Uploading {newModels.Count} new models.",
-                this,
-                Logging.LogType.Info
-            );
             string error = await modelService.UploadModels(
                 modelRequests,
                 currentWorldData.worldId,
                 session.APIToken
+            );
+            logger.Log(
+                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
+                this,
+                Logging.LogType.Info
             );
 
             if (!string.IsNullOrEmpty(error))
