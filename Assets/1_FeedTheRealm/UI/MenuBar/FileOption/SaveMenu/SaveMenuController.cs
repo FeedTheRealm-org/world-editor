@@ -51,12 +51,22 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
             if (currentWorldData != null)
             {
                 nameInput.value = currentWorldData.worldName;
-                descriptionInput.value = currentWorldData.description;
+                descriptionInput.value = currentWorldData.description ?? "";
             }
             else if (!string.IsNullOrEmpty(worldName))
             {
                 nameInput.value = worldName;
             }
+
+            UpdateButtonStates();
+        }
+
+        private void UpdateButtonStates()
+        {
+            bool hasWorldData = currentWorldData != null;
+            saveCreatablesButton.SetEnabled(hasWorldData);
+            saveZoneButton.SetEnabled(hasWorldData);
+            saveWorldButton.SetEnabled(hasWorldData);
         }
 
         void OnDisable()
@@ -83,7 +93,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
                     "success",
                     Color.green
                 );
-                CloseMenu();
+                UpdateButtonStates();
             }
             catch (Exception ex)
             {

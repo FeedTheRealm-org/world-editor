@@ -1,3 +1,4 @@
+using System.IO;
 using FeedTheRealm.Core.Utils;
 using FeedTheRealm.Core.WorldObjects;
 using FTRShared.Runtime.Models;
@@ -21,9 +22,17 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public override string Id => data.id;
 
-        public override void Save(ref CreatablesData data)
+        public override void Save(ref CreatablesData creatablesData)
         {
-            data.weaponItems.Add(this.data);
+            if (!data.spriteFilePath.StartsWith(config.SpritesDirectory))
+            {
+                data.spriteFilePath = FileSystemHandler.SaveSprite(
+                    data.spriteFilePath,
+                    config.SpritesDirectory,
+                    data.id
+                );
+            }
+            creatablesData.weaponItems.Add(data);
         }
     }
 }

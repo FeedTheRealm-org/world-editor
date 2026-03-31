@@ -60,6 +60,7 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("Subscriptions", subscriptionsOptionController);
             BindButton("Help", helpOptionController);
             BindButton("About", aboutOptionController);
+            logger.Log("MenuBarController initialized successfully.", this);
         }
 
         private void BindButton(string buttonName, GameObject option)

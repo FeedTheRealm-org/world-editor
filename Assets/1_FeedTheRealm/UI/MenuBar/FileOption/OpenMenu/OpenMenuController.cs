@@ -89,6 +89,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             {
                 // If we're already in the game scene,
                 // we can just load the new world data without reloading the scene
+                dataPersistenceManager.ClearRegistry();
                 await zoneLoader.Load();
                 await creatablesLoader.Load();
                 refreshZonesEvent.Raise();

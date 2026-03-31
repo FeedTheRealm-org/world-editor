@@ -25,14 +25,14 @@ namespace API
         private Config config;
         private const string FILE_PROTOCOL = "file://";
 
-        public async UniTask Load(GameObject parent, string modelFile)
+        public async UniTask Load(GameObject parent, string modelFilepath)
         {
-            if (string.IsNullOrEmpty(modelFile))
+            if (string.IsNullOrEmpty(modelFilepath))
             {
                 CreateFallback(parent);
                 return;
             }
-            var modelFilepath = $"{FILE_PROTOCOL}{config.ModelsDirectory}/{modelFile}";
+            modelFilepath = $"{FILE_PROTOCOL}/{config.ModelsDirectory}/{modelFilepath}";
             try
             {
                 var gltfImport = new GltfImport();

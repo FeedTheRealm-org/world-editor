@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Gameplay.WorldLoader;
@@ -21,6 +22,9 @@ namespace FeedTheRealm.UI.MenuBar
         private WorldSelector worldSelector;
 
         [Inject]
+        private DataPersistenceManager dataPersistenceManager;
+
+        [Inject]
         private ZoneLoader zoneLoader;
 
         [Inject]
@@ -38,6 +42,7 @@ namespace FeedTheRealm.UI.MenuBar
 
                 if (SceneManager.GetActiveScene().name == editorScene.SceneName)
                 {
+                    dataPersistenceManager.ClearRegistry();
                     refreshZonesEvent.Raise();
                     await zoneLoader.Load();
                     await creatablesLoader.Load();

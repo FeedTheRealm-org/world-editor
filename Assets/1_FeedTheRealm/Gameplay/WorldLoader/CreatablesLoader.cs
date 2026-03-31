@@ -37,14 +37,16 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             try
             {
+                creatablesManager.ClearRegistry();
+
                 if (string.IsNullOrEmpty(worldSelector.selectedWorld))
                     return;
 
                 CreatablesData data = dataPersistenceManager.GetCreatables(
                     worldSelector.selectedWorld
                 );
-
-                creatablesManager.ClearRegistry();
+                if (data == null)
+                    return;
 
                 foreach (var enemy in data.enemies)
                     creatablesManager.Add(new AggresiveNpc(enemy));

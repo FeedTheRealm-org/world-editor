@@ -129,7 +129,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         {
             string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
             if (string.IsNullOrEmpty(spritePath))
+            {
+                Debug.Log($"No existing sprite path found at: {fullPath}", this);
                 return;
+            }
             var sprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
             if (sprite != null)
                 spritePreview.sprite = sprite;

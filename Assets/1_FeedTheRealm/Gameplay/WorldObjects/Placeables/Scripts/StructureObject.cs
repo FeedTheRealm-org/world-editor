@@ -17,6 +17,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             StructureData data = new()
             {
                 id = this.data.id,
+                fileName = this.data.fileName,
                 structureName = gameObject.name,
                 position = gameObject.transform.position,
                 rotation = gameObject.transform.rotation.eulerAngles,

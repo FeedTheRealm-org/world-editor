@@ -24,6 +24,8 @@ namespace FeedTheRealm.UI.Common
         )]
         [SerializeField]
         private List<MenuOption> menuOptions = new();
+
+        [Header("Execute Dependencies")]
         public string Label => label;
         public IReadOnlyList<MenuOption> MenuOptions => menuOptions;
         public MenuController MenuToOpen => menuToOpen;

@@ -12,6 +12,7 @@ namespace FeedTheRealm.Core.DataPersistence
         private Logging.Logger logger;
         private WorldsRepository worldsRepository;
         private ZonesRepository zonesRepository;
+        private ModelsRepository modelsRepository;
         private CreatablesRepository creatablesRepository;
         private List<IPersistent<ZoneData>> registeredPlaceables = new();
         private List<IPersistent<CreatablesData>> registeredCreatables = new();
@@ -22,6 +23,7 @@ namespace FeedTheRealm.Core.DataPersistence
             WorldsRepository worldsRepository,
             ZonesRepository zonesRepository,
             CreatablesRepository creatablesRepository,
+            ModelsRepository modelsRepository,
             ZoneDataRegistryEvent registryEvent,
             CreatablesDataRegistryEvent creatablesRegistryEvent
         )
@@ -30,6 +32,7 @@ namespace FeedTheRealm.Core.DataPersistence
             this.worldsRepository = worldsRepository;
             this.zonesRepository = zonesRepository;
             this.creatablesRepository = creatablesRepository;
+            this.modelsRepository = modelsRepository;
             registryEvent.OnRaised += RegisterEntity;
             creatablesRegistryEvent.OnRaised += RegisterEntity;
         }
@@ -114,6 +117,8 @@ namespace FeedTheRealm.Core.DataPersistence
 
         public WorldData GetWorldData(string worldName)
         {
+            if (string.IsNullOrEmpty(worldName))
+                return null;
             return worldsRepository.GetWorldData(worldName);
         }
 
@@ -136,8 +141,13 @@ namespace FeedTheRealm.Core.DataPersistence
             return zonesRepository.ListZones(worldName);
         }
 
-        // ----- Placeable Management -----
-        public void ClearPlaceables()
+        // ----- Data Management -----
+        /// <summary>
+        /// Clears the registry of placeables and creatables.
+        /// This is typically called before loading a new world to ensure
+        /// that data from the previous world does not persist.
+        /// </summary>
+        public void ClearRegistry()
         {
             registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
 
@@ -147,6 +157,13 @@ namespace FeedTheRealm.Core.DataPersistence
                 UnityEngine.Object.Destroy(component.gameObject);
             }
             registeredPlaceables.Clear();
+            registeredCreatables.Clear();
+            logger.Log("[DataPersistenceManager] Registry cleared.");
+        }
+
+        public string GetModelFilepath(string modelId)
+        {
+            return modelsRepository.GetModelFilepath(modelId);
         }
     }
 }

@@ -41,15 +41,8 @@ namespace FeedTheRealm.Core.Repository
             try
             {
                 string path = GetWorldDataFilePath(worldName);
-                if (!File.Exists(path))
-                {
-                    logger.Log(
-                        $"No world data found at '{path}', returning empty.",
-                        Logging.LogType.Warning
-                    );
+                if (path == null || !File.Exists(path))
                     return null;
-                }
-
                 string json = File.ReadAllText(path);
                 return JsonUtility.FromJson<WorldData>(json) ?? new WorldData();
             }

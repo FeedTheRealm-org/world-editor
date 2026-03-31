@@ -24,6 +24,8 @@ namespace FeedTheRealm.Core.Repository
         [Inject]
         private Logging.Logger logger;
 
+        private Dictionary<string, StructureData> modelsData;
+
         public ModelsRepository(Config config, Logging.Logger logger)
         {
             this.config = config;
@@ -40,8 +42,14 @@ namespace FeedTheRealm.Core.Repository
 
         public Dictionary<string, StructureData> GetModelsData()
         {
-            return LoadFromDisk().ToDictionary(m => m.id, m => m);
-            ;
+            modelsData ??= LoadFromDisk().ToDictionary(model => model.id, model => model);
+            return modelsData;
+        }
+
+        public string GetModelFilepath(string modelId)
+        {
+            modelsData.TryGetValue(modelId, out StructureData modelData);
+            return Path.Combine(config.ModelsDirectory, modelData?.fileName ?? "");
         }
 
         private void GenerateDefaultFile()
