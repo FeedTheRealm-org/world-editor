@@ -25,7 +25,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 colliderSize = collider != null ? collider.size : Vector3.zero,
                 colliderCenter = collider != null ? collider.center : Vector3.zero,
             };
-            Debug.Log($"Saving structure data: {data}'");
             zoneData.objectPlacementData.Add(data);
         }
 

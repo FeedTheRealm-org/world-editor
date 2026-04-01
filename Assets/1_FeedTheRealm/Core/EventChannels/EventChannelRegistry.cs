@@ -17,7 +17,6 @@ namespace FeedTheRealm.Core.EventChannels
         public LoadWorldEvent loadWorldEvent;
 
         [Header("World Events")]
-        public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
         public ZoneDataRegistryEvent ZoneDataRegistryEvent;
@@ -43,7 +42,6 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(editPlaceableEvent);
             builder.RegisterInstance(ZoneDataRegistryEvent);
             builder.RegisterInstance(CreatablesDataRegistryEvent);
-            builder.RegisterInstance(worldSelectedEvent);
             builder.RegisterInstance(objectSelectedEvent);
             builder.RegisterInstance(enableEditorEvent);
             builder.RegisterInstance(categorySelectedEvent);

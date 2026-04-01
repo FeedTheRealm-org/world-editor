@@ -7,5 +7,11 @@ namespace FeedTheRealm.Core.DataPersistence
     {
         public string selectedWorld;
         public int selectedZoneId = 1;
+
+        public void ClearSelection()
+        {
+            selectedWorld = null;
+            selectedZoneId = 1;
+        }
     }
 }

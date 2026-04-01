@@ -114,15 +114,43 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             descriptionInput.RegisterValueChangedCallback(evt =>
                 editingData.description = evt.newValue
             );
+
+            dialogDropdown.RegisterValueChangedCallback(evt =>
+            {
+                if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
+                {
+                    editingData.npcDialog = null;
+                    return;
+                }
+
+                var dialog = creatablesManager
+                    .GetAll<Dialog>()
+                    .FirstOrDefault(d => d.data.name == evt.newValue);
+
+                if (dialog == null)
+                    return;
+
+                selectedDialogId = dialog.Id;
+
+                if (editingData.npcDialog == null)
+                    editingData.npcDialog = new NPCDialogData(dialog.Id);
+                else
+                    editingData.npcDialog.dialogId = dialog.Id;
+
+                editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+            });
         }
 
         private void PopulateDialogDropdown()
         {
             var dialogs = creatablesManager.GetAll<Dialog>();
+            // unregister before setting choices to avoid spurious OnDialogChanged calls
+            dialogDropdown.UnregisterValueChangedCallback(OnDialogChanged);
             dialogDropdown.choices = new List<string> { "None" }
                 .Concat(dialogs.Select(d => d.data.name))
                 .ToList();
             dialogDropdown.value = "None";
+            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
         }
 
         private void OnDialogChanged(ChangeEvent<string> evt)
@@ -140,7 +168,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 .FirstOrDefault(d => d.data.name == evt.newValue);
 
             if (dialog == null)
+            {
+                selectedDialogId = "";
                 return;
+            }
 
             selectedDialogId = dialog.Id;
             LoadDialogMessages(dialog);
@@ -180,6 +211,88 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             );
         }
 
+        private DropdownField CreateQuestDropdown(MessageData message, string currentQuestId)
+        {
+            var dropdown = new DropdownField();
+            dropdown.AddToClassList("npc-quest-dropdown");
+            dropdown.style.display = string.IsNullOrEmpty(currentQuestId)
+                ? DisplayStyle.None
+                : DisplayStyle.Flex;
+
+            PopulateQuestDropdown(dropdown, currentQuestId);
+
+            dropdown.RegisterValueChangedCallback(evt =>
+            {
+                var selected = creatablesManager
+                    .GetAll<Quest>()
+                    .FirstOrDefault(q => q.data.title == evt.newValue);
+                if (selected != null)
+                {
+                    messageQuestAssignments[message.id] = selected.Id;
+                    FlushToNpcDialog(); // flush after every quest assignment change
+                }
+            });
+
+            return dropdown;
+        }
+
+        private void PopulateQuestDropdown(DropdownField dropdown, string currentQuestId = "")
+        {
+            var quests = creatablesManager.GetAll<Quest>();
+            dropdown.choices = quests.Select(q => q.data.title).ToList();
+
+            if (!string.IsNullOrEmpty(currentQuestId))
+            {
+                var current = quests.FirstOrDefault(q => q.Id == currentQuestId);
+                if (current != null)
+                    dropdown.value = current.data.title;
+            }
+            else if (dropdown.choices.Count > 0)
+                dropdown.value = dropdown.choices[0];
+        }
+
+        private Button CreateRemoveQuestButton(
+            MessageData message,
+            DropdownField questDropdown,
+            Button addQuestButton,
+            string currentQuestId
+        )
+        {
+            var button = new Button { text = "✕" };
+            button.AddToClassList("npc-remove-quest-button");
+
+            button.clicked += () =>
+            {
+                questDropdown.style.display = DisplayStyle.Flex;
+                button.style.display = DisplayStyle.None;
+
+                var removeButton = button.parent?.Q<Button>();
+                if (removeButton != null && removeButton.text == "✕")
+                    removeButton.style.display = DisplayStyle.Flex;
+
+                var initial = creatablesManager
+                    .GetAll<Quest>()
+                    .FirstOrDefault(q => q.data.title == questDropdown.value);
+                if (initial != null)
+                {
+                    messageQuestAssignments[message.id] = initial.Id;
+                    FlushToNpcDialog(); // flush on add too
+                }
+            };
+
+            if (string.IsNullOrEmpty(currentQuestId))
+                button.style.display = DisplayStyle.None;
+
+            return button;
+        }
+
+        private void FlushToNpcDialog()
+        {
+            if (editingData?.npcDialog == null)
+                return;
+            editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+        }
+
         private void LoadExistingSprite(string spritePath)
         {
             if (string.IsNullOrEmpty(spritePath))
@@ -202,7 +315,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 Guid.NewGuid().ToString(),
                 nameInput.value,
                 descriptionInput.value ?? "",
-                pendingSpritePath,
+                pendingSpritePath ?? "",
                 npcDialogData
             );
 
