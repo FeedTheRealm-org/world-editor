@@ -74,6 +74,7 @@ public class ZoneOptionController : MonoBehaviour
         if (selectedZone == worldSelector.selectedZoneId)
             return;
         worldSelector.selectedZoneId = selectedZone;
+        dataPersistenceManager.SaveZone(worldSelector.selectedWorld, worldSelector.selectedZoneId);
         await zoneLoader.Load();
     }
 
