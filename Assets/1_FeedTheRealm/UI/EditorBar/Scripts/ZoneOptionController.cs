@@ -82,7 +82,7 @@ public class ZoneOptionController : MonoBehaviour
     /// </summary>
     private async UniTask CreateNewZone()
     {
-        if (worldSelector.selectedWorld == null)
+        if (string.IsNullOrEmpty(worldSelector.selectedWorld))
         {
             ToastNotification.Show(
                 "Please save your world first before creating a new zone.",
