@@ -1,128 +1,471 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using API;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
+using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
-using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 {
+    [RequireComponent(typeof(UIDocument))]
     public class PublishMenuController : MenuController
     {
         [SerializeField]
         private Logging.Logger logger;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private Config config;
 
         [SerializeField]
-        private WorldPublisherController worldPublisherController;
+        private WorldService worldService;
 
         [SerializeField]
-        private WorldUIObjectProvider worldUIObjectProvider;
+        private SpriteService spriteService;
 
-        // -------- Ui related elements --------
+        [SerializeField]
+        private ModelService modelService;
+
+        [SerializeField]
+        private ZoneService zoneService;
+
+        [SerializeField]
+        private Session.Session session;
+
+        [Inject]
+        private DataPersistenceManager dataPersistenceManager;
+
+        [Inject]
+        private WorldSelector worldSelector;
+
         private Button publishButton;
         private Button closeButton;
-        private Label nameInput;
-        private TextField descriptionInput;
-        private VisualElement root;
-        private WorldData worldData;
+        private Label worldNameLabel;
+        private Toggle publishCreatablesToggle;
+        private Toggle publishWorldDataToggle;
+        private VisualElement zoneGroup;
 
-        private void OnEnable()
+        private WorldData currentWorldData;
+        private List<int> availableZones;
+        private HashSet<int> selectedZones = new();
+        private bool publishAllZones = true;
+
+        void OnEnable()
         {
-            worldData = dataPersistenceManager.CurrentWorldData;
-            var uiDocument = GetComponent<UIDocument>();
-            root = uiDocument.rootVisualElement;
+            var root = GetComponent<UIDocument>().rootVisualElement;
 
             publishButton = root.Q<Button>("Publish");
             closeButton = root.Q<Button>("Close");
-            nameInput = root.Q<Label>("WorldName");
-            descriptionInput = root.Q<TextField>("DescriptionInput");
+            worldNameLabel = root.Q<Label>("WorldName");
+            publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
+            publishWorldDataToggle = root.Q<Toggle>("PublishWorldData");
+            zoneGroup = root.Q<VisualElement>("ZoneGroup");
 
-            nameInput.text = worldData.worldName;
+            currentWorldData = dataPersistenceManager.GetWorldData(worldSelector.selectedWorld);
+            worldNameLabel.text = currentWorldData?.worldName ?? "No world loaded";
+
+            bool isFirstPublish = string.IsNullOrEmpty(currentWorldData?.worldId);
+            publishWorldDataToggle.value = true;
+            publishWorldDataToggle.SetEnabled(!isFirstPublish);
+            publishCreatablesToggle.value = true;
+
+            PopulateZoneGroup();
+
             publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             publishButton.clicked -= OnPublishClicked;
             closeButton.clicked -= CloseMenu;
         }
 
-        private async void OnPublishClicked()
+        private void PopulateZoneGroup()
         {
-            logger.Log(
-                $"PublishMenuController: Publishing world. Current local id='{worldData?.id}', name='{worldData?.worldName}'",
-                this,
-                Logging.LogType.Info
-            );
-            await PublishWorld();
+            availableZones = dataPersistenceManager.ListZones(worldSelector.selectedWorld);
+
+            if (zoneGroup is ScrollView scrollView)
+            {
+                scrollView.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
+                scrollView.verticalScrollerVisibility = ScrollerVisibility.Auto;
+                scrollView.contentContainer.style.flexDirection = FlexDirection.Column;
+                scrollView.contentContainer.style.width = Length.Percent(100);
+            }
+
+            zoneGroup.Clear();
+            selectedZones.Clear();
+            publishAllZones = true;
+
+            var allButton = CreateZoneButton("All Zones", true);
+            allButton.clicked += () => OnAllZonesClicked(allButton);
+            zoneGroup.Add(allButton);
+
+            foreach (var zoneId in availableZones)
+            {
+                var id = zoneId;
+                var button = CreateZoneButton($"Zone {id}", false);
+                button.clicked += () => OnZoneClicked(button, id, allButton);
+                zoneGroup.Add(button);
+            }
         }
 
-        private async Task PublishWorld()
+        private Button CreateZoneButton(string text, bool selected)
         {
-            var currentData = dataPersistenceManager.CurrentWorldData;
-            currentData.worldName = dataPersistenceManager.CurrentWorldData.worldName;
+            var button = new Button { text = text };
+            button.style.marginBottom = 2;
+            button.style.marginLeft = 2;
+            button.style.marginRight = 2;
+            button.style.flexShrink = 0;
+            button.style.alignSelf = Align.Stretch;
+            button.style.width = Length.Percent(100);
+            button.style.marginBottom = 4;
+            button.style.backgroundColor = selected
+                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
+                : new StyleColor(Color.black);
+            button.style.color = new StyleColor(Color.white);
+            button.style.borderTopLeftRadius = 6;
+            button.style.borderTopRightRadius = 6;
+            button.style.borderBottomLeftRadius = 6;
+            button.style.borderBottomRightRadius = 6;
+            return button;
+        }
 
-            dataPersistenceManager.SaveWorld(currentData.worldName);
-            string fileName = dataPersistenceManager.GetWorldFile(currentData.worldName);
+        private void SetButtonSelected(Button button, bool selected)
+        {
+            button.style.backgroundColor = selected
+                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
+                : new StyleColor(Color.black);
+        }
 
-            (string worldId, string error, long statusCode) =
-                await worldPublisherController.PublishWorld(
-                    currentData,
-                    fileName,
-                    descriptionInput.value
-                );
+        private void OnAllZonesClicked(Button allButton)
+        {
+            publishAllZones = true;
+            selectedZones.Clear();
+            SetButtonSelected(allButton, true);
+            foreach (var button in zoneGroup.Query<Button>().ToList())
+                if (button != allButton)
+                    SetButtonSelected(button, false);
+        }
 
-            if (!string.IsNullOrEmpty(error) && error != "No assets to upload.")
+        private void OnZoneClicked(Button button, int zoneId, Button allButton)
+        {
+            publishAllZones = false;
+            SetButtonSelected(allButton, false);
+
+            if (selectedZones.Contains(zoneId))
             {
-                logger.Log(
-                    $"PublishMenuController: Error publishing world (status {statusCode}): {error}",
-                    this,
-                    Logging.LogType.Warning
+                selectedZones.Remove(zoneId);
+                SetButtonSelected(button, false);
+                if (selectedZones.Count == 0)
+                    OnAllZonesClicked(allButton);
+            }
+            else
+            {
+                selectedZones.Add(zoneId);
+                SetButtonSelected(button, true);
+            }
+        }
+
+        private List<int> GetZonesToPublish() =>
+            publishAllZones ? availableZones : new List<int>(selectedZones);
+
+        private async void OnPublishClicked()
+        {
+            try
+            {
+                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                dataPersistenceManager.SaveZone(
+                    currentWorldData.worldName,
+                    worldSelector.selectedZoneId
                 );
-                string message = error;
-                Color color = Color.red;
-                if (statusCode == 401)
+                dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
+                publishButton.SetEnabled(false);
+                await ValidateBeforePublish();
+                await PublishWorldData();
+                await PublishCreatables();
+                await PublishSprites();
+                await PublishZoneData();
+                ToastNotification.Show("World published successfully!", "success", Color.green);
+                CloseMenu();
+            }
+            catch (Exception ex)
+            {
+                logger.Log($"[PublishMenu] Error: {ex.Message}", this, Logging.LogType.Error);
+                ToastNotification.Show($"Error publishing: {ex.Message}", "error", Color.red);
+            }
+            finally
+            {
+                publishButton.SetEnabled(true);
+            }
+        }
+
+        // ---- Validation Functions ----
+
+        private async Task ValidateBeforePublish()
+        {
+            var errors = new List<string>();
+
+            ValidateSprites(errors);
+            await ValidateModels(errors);
+
+            if (errors.Count > 0)
+                throw new Exception(
+                    $"Cannot publish, fix the following issues first:\n\n{string.Join("\n", errors)}"
+                );
+        }
+
+        private void ValidateSprites(List<string> errors)
+        {
+            var creatablesData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+            if (creatablesData == null)
+                return;
+
+            var allItems = new List<ItemData>();
+            allItems.AddRange(creatablesData.weaponItems);
+            allItems.AddRange(creatablesData.consumableItems);
+
+            foreach (var item in allItems)
+            {
+                if (string.IsNullOrEmpty(item.spriteFilePath))
+                    continue;
+                string fullPath = Path.Combine(config.SpritesDirectory, item.spriteFilePath);
+                if (!File.Exists(fullPath))
+                    errors.Add($"Missing sprite for '{item.name}': {fullPath}");
+            }
+        }
+
+        private async Task ValidateModels(List<string> errors)
+        {
+            if (string.IsNullOrEmpty(currentWorldData?.worldId))
+                return; // first publish, no existing models to compare against
+
+            foreach (var zoneId in GetZonesToPublish())
+            {
+                var zoneData = dataPersistenceManager.GetZoneData(
+                    worldSelector.selectedWorld,
+                    zoneId
+                );
+                if (zoneData == null || zoneData.objectPlacementData.Count == 0)
+                    continue;
+
+                var existingModels = await modelService.ListWorldModels(
+                    currentWorldData.worldId,
+                    session.APIToken
+                );
+
+                var newModels = zoneData
+                    .objectPlacementData.GroupBy(s => s.id)
+                    .Select(g => g.First())
+                    .Where(s => !existingModels.ContainsKey(s.id))
+                    .ToList();
+
+                foreach (var model in newModels)
                 {
-                    var loginObj = Instantiate(worldUIObjectProvider.loginMenuObject);
-                    var signUpObj = Instantiate(worldUIObjectProvider.signUpMenuObject);
-                    var verifyCodeObj = Instantiate(worldUIObjectProvider.verifyCodeMenuObject);
-
-                    var loginCtrl = loginObj.GetComponent<LoginController>();
-                    if (loginCtrl != null)
-                        loginCtrl.showBackground = false;
-
-                    loginObj.name = "LoginMenu";
-                    signUpObj.name = "SignUpMenu";
-                    verifyCodeObj.name = "VerifyCodeMenu";
-
-                    var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-                    authFlow.OnAuthComplete += () => authFlow.Destroy();
-                    authFlow.Initialize();
+                    var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
+                    if (string.IsNullOrEmpty(modelPath) || !File.Exists(modelPath))
+                        errors.Add(
+                            $"Missing model file for '{model.structureName}' (id: {model.id})"
+                        );
                 }
-                else if (statusCode >= 500 || statusCode == 0)
-                    message = "Unable to connect to server. Please try again later.";
-                ToastNotification.Show(message, "error", color);
+            }
+        }
+
+        // ---- Publish Functions ----
+
+        private async Task PublishWorldData()
+        {
+            if (currentWorldData == null)
+                throw new Exception("No world data to publish.");
+
+            if (string.IsNullOrEmpty(currentWorldData.worldId))
+            {
+                var (publishedId, error, statusCode) = await worldService.PublishWorld(
+                    currentWorldData,
+                    session.APIToken
+                );
+                if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
+                    throw new Exception(
+                        $"Failed to publish world data: {error} (status {statusCode})"
+                    );
+                currentWorldData.worldId = publishedId;
+                currentWorldData.published_at = DateTime.Now;
+                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                ToastNotification.Show(
+                    "World data published successfully!",
+                    "info",
+                    Color.aliceBlue
+                );
+            }
+            else if (publishWorldDataToggle.value)
+            {
+                var (updatedId, error, statusCode) = await worldService.UpdateWorld(
+                    currentWorldData,
+                    session.APIToken
+                );
+                if (!string.IsNullOrEmpty(error))
+                    throw new Exception(
+                        $"Failed to update world data: {error} (status {statusCode})"
+                    );
+                ToastNotification.Show("World data updated successfully!", "info", Color.aliceBlue);
+            }
+        }
+
+        private async Task PublishCreatables()
+        {
+            CreatablesData creatablesData = dataPersistenceManager.GetCreatables(
+                worldSelector.selectedWorld
+            );
+            if (creatablesData == null)
+            {
+                logger.Log("No creatables data to publish.", this, Logging.LogType.Info);
                 return;
             }
+            await worldService.PublishCreatables(
+                creatablesData,
+                currentWorldData.worldId,
+                session.APIToken
+            );
+        }
+
+        private async Task PublishSprites()
+        {
+            CreatablesData creatablesData = dataPersistenceManager.GetCreatables(
+                worldSelector.selectedWorld
+            );
+
+            var spritesRequest = new SpritesRequest();
+
+            List<ItemData> allItems = new List<ItemData>();
+            if (creatablesData != null)
+            {
+                allItems.AddRange(creatablesData.weaponItems);
+                allItems.AddRange(creatablesData.consumableItems);
+            }
+
+            foreach (var item in allItems)
+            {
+                if (!string.IsNullOrEmpty(item.spriteFilePath))
+                    spritesRequest.ids.Add(item.id);
+                // TODO: this should be abstracted, the publish controller should not know about weapon's sprite path structure
+                spritesRequest.spritePath.Add(
+                    Path.Combine(config.SpritesDirectory, item.spriteFilePath)
+                );
+            }
+
+            var missingSprites = spritesRequest
+                .spritePath.Where(path => !File.Exists(path))
+                .ToList();
+
+            if (missingSprites.Count > 0)
+            {
+                var missing = string.Join("\n", missingSprites);
+                throw new Exception($"Missing sprite files:\n{missing}");
+            }
+
+            await spriteService.UploadSprites(
+                spritesRequest,
+                currentWorldData.worldId,
+                session.APIToken
+            );
+        }
+
+        private async Task PublishZoneData()
+        {
+            foreach (var zoneId in GetZonesToPublish())
+            {
+                var zoneData = dataPersistenceManager.GetZoneData(
+                    worldSelector.selectedWorld,
+                    zoneId
+                );
+                if (zoneData == null)
+                    continue;
+
+                await PublishModels(zoneData);
+
+                var (_, error, statusCode) = await zoneService.PublishZone(
+                    currentWorldData.worldId,
+                    zoneData,
+                    session.APIToken
+                );
+                if (!string.IsNullOrEmpty(error))
+                {
+                    logger.Log(
+                        $"Failed to publish zone {zoneId}: {error} (status {statusCode})",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    ToastNotification.Show($"Failed to publish zone {zoneId}.", error, Color.red);
+                    continue;
+                }
+                ToastNotification.Show(
+                    $"Zone {zoneId} published successfully!",
+                    "info",
+                    Color.aliceBlue
+                );
+            }
+        }
+
+        private async Task PublishModels(ZoneData zoneData)
+        {
+            if (zoneData.objectPlacementData.Count == 0)
+            {
+                logger.Log(
+                    "[WorldPublisher] No structures in zone, skipping model upload.",
+                    this,
+                    Logging.LogType.Info
+                );
+                return;
+            }
+
+            var existingModels = await modelService.ListWorldModels(
+                currentWorldData.worldId,
+                session.APIToken
+            );
+
+            var newModels = zoneData
+                .objectPlacementData.GroupBy(s => s.id)
+                .Select(g => g.First())
+                .Where(s => !existingModels.ContainsKey(s.id))
+                .ToList();
+
+            if (newModels.Count == 0)
+                return;
+
+            List<ModelRequest> modelRequests = new();
+
+            // Validate all model files exist before attempting upload
+            foreach (var model in newModels)
+            {
+                var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
+                if (string.IsNullOrEmpty(modelPath))
+                {
+                    throw new Exception(
+                        $"Model file for '{model.id}' not found. Please ensure all model files are present before publishing."
+                    );
+                }
+                modelRequests.Add(new ModelRequest { id = model.id, filePath = modelPath });
+            }
+
+            string error = await modelService.UploadModels(
+                modelRequests,
+                currentWorldData.worldId,
+                session.APIToken
+            );
             logger.Log(
-                $"PublishMenuController: World published successfully with id='{worldId}'",
+                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
                 this,
                 Logging.LogType.Info
             );
 
-            dataPersistenceManager.CurrentWorldData.id = worldId;
-            dataPersistenceManager.SetWorldId(worldId);
-
-            dataPersistenceManager.SaveWorld(dataPersistenceManager.CurrentWorldData.worldName);
-
-            ToastNotification.Show("World published successfully", "success", Color.green);
-            CloseMenu();
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to upload models: {error}");
         }
     }
 }

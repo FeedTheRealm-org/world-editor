@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d4ad108b760529cb9aedc5d1f8a1de6, type: 3}
+  m_Name: CreatablesManager
+  m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.Library.CreatablesManager
+  registryEvent: {fileID: 11400000, guid: b8ddf3cce44998d30bb07ef23110e7a3, type: 2}
+  logger: {fileID: 11400000, guid: e9c585bc10cc1f785ba28720bf7d3000, type: 2}

@@ -1,0 +1,165 @@
+using System;
+using System.IO;
+using System.Linq;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.UI.Common;
+using FTR.Core.Common.Config;
+using FTRShared.Runtime.Models;
+using UnityEngine;
+using UnityEngine.UIElements;
+using Utils;
+using VContainer;
+
+namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
+{
+    [RequireComponent(typeof(UIDocument))]
+    public class WeaponCreatorMenu : MenuController
+    {
+        [Inject]
+        private CreatablesManager creatablesManager;
+
+        [SerializeField]
+        private GameObject itemsMenuPrefab;
+
+        [Inject]
+        private Config config;
+
+        private WeaponItemData editingData;
+
+        private TextField nameInput;
+        private TextField descriptionInput;
+        private DropdownField weaponTypeInput;
+        private IntegerField damageInput;
+        private FloatField attackSpeedInput;
+        private FloatField rangeInput;
+        private IntegerField ammoInput;
+        private Image spritePreview;
+        private string pendingSpritePath;
+        private Button saveButton;
+        private Button closeButton;
+
+        void OnEnable()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            nameInput = root.Q<TextField>("NameField");
+            descriptionInput = root.Q<TextField>("DescriptionField");
+            weaponTypeInput = root.Q<DropdownField>("WeaponTypeField");
+            weaponTypeInput.choices = Enum.GetNames(typeof(WeaponType)).ToList();
+            weaponTypeInput.value = WeaponType.None.ToString();
+            damageInput = root.Q<IntegerField>("DamageField");
+            attackSpeedInput = root.Q<FloatField>("AttackSpeedField");
+            rangeInput = root.Q<FloatField>("RangeField");
+            ammoInput = root.Q<IntegerField>("AmmoField");
+            spritePreview = root.Q<Image>("SpritePreview");
+            saveButton = root.Q<Button>("SaveButton");
+            closeButton = root.Q<Button>("Close");
+
+            root.Q<Button>("LoadSprite").clicked += LoadSprite;
+            root.Q<Button>("Return").clicked += ReturnToList;
+            closeButton.clicked += CloseMenu;
+            saveButton.clicked += CreateNewObject;
+        }
+
+        public void SetupEditor(Weapon weapon)
+        {
+            editingData = weapon.data;
+            PopulateFields();
+            BindEditMode();
+            saveButton.clicked -= CreateNewObject;
+            saveButton.text = "Return to List";
+            saveButton.clicked += ReturnToList;
+        }
+
+        private void PopulateFields()
+        {
+            nameInput.value = editingData.name;
+            descriptionInput.value = editingData.description;
+            weaponTypeInput.value = editingData.weaponType.ToString();
+            damageInput.value = editingData.damage;
+            attackSpeedInput.value = editingData.attackSpeed;
+            rangeInput.value = editingData.range;
+            ammoInput.value = editingData.ammo;
+            LoadExistingSprite(editingData.spriteFilePath);
+        }
+
+        private void BindEditMode()
+        {
+            nameInput.RegisterValueChangedCallback(evt => editingData.name = evt.newValue);
+            descriptionInput.RegisterValueChangedCallback(evt =>
+                editingData.description = evt.newValue
+            );
+            weaponTypeInput.RegisterValueChangedCallback(evt =>
+                editingData.weaponType = Enum.Parse<WeaponType>(evt.newValue)
+            );
+
+            damageInput.RegisterValueChangedCallback(evt => editingData.damage = evt.newValue);
+            attackSpeedInput.RegisterValueChangedCallback(evt =>
+                editingData.attackSpeed = evt.newValue
+            );
+            rangeInput.RegisterValueChangedCallback(evt => editingData.range = evt.newValue);
+            ammoInput.RegisterValueChangedCallback(evt => editingData.ammo = evt.newValue);
+        }
+
+        private void LoadSprite()
+        {
+            CustomFileBrowser.ShowFilePickerDialog(
+                onSuccess: paths =>
+                {
+                    if (paths == null || paths.Length == 0)
+                        return;
+                    if (!paths[0].EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Debug.LogWarning("Selected file is not a PNG.");
+                        return;
+                    }
+                    var sprite = CustomFileBrowser.LoadSpriteFromDisk(paths[0]);
+                    if (sprite == null)
+                        return;
+                    spritePreview.sprite = sprite;
+                    pendingSpritePath = paths[0];
+                    if (editingData != null)
+                        editingData.spriteFilePath = pendingSpritePath;
+                },
+                onCancel: () => Debug.Log("Sprite selection canceled.")
+            );
+        }
+
+        private void LoadExistingSprite(string spritePath)
+        {
+            string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
+            if (string.IsNullOrEmpty(spritePath))
+            {
+                Debug.Log($"No existing sprite path found at: {fullPath}", this);
+                return;
+            }
+            var sprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
+            if (sprite != null)
+                spritePreview.sprite = sprite;
+        }
+
+        private void CreateNewObject()
+        {
+            var itemData = new ItemData(
+                Guid.NewGuid().ToString(),
+                nameInput.value,
+                descriptionInput.value ?? "",
+                pendingSpritePath
+            );
+
+            var weaponData = new WeaponItemData(
+                itemData,
+                Enum.Parse<WeaponType>(weaponTypeInput.value),
+                damageInput.value,
+                attackSpeedInput.value,
+                rangeInput.value,
+                ammoInput.value
+            );
+
+            creatablesManager.Add(new Weapon(weaponData));
+            ReturnToList();
+        }
+
+        private void ReturnToList() => OpenMenu(itemsMenuPrefab);
+    }
+}

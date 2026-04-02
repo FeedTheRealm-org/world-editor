@@ -1,5 +1,6 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Core.WorldSetup;
 using FeedTheRealm.Gameplay.Player;
 using UnityEngine;
 using VContainer;
@@ -7,7 +8,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
 {
-    public class PlayerSetupService : SetupService
+    public class PlayerSetupService : ISetup
     {
         private readonly GameObject playerPrefab;
         private readonly IObjectResolver objectResolver;
@@ -16,10 +17,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         public PlayerSetupService(
             WorldPrefabProvider worldPrefabProvider,
             IObjectResolver objectResolver,
-            PlayerConfig playerConfig,
-            WorldSetupEvent setupEvent
+            PlayerConfig playerConfig
         )
-            : base(setupEvent)
         {
             if (worldPrefabProvider == null)
             {
@@ -31,7 +30,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.playerConfig = playerConfig;
         }
 
-        public override void Setup()
+        public void Setup()
         {
             GameObject playerInstance = Object.Instantiate(
                 playerPrefab,

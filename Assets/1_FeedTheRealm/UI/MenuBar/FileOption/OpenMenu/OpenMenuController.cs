@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 {
@@ -13,11 +17,22 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
     public class OpenMenuController : MenuController
     {
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private SceneReference editorScene;
 
-        [SerializeField]
-        private SceneReference gameScene;
+        [Inject]
+        private WorldSelector worldSelector;
 
+        [Inject]
+        private ZoneLoader zoneLoader;
+
+        [Inject]
+        private CreatablesLoader creatablesLoader;
+
+        [Inject]
+        private DataPersistenceManager dataPersistenceManager;
+
+        [Inject]
+        private RefreshZonesEvent refreshZonesEvent;
         private Button closeButton;
         private ListView worldsListView;
         private VisualElement root;
@@ -48,9 +63,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
                 button.text = PrettifyName(loadedWorlds[index]);
 
                 button.clicked -= () => { };
-                button.clicked += () =>
+                button.clicked += async () =>
                 {
-                    OnLoadWorldClicked(loadedWorlds[index]);
+                    await OnLoadWorldClicked(loadedWorlds[index]);
                 };
             };
 
@@ -64,11 +79,23 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             closeButton.clicked -= CloseMenu;
         }
 
-        private void OnLoadWorldClicked(string worldName)
+        private async UniTask OnLoadWorldClicked(string worldName)
         {
-            dataPersistenceManager.SetActiveWorld(worldName);
-            SceneManager.LoadScene(gameScene.SceneName);
-            CloseMenu();
+            worldSelector.selectedWorld = worldName;
+            worldSelector.selectedZoneId =
+                dataPersistenceManager.GetWorldData(worldName)?.startingZone ?? 1;
+
+            if (SceneManager.GetActiveScene().name == editorScene.SceneName)
+            {
+                // If we're already in the game scene,
+                // we can just load the new world data without reloading the scene
+                await zoneLoader.Load();
+                await creatablesLoader.Load();
+                refreshZonesEvent.Raise();
+                CloseMenu();
+            }
+            else
+                SceneManager.LoadScene(editorScene.SceneName);
         }
 
         private string PrettifyName(string name)

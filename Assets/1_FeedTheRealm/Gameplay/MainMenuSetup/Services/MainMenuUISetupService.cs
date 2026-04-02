@@ -1,5 +1,6 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Core.WorldSetup;
 using FeedTheRealm.Gameplay.WorldSetup;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
@@ -8,7 +9,7 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
 {
-    public class MainMenuUISetupService : SetupService
+    public class MainMenuUISetupService : ISetup
     {
         private readonly GameObject mainMenuGameObject;
         private readonly GameObject menuBarGameObject;
@@ -20,10 +21,8 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
 
         public MainMenuUISetupService(
             MainMenuUIObjectProvider mainMenuUIObjectProvider,
-            IObjectResolver objectResolver,
-            WorldSetupEvent setupEvent
+            IObjectResolver objectResolver
         )
-            : base(setupEvent)
         {
             if (mainMenuUIObjectProvider == null)
             {
@@ -38,7 +37,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
             this.objectResolver = objectResolver;
         }
 
-        public override void Setup()
+        public void Setup()
         {
             if (mainMenuGameObject == null)
                 throw new System.Exception(
@@ -56,6 +55,7 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 throw new System.Exception(
                     "LoginMenu GameObject not set in mainMenuUIObjectProvider!"
                 );
+
             GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
             var loginObj = loginMenu;
             loginObj.name = "LoginMenu";

@@ -15,7 +15,7 @@ namespace FeedTheRealm.UI.Common
         protected EnableEditorEvent enableEditorEvent;
 
         [Inject]
-        private IObjectResolver resolver;
+        protected IObjectResolver resolver;
 
         void Awake()
         {
@@ -37,7 +37,7 @@ namespace FeedTheRealm.UI.Common
                 enableInputEvent?.Raise(false);
         }
 
-        public void CloseMenu()
+        public virtual void CloseMenu()
         {
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised -= OnInputEventRaised;
@@ -46,7 +46,7 @@ namespace FeedTheRealm.UI.Common
             Destroy(gameObject);
         }
 
-        public void OpenMenu(GameObject menuPrefab)
+        public virtual void OpenMenu(GameObject menuPrefab)
         {
             resolver.Instantiate(menuPrefab);
             Destroy(gameObject);

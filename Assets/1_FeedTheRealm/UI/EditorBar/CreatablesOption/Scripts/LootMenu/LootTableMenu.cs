@@ -1,0 +1,129 @@
+using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.UI.Common;
+using UnityEngine;
+using UnityEngine.UIElements;
+using VContainer;
+using VContainer.Unity;
+
+namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
+{
+    [RequireComponent(typeof(UIDocument))]
+    public class LootTableMenu : MenuController
+    {
+        [SerializeField]
+        private Logging.Logger logger;
+
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
+
+        [SerializeField]
+        private GameObject lootTableCreatorMenuPrefab;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
+
+        private Button closeButton;
+        private Button addLootTableButton;
+
+        // This holds the reference to the table we want to edit
+        private LootTable editingData;
+
+        void OnEnable()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+
+            // Query elements based on your UXML names
+            closeButton = root.Q<Button>("Close");
+            addLootTableButton = root.Q<Button>("AddLootTable");
+
+            closeButton.clicked += CloseMenu;
+            addLootTableButton.clicked += () => OpenCreatorMenu(lootTableCreatorMenuPrefab);
+
+            PopulateList();
+        }
+
+        void OnDisable()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= CloseMenu;
+        }
+
+        private void PopulateList()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var list = root.Q<ListView>("LootTablesList");
+            list.Clear();
+
+            // Retrieve all LootTable creatables from the manager
+            foreach (var lootTable in creatablesManager.GetAll<LootTable>())
+            {
+                AddListEntry(
+                    list,
+                    lootTable,
+                    lootTable.data.name, // Assuming LootTable has a .data.name property
+                    "Loot Table",
+                    lootTableCreatorMenuPrefab
+                );
+            }
+        }
+
+        private void AddListEntry(
+            ListView list,
+            LootTable creatable,
+            string displayName,
+            string type,
+            GameObject creatorPrefab
+        )
+        {
+            var entry = itemListTemplate.Instantiate();
+            entry.Q<Label>("Header").text = displayName;
+
+            var typeLabel = entry.Q<Label>("Type");
+            if (typeLabel != null)
+                typeLabel.text = type;
+
+            // Handle Edit Logic
+            entry.Q<Button>("Edit").clicked += () =>
+            {
+                editingData = creatable;
+                OpenMenu(creatorPrefab);
+            };
+
+            // Handle Delete Logic
+            entry.Q<Button>("Delete").clicked += () =>
+            {
+                creatablesManager.Delete<LootTable>(creatable.Id);
+                entry.RemoveFromHierarchy();
+                logger.Log($"[LootTableMenu] Deleted {displayName}");
+            };
+
+            list.hierarchy.Add(entry);
+        }
+
+        private void OpenCreatorMenu(GameObject prefab)
+        {
+            editingData = null; // Clear state so the next menu knows it's a "New" item
+            OpenMenu(prefab);
+        }
+
+        public override void OpenMenu(GameObject menuPrefab)
+        {
+            // Use VContainer resolver to instantiate and inject dependencies
+            var menuInstance = resolver.Instantiate(menuPrefab);
+
+            if (editingData != null)
+            {
+                // Try to get the creator component and pass the existing data
+                var creatorMenu = menuInstance.GetComponent<LootTableCreatorMenu>();
+                if (creatorMenu != null)
+                {
+                    creatorMenu.SetupEditor(editingData);
+                }
+            }
+
+            Destroy(gameObject);
+        }
+    }
+}

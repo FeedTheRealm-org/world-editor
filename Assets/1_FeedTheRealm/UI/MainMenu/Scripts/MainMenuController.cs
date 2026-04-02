@@ -2,6 +2,7 @@ using FeedTheRealm.Core.DataPersistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MainMenu
 {
@@ -13,6 +14,9 @@ namespace FeedTheRealm.UI.MainMenu
         public Button _browseButton;
         public Button _quitButton;
 
+        [Inject]
+        private WorldSelector worldSelector;
+
         [SerializeField]
         private SceneReference newWorldScene;
 
@@ -20,7 +24,7 @@ namespace FeedTheRealm.UI.MainMenu
         private SceneReference loadWorldScene;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         private void Awake()
         {
@@ -32,9 +36,6 @@ namespace FeedTheRealm.UI.MainMenu
             _startButton = ui.Q<Button>("Start");
             _startButton.clicked += OnStartClicked;
 
-            _browseButton = ui.Q<Button>("Browse");
-            _browseButton.clicked += OnBrowseClicked;
-
             _quitButton = ui.Q<Button>("Quit");
             _quitButton.clicked += OnQuitClicked;
         }
@@ -43,13 +44,9 @@ namespace FeedTheRealm.UI.MainMenu
         {
             // TODO: in the future, this should be a new scene that lets
             // makers set preset values for their new world
-            dataPersistenceManager.NewWorld();
+            //dataPersistenceManager.NewWorld();
+            worldSelector.ClearSelection();
             SceneManager.LoadScene(newWorldScene.SceneName);
-        }
-
-        private void OnBrowseClicked()
-        {
-            SceneManager.LoadScene(loadWorldScene.SceneName);
         }
 
         private void OnQuitClicked()

@@ -1,4 +1,5 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Core.WorldObjects;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates
@@ -29,7 +30,11 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
             );
             if (!selectedObject)
                 return;
-            worldEditor.SetState(new EditingState(worldEditor, selectedObject));
+            var WorldObject = selectedObject.GetComponentInParent<IPlaceable>();
+            var placeableCategory = WorldObject.Category;
+            worldEditor.editPlaceableEvent.Raise(
+                new EditableOption { placeable = selectedObject, category = placeableCategory }
+            );
         }
 
         public void OnSecondaryAction() { }

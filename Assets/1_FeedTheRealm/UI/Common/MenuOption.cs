@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.Common
 {
@@ -22,23 +24,24 @@ namespace FeedTheRealm.UI.Common
         )]
         [SerializeField]
         private List<MenuOption> menuOptions = new();
+
+        [Header("Execute Dependencies")]
         public string Label => label;
         public IReadOnlyList<MenuOption> MenuOptions => menuOptions;
         public MenuController MenuToOpen => menuToOpen;
 
-        public virtual void Execute()
+        [Inject]
+        private IObjectResolver objectResolver;
+
+        public virtual async void Execute()
         {
             if (menuToOpen != null)
             {
                 Transform parent = FindFirstObjectByType<Canvas>()?.transform;
                 if (parent != null)
-                {
-                    MenuController instance = Instantiate(menuToOpen, parent);
-                }
+                    objectResolver.Instantiate(menuToOpen, parent);
                 else
-                {
-                    MenuController instance = Instantiate(menuToOpen);
-                }
+                    objectResolver.Instantiate(menuToOpen);
             }
         }
     }

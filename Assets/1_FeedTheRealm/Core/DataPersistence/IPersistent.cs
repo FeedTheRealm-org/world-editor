@@ -1,9 +1,7 @@
-using FTRShared.Runtime.Models;
-
 namespace FeedTheRealm.Core.DataPersistence
 {
-    public interface IPersistent
+    public interface IPersistent<T>
     {
-        void SaveData(ref WorldData worldData);
+        void SaveData(ref T data);
     }
 }

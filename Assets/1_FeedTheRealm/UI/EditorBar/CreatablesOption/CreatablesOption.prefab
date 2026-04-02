@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4733705910565161396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5023443812008390197}
+  - component: {fileID: -7251970769835033095}
+  - component: {fileID: 6620227208176240371}
+  - component: {fileID: -4973265389688845956}
+  - component: {fileID: 98898599094516240}
+  - component: {fileID: 3916881692968771639}
+  - component: {fileID: -1703900619815832400}
+  - component: {fileID: 4619736483548598808}
+  - component: {fileID: -5979143776995738706}
+  m_Layer: 0
+  m_Name: CreatablesOption
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5023443812008390197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -23.47313, y: -1.3858, z: -4.60291}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-7251970769835033095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Creatable
+  menuToOpen: {fileID: 0}
+  menuOptions:
+  - {fileID: 6620227208176240371}
+  - {fileID: -4973265389688845956}
+  - {fileID: 98898599094516240}
+  - {fileID: 3916881692968771639}
+  - {fileID: -1703900619815832400}
+  - {fileID: 4619736483548598808}
+  - {fileID: -5979143776995738706}
+--- !u!114 &6620227208176240371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Dialogs
+  menuToOpen: {fileID: 6581744661053460631, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
+  menuOptions: []
+--- !u!114 &-4973265389688845956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Enemies
+  menuToOpen: {fileID: 7721069613254937411, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
+  menuOptions: []
+--- !u!114 &98898599094516240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Items
+  menuToOpen: {fileID: -3587784106667264666, guid: 0428ffadd9b08ef419f66bf9809cc60c, type: 3}
+  menuOptions: []
+--- !u!114 &3916881692968771639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Loot
+  menuToOpen: {fileID: -550665515334386564, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
+  menuOptions: []
+--- !u!114 &-1703900619815832400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  label: Shop
+  menuToOpen: {fileID: 6748489813826923316, guid: cfe15a1ae987b9ae9ac0c6bfc24ef983, type: 3}
+  menuOptions: []
+--- !u!114 &4619736483548598808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: NPC
+  menuToOpen: {fileID: -1537716657621255143, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
+  menuOptions: []
+--- !u!114 &-5979143776995738706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: Quest
+  menuToOpen: {fileID: 6002012647832702426, guid: 36f2a1fea5a9d123f8ca85e5760a80a0, type: 3}
+  menuOptions: []

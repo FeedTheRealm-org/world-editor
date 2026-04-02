@@ -1,18 +1,23 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.UI.Common;
 using FeedTheRealm.UI.Common.Components;
 using FeedTheRealm.UI.EditorBar.PlacementOption;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar
 {
     public class EditorBarController : MonoBehaviour
     {
-        [SerializeField]
+        [Inject]
+        private InputReader inputReader;
+
+        [Inject]
         private Logging.Logger logger;
 
         [SerializeField]
@@ -20,13 +25,10 @@ namespace FeedTheRealm.UI.MenuBar
 
         [Header("Menu Options")]
         [SerializeField]
-        private MenuOption ZoneOption;
+        private GameObject PlacementOption;
 
         [SerializeField]
-        private MenuOption PlacementOption;
-
-        [SerializeField]
-        private MenuOption ElementOption;
+        private GameObject CreatablesOption;
 
         [Inject]
         private CategorySelectedEvent categorySelectedEvent;
@@ -47,12 +49,11 @@ namespace FeedTheRealm.UI.MenuBar
         {
             root = menuBarUI.rootVisualElement;
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
-            BindButton("Zone", ZoneOption);
             BindButton("Placement", PlacementOption);
-            BindButton("Element", ElementOption);
+            BindButton("Creatables", CreatablesOption);
         }
 
-        private void BindButton(string buttonName, MenuOption option)
+        private void BindButton(string buttonName, GameObject option)
         {
             Button button = root.Q<Button>(buttonName);
 
@@ -72,8 +73,21 @@ namespace FeedTheRealm.UI.MenuBar
                 return;
             }
 
-            button.text = option.Label;
-            foreach (var subOption in option.MenuOptions)
+            resolver.InjectGameObject(option);
+
+            if (!option.TryGetComponent<MenuOption>(out var menuOption))
+            {
+                logger.Log(
+                    $"MenuOption component not found on '{option.name}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                button.SetEnabled(false);
+                return;
+            }
+
+            button.text = menuOption.Label;
+            foreach (var subOption in menuOption.MenuOptions)
             {
                 if (subOption is ICategoryOption categoryOption)
                     categoryOption.SetCategoryEvent(categorySelectedEvent);
@@ -89,16 +103,16 @@ namespace FeedTheRealm.UI.MenuBar
             });
             button.clicked += () =>
             {
-                if (option.MenuOptions.Count == 0)
+                if (menuOption.MenuOptions.Count == 0)
                 {
                     logger.Log(
-                        $"MenuOption '{option.Label}' has no submenu options defined.",
+                        $"MenuOption '{menuOption.Label}' has no submenu options defined.",
                         this,
                         Logging.LogType.Warning
                     );
                     return;
                 }
-                menuStack.Toggle(button, option.MenuOptions);
+                menuStack.Toggle(button, menuOption.MenuOptions);
             };
         }
     }

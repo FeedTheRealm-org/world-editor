@@ -1,4 +1,4 @@
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldEditor;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates

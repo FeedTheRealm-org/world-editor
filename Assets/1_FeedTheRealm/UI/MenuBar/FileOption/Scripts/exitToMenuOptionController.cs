@@ -11,14 +11,14 @@ namespace FeedTheRealm.UI.MenuBar
         private SceneReference mainMenuScene;
 
         [SerializeField]
-        private DataPersistenceManagerSO dataPersistenceManager;
+        private DataPersistenceManager dataPersistenceManager;
 
         public override void Execute()
         {
             if (mainMenuScene != null)
             {
                 SceneManager.LoadScene(mainMenuScene.SceneName);
-                dataPersistenceManager.UnsetActiveWorld();
+                //dataPersistenceManager.UnsetActiveWorld();
             }
             else
                 Debug.LogError("ExitToMenuOptionController: MainMenuScene reference is not set!");

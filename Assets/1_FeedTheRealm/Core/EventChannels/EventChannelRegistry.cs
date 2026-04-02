@@ -14,18 +14,19 @@ namespace FeedTheRealm.Core.EventChannels
     [CreateAssetMenu(fileName = "EventChannelRegistry", menuName = "Events/EventChannelRegistry")]
     public class EventChannelRegistry : ScriptableObject
     {
-        [Header("Setup Events")]
-        public WorldSetupEvent setupEvent;
         public LoadWorldEvent loadWorldEvent;
 
         [Header("World Events")]
-        public WorldSelectedEvent worldSelectedEvent;
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
+        public ZoneDataRegistryEvent ZoneDataRegistryEvent;
+        public CreatablesDataRegistryEvent CreatablesDataRegistryEvent;
+        public EditPlaceableEvent editPlaceableEvent;
 
         [Header("UI Events")]
         public CategorySelectedEvent categorySelectedEvent;
         public EnableInputEvent enableInputEvent;
+        public RefreshZonesEvent refreshZonesEvent;
 
         [Header("Tick Events")]
         public TickEvent tickEvent;
@@ -38,9 +39,9 @@ namespace FeedTheRealm.Core.EventChannels
         /// </summary>
         public void RegisterAll(IContainerBuilder builder)
         {
-            Validate();
-
-            builder.RegisterInstance(worldSelectedEvent);
+            builder.RegisterInstance(editPlaceableEvent);
+            builder.RegisterInstance(ZoneDataRegistryEvent);
+            builder.RegisterInstance(CreatablesDataRegistryEvent);
             builder.RegisterInstance(objectSelectedEvent);
             builder.RegisterInstance(enableEditorEvent);
             builder.RegisterInstance(categorySelectedEvent);
@@ -48,28 +49,8 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
-            builder.RegisterInstance(setupEvent);
+            builder.RegisterInstance(refreshZonesEvent);
             builder.RegisterInstance(loadWorldEvent);
-        }
-
-        private void Validate()
-        {
-            ValidateField(worldSelectedEvent, nameof(worldSelectedEvent));
-            ValidateField(objectSelectedEvent, nameof(objectSelectedEvent));
-            ValidateField(enableEditorEvent, nameof(enableEditorEvent));
-            ValidateField(categorySelectedEvent, nameof(categorySelectedEvent));
-            ValidateField(enableInputEvent, nameof(enableInputEvent));
-            ValidateField(tickEvent, nameof(tickEvent));
-            ValidateField(fixedTickEvent, nameof(fixedTickEvent));
-            ValidateField(lateTickEvent, nameof(lateTickEvent));
-            ValidateField(setupEvent, nameof(setupEvent));
-            ValidateField(loadWorldEvent, nameof(loadWorldEvent));
-        }
-
-        private void ValidateField(Object field, string fieldName)
-        {
-            if (field == null)
-                Debug.LogError($"[EventChannelRegistry] {fieldName} is not assigned.");
         }
     }
 }

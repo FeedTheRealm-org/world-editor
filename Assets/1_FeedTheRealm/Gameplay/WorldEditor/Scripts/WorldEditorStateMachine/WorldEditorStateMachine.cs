@@ -1,8 +1,7 @@
-using System;
-using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.Core.Interfaces;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates;
 using UnityEngine;
 using VContainer;
@@ -11,7 +10,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
 {
     public class WorldEditorStateMachine : MonoBehaviour
     {
-        [SerializeField]
+        [Inject]
         private Logging.Logger logger;
 
         [Inject]
@@ -20,9 +19,15 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         [Inject]
         private EnableEditorEvent enableEditorEvent;
 
+        [Inject]
+        public PlaceablesLibrary placeablesLibrary;
+
+        [Inject]
+        public EditPlaceableEvent editPlaceableEvent;
+
         public InputReader inputReader;
         public Camera playerCamera;
-        public IPlaceable SelectedObject { get; private set; }
+        public PlaceableOption SelectedObject { get; private set; }
         public bool IsEditorEnabled { get; private set; } = true;
         private IWorldEditorState currentState;
 
@@ -30,7 +35,8 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         public SelectingState SelectingState { get; private set; }
         public PlacingState PlacingState { get; private set; }
         public RemovingState RemovingState { get; private set; }
-        public EditingState EditingState { get; private set; }
+
+        // public EditingState EditingState { get; private set; }
 
         // -------------------- Public Methods --------------------
 
@@ -108,23 +114,15 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
             Debug.Log($"Interaction {(enabled ? "enabled" : "disabled")}.");
         }
 
-        private void OnWorldObjectSelected(IPlaceable reference)
+        private void OnWorldObjectSelected(PlaceableOption reference)
         {
             if (currentState is PlacingState)
             {
                 SelectedObject = reference;
-                Log($"Switched to: {reference.DisplayName}");
                 return;
             }
             SelectedObject = reference;
             SetState(new PlacingState(this));
-        }
-
-        private void Update()
-        {
-            if (!IsEditorEnabled)
-                return;
-            currentState?.Tick();
         }
     }
 }

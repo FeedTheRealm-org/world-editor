@@ -19,3 +19,7 @@ MonoBehaviour:
   loginMenuObject: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
   signUpMenuObject: {fileID: 848887175973073914, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
   verifyCodeMenuObject: {fileID: 2433370806483395245, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
+  placeableEditor: {fileID: 8057090252808628878, guid: 95da3940fbc8dd2ec8209befdfa43fd9, type: 3}
+  structureEditObject: {fileID: 327539696238860596, guid: fa75a38db21056d5a81c4576774cbb5c, type: 3}
+  FriendlyNpcSpawnerEditObject: {fileID: 4105760430034162826, guid: 875f74cbddabe4f2d8dff1719d8dac60, type: 3}
+  AggresiveNpcSpawnerEditObject: {fileID: 4306287891462671948, guid: 466722acd38bf7b26a345e9f265024b9, type: 3}

@@ -1,15 +1,13 @@
 using System.Threading.Tasks;
-using FeedTheRealm.Core.Interfaces;
-using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine;
+using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates
 {
     public class PlacingState : IWorldEditorState
     {
         private WorldEditorStateMachine worldEditor;
-
         private LayerMask placementLayerMask = LayerMask.GetMask("Placeable");
         private const float PLACEMENT_OFFSET = 1.0f;
 
@@ -20,7 +18,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
 
         public void Enter()
         {
-            worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.DisplayName}");
+            worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.id}");
         }
 
         public void Exit() { }
@@ -42,9 +40,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
             )
                 return;
 
-            GameObject instance = await worldEditor.SelectedObject.GetPlaceableObject(
-                WorldLayers.WorldObjectLayer
+            PlaceablesLibrary library = worldEditor.placeablesLibrary;
+            GameObject instance = await library.GetObject(
+                worldEditor.SelectedObject.category,
+                worldEditor.SelectedObject.id
             );
+
             instance.transform.position = hit.point;
             var collider = instance.GetComponentInChildren<Collider>();
             float bottomY = collider.bounds.min.y;
