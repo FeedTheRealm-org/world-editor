@@ -14,20 +14,21 @@ namespace FeedTheRealm.Gameplay.WorldObjects
         public override void SaveData(ref ZoneData zoneData)
         {
             BoxCollider collider = GetComponent<BoxCollider>();
-            StructureData data = new()
+            StructureData savedData = new()
             {
-                id = this.data.id,
-                fileName = this.data.fileName,
-                structureName = gameObject.name,
+                id = data.id,
+                structureName = data.structureName,
+                fileName = data.fileName,
+                isShop = data.isShop,
+                shopId = data.shopId,
+
                 position = gameObject.transform.position,
                 rotation = gameObject.transform.rotation.eulerAngles,
                 size = gameObject.transform.localScale,
                 colliderSize = collider != null ? collider.size : Vector3.zero,
                 colliderCenter = collider != null ? collider.center : Vector3.zero,
-                isShop = this.data.isShop,
-                shopId = this.data.shopId,
             };
-            zoneData.objectPlacementData.Add(data);
+            zoneData.objectPlacementData.Add(savedData);
         }
 
         public override void LoadData(StructureData data)
