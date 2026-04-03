@@ -5,12 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 {
@@ -44,7 +47,11 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [Inject]
         private WorldSelector worldSelector;
 
+        [Inject]
+        private WorldUIObjectProvider worldUIObjectProvider;
+
         private Button publishButton;
+        private Button loginButton;
         private Button closeButton;
         private Label worldNameLabel;
         private Toggle publishCreatablesToggle;
@@ -55,12 +62,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private List<int> availableZones;
         private HashSet<int> selectedZones = new();
         private bool publishAllZones = true;
+        private bool isAuthFlowActive;
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             publishButton = root.Q<Button>("Publish");
+            loginButton = root.Q<Button>("Login");
             closeButton = root.Q<Button>("Close");
             worldNameLabel = root.Q<Label>("WorldName");
             publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
@@ -79,12 +88,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
+            loginButton.clicked += OnLoginClicked;
         }
 
         void OnDisable()
         {
             publishButton.clicked -= OnPublishClicked;
             closeButton.clicked -= CloseMenu;
+            loginButton.clicked -= OnLoginClicked;
         }
 
         private void PopulateZoneGroup()
@@ -175,6 +186,48 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private List<int> GetZonesToPublish() =>
             publishAllZones ? availableZones : new List<int>(selectedZones);
+
+        private static bool IsAuthMenuOpen()
+        {
+            return GameObject.Find("LoginMenu") != null
+                || GameObject.Find("SignUpMenu") != null
+                || GameObject.Find("VerifyCodeMenu") != null;
+        }
+
+        private async void OnLoginClicked()
+        {
+            if (isAuthFlowActive || IsAuthMenuOpen())
+            {
+                return;
+            }
+            var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
+            var loginMenuObject = worldUIObjectProvider.loginMenuObject;
+            var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
+            var verifyCodeMenuObject = worldUIObjectProvider.verifyCodeMenuObject;
+            isAuthFlowActive = true;
+            try
+            {
+                GameObject loginMenu = resolver.Instantiate(loginMenuObject);
+                var loginObj = loginMenu;
+                loginObj.name = "LoginMenu";
+                var signUpObj = resolver.Instantiate(signUpMenuObject);
+                signUpObj.name = "SignUpMenu";
+                var verifyCodeObj = resolver.Instantiate(verifyCodeMenuObject);
+                verifyCodeObj.name = "VerifyCodeMenu";
+                var authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+                authFlowManager.OnAuthComplete += () =>
+                {
+                    authFlowManager.Destroy();
+                    isAuthFlowActive = false;
+                };
+                authFlowManager.Initialize();
+            }
+            catch
+            {
+                isAuthFlowActive = false;
+                throw;
+            }
+        }
 
         private async void OnPublishClicked()
         {
