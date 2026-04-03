@@ -22,3 +22,4 @@ MonoBehaviour:
   aggresiveNPCSpawnerPrefab: {fileID: 5537282333109391366, guid: eb253cc0ad330bb6c8999ccf918cff0d, type: 3}
   friendlyNPCSpawnerPrefab: {fileID: 5537282333109391366, guid: 994e067732e28fe4da14144b2fb9006f, type: 3}
   playerSpawnpointPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
+  portalPrefab: {fileID: 5537282333109391366, guid: 9c0bd65e3420572b09e3952caea3b733, type: 3}

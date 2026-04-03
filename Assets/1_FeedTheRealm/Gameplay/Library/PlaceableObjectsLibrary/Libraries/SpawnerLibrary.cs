@@ -1,71 +1,42 @@
 using System.Collections.Generic;
-using System.Linq;
-using API;
-using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
 {
-    public class SpawnerLibrary : ILibrary
+    public class SpawnerLibrary : PrefabLibrary
     {
-        private GameObject aggresiveNpcSpawnerPrefab;
-        private GameObject friendlyNpcSpawnerPrefab;
-        private GameObject playerSpawnpointPrefab;
-        private IObjectResolver resolver;
-
         public SpawnerLibrary(WorldPrefabProvider prefabProvider, IObjectResolver resolver)
+            : base(resolver)
         {
-            aggresiveNpcSpawnerPrefab = prefabProvider.aggresiveNPCSpawnerPrefab;
-            friendlyNpcSpawnerPrefab = prefabProvider.friendlyNPCSpawnerPrefab;
-            playerSpawnpointPrefab = prefabProvider.playerSpawnpointPrefab;
-            this.resolver = resolver;
+            Register(PlaceableOptions.AggresiveNPC, prefabProvider.aggresiveNPCSpawnerPrefab);
+            Register(PlaceableOptions.FriendlyNPC, prefabProvider.friendlyNPCSpawnerPrefab);
+            Register(PlaceableOptions.PlayerSpawnpoint, prefabProvider.playerSpawnpointPrefab);
         }
 
-        public UniTask<GameObject> GetItem(string itemName)
-        {
-            return itemName switch
-            {
-                SpawnerTypes.AggresiveNPC => UniTask.FromResult(
-                    resolver.Instantiate(aggresiveNpcSpawnerPrefab)
-                ),
-                SpawnerTypes.FriendlyNPC => UniTask.FromResult(
-                    resolver.Instantiate(friendlyNpcSpawnerPrefab)
-                ),
-                SpawnerTypes.PlayerSpawnpoint => UniTask.FromResult(
-                    resolver.Instantiate(playerSpawnpointPrefab)
-                ),
-                _ => UniTask.FromResult<GameObject>(null),
-            };
-        }
-
-        public List<PlaceableOption> ListAvailableItems()
-        {
-            return new List<PlaceableOption>
+        public override List<PlaceableOption> ListAvailableItems() =>
+            new()
             {
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerTypes.AggresiveNPC,
-                    displayName = SpawnerTypes.AggresiveNPC,
+                    id = PlaceableOptions.AggresiveNPC,
+                    displayName = PlaceableOptions.AggresiveNPC,
                 },
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerTypes.FriendlyNPC,
-                    displayName = SpawnerTypes.FriendlyNPC,
+                    id = PlaceableOptions.FriendlyNPC,
+                    displayName = PlaceableOptions.FriendlyNPC,
                 },
                 new()
                 {
                     category = PlaceableObjectCategories.Spawner,
-                    id = SpawnerTypes.PlayerSpawnpoint,
-                    displayName = SpawnerTypes.PlayerSpawnpoint,
+                    id = PlaceableOptions.PlayerSpawnpoint,
+                    displayName = PlaceableOptions.PlayerSpawnpoint,
                 },
             };
-        }
     }
 }

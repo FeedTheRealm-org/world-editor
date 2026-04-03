@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1638142084274025338}
   - component: {fileID: 5062968973939956887}
   - component: {fileID: 7579879578991499288}
-  - component: {fileID: 3677565591372910355}
+  - component: {fileID: 8147753701238930182}
   m_Layer: 11
   m_Name: Portal
   m_TagString: Untagged
@@ -113,7 +113,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &3677565591372910355
+--- !u!114 &8147753701238930182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,14 +122,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5537282333109391366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc9bd6fa9d428c7f381f5d1398532f91, type: 3}
+  m_Script: {fileID: 11500000, guid: ea3adeffeaf51d206a5662e5d5996464, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldObjects.AggresiveNpcSpawnerObject
+  m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldObjects.PortalObject
   data:
-    Position: {x: 0, y: 0, z: 0}
-    Radius: 0
-    MaxEnemies: 0
-    SpawnRate: 0
-    ResetAfterKills: 0
-    ResetDelay: 0
-    EnemyId:
+    id:
+    name: Portal
+    Radius: 3
+    position: {x: 0, y: 0, z: 0}

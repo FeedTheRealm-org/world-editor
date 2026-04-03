@@ -70,6 +70,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
             builder.Register<SpawnerLibrary>(Lifetime.Singleton);
+            builder.Register<MiscLibrary>(Lifetime.Singleton);
             builder.Register<PlaceablesLibrary>(Lifetime.Singleton);
 
             // Loaders

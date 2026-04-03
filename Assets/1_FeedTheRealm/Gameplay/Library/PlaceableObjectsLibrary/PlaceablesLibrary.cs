@@ -13,13 +13,18 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         private readonly Logging.Logger logger;
         private Dictionary<PlaceableObjectCategories, ILibrary> library = new();
 
-        public PlaceablesLibrary(Logging.Logger logger, IObjectResolver objectResolver)
+        public PlaceablesLibrary(
+            Logging.Logger logger,
+            StructureLibrary structureLibrary,
+            SpawnerLibrary spawnerLibrary,
+            MiscLibrary miscLibrary,
+            IObjectResolver objectResolver
+        )
         {
             this.logger = logger;
-            var structureLibrary = objectResolver.Resolve<StructureLibrary>();
-            var spawnerLibrary = objectResolver.Resolve<SpawnerLibrary>();
             library[PlaceableObjectCategories.Structure] = structureLibrary;
             library[PlaceableObjectCategories.Spawner] = spawnerLibrary;
+            library[PlaceableObjectCategories.Misc] = miscLibrary;
         }
 
         // IInitializable requiers this method, but we don't need to do anything on initialization for this repository

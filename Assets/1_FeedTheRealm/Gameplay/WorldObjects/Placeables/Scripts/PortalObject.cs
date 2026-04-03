@@ -16,6 +16,16 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             worldData.portalPlacements.Add(data);
         }
 
-        public override void LoadData(PortalPlacementData data) { }
+        public override void LoadData(PortalPlacementData data)
+        {
+            this.data = data;
+            gameObject.name = $"Portal-{data.id}";
+            gameObject.transform.position = data.position;
+            gameObject.transform.localScale = new Vector3(
+                data.Radius,
+                transform.localScale.y,
+                data.Radius
+            );
+        }
     }
 }
