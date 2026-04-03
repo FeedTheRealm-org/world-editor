@@ -50,9 +50,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
 
-        [Inject]
-        private IObjectResolver objectResolver;
-
         private Button publishButton;
         private Button loginButton;
         private Button closeButton;
@@ -65,6 +62,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private List<int> availableZones;
         private HashSet<int> selectedZones = new();
         private bool publishAllZones = true;
+        private bool isAuthFlowActive;
 
         void OnEnable()
         {
@@ -189,27 +187,46 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private List<int> GetZonesToPublish() =>
             publishAllZones ? availableZones : new List<int>(selectedZones);
 
+        private static bool IsAuthMenuOpen()
+        {
+            return GameObject.Find("LoginMenu") != null
+                || GameObject.Find("SignUpMenu") != null
+                || GameObject.Find("VerifyCodeMenu") != null;
+        }
+
         private async void OnLoginClicked()
         {
+            if (isAuthFlowActive || IsAuthMenuOpen())
+            {
+                return;
+            }
             var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
             var loginMenuObject = worldUIObjectProvider.loginMenuObject;
             var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
             var verifyCodeMenuObject = worldUIObjectProvider.verifyCodeMenuObject;
-
-            GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
-            var loginObj = loginMenu;
-            loginObj.name = "LoginMenu";
-            var signUpObj = objectResolver.Instantiate(signUpMenuObject);
-            signUpObj.name = "SignUpMenu";
-            var verifyCodeObj = objectResolver.Instantiate(verifyCodeMenuObject);
-            verifyCodeObj.name = "VerifyCodeMenu";
-
-            var authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-            authFlowManager.OnAuthComplete += () =>
+            isAuthFlowActive = true;
+            try
             {
-                authFlowManager.Destroy();
-            };
-            authFlowManager.Initialize();
+                GameObject loginMenu = resolver.Instantiate(loginMenuObject);
+                var loginObj = loginMenu;
+                loginObj.name = "LoginMenu";
+                var signUpObj = resolver.Instantiate(signUpMenuObject);
+                signUpObj.name = "SignUpMenu";
+                var verifyCodeObj = resolver.Instantiate(verifyCodeMenuObject);
+                verifyCodeObj.name = "VerifyCodeMenu";
+                var authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+                authFlowManager.OnAuthComplete += () =>
+                {
+                    authFlowManager.Destroy();
+                    isAuthFlowActive = false;
+                };
+                authFlowManager.Initialize();
+            }
+            catch
+            {
+                isAuthFlowActive = false;
+                throw;
+            }
         }
 
         private async void OnPublishClicked()

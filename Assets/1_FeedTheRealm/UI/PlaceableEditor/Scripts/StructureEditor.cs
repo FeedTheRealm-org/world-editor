@@ -99,7 +99,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
             if (shops.Count == 0)
             {
                 shopToggle.SetEnabled(false);
-                shopToggle.value = false;
+                shopToggle.SetValueWithoutNotify(false);
+                target.data.isShop = false;
+                target.data.shopId = null;
                 shopDropdown.style.display = DisplayStyle.None;
                 return;
             }
@@ -107,16 +109,20 @@ namespace FeedTheRealm.UI.PlaceableEditor
             shopToggle.SetEnabled(true);
             shopDropdown.choices = shops.Select(s => s.data.shopName).ToList();
 
-            bool hasShop = target.data.isShop && !string.IsNullOrEmpty(target.data.shopId);
+            bool hasPersistedShop = target.data.isShop && !string.IsNullOrEmpty(target.data.shopId);
+            var currentShop = hasPersistedShop
+                ? shops.FirstOrDefault(s => s.Id == target.data.shopId)
+                : null;
+            if (hasPersistedShop && currentShop == null)
+            {
+                target.data.isShop = false;
+                target.data.shopId = null;
+            }
+            bool hasShop = currentShop != null;
             shopToggle.SetValueWithoutNotify(hasShop);
             shopDropdown.style.display = hasShop ? DisplayStyle.Flex : DisplayStyle.None;
-
-            if (hasShop)
-            {
-                var currentShop = shops.FirstOrDefault(s => s.Id == target.data.shopId);
-                if (currentShop != null)
-                    shopDropdown.SetValueWithoutNotify(currentShop.data.shopName);
-            }
+            if (currentShop != null)
+                shopDropdown.SetValueWithoutNotify(currentShop.data.shopName);
         }
 
         private void OnShopToggleChanged(ChangeEvent<bool> evt)
