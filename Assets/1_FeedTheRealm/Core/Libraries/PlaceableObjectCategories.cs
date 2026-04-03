@@ -11,6 +11,7 @@ namespace FeedTheRealm.Core.Library
         // Generic categories
         Structure,
         Spawner,
+        Portal,
 
         // Specific categories
         FriendlyNpcSpawner,
