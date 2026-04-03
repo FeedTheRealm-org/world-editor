@@ -8,7 +8,11 @@ using VContainer;
 
 namespace FeedTheRealm.Core.WorldObjects
 {
-    public interface IPlaceable
+    /// <summary>
+    /// The intention of this interface is to recognize the categories of placeable objects in the world,
+    ///  so they can be edited in the editor.
+    /// </summary>
+    public interface IEditable
     {
         PlaceableObjectCategories Category { get; }
     }
@@ -17,7 +21,7 @@ namespace FeedTheRealm.Core.WorldObjects
         : MonoBehaviour,
             IPersistent<ZoneData>,
             ILoadable<T>,
-            IPlaceable
+            IEditable
     {
         [Inject]
         private ZoneDataRegistryEvent registryEvent;
