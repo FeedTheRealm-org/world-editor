@@ -1,5 +1,8 @@
+using System.Linq;
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Inputs;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
@@ -14,6 +17,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
         [Inject]
         private InputReader inputReader;
 
+        [Inject]
+        private CreatablesManager creatablesManager;
+
         [SerializeField]
         private float positionScrollSensitivity = 1f;
 
@@ -23,17 +29,17 @@ namespace FeedTheRealm.UI.PlaceableEditor
         [SerializeField]
         private float scaleScrollSensitivity = 1f;
 
-        // UI Elements
         private Label titleLabel;
         private Vector3Field positionField;
         private Vector3Field rotationField;
         private Vector3Field scaleField;
+        private Toggle shopToggle;
+        private DropdownField shopDropdown;
         private Button closeButton;
 
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
 
-        // Target
         private StructureObject target;
 
         void OnEnable()
@@ -44,6 +50,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             positionField = root.Q<Vector3Field>("Position");
             rotationField = root.Q<Vector3Field>("Rotation");
             scaleField = root.Q<Vector3Field>("Scale");
+            shopToggle = root.Q<Toggle>("ShopToggle");
+            shopDropdown = root.Q<DropdownField>("ShopDropdown");
             closeButton = root.Q<Button>("Close");
 
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
@@ -51,6 +59,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 target.transform.localEulerAngles = e.newValue
             );
             scaleField.RegisterValueChangedCallback(e => target.transform.localScale = e.newValue);
+
+            shopToggle.RegisterValueChangedCallback(OnShopToggleChanged);
+            shopDropdown.RegisterValueChangedCallback(OnShopSelected);
 
             RegisterAxisHandlers(positionField);
             RegisterAxisHandlers(rotationField);
@@ -65,7 +76,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             if (target == null)
             {
                 Debug.LogError(
-                    $"PlaceableEditorController: {placeable.name} has no StructureObject component."
+                    $"StructureEditor: {placeable.name} has no StructureObject component."
                 );
                 Destroy(gameObject);
                 return;
@@ -76,7 +87,72 @@ namespace FeedTheRealm.UI.PlaceableEditor
             rotationField.SetValueWithoutNotify(target.transform.localEulerAngles);
             scaleField.SetValueWithoutNotify(target.transform.localScale);
 
+            SetupShopControls();
+
             inputReader.ScrollEvent += OnScroll;
+        }
+
+        private void SetupShopControls()
+        {
+            var shops = creatablesManager.GetAll<Shop>();
+
+            if (shops.Count == 0)
+            {
+                shopToggle.SetEnabled(false);
+                shopToggle.value = false;
+                shopDropdown.style.display = DisplayStyle.None;
+                return;
+            }
+
+            shopToggle.SetEnabled(true);
+            shopDropdown.choices = shops.Select(s => s.data.shopName).ToList();
+
+            bool hasShop = target.data.isShop && !string.IsNullOrEmpty(target.data.shopId);
+            shopToggle.SetValueWithoutNotify(hasShop);
+            shopDropdown.style.display = hasShop ? DisplayStyle.Flex : DisplayStyle.None;
+
+            if (hasShop)
+            {
+                var currentShop = shops.FirstOrDefault(s => s.Id == target.data.shopId);
+                if (currentShop != null)
+                    shopDropdown.SetValueWithoutNotify(currentShop.data.shopName);
+            }
+        }
+
+        private void OnShopToggleChanged(ChangeEvent<bool> evt)
+        {
+            if (evt.newValue)
+            {
+                shopDropdown.style.display = DisplayStyle.Flex;
+
+                // auto select first shop if none selected
+                var shops = creatablesManager.GetAll<Shop>();
+                if (shops.Count > 0 && string.IsNullOrEmpty(target.data.shopId))
+                {
+                    target.data.isShop = true;
+                    target.data.shopId = shops[0].Id;
+                    shopDropdown.SetValueWithoutNotify(shops[0].data.shopName);
+                }
+            }
+            else
+            {
+                shopDropdown.style.display = DisplayStyle.None;
+                target.data.isShop = false;
+                target.data.shopId = null;
+            }
+        }
+
+        private void OnShopSelected(ChangeEvent<string> evt)
+        {
+            var selected = creatablesManager
+                .GetAll<Shop>()
+                .FirstOrDefault(s => s.data.shopName == evt.newValue);
+
+            if (selected == null)
+                return;
+
+            target.data.isShop = true;
+            target.data.shopId = selected.Id;
         }
 
         public override void CloseMenu()

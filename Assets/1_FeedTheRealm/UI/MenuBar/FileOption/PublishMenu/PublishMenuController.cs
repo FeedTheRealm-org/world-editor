@@ -5,12 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 {
@@ -44,7 +47,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [Inject]
         private WorldSelector worldSelector;
 
+        [Inject]
+        private WorldUIObjectProvider worldUIObjectProvider;
+
+        [Inject]
+        private IObjectResolver objectResolver;
+
         private Button publishButton;
+        private Button loginButton;
         private Button closeButton;
         private Label worldNameLabel;
         private Toggle publishCreatablesToggle;
@@ -61,6 +71,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             publishButton = root.Q<Button>("Publish");
+            loginButton = root.Q<Button>("Login");
             closeButton = root.Q<Button>("Close");
             worldNameLabel = root.Q<Label>("WorldName");
             publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
@@ -79,12 +90,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
+            loginButton.clicked += OnLoginClicked;
         }
 
         void OnDisable()
         {
             publishButton.clicked -= OnPublishClicked;
             closeButton.clicked -= CloseMenu;
+            loginButton.clicked -= OnLoginClicked;
         }
 
         private void PopulateZoneGroup()
@@ -175,6 +188,29 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private List<int> GetZonesToPublish() =>
             publishAllZones ? availableZones : new List<int>(selectedZones);
+
+        private async void OnLoginClicked()
+        {
+            var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
+            var loginMenuObject = worldUIObjectProvider.loginMenuObject;
+            var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
+            var verifyCodeMenuObject = worldUIObjectProvider.verifyCodeMenuObject;
+
+            GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
+            var loginObj = loginMenu;
+            loginObj.name = "LoginMenu";
+            var signUpObj = objectResolver.Instantiate(signUpMenuObject);
+            signUpObj.name = "SignUpMenu";
+            var verifyCodeObj = objectResolver.Instantiate(verifyCodeMenuObject);
+            verifyCodeObj.name = "VerifyCodeMenu";
+
+            var authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
+            authFlowManager.OnAuthComplete += () =>
+            {
+                authFlowManager.Destroy();
+            };
+            authFlowManager.Initialize();
+        }
 
         private async void OnPublishClicked()
         {
