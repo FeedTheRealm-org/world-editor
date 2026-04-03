@@ -7,7 +7,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 {
     public class StructureObject : Placeable<StructureData>
     {
-        private StructureData data = new();
+        public StructureData data = new();
 
         public override PlaceableObjectCategories Category => PlaceableObjectCategories.Structure;
 
@@ -24,6 +24,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 size = gameObject.transform.localScale,
                 colliderSize = collider != null ? collider.size : Vector3.zero,
                 colliderCenter = collider != null ? collider.center : Vector3.zero,
+                isShop = this.data.isShop,
+                shopId = this.data.shopId,
             };
             zoneData.objectPlacementData.Add(data);
         }
