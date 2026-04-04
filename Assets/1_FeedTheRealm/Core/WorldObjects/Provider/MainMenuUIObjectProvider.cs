@@ -9,7 +9,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
     public class MainMenuUIObjectProvider : ScriptableObject
     {
         public GameObject mainMenuGameObject;
-        public GameObject menuBarGameObject;
         public GameObject loginMenuObject;
         public GameObject signUpMenuObject;
         public GameObject verifyCodeMenuObject;
