@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Core.WorldObjects;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates
@@ -35,16 +36,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
                 worldEditor.Log($"Hit object: {hit.collider}");
                 return;
             }
-            GameObject hitObject = hit.collider.gameObject;
-            worldEditor.Log($"Removing object: {hitObject.name}");
-            GameObject rootObject = hitObject;
-            while (rootObject.transform.parent != null)
-            {
-                rootObject = rootObject.transform.parent.gameObject;
-            }
-
-            worldEditor.Log($"Removing object: {rootObject.name}");
-            Object.Destroy(rootObject);
+            GameObject selectedPlaceable = hit.collider.gameObject;
+            var WorldObject = selectedPlaceable.GetComponentInParent<IPlaceable>();
+            WorldObject.DeletePlaceable();
         }
 
         public void OnSecondaryAction()

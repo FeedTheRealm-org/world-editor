@@ -30,7 +30,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
             );
             if (!selectedObject)
                 return;
-            var WorldObject = selectedObject.GetComponentInParent<Core.WorldObjects.IEditable>();
+            var WorldObject = selectedObject.GetComponentInParent<IPlaceable>();
             var placeableCategory = WorldObject.Category;
             worldEditor.editPlaceableEvent.Raise(
                 new EditableOption { placeable = selectedObject, category = placeableCategory }

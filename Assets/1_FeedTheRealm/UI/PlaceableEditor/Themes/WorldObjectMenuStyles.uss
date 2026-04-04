@@ -208,3 +208,9 @@ DropdownField > .unity-popup-field__input > .unity-base-popup-field__arrow {
     background-color: rgb(0, 0, 0);
     color: rgb(255, 255, 255);
 }
+
+#root > #Menu > #DestinationContainer > #Zone > .unity-popup-field__label {
+    max-width: 66px;
+    width: 66px;
+    min-width: 66px;
+}

@@ -7,8 +7,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 {
     public class StructureObject : Placeable<StructureData>
     {
-        public StructureData data = new();
-
         public override PlaceableObjectCategories Category => PlaceableObjectCategories.Structure;
 
         public override void SaveData(ref ZoneData zoneData)

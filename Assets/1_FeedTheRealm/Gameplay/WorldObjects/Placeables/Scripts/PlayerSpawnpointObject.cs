@@ -7,8 +7,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 {
     public class PlayerSpawnpointObject : Placeable<PlayerSpawnerData>
     {
-        public PlayerSpawnerData data;
-
         public override PlaceableObjectCategories Category =>
             PlaceableObjectCategories.PlayerSpawnpointSpawner;
 

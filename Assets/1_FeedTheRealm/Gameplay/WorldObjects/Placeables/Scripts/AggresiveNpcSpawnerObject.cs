@@ -7,8 +7,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 {
     public class AggresiveNpcSpawnerObject : Placeable<EnemySpawnerData>
     {
-        public EnemySpawnerData data;
-
         public override PlaceableObjectCategories Category =>
             PlaceableObjectCategories.AggresiveNpcSpawner;
 

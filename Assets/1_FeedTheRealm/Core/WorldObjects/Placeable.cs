@@ -12,21 +12,24 @@ namespace FeedTheRealm.Core.WorldObjects
     /// The intention of this interface is to recognize the categories of placeable objects in the world,
     ///  so they can be edited in the editor.
     /// </summary>
-    public interface IEditable
+    public interface IPlaceable
     {
         PlaceableObjectCategories Category { get; }
+        void DeletePlaceable();
     }
 
     public abstract class Placeable<T>
         : MonoBehaviour,
             IPersistent<ZoneData>,
             ILoadable<T>,
-            IEditable
+            IPlaceable
     {
         [Inject]
-        private ZoneDataRegistryEvent registryEvent;
+        protected ZoneDataRegistryEvent registryEvent;
 
-        private void Start()
+        public T data;
+
+        private void Awake()
         {
             if (registryEvent != null)
                 registryEvent.Raise(this);
@@ -40,6 +43,11 @@ namespace FeedTheRealm.Core.WorldObjects
         public void Load(T data)
         {
             LoadData(data);
+        }
+
+        public virtual void DeletePlaceable()
+        {
+            Destroy(gameObject);
         }
     }
 }
