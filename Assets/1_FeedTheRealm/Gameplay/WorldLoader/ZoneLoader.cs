@@ -31,7 +31,8 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             PlayerSpawnpointLoader playerSpawnpointLoader,
             StructureLoader structureLoader,
             AggresiveNpcSpawnerLoader aggresiveNpcSpawnerLoader,
-            FriendlyNpcSpawnerLoader friendlyNpcSpawnerLoader
+            FriendlyNpcSpawnerLoader friendlyNpcSpawnerLoader,
+            PortalLoader portalLoader
         )
         {
             this.worldSelector = worldSelector;
@@ -44,6 +45,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 structureLoader,
                 aggresiveNpcSpawnerLoader,
                 friendlyNpcSpawnerLoader,
+                portalLoader,
             };
         }
 

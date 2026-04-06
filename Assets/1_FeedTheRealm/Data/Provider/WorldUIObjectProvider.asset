@@ -23,3 +23,4 @@ MonoBehaviour:
   structureEditObject: {fileID: 327539696238860596, guid: fa75a38db21056d5a81c4576774cbb5c, type: 3}
   FriendlyNpcSpawnerEditObject: {fileID: 4105760430034162826, guid: 875f74cbddabe4f2d8dff1719d8dac60, type: 3}
   AggresiveNpcSpawnerEditObject: {fileID: 4306287891462671948, guid: 466722acd38bf7b26a345e9f265024b9, type: 3}
+  PortalEditObject: {fileID: 327539696238860596, guid: f49d01631cb398522b13963938617abd, type: 3}

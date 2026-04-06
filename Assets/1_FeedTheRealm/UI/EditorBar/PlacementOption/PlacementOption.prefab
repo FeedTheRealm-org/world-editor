@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3155003523430397767}
   - component: {fileID: 8460830210770891682}
-  - component: {fileID: 6025770802336359105}
-  - component: {fileID: 2105416600247987642}
+  - component: {fileID: 3822748532315289525}
+  - component: {fileID: 8079965266204142436}
+  - component: {fileID: 5449912061284530946}
   m_Layer: 0
   m_Name: PlacementOption
   m_TagString: Untagged
@@ -49,9 +50,10 @@ MonoBehaviour:
   label: Placement
   menuToOpen: {fileID: 0}
   menuOptions:
-  - {fileID: 6025770802336359105}
-  - {fileID: 2105416600247987642}
---- !u!114 &6025770802336359105
+  - {fileID: 3822748532315289525}
+  - {fileID: 8079965266204142436}
+  - {fileID: 5449912061284530946}
+--- !u!114 &3822748532315289525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -60,13 +62,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1020976986542930152}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39a76cf84312e81899923425cee2e003, type: 3}
+  m_Script: {fileID: 11500000, guid: e3e7d9264d46a30dcafc49daa137bb8c, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::StructureOptionController
-  label: Structures
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.EditorBar.PlacementOption.PlaceableOptionController
+  label: Structure
   menuToOpen: {fileID: 0}
   menuOptions: []
---- !u!114 &2105416600247987642
+  category: 0
+--- !u!114 &8079965266204142436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -75,9 +78,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1020976986542930152}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 517a7e3223d5bc38f825e72d51081610, type: 3}
+  m_Script: {fileID: 11500000, guid: e3e7d9264d46a30dcafc49daa137bb8c, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnerOptionController
-  label: Spawners
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.EditorBar.PlacementOption.PlaceableOptionController
+  label: Spawner
   menuToOpen: {fileID: 0}
   menuOptions: []
+  category: 1
+--- !u!114 &5449912061284530946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020976986542930152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e7d9264d46a30dcafc49daa137bb8c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.EditorBar.PlacementOption.PlaceableOptionController
+  label: Misc.
+  menuToOpen: {fileID: 0}
+  menuOptions: []
+  category: 2

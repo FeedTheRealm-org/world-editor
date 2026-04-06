@@ -73,6 +73,9 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 foreach (var shop in data.shops)
                     creatablesManager.Add(new Shop(shop));
 
+                foreach (var portal in data.portals)
+                    creatablesManager.Add(new Portal(portal));
+
                 logger.Log("[CreatableLoader] Creatables loaded successfully.");
             }
             catch (Exception ex)

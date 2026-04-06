@@ -8,9 +8,14 @@ using VContainer;
 
 namespace FeedTheRealm.Core.WorldObjects
 {
+    /// <summary>
+    /// The intention of this interface is to recognize the categories of placeable objects in the world,
+    ///  so they can be edited in the editor.
+    /// </summary>
     public interface IPlaceable
     {
         PlaceableObjectCategories Category { get; }
+        void DeletePlaceable();
     }
 
     public abstract class Placeable<T>
@@ -20,9 +25,11 @@ namespace FeedTheRealm.Core.WorldObjects
             IPlaceable
     {
         [Inject]
-        private ZoneDataRegistryEvent registryEvent;
+        protected ZoneDataRegistryEvent registryEvent;
 
-        private void Start()
+        public T data;
+
+        private void Awake()
         {
             if (registryEvent != null)
                 registryEvent.Raise(this);
@@ -36,6 +43,11 @@ namespace FeedTheRealm.Core.WorldObjects
         public void Load(T data)
         {
             LoadData(data);
+        }
+
+        public virtual void DeletePlaceable()
+        {
+            Destroy(gameObject);
         }
     }
 }

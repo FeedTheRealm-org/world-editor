@@ -11,10 +11,12 @@ namespace FeedTheRealm.Core.Library
         // Generic categories
         Structure,
         Spawner,
+        Misc,
 
         // Specific categories
         FriendlyNpcSpawner,
         AggresiveNpcSpawner,
         PlayerSpawnpointSpawner,
+        Portal,
     }
 }

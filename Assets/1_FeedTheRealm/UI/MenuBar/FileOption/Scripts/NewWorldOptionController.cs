@@ -43,8 +43,8 @@ namespace FeedTheRealm.UI.MenuBar
                 if (SceneManager.GetActiveScene().name == editorScene.SceneName)
                 {
                     refreshZonesEvent.Raise();
-                    await zoneLoader.Load();
                     await creatablesLoader.Load();
+                    await zoneLoader.Load();
                 }
                 else
                     SceneManager.LoadScene(editorScene.SceneName);

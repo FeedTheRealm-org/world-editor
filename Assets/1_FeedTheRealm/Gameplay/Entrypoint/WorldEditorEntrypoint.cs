@@ -35,8 +35,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint
         public async void Start()
         {
             worldSetup.ExecuteSetup();
-            await zoneLoader.Load();
             await creatablesLoader.Load();
+            await zoneLoader.Load();
         }
 
         public void Tick()

@@ -12,7 +12,6 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
     public class MainMenuUISetupService : ISetup
     {
         private readonly GameObject mainMenuGameObject;
-        private readonly GameObject menuBarGameObject;
         private readonly IObjectResolver objectResolver;
         private readonly GameObject loginMenuObject;
         private readonly GameObject signUpMenuObject;
@@ -30,7 +29,6 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 return;
             }
             mainMenuGameObject = mainMenuUIObjectProvider.mainMenuGameObject;
-            menuBarGameObject = mainMenuUIObjectProvider.menuBarGameObject;
             loginMenuObject = mainMenuUIObjectProvider.loginMenuObject;
             signUpMenuObject = mainMenuUIObjectProvider.signUpMenuObject;
             verifyCodeMenuObject = mainMenuUIObjectProvider.verifyCodeMenuObject;
@@ -44,12 +42,6 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                     "MainMenu GameObject not set in mainMenuUIObjectProvider!"
                 );
             objectResolver.Instantiate(mainMenuGameObject).name = "MainMenu";
-
-            if (menuBarGameObject == null)
-                throw new System.Exception(
-                    "MenuBar GameObject not set in mainMenuUIObjectProvider!"
-                );
-            objectResolver.Instantiate(menuBarGameObject).name = "MenuBar";
 
             if (loginMenuObject == null)
                 throw new System.Exception(

@@ -7,8 +7,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 {
     public class FriendlyNpcSpawnerObject : Placeable<NPCSpawnerData>
     {
-        public NPCSpawnerData data;
-
         public override PlaceableObjectCategories Category =>
             PlaceableObjectCategories.FriendlyNpcSpawner;
 
