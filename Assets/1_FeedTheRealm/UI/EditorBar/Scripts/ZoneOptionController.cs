@@ -73,8 +73,11 @@ public class ZoneOptionController : MonoBehaviour
         int selectedZone = int.Parse(selectedValue);
         if (selectedZone == worldSelector.selectedZoneId)
             return;
-        worldSelector.selectedZoneId = selectedZone;
+        // we save our current zone data to not lose any unsaved changes before loading the new zone
         dataPersistenceManager.SaveZone(worldSelector.selectedWorld, worldSelector.selectedZoneId);
+
+        // update the selected zone in the world selector and load the new zone
+        worldSelector.selectedZoneId = selectedZone;
         Debug.Log(
             $"[ZoneOptionController] {worldSelector.selectedWorld} | Zone {selectedValue} selected."
         );
