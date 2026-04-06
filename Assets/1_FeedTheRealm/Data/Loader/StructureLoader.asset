@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05df18066466895098511e313c77c8cd, type: 3}
+  m_Name: StructureLoader
+  m_EditorClassIdentifier: Assembly-CSharp::StructureLoaderSO
+  logger: {fileID: 11400000, guid: ab1fc72a239278b8786463796a97a38b, type: 2}
+  worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}
+  libraryFilePath: Assets/models.json
+  modelsDirectory: Models
+  structurePrefab: {fileID: 8418757689684725357, guid: 389635cd1e95a4d6b916501c1f73b893, type: 3}

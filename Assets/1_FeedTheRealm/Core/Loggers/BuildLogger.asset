@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f1e0326d7da24ae943a052022117a0, type: 3}
   m_Name: BuildLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
-  _showLogs: 1
-  _loggerPrefix: BuildSystem
-  _loggerColor: {r: 1, g: 0.9423084, b: 0, a: 0}
+  showLogs: 1
+  loggerPrefix: 
+  loggerColor: {r: 0.93039024, g: 0.93039024, b: 0.93039024, a: 0}
+  showColor: 1

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 601acef760013ebf688729670476a3b9, type: 3}
+  m_Name: WorldPrefabProvider
+  m_EditorClassIdentifier: FTR.Core::WorldPrefabProvider
+  playerPrefab: {fileID: 7716978049392081773, guid: 9c20c9242bf9758e7b616bba53efd16a, type: 3}
+  worldEditorPrefab: {fileID: 6012702040579960072, guid: 6d7686df63f30be61b96e27573d65070, type: 3}
+  worldPrefab: {fileID: 5180060565708909657, guid: 0ebf5ea53eb4fd013bc753d6ab180207, type: 3}
+  worldLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  structurePrefab: {fileID: 8418757689684725357, guid: 389635cd1e95a4d6b916501c1f73b893, type: 3}
+  aggresiveNPCSpawnerPrefab: {fileID: 5537282333109391366, guid: eb253cc0ad330bb6c8999ccf918cff0d, type: 3}
+  friendlyNPCSpawnerPrefab: {fileID: 5537282333109391366, guid: 994e067732e28fe4da14144b2fb9006f, type: 3}
+  playerSpawnpointPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
+  portalPrefab: {fileID: 5537282333109391366, guid: 9c0bd65e3420572b09e3952caea3b733, type: 3}

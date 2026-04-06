@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="root" style="flex-grow: 1; width: 100%; height: 100%;">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="flex-shrink: 0; width: 30%; height: 566px; margin-top: 4%; margin-left: 13%;">
+            <ui:VisualElement name="Header" class="menu-tab" style="flex-grow: 1; background-color: rgb(0, 0, 0); height: 50px; max-height: 50px; min-height: 30px; flex-direction: row; align-items: stretch; justify-content: space-between; border-bottom-width: 0;">
+                <ui:Label text="Publish Your World!" name="Title" class="text title" style="font-size: 15px;"/>
+                <ui:Button text="Close" name="Close" class="close-button"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Content" class="menu-content" style="border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); height: 429px;">
+                <ui:Label text="world name here" name="WorldName" class="title" style="-unity-text-align: lower-left; color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 80%; font-size: 20px; border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255);"/>
+                <ui:Toggle label="Publish Creatables?" name="PublishCreatables" style="color: rgb(255, 255, 255); width: 191px;"/>
+                <ui:Toggle label="Publish World Data?" name="PublishWorldData" style="color: rgb(255, 255, 255); width: 191px;"/>
+                <ui:ScrollView name="ZoneGroup" style="flex-direction: column; max-height: 300%; border-width: 1px; border-color: rgb(255, 255, 255); border-radius: 4px; padding: 4px; height: 300px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; align-self: stretch; justify-content: space-between; align-items: center;">
+                <ui:Button text="Publish World!" name="Publish" enabled="true" display-tooltip-when-elided="false" class="cool-button" style="background-color: rgb(0, 0, 0); color: rgb(255, 255, 255); border-top-left-radius: 9px; border-top-right-radius: 9px; border-bottom-right-radius: 9px; border-bottom-left-radius: 9px; margin-top: 20px; margin-right: 0; margin-bottom: 0; margin-left: 0; align-self: flex-end; justify-content: space-around; align-content: center; height: 27px; align-items: flex-start; white-space: pre; width: 207px;"/>
+                <ui:Button text="Login" name="Login" enabled="true" display-tooltip-when-elided="false" class="cool-button" style="background-color: rgb(0, 0, 0); color: rgb(255, 255, 255); border-top-left-radius: 9px; border-top-right-radius: 9px; border-bottom-right-radius: 9px; border-bottom-left-radius: 9px; margin-top: 20px; margin-right: 0; margin-bottom: 0; margin-left: 0; align-self: flex-end; justify-content: space-around; align-content: center; height: 27px; align-items: flex-start; white-space: pre; width: 97px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

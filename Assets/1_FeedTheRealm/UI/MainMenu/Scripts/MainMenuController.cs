@@ -1,59 +1,60 @@
+using FeedTheRealm.Core.DataPersistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VContainer;
 
-[RequireComponent(typeof(UIDocument))]
-public class MainMenu : MonoBehaviour
+namespace FeedTheRealm.UI.MainMenu
 {
-    public VisualElement ui;
-    public Button _startButton;
-    public Button _browseButton;
-    public Button _quitButton;
-
-    [SerializeField]
-    private SceneReference newWorldScene;
-
-    [SerializeField]
-    private SceneReference loadWorldScene;
-
-    [SerializeField]
-    private DataPersistenceManagerSO dataPersistenceManager;
-
-    private void Awake()
+    [RequireComponent(typeof(UIDocument))]
+    public class MainMenu : MonoBehaviour
     {
-        ui = GetComponent<UIDocument>().rootVisualElement;
-    }
+        public VisualElement ui;
+        public Button _startButton;
+        public Button _browseButton;
+        public Button _quitButton;
 
-    private void OnEnable()
-    {
-        _startButton = ui.Q<Button>("Start");
-        _startButton.clicked += OnStartClicked;
+        [Inject]
+        private WorldSelector worldSelector;
 
-        _browseButton = ui.Q<Button>("Browse");
-        _browseButton.clicked += OnBrowseClicked;
+        [SerializeField]
+        private SceneReference newWorldScene;
 
-        _quitButton = ui.Q<Button>("Quit");
-        _quitButton.clicked += OnQuitClicked;
-    }
+        [SerializeField]
+        private SceneReference loadWorldScene;
 
-    private void OnStartClicked()
-    {
-        // TODO: in the future, this should be a new scene that lets
-        // makers set preset values for their new world
-        dataPersistenceManager.NewWorld();
-        SceneManager.LoadScene(newWorldScene.SceneName);
-    }
+        [SerializeField]
+        private DataPersistenceManager dataPersistenceManager;
 
-    private void OnBrowseClicked()
-    {
-        SceneManager.LoadScene(loadWorldScene.SceneName);
-    }
+        private void Awake()
+        {
+            ui = GetComponent<UIDocument>().rootVisualElement;
+        }
 
-    private void OnQuitClicked()
-    {
-        Application.Quit();
+        private void OnEnable()
+        {
+            _startButton = ui.Q<Button>("Start");
+            _startButton.clicked += OnStartClicked;
+
+            _quitButton = ui.Q<Button>("Quit");
+            _quitButton.clicked += OnQuitClicked;
+        }
+
+        private void OnStartClicked()
+        {
+            // TODO: in the future, this should be a new scene that lets
+            // makers set preset values for their new world
+            //dataPersistenceManager.NewWorld();
+            worldSelector.ClearSelection();
+            SceneManager.LoadScene(newWorldScene.SceneName);
+        }
+
+        private void OnQuitClicked()
+        {
+            Application.Quit();
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #endif
+        }
     }
 }

@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: e0f6148e9702b5f8ab88476eb3dbcbaf, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: c4297ff1ff274c543b49a0331c3899a3, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 700
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -70,13 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::LoginController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  targetScene:
-    sceneName: WorldEditor
-    sceneAsset: {fileID: 102900000, guid: d3ad6e6da772281b9a4e7fbe09adfa25, type: 3}
-  otherFormScene:
-    sceneName: Signup
-    sceneAsset: {fileID: 102900000, guid: b5130eb7c7f243e829d5318ca82cdcf6, type: 3}
-  verifyCodeScene:
-    sceneName: VerifyCode
-    sceneAsset: {fileID: 102900000, guid: f37098309a5dfe64493d8f80366c4a51, type: 3}
+  loginBackgroundPrefab: {fileID: 6544328675534064428, guid: 647ea82975137576baf68b9d805b6af2, type: 3}
+  showBackground: 1
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}
