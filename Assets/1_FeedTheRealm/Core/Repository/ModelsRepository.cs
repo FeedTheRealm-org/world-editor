@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -144,6 +143,37 @@ namespace FeedTheRealm.Core.Repository
             modelsData = null; // invalidate cache
             logger.Log(
                 $"[ModelsRepository] Deleted model metadata for '{modelName}'.",
+                Logging.LogType.Info
+            );
+        }
+
+        /// <summary>
+        /// Adds a new model to the repository and writes its metadata to disk.
+        /// Call this after copying the .glb file to the models directory.
+        /// </summary>
+        public void AddModel(StructureData model, string sourceFilePath)
+        {
+            if (!File.Exists(sourceFilePath))
+            {
+                logger.Log(
+                    $"[ModelsRepository] Source file not found: {sourceFilePath}",
+                    Logging.LogType.Error
+                );
+                return;
+            }
+
+            string destPath = Path.Combine(config.ModelsDirectory, model.fileName);
+            File.Copy(sourceFilePath, destPath, overwrite: true);
+            logger.Log(
+                $"[ModelsRepository] Copied model file to '{destPath}'.",
+                Logging.LogType.Info
+            );
+
+            WriteModelToDisk(model);
+            modelsData ??= new Dictionary<string, StructureData>();
+            modelsData[model.id] = model;
+            logger.Log(
+                $"[ModelsRepository] Added model '{model.structureName}' (id: {model.id}).",
                 Logging.LogType.Info
             );
         }
