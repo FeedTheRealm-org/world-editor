@@ -45,6 +45,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e01a0c99194187aadb8935bf1828e7, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldObjects.StructureObject
+  data:
+    id:
+    size: {x: 1, y: 1, z: 1}
+    rotation: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0, z: 0}
+    fileName:
+    structureName: New Structure
+    isShop: 0
+    shopId:
+    colliderSize: {x: 0, y: 0, z: 0}
+    colliderCenter: {x: 0, y: 0, z: 0}
+    hasCustomCollider: 0
 --- !u!65 &6615877233883412725
 BoxCollider:
   m_ObjectHideFlags: 0
