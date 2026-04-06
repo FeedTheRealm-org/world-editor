@@ -17,8 +17,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             Logging.Logger logger,
             StructureLibrary structureLibrary,
             SpawnerLibrary spawnerLibrary,
-            MiscLibrary miscLibrary,
-            IObjectResolver objectResolver
+            MiscLibrary miscLibrary
         )
         {
             this.logger = logger;
