@@ -12,7 +12,7 @@ namespace FTR.Core.Common.Config
 
         [Header("Persistent Model file config")]
         [SerializeField]
-        private string modelsDataFile = "Models/models.json";
+        private string modelsDataDirectory = "Models";
 
         [SerializeField]
         private string modelsDirectory = "Models";
@@ -36,8 +36,8 @@ namespace FTR.Core.Common.Config
         [SerializeField]
         private string zoneFilePrefix = "zone_";
 
-        public string ModelsDataFile =>
-            Path.Combine(Application.persistentDataPath, modelsDataFile);
+        public string ModelsDataDirectory =>
+            Path.Combine(Application.persistentDataPath, modelsDataDirectory);
         public string ModelsDirectory =>
             Path.Combine(Application.streamingAssetsPath, modelsDirectory);
         public string SpritesDirectory =>
