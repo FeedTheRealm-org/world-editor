@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using FTRShared.Runtime.Models;
+using API;
 using UnityEngine;
 using UnityEngine.UIElements;
-using API;
 
-namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
+namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
 {
-    internal sealed class AggresiveNpcCharacterPreviewRenderer : IDisposable
+    internal sealed class CharacterEditorPreviewRenderer : IDisposable
     {
         private readonly GameObject characterEditorPrefab;
 
@@ -15,7 +14,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private CharacterEditController previewController;
         private Camera previewCamera;
 
-        public AggresiveNpcCharacterPreviewRenderer(GameObject characterEditorPrefab)
+        public CharacterEditorPreviewRenderer(GameObject characterEditorPrefab)
         {
             this.characterEditorPrefab = characterEditorPrefab;
         }
@@ -98,9 +97,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 return;
 
             var root = document.rootVisualElement;
-            if (root != null)
+            if (root == null)
+                return;
+
+            root.style.visibility = Visibility.Hidden;
+            root.style.opacity = 0f;
+            root.pickingMode = PickingMode.Ignore;
+
+            // The character editor prefab has its own uGUI preview surface; disable it so
+            // only the menu's target image displays the render texture.
+            if (previewInstance == null)
+                return;
+
+            var canvases = previewInstance.GetComponentsInChildren<Canvas>(true);
+            foreach (var canvas in canvases)
             {
-                root.style.display = DisplayStyle.None;
+                canvas.enabled = false;
             }
         }
 

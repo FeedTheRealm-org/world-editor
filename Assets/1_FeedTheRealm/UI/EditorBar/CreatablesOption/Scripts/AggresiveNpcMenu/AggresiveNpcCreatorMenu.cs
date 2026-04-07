@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -41,8 +42,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private GameObject characterEditorInstance;
         private CharacterEditController characterEditor;
-        private AggresiveNpcCharacterPreviewRenderer characterPreviewRenderer;
+        private CharacterEditorPreviewRenderer characterPreviewRenderer;
         private bool pendingPreviewRefresh;
+        private bool editModeBindingsRegistered;
 
         public void SetupEditor(AggresiveNpc npc)
         {
@@ -62,8 +64,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             InitializeFields(root);
             PopulateLootTables();
-            HideEmbeddedCharacterEditors();
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            CharacterEditorRuntimeUtility.HideEmbeddedCharacterEditors(this);
+
             SetCharacterEditorVisible(false);
+            SetSpritePreviewVisible(true);
 
             if (editingEnemyData != null)
             {
@@ -107,6 +116,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 DestroyCharacterEditorInstance();
                 SetCharacterPreviewVisible(true);
+                SetSpritePreviewVisible(true);
             }
 
             if (pendingPreviewRefresh && characterEditorInstance == null)
@@ -141,6 +151,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SetupCreateMode()
         {
+            pendingCategorySprites.Clear();
+
             saveButton.text = "Create Enemy";
             saveButton.clicked -= ReturnToList;
             saveButton.clicked -= CreateNewObject;
@@ -179,7 +191,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         {
             if (editingEnemyData != null)
             {
-                editingEnemyData.category_sprites = categorySprites;
+                editingEnemyData.category_sprites = categorySprites ?? new Dictionary<string, string>();
                 pendingPreviewRefresh = true;
                 return;
             }
@@ -208,6 +220,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void BindEditMode()
         {
+            if (editModeBindingsRegistered)
+                return;
+
             nameInput.RegisterValueChangedCallback(evt => editingEnemyData.name = evt.newValue);
 
             descriptionInput.RegisterValueChangedCallback(evt =>
@@ -231,6 +246,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
                 editingEnemyData.lootTableId = selected?.data.id;
             });
+
+            editModeBindingsRegistered = true;
         }
 
         private void CreateNewObject()
@@ -278,6 +295,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                     return;
 
                 SetCharacterPreviewVisible(false);
+                SetSpritePreviewVisible(false);
                 characterEditorInstance.SetActive(true);
                 return;
             }
@@ -289,6 +307,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             }
 
             SetCharacterPreviewVisible(true);
+            SetSpritePreviewVisible(true);
 
             if (pendingPreviewRefresh)
             {
@@ -302,60 +321,17 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (characterEditorInstance != null && characterEditor != null)
                 return true;
 
-            ResolveCharacterEditorPrefabFallback();
-
-            if (characterEditorPrefab == null)
-            {
-                Debug.LogError("Character editor prefab is not assigned.", this);
-                return false;
-            }
-
-            characterEditorInstance = Instantiate(characterEditorPrefab);
-            characterEditorInstance.name = $"{characterEditorPrefab.name}_Runtime";
-            characterEditorInstance.transform.SetParent(null, false);
-            characterEditor = characterEditorInstance.GetComponentInChildren<CharacterEditController>(
-                true
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
             );
 
-            if (characterEditor == null)
-            {
-                Debug.LogError(
-                    "CharacterEditController component was not found on instantiated character editor prefab.",
-                    this
-                );
-                DestroyCharacterEditorInstance();
-                return false;
-            }
-
-            characterEditorInstance.SetActive(false);
-            return true;
-        }
-
-        private void ResolveCharacterEditorPrefabFallback()
-        {
-            if (characterEditorPrefab != null)
-                return;
-
-            var embeddedEditor = GetComponentInChildren<CharacterEditController>(true);
-            if (embeddedEditor == null)
-                return;
-
-            characterEditorPrefab = embeddedEditor.transform.parent != null
-                ? embeddedEditor.transform.parent.gameObject
-                : embeddedEditor.gameObject;
-        }
-
-        private void HideEmbeddedCharacterEditors()
-        {
-            var embeddedEditors = GetComponentsInChildren<CharacterEditController>(true);
-            foreach (var embeddedEditor in embeddedEditors)
-            {
-                var root = embeddedEditor.transform.parent != null
-                    ? embeddedEditor.transform.parent.gameObject
-                    : embeddedEditor.gameObject;
-
-                root.SetActive(false);
-            }
+            return CharacterEditorRuntimeUtility.TryInstantiateCharacterEditor(
+                this,
+                characterEditorPrefab,
+                out characterEditorInstance,
+                out characterEditor
+            );
         }
 
         private CharacterInfoResponse BuildCharacterInfo()
@@ -391,7 +367,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (characterPreviewRenderer != null)
                 return true;
 
-            ResolveCharacterEditorPrefabFallback();
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
 
             if (characterEditorPrefab == null)
             {
@@ -399,13 +378,23 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 return false;
             }
 
-            characterPreviewRenderer = new AggresiveNpcCharacterPreviewRenderer(characterEditorPrefab);
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
             return true;
         }
 
         private void SetCharacterPreviewVisible(bool isVisible)
         {
             characterPreviewRenderer?.SetVisible(isVisible);
+        }
+
+        private void SetSpritePreviewVisible(bool isVisible)
+        {
+            if (spritePreview == null)
+                return;
+
+            spritePreview.style.visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+            spritePreview.style.opacity = isVisible ? 1f : 0f;
+            spritePreview.pickingMode = isVisible ? PickingMode.Position : PickingMode.Ignore;
         }
 
         private void DisposeCharacterPreviewRenderer()
@@ -421,13 +410,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void DestroyCharacterEditorInstance()
         {
-            if (characterEditorInstance != null)
-            {
-                Destroy(characterEditorInstance);
-                characterEditorInstance = null;
-            }
-
-            characterEditor = null;
+            CharacterEditorRuntimeUtility.DestroyCharacterEditorInstance(
+                ref characterEditorInstance,
+                ref characterEditor
+            );
         }
     }
 }
