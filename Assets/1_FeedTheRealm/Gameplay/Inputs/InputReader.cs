@@ -17,6 +17,10 @@ namespace FeedTheRealm.Gameplay.Inputs
         public event Action SecondaryInteractionEvent;
         public event Action<float> MoveVerticalEvent;
         public event Action RemoveEvent;
+        public event Action MoveShortcutEvent;
+        public event Action RotateShortcutEvent;
+        public event Action ScaleShortcutEvent;
+        public event Action HideShortcutEvent;
         public event Action<Vector2> ScrollEvent;
         public Vector2 LastClickPosition { get; private set; }
         public event Action PrimaryInteractionReleasedEvent;
@@ -159,6 +163,38 @@ namespace FeedTheRealm.Gameplay.Inputs
         public void OnCursorPosition(InputAction.CallbackContext context)
         {
             CurrentMousePosition = context.ReadValue<Vector2>();
+        }
+
+        public void OnMoveSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                MoveShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnScaleSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ScaleShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnRotateSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                RotateShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnHideSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                HideShortcutEvent?.Invoke();
+            }
         }
     }
 }

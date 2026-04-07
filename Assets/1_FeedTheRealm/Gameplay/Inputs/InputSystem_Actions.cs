@@ -172,6 +172,42 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MoveSC"",
+                    ""type"": ""Button"",
+                    ""id"": ""587bc957-1eae-45f0-a73e-d03cbe1b5135"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ScaleSC"",
+                    ""type"": ""Button"",
+                    ""id"": ""5559fd8a-74cd-4528-a58d-440f208e7c07"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateSC"",
+                    ""type"": ""Button"",
+                    ""id"": ""b621112b-1290-44ff-9f9c-58be5ea52d9c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HideSC"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d4faa8b-f899-48aa-93de-e73a474500c4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -414,6 +450,50 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""CursorPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""75f68291-3565-4438-8133-db6e4adf5dda"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8704bbb2-29d9-4ca6-88b9-9aef63ff7a9a"",
+                    ""path"": ""<Keyboard>/n"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScaleSC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""525549ab-a799-4db3-ba9d-7c78355c6a93"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateSC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16872dc5-3054-49c9-b340-8b5531508a51"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HideSC"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1010,6 +1090,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player_RemoveAction = m_Player.FindAction("RemoveAction", throwIfNotFound: true);
         m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
         m_Player_CursorPosition = m_Player.FindAction("CursorPosition", throwIfNotFound: true);
+        m_Player_MoveSC = m_Player.FindAction("MoveSC", throwIfNotFound: true);
+        m_Player_ScaleSC = m_Player.FindAction("ScaleSC", throwIfNotFound: true);
+        m_Player_RotateSC = m_Player.FindAction("RotateSC", throwIfNotFound: true);
+        m_Player_HideSC = m_Player.FindAction("HideSC", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1112,6 +1196,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_RemoveAction;
     private readonly InputAction m_Player_Scroll;
     private readonly InputAction m_Player_CursorPosition;
+    private readonly InputAction m_Player_MoveSC;
+    private readonly InputAction m_Player_ScaleSC;
+    private readonly InputAction m_Player_RotateSC;
+    private readonly InputAction m_Player_HideSC;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1159,6 +1247,22 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/CursorPosition".
         /// </summary>
         public InputAction @CursorPosition => m_Wrapper.m_Player_CursorPosition;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/MoveSC".
+        /// </summary>
+        public InputAction @MoveSC => m_Wrapper.m_Player_MoveSC;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ScaleSC".
+        /// </summary>
+        public InputAction @ScaleSC => m_Wrapper.m_Player_ScaleSC;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/RotateSC".
+        /// </summary>
+        public InputAction @RotateSC => m_Wrapper.m_Player_RotateSC;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/HideSC".
+        /// </summary>
+        public InputAction @HideSC => m_Wrapper.m_Player_HideSC;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1212,6 +1316,18 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @CursorPosition.started += instance.OnCursorPosition;
             @CursorPosition.performed += instance.OnCursorPosition;
             @CursorPosition.canceled += instance.OnCursorPosition;
+            @MoveSC.started += instance.OnMoveSC;
+            @MoveSC.performed += instance.OnMoveSC;
+            @MoveSC.canceled += instance.OnMoveSC;
+            @ScaleSC.started += instance.OnScaleSC;
+            @ScaleSC.performed += instance.OnScaleSC;
+            @ScaleSC.canceled += instance.OnScaleSC;
+            @RotateSC.started += instance.OnRotateSC;
+            @RotateSC.performed += instance.OnRotateSC;
+            @RotateSC.canceled += instance.OnRotateSC;
+            @HideSC.started += instance.OnHideSC;
+            @HideSC.performed += instance.OnHideSC;
+            @HideSC.canceled += instance.OnHideSC;
         }
 
         /// <summary>
@@ -1250,6 +1366,18 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @CursorPosition.started -= instance.OnCursorPosition;
             @CursorPosition.performed -= instance.OnCursorPosition;
             @CursorPosition.canceled -= instance.OnCursorPosition;
+            @MoveSC.started -= instance.OnMoveSC;
+            @MoveSC.performed -= instance.OnMoveSC;
+            @MoveSC.canceled -= instance.OnMoveSC;
+            @ScaleSC.started -= instance.OnScaleSC;
+            @ScaleSC.performed -= instance.OnScaleSC;
+            @ScaleSC.canceled -= instance.OnScaleSC;
+            @RotateSC.started -= instance.OnRotateSC;
+            @RotateSC.performed -= instance.OnRotateSC;
+            @RotateSC.canceled -= instance.OnRotateSC;
+            @HideSC.started -= instance.OnHideSC;
+            @HideSC.performed -= instance.OnHideSC;
+            @HideSC.canceled -= instance.OnHideSC;
         }
 
         /// <summary>
@@ -1613,6 +1741,34 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCursorPosition(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveSC" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveSC(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ScaleSC" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnScaleSC(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RotateSC" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotateSC(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HideSC" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHideSC(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

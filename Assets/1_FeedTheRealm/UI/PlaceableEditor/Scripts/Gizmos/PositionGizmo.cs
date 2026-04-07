@@ -1,16 +1,14 @@
 using System;
-using FeedTheRealm.Gameplay.Inputs;
-using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine;
 using UnityEngine;
 
-namespace FeedTheRealm.Gameplay.WorldEditor
+namespace FeedTheRealm.UI.PlaceableEditor
 {
     /// <summary>
     /// Runtime transform gizmo that attaches to a selected placeable.
     /// Axes are always aligned to world space regardless of object rotation.
     /// Scales with camera distance to remain consistently visible.
     /// </summary>
-    public class TransformGizmo : MonoBehaviour
+    public class PositionGizmo : BaseGizmo
     {
         [Header("Handles")]
         [SerializeField]
@@ -25,24 +23,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         [SerializeField]
         private Transform centerHandle;
 
-        [SerializeField]
-        private InputReader inputReader;
-
-        [SerializeField]
-        private Logging.Logger logger;
-
-        [Header("Settings")]
-        [SerializeField]
-        private float screenSizeFactor = 0.1f;
-
-        [SerializeField]
-        private float boundsScaleFactor = 1.3f;
-
-        [SerializeField]
-        private LayerMask gizmoLayerMask;
-
-        private Camera mainCamera;
-        private Transform target;
+        public event Action<Vector3> OnPositionChanged;
 
         private enum DragAxis
         {
@@ -57,58 +38,18 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         private Vector3 dragStartObjectPos;
         private Vector3 dragStartMouseWorld;
         private Plane dragPlane;
-        public event Action<Vector3> OnPositionChanged;
 
-        private bool isPrimaryHeld = false;
-
-        public void Initialize(Transform target, Camera camera)
+        protected override void OnPrimaryDown()
         {
-            this.target = target;
-            mainCamera = camera;
+            base.OnPrimaryDown();
         }
 
-        private void OnEnable()
+        protected override void OnPrimaryUp()
         {
-            if (inputReader == null)
-                return;
-            inputReader.PrimaryInteractionEvent += OnPrimaryDown;
-            inputReader.PrimaryInteractionReleasedEvent += OnPrimaryUp;
+            base.OnPrimaryUp();
         }
 
-        private void OnDisable()
-        {
-            if (inputReader == null)
-                return;
-            inputReader.PrimaryInteractionEvent -= OnPrimaryDown;
-            inputReader.PrimaryInteractionReleasedEvent -= OnPrimaryUp;
-            activeDrag = DragAxis.None;
-            isPrimaryHeld = false;
-        }
-
-        private void OnPrimaryDown()
-        {
-            logger.Log("Primary interaction started!!!");
-            isPrimaryHeld = true;
-            TryBeginDrag();
-        }
-
-        private void OnPrimaryUp()
-        {
-            isPrimaryHeld = false;
-            activeDrag = DragAxis.None;
-        }
-
-        private void LateUpdate()
-        {
-            if (target == null || mainCamera == null)
-                return;
-
-            transform.position = target.position;
-            transform.rotation = Quaternion.identity;
-
-            float distance = Vector3.Distance(mainCamera.transform.position, transform.position);
-            transform.localScale = Vector3.one * (distance * screenSizeFactor);
-        }
+        protected override void ResetDrag() => activeDrag = DragAxis.None;
 
         private void Update()
         {
@@ -118,18 +59,13 @@ namespace FeedTheRealm.Gameplay.WorldEditor
                 ContinueDrag();
         }
 
-        private void TryBeginDrag()
+        protected override void TryBeginDrag()
         {
             Ray ray = mainCamera.ScreenPointToRay(inputReader.CurrentMousePosition);
             if (!Physics.Raycast(ray, out RaycastHit hit, 10000f, gizmoLayerMask))
-            {
-                logger.Log("Gizmo handle hit: " + hit.collider.transform);
                 return;
-            }
 
             Transform hitHandle = hit.collider.transform;
-            logger.Log("Gizmo handle hit: " + hitHandle.name);
-
             if (hitHandle == xHandle)
                 BeginAxisDrag(DragAxis.X, Vector3.right);
             else if (hitHandle == yHandle)
@@ -144,16 +80,13 @@ namespace FeedTheRealm.Gameplay.WorldEditor
         {
             activeDrag = axis;
             dragStartObjectPos = target.position;
-
             Vector3 planeNormal = Vector3
                 .Cross(axisDirection, Vector3.Cross(mainCamera.transform.forward, axisDirection))
                 .normalized;
-
             if (planeNormal == Vector3.zero)
                 planeNormal = mainCamera.transform.forward;
-
             dragPlane = new Plane(planeNormal, target.position);
-            dragStartMouseWorld = GetMouseWorldOnPlane(dragPlane);
+            dragStartMouseWorld = GetMouseWorldOnPlane(dragPlane, target.position);
         }
 
         private void BeginFreeDrag()
@@ -161,12 +94,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor
             activeDrag = DragAxis.Free;
             dragStartObjectPos = target.position;
             dragPlane = new Plane(-mainCamera.transform.forward, target.position);
-            dragStartMouseWorld = GetMouseWorldOnPlane(dragPlane);
+            dragStartMouseWorld = GetMouseWorldOnPlane(dragPlane, target.position);
         }
 
         private void ContinueDrag()
         {
-            Vector3 currentMouseWorld = GetMouseWorldOnPlane(dragPlane);
+            Vector3 currentMouseWorld = GetMouseWorldOnPlane(dragPlane, dragStartMouseWorld);
             Vector3 delta = currentMouseWorld - dragStartMouseWorld;
 
             switch (activeDrag)
@@ -187,16 +120,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor
                     target.position = dragStartObjectPos + delta;
                     break;
             }
-
             OnPositionChanged?.Invoke(target.position);
-        }
-
-        private Vector3 GetMouseWorldOnPlane(Plane plane)
-        {
-            Ray ray = mainCamera.ScreenPointToRay(inputReader.CurrentMousePosition);
-            if (plane.Raycast(ray, out float distance))
-                return ray.GetPoint(distance);
-            return dragStartMouseWorld;
         }
     }
 }

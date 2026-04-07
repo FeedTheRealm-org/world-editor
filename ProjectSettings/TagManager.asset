@@ -17,7 +17,7 @@ TagManager:
   - Placeable
   - Selectable
   - WorldObject
-  - Transform
+  - Gizmo
   - 
   - 
   - 
