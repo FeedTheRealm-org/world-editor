@@ -3,6 +3,7 @@ using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.Gameplay.WorldEditor;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
@@ -39,8 +40,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
-
         private StructureObject target;
+        private TransformGizmo gizmo;
 
         void OnEnable()
         {
@@ -89,7 +90,20 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             SetupShopControls();
 
+            gizmo = target.GetComponentInChildren<TransformGizmo>(includeInactive: true);
+            if (gizmo != null)
+            {
+                gizmo.Initialize(target.transform, Camera.main);
+                gizmo.OnPositionChanged += OnGizmoMoved;
+                gizmo.gameObject.SetActive(true);
+            }
+
             inputReader.ScrollEvent += OnScroll;
+        }
+
+        private void OnGizmoMoved(Vector3 newPosition)
+        {
+            positionField.SetValueWithoutNotify(newPosition);
         }
 
         private void SetupShopControls()
@@ -164,8 +178,13 @@ namespace FeedTheRealm.UI.PlaceableEditor
         public override void CloseMenu()
         {
             inputReader.ScrollEvent -= OnScroll;
+
+            if (gizmo != null)
+                gizmo.OnPositionChanged -= OnGizmoMoved;
+
             focusedAxisField = null;
             focusedVectorField = null;
+            gizmo.gameObject.SetActive(false);
             base.CloseMenu();
         }
 
