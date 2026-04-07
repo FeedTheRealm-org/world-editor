@@ -85,112 +85,15 @@ Vector3Field {
     max-width: 100%;
 }
 
-Vector3Field > .unity-vector3-field__input {
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-y-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-z-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 100%;
-    min-width: 0%;
-    max-width: 60%;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-y-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 25%;
-    min-width: 0%;
-    max-width: 60%;
-}
 
-Vector3Field > .unity-vector3-field__input > #unity-z-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 25%;
-    min-width: 0%;
-    max-width: 60%;
-}
+
+
+
 
 DropdownField > .unity-popup-field__input {
     background-color: rgb(0, 0, 0);
@@ -213,4 +116,39 @@ DropdownField > .unity-popup-field__input > .unity-base-popup-field__arrow {
     max-width: 66px;
     width: 66px;
     min-width: 66px;
+}
+
+Vector3Field > .unity-vector3-field__input {
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-y-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-z-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-y-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
 }
