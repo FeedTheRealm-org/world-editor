@@ -1,0 +1,208 @@
+:root {
+}
+
+.world-character-edit-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.45);
+    justify-content: center;
+    align-items: center;
+}
+
+.world-character-edit-container {
+    width: 72%;
+    max-width: 1320px;
+    height: 78%;
+    max-height: 860px;
+    min-height: 620px;
+    padding-top: 16px;
+}
+
+.world-character-edit-content {
+    flex-direction: row;
+    flex-grow: 1;
+    gap: 16px;
+    min-height: 0;
+}
+
+.world-character-panel {
+    width: 30%;
+    min-width: 280px;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.world-preview-label {
+    font-size: 18px;
+}
+
+.hidden-input {
+    display: none;
+}
+
+.world-character-preview {
+    width: 100%;
+    aspect-ratio: 1;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-left-color: rgb(255, 255, 255);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.world-cosmetics-panel {
+    flex-grow: 1;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.world-error-message {
+    color: rgb(255, 135, 135);
+    min-height: 20px;
+    margin-bottom: 4px;
+}
+
+.world-action-row {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.hbar {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin-top: 6px;
+    margin-bottom: 8px;
+}
+
+.world-categories-scroll,
+.world-items-scroll {
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.45);
+    border-right-color: rgba(255, 255, 255, 0.45);
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+    border-left-color: rgba(255, 255, 255, 0.45);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-top: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+}
+
+.world-categories-scroll {
+    height: 94px;
+    min-height: 94px;
+    max-height: 94px;
+}
+
+.world-items-scroll {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.world-categories-scroll > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container,
+.world-categories-scroll > .unity-scroll-view__content-container,
+.world-items-scroll > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container,
+.world-items-scroll > .unity-scroll-view__content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.world-pagination-row {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.world-pagination-button {
+    min-width: 80px;
+}
+
+.world-page-info {
+    min-width: 120px;
+    -unity-text-align: middle-center;
+}
+
+.category_button,
+.item_button {
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.45);
+    border-right-color: rgba(255, 255, 255, 0.45);
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+    border-left-color: rgba(255, 255, 255, 0.45);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.category_button {
+    width: 54px;
+    min-width: 54px;
+    height: 54px;
+    min-height: 54px;
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.category_button > .unity-button__image {
+    width: 130%;
+    height: 130%;
+    min-width: 130%;
+    min-height: 130%;
+    max-width: 130%;
+    max-height: 130%;
+}
+
+.category_button_selected {
+    background-color: rgba(255, 255, 255, 0.22);
+    border-top-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-left-color: rgb(255, 255, 255);
+}
+
+.item_button {
+    width: 84px;
+    min-width: 84px;
+    height: 84px;
+    min-height: 84px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.item_button:hover,
+.category_button:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.world-hidden-back {
+    display: none;
+}

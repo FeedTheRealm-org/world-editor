@@ -1,4 +1,6 @@
 using System;
+using API;
+using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
@@ -19,7 +21,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         [SerializeField]
         private GameObject aggresiveNpcMenuPrefab;
 
+        [SerializeField]
+        private CharacterEditController characterEditor;
+
         private EnemyData editingEnemyData;
+        private Dictionary<string, string> pendingCategorySprites = new();
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -28,13 +34,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private IntegerField speedInput;
         private IntegerField rangeInput;
         private DropdownField lootTableInput;
+        private Button editCharacterButton;
         private Button closeButton;
         private Button saveButton;
 
         public void SetupEditor(AggresiveNpc npc)
         {
             editingEnemyData = npc.data;
-            SetupEditMode();
+
+            if (isActiveAndEnabled)
+            {
+                SetupEditMode();
+            }
         }
 
         private void OnEnable()
@@ -43,7 +54,31 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             InitializeFields(root);
             PopulateLootTables();
-            SetupCreateMode();
+            SetCharacterEditorVisible(false);
+
+            if (editingEnemyData != null)
+            {
+                SetupEditMode();
+            }
+            else
+            {
+                SetupCreateMode();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= ReturnToList;
+
+            if (saveButton != null)
+            {
+                saveButton.clicked -= CreateNewObject;
+                saveButton.clicked -= ReturnToList;
+            }
+
+            if (editCharacterButton != null)
+                editCharacterButton.clicked -= OpenCharacterEditor;
         }
 
         private void InitializeFields(VisualElement root)
@@ -55,6 +90,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             speedInput = root.Q<IntegerField>("Speed");
             rangeInput = root.Q<IntegerField>("Range");
             lootTableInput = root.Q<DropdownField>("LootTableField");
+            editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
 
@@ -70,7 +106,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void SetupCreateMode()
         {
             saveButton.text = "Create Enemy";
+            saveButton.clicked -= ReturnToList;
+            saveButton.clicked -= CreateNewObject;
             saveButton.clicked += CreateNewObject;
+
+            editCharacterButton.clicked -= OpenCharacterEditor;
+            editCharacterButton.clicked += OpenCharacterEditor;
         }
 
         private void SetupEditMode()
@@ -80,7 +121,42 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             saveButton.text = "Return to List";
             saveButton.clicked -= CreateNewObject;
+            saveButton.clicked -= ReturnToList;
             saveButton.clicked += ReturnToList;
+
+            editCharacterButton.clicked -= OpenCharacterEditor;
+            editCharacterButton.clicked += OpenCharacterEditor;
+        }
+
+        private void OpenCharacterEditor()
+        {
+            if (characterEditor == null)
+                return;
+
+            var categorySprites = editingEnemyData?.category_sprites ?? pendingCategorySprites;
+            if (categorySprites == null)
+                categorySprites = new Dictionary<string, string>();
+
+            var characterInfo = new CharacterInfoResponse
+            {
+                character_name = editingEnemyData?.name ?? nameInput?.value ?? string.Empty,
+                character_bio = editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
+                category_sprites = categorySprites
+            };
+
+            characterEditor.SetupWithCharacterInfo(characterInfo, SaveCharacterInfo);
+            SetCharacterEditorVisible(true);
+        }
+
+        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        {
+            if (editingEnemyData != null)
+            {
+                editingEnemyData.category_sprites = categorySprites;
+                return;
+            }
+
+            pendingCategorySprites = categorySprites ?? new Dictionary<string, string>();
         }
 
         private void PopulateFields()
@@ -144,8 +220,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 damageInput.value,
                 speedInput.value,
                 rangeInput.value,
-                null,
-                selectedLootTable?.data.id
+                selectedLootTable?.data.id,
+                editingEnemyData?.category_sprites
+                    ?? pendingCategorySprites
+                    ?? new Dictionary<string, string>()
             );
 
             var enemy = new AggresiveNpc(enemyData);
@@ -159,7 +237,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void ReturnToList()
         {
+            SetCharacterEditorVisible(false);
             OpenMenu(aggresiveNpcMenuPrefab);
+        }
+
+        private void SetCharacterEditorVisible(bool isVisible)
+        {
+            if (characterEditor == null)
+                return;
+
+            var characterEditorRoot = characterEditor.transform.parent != null
+                ? characterEditor.transform.parent.gameObject
+                : characterEditor.gameObject;
+
+            characterEditorRoot.SetActive(isVisible);
         }
     }
 }

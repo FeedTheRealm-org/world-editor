@@ -42,10 +42,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bd1207e0fde2445799c722ebc0c8951, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldEditor.WorldEditorEntrypoint
   parentReference:
-    TypeName:
+    TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
   worldSelector: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}
@@ -56,5 +56,7 @@ MonoBehaviour:
   worldPrefabProvider: {fileID: 11400000, guid: 36f48e688128bc65b8af8d71ef86f3f1, type: 2}
   WorldUIObjectProvider: {fileID: 11400000, guid: 522c26f378da6490e906908c0d09b9c6, type: 2}
   gltfService: {fileID: 11400000, guid: cbcfb360fbc87c237824cc04a950d33f, type: 2}
-  creatablesManager: {fileID: 11400000, guid: 08135c10225263a2d9af310ac5f81d4d, type: 2}
+  assetsService: {fileID: 11400000, guid: cd0887d2ef13cf0deb9953395f896994, type: 2}
+  playerService: {fileID: 11400000, guid: c32e41c719d74440b9719caf3db30295, type: 2}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   eventChannelRegistry: {fileID: 11400000, guid: 0485cfe168ab7e2d48f3982acb4b2a85, type: 2}

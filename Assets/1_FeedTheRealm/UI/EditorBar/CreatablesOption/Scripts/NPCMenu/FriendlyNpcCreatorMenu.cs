@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -21,6 +20,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         [SerializeField]
         private GameObject npcsMenuPrefab;
+
+        [SerializeField]
+        private CharacterEditController characterEditor;
 
         private NPCData editingData;
         private string selectedDialogId = "";
@@ -82,7 +84,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             nameInput.value = editingData.name;
             descriptionInput.value = editingData.description;
-            LoadExistingSprite(editingData.spriteFilePath);
 
             if (
                 editingData.npcDialog == null
@@ -204,8 +205,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                         return;
                     spritePreview.sprite = sprite;
                     pendingSpritePath = paths[0];
-                    if (editingData != null)
-                        editingData.spriteFilePath = pendingSpritePath;
                 },
                 onCancel: () => { }
             );
@@ -315,8 +314,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 Guid.NewGuid().ToString(),
                 nameInput.value,
                 descriptionInput.value ?? "",
-                pendingSpritePath ?? "",
-                npcDialogData
+                npcDialogData,
+                new Dictionary<string, string>()
             );
 
             creatablesManager.Add(new FriendlyNpc(npcData));
