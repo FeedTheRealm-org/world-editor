@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6259759607884325027}
   - component: {fileID: -1426683987570129422}
   - component: {fileID: 7179208095054563851}
+  - component: {fileID: 9153991195750763552}
   m_Layer: 0
   m_Name: EditOption
   m_TagString: Untagged
@@ -51,6 +52,7 @@ MonoBehaviour:
   menuOptions:
   - {fileID: -1426683987570129422}
   - {fileID: 7179208095054563851}
+  - {fileID: 9153991195750763552}
 --- !u!114 &-1426683987570129422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,4 +82,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
   label: Custom Model
   menuToOpen: {fileID: 4954236233821240776, guid: e9e6ed2b52fe402d0b32d625d933113f, type: 3}
+  menuOptions: []
+--- !u!114 &9153991195750763552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3182986232941324249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: Model Editor
+  menuToOpen: {fileID: 5034267514889570202, guid: b1bf42e05107f48d284de5650b149d42, type: 3}
   menuOptions: []

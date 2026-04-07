@@ -19,9 +19,6 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         private ModelsRepository modelsRepository;
 
         [Inject]
-        private Config config;
-
-        [Inject]
         private RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
 
         private Button selectModelButton;

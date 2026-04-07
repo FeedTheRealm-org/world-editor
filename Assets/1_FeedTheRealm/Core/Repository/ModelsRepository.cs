@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -40,6 +41,71 @@ namespace FeedTheRealm.Core.Repository
             GetModelsData().TryGetValue(modelId, out StructureData modelData);
             return Path.Combine(config.ModelsDirectory, modelData?.fileName ?? "");
         }
+
+        /// <summary>
+        /// Adds a new model to the repository and writes its metadata to disk.
+        /// Call this after copying the .glb file to the models directory.
+        /// </summary>
+        public void AddModel(StructureData model, string sourceFilePath)
+        {
+            if (!File.Exists(sourceFilePath))
+            {
+                logger.Log(
+                    $"[ModelsRepository] Source file not found: {sourceFilePath}",
+                    Logging.LogType.Error
+                );
+                return;
+            }
+
+            string destPath = Path.Combine(config.ModelsDirectory, model.fileName);
+            File.Copy(sourceFilePath, destPath, overwrite: true);
+            logger.Log(
+                $"[ModelsRepository] Copied model file to '{destPath}'.",
+                Logging.LogType.Info
+            );
+
+            WriteModelToDisk(model);
+
+            GetModelsData()[model.id] = model;
+
+            logger.Log(
+                $"[ModelsRepository] Added model '{model.structureName}' (id: {model.id}).",
+                Logging.LogType.Info
+            );
+        }
+
+        public void WriteModelToDisk(StructureData model)
+        {
+            try
+            {
+                string json = JsonUtility.ToJson(model, true);
+                File.WriteAllText(GetModelJsonPath(model.structureName), json);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[ModelsRepository] Failed to write '{model.structureName}': {ex.Message}",
+                    Logging.LogType.Error
+                );
+            }
+        }
+
+        public void DeleteModel(StructureData model)
+        {
+            DeleteModelFromDisk(model.structureName);
+
+            string glbPath = Path.Combine(config.ModelsDirectory, model.fileName);
+            if (File.Exists(glbPath))
+                File.Delete(glbPath);
+
+            modelsData?.Remove(model.id);
+            logger.Log(
+                $"[ModelsRepository] Deleted model '{model.structureName}' and its files.",
+                Logging.LogType.Info
+            );
+        }
+
+        // ------ PRIVATE METHODS ------
 
         /// <summary>
         /// Scans StreamingAssets/Models for any .glb files that don't yet
@@ -118,62 +184,14 @@ namespace FeedTheRealm.Core.Repository
             return result;
         }
 
-        public void WriteModelToDisk(StructureData model)
-        {
-            try
-            {
-                string json = JsonUtility.ToJson(model, true);
-                File.WriteAllText(GetModelJsonPath(model.structureName), json);
-            }
-            catch (Exception ex)
-            {
-                logger.Log(
-                    $"[ModelsRepository] Failed to write '{model.structureName}': {ex.Message}",
-                    Logging.LogType.Error
-                );
-            }
-        }
-
-        public void DeleteModelFromDisk(string modelName)
+        private void DeleteModelFromDisk(string modelName)
         {
             string jsonPath = GetModelJsonPath(modelName);
             if (!File.Exists(jsonPath))
                 return;
             File.Delete(jsonPath);
-            modelsData = null; // invalidate cache
             logger.Log(
                 $"[ModelsRepository] Deleted model metadata for '{modelName}'.",
-                Logging.LogType.Info
-            );
-        }
-
-        /// <summary>
-        /// Adds a new model to the repository and writes its metadata to disk.
-        /// Call this after copying the .glb file to the models directory.
-        /// </summary>
-        public void AddModel(StructureData model, string sourceFilePath)
-        {
-            if (!File.Exists(sourceFilePath))
-            {
-                logger.Log(
-                    $"[ModelsRepository] Source file not found: {sourceFilePath}",
-                    Logging.LogType.Error
-                );
-                return;
-            }
-
-            string destPath = Path.Combine(config.ModelsDirectory, model.fileName);
-            File.Copy(sourceFilePath, destPath, overwrite: true);
-            logger.Log(
-                $"[ModelsRepository] Copied model file to '{destPath}'.",
-                Logging.LogType.Info
-            );
-
-            WriteModelToDisk(model);
-            modelsData ??= new Dictionary<string, StructureData>();
-            modelsData[model.id] = model;
-            logger.Log(
-                $"[ModelsRepository] Added model '{model.structureName}' (id: {model.id}).",
                 Logging.LogType.Info
             );
         }
