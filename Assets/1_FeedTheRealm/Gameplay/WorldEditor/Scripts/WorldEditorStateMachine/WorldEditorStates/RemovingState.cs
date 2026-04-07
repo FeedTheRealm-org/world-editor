@@ -30,7 +30,14 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
         public void OnPrimaryAction()
         {
             worldEditor.Log($"ObjectLayerMask value: {objectLayerMask.value}");
-            if (!Raycaster.TryGetPlacementPoint(worldEditor, objectLayerMask, out RaycastHit hit))
+            if (
+                !Raycaster.TryGetPlacementPoint(
+                    worldEditor.playerCamera,
+                    worldEditor.inputReader,
+                    objectLayerMask,
+                    out RaycastHit hit
+                )
+            )
             {
                 worldEditor.Log("No objects to remove.");
                 worldEditor.Log($"Hit object: {hit.collider}");

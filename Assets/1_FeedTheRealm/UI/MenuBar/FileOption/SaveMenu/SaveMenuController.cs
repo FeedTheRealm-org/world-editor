@@ -137,10 +137,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
         {
             try
             {
-                string worldName = GetValidatedWorldName();
-                EnsureWorldData(worldName);
+                string validatedWorldName = GetValidatedWorldName();
+                EnsureWorldData(validatedWorldName);
                 dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                worldSelector.selectedWorld = worldName;
+                worldSelector.selectedWorld = validatedWorldName;
                 ToastNotification.Show("World data saved", "success", Color.green);
             }
             catch (Exception ex)

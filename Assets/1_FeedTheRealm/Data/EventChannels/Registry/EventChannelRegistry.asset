@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 846cebe1cf154b4808cceba705a4c633, type: 3}
   m_Name: EventChannelRegistry
   m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.EventChannels.EventChannelRegistry
-  loadWorldEvent: {fileID: 11400000, guid: 7d804ceddaa20b3e4930db8529b2cd18, type: 2}
-  worldSelectedEvent: {fileID: 11400000, guid: d48fb7613a5cc551799d9fc3c744a345, type: 2}
   objectSelectedEvent: {fileID: 11400000, guid: 63a090ff7d2d67b59b90b4c80039ce86, type: 2}
   enableEditorEvent: {fileID: 11400000, guid: da8ed595ac86d4deda9a9fff9185ee49, type: 2}
   ZoneDataRegistryEvent: {fileID: 11400000, guid: d9ba8ff6c5acf3efab692e7e82f6e06e, type: 2}
@@ -22,6 +20,7 @@ MonoBehaviour:
   categorySelectedEvent: {fileID: 11400000, guid: 9c40dcb755848f4249665728d6806c50, type: 2}
   enableInputEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}
   refreshZonesEvent: {fileID: 11400000, guid: f828652c704830b158870a29769c0e61, type: 2}
+  refreshPlaceableLibraryEvent: {fileID: 11400000, guid: d891f22fbbdab8b46b933f633c40bc7e, type: 2}
   tickEvent: {fileID: 11400000, guid: 2cc95b74b8a1ad36f88f366fcbf4e8e3, type: 2}
   fixedTickEvent: {fileID: 11400000, guid: 5bcf141af277623009f9582fea19b6f1, type: 2}
   lateTickEvent: {fileID: 11400000, guid: 3ac78d2c84182126eb836dab55d71af3, type: 2}

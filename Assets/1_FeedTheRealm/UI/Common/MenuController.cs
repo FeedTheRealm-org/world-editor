@@ -17,11 +17,17 @@ namespace FeedTheRealm.UI.Common
         [Inject]
         protected IObjectResolver resolver;
 
+        [SerializeField]
+        private bool AllowInputWhileOpen = false;
+
         void Awake()
         {
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised += OnInputEventRaised;
-            enableInputEvent?.Raise(false);
+
+            if (enableInputEvent != null && !AllowInputWhileOpen)
+                enableInputEvent.Raise(false);
+
             enableEditorEvent?.Raise(false);
         }
 
@@ -33,7 +39,7 @@ namespace FeedTheRealm.UI.Common
 
         private void OnInputEventRaised(bool isEnabled)
         {
-            if (isEnabled)
+            if (isEnabled && !AllowInputWhileOpen)
                 enableInputEvent?.Raise(false);
         }
 

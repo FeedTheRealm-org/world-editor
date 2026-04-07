@@ -36,7 +36,12 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
         private async Task OnPrimaryActionAsync()
         {
             if (
-                !Raycaster.TryGetPlacementPoint(worldEditor, placementLayerMask, out RaycastHit hit)
+                !Raycaster.TryGetPlacementPoint(
+                    worldEditor.playerCamera,
+                    worldEditor.inputReader,
+                    placementLayerMask,
+                    out RaycastHit hit
+                )
             )
                 return;
 
