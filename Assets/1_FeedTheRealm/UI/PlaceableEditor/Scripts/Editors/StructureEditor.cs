@@ -36,6 +36,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private Toggle shopToggle;
         private DropdownField shopDropdown;
         private Button closeButton;
+        private Toggle collidersToggle;
 
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
@@ -57,6 +58,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             shopToggle = root.Q<Toggle>("ShopToggle");
             shopDropdown = root.Q<DropdownField>("ShopDropdown");
             closeButton = root.Q<Button>("Close");
+            collidersToggle = root.Q<Toggle>("CollidersToggle");
+            collidersToggle.RegisterValueChangedCallback(OnCollidersToggleChanged);
 
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
             rotationField.RegisterValueChangedCallback(e =>
@@ -89,6 +92,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             titleLabel.text = target.name;
             positionField.SetValueWithoutNotify(target.transform.position);
             rotationField.SetValueWithoutNotify(target.transform.localEulerAngles);
+            collidersToggle.SetValueWithoutNotify(target.data.hasColliders);
             scaleField.SetValueWithoutNotify(target.transform.localScale);
 
             SetupShopControls();
@@ -249,6 +253,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 return;
             target.data.isShop = true;
             target.data.shopId = selected.Id;
+        }
+
+        private void OnCollidersToggleChanged(ChangeEvent<bool> evt)
+        {
+            target.data.hasColliders = evt.newValue;
         }
 
         // ---- Close ----

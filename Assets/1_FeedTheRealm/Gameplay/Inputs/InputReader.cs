@@ -60,12 +60,12 @@ namespace FeedTheRealm.Gameplay.Inputs
             }
             else
             {
-                // controls.Player.Move.Disable();
-                // controls.Player.Look.Disable();
-                // controls.Player.MoveUp.Disable();
-                // controls.Player.MoveDown.Disable();
-                // controls.Player.SecondaryInteraction.Disable();
-                // controls.Player.PrimaryInteraction.Disable();
+                controls.Player.Move.Disable();
+                controls.Player.Look.Disable();
+                controls.Player.MoveUp.Disable();
+                controls.Player.MoveDown.Disable();
+                controls.Player.SecondaryInteraction.Disable();
+                controls.Player.PrimaryInteraction.Disable();
             }
         }
 

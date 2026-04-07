@@ -19,6 +19,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 fileName = data.fileName,
                 isShop = data.isShop,
                 shopId = data.shopId,
+                hasColliders = data.hasColliders,
 
                 position = gameObject.transform.position,
                 rotation = gameObject.transform.rotation.eulerAngles,
