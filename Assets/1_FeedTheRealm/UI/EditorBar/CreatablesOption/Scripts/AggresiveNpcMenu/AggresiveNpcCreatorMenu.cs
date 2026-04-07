@@ -22,7 +22,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private GameObject aggresiveNpcMenuPrefab;
 
         [SerializeField]
-        private CharacterEditController characterEditor;
+        private GameObject characterEditorPrefab;
 
         private EnemyData editingEnemyData;
         private Dictionary<string, string> pendingCategorySprites = new();
@@ -37,6 +37,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private Button editCharacterButton;
         private Button closeButton;
         private Button saveButton;
+
+        private GameObject characterEditorInstance;
+        private CharacterEditController characterEditor;
 
         public void SetupEditor(AggresiveNpc npc)
         {
@@ -54,6 +57,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             InitializeFields(root);
             PopulateLootTables();
+            HideEmbeddedCharacterEditors();
             SetCharacterEditorVisible(false);
 
             if (editingEnemyData != null)
@@ -79,6 +83,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             if (editCharacterButton != null)
                 editCharacterButton.clicked -= OpenCharacterEditor;
+
+            DestroyCharacterEditorInstance();
+        }
+
+        private void Update()
+        {
+            if (characterEditorInstance != null && !characterEditorInstance.activeSelf)
+            {
+                DestroyCharacterEditorInstance();
+            }
         }
 
         private void InitializeFields(VisualElement root)
@@ -130,7 +144,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void OpenCharacterEditor()
         {
-            if (characterEditor == null)
+            if (!EnsureCharacterEditorInstance())
                 return;
 
             var categorySprites = editingEnemyData?.category_sprites ?? pendingCategorySprites;
@@ -243,14 +257,92 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SetCharacterEditorVisible(bool isVisible)
         {
-            if (characterEditor == null)
+            if (isVisible)
+            {
+                if (!EnsureCharacterEditorInstance())
+                    return;
+
+                characterEditorInstance.SetActive(true);
+                return;
+            }
+
+            if (characterEditorInstance == null)
                 return;
 
-            var characterEditorRoot = characterEditor.transform.parent != null
-                ? characterEditor.transform.parent.gameObject
-                : characterEditor.gameObject;
+            characterEditorInstance.SetActive(false);
+            DestroyCharacterEditorInstance();
+        }
 
-            characterEditorRoot.SetActive(isVisible);
+        private bool EnsureCharacterEditorInstance()
+        {
+            if (characterEditorInstance != null && characterEditor != null)
+                return true;
+
+            ResolveCharacterEditorPrefabFallback();
+
+            if (characterEditorPrefab == null)
+            {
+                Debug.LogError("Character editor prefab is not assigned.", this);
+                return false;
+            }
+
+            characterEditorInstance = Instantiate(characterEditorPrefab);
+            characterEditorInstance.name = $"{characterEditorPrefab.name}_Runtime";
+            characterEditorInstance.transform.SetParent(null, false);
+            characterEditor = characterEditorInstance.GetComponentInChildren<CharacterEditController>(
+                true
+            );
+
+            if (characterEditor == null)
+            {
+                Debug.LogError(
+                    "CharacterEditController component was not found on instantiated character editor prefab.",
+                    this
+                );
+                DestroyCharacterEditorInstance();
+                return false;
+            }
+
+            characterEditorInstance.SetActive(false);
+            return true;
+        }
+
+        private void ResolveCharacterEditorPrefabFallback()
+        {
+            if (characterEditorPrefab != null)
+                return;
+
+            var embeddedEditor = GetComponentInChildren<CharacterEditController>(true);
+            if (embeddedEditor == null)
+                return;
+
+            characterEditorPrefab = embeddedEditor.transform.parent != null
+                ? embeddedEditor.transform.parent.gameObject
+                : embeddedEditor.gameObject;
+        }
+
+        private void HideEmbeddedCharacterEditors()
+        {
+            var embeddedEditors = GetComponentsInChildren<CharacterEditController>(true);
+            foreach (var embeddedEditor in embeddedEditors)
+            {
+                var root = embeddedEditor.transform.parent != null
+                    ? embeddedEditor.transform.parent.gameObject
+                    : embeddedEditor.gameObject;
+
+                root.SetActive(false);
+            }
+        }
+
+        private void DestroyCharacterEditorInstance()
+        {
+            if (characterEditorInstance != null)
+            {
+                Destroy(characterEditorInstance);
+                characterEditorInstance = null;
+            }
+
+            characterEditor = null;
         }
     }
 }
