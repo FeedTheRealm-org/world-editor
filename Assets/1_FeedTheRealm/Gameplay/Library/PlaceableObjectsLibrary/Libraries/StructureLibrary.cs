@@ -48,6 +48,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         public async UniTask<GameObject> GetItem(string structureId)
         {
             logger.Log($"GetItem called for {structureId}");
+            GameObject instance = null;
             try
             {
                 if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
@@ -66,7 +67,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                 }
 
                 // Instantiate and load data onto the new instance
-                var instance = resolver.Instantiate(cachedStructure);
+                instance = resolver.Instantiate(cachedStructure);
                 var instanceModelData = modelsData.GetValueOrDefault(structureId);
                 instance.GetComponent<ILoadable<StructureData>>().Load(instanceModelData);
                 instance.SetActive(true);
@@ -77,6 +78,8 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             catch (System.Exception e)
             {
                 logger.Log($"GetItem failed for {structureId}: {e}", Logging.LogType.Error);
+                if (instance != null)
+                    Object.Destroy(instance);
                 return null;
             }
         }

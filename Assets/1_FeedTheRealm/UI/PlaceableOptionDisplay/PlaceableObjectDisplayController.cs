@@ -24,6 +24,9 @@ namespace FeedTheRealm.UI.EditorBar
         [Inject]
         private EnableInputEvent enableInputEvent;
 
+        [Inject]
+        private RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
+
         private ListView libraryBar;
         private List<PlaceableOption> currentItems = new();
 
@@ -45,13 +48,15 @@ namespace FeedTheRealm.UI.EditorBar
 
             libraryBar.makeItem = MakeListItem;
             libraryBar.bindItem = BindListItem;
-
+            refreshPlaceableLibraryEvent.OnRaised += RefreshLibrary;
             categorySelectedEvent.OnRaised += LoadObjectsForCategory;
+
             LoadObjectsForCategory(PlaceableObjectCategories.Structure);
         }
 
         void OnDestroy()
         {
+            refreshPlaceableLibraryEvent.OnRaised -= RefreshLibrary;
             categorySelectedEvent.OnRaised -= LoadObjectsForCategory;
         }
 
@@ -80,6 +85,11 @@ namespace FeedTheRealm.UI.EditorBar
             currentItems = placeableObjectLibrary.GetPlaceableOptions(category);
             libraryBar.itemsSource = currentItems;
             libraryBar.Rebuild();
+        }
+
+        private void RefreshLibrary()
+        {
+            LoadObjectsForCategory(PlaceableObjectCategories.Structure);
         }
     }
 }

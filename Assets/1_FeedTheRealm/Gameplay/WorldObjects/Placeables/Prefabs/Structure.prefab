@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6704343843985577907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5031604658594829505}
+  m_Layer: 11
+  m_Name: Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5031604658594829505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6704343843985577907}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4421515928892810060}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8418757689684725357
 GameObject:
   m_ObjectHideFlags: 0
@@ -27,10 +58,11 @@ Transform:
   m_GameObject: {fileID: 8418757689684725357}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.60524, y: 6.66, z: -4.3417}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5031604658594829505}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1566196178668064025
@@ -45,6 +77,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e01a0c99194187aadb8935bf1828e7, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldObjects.StructureObject
+  data:
+    id:
+    size: {x: 1, y: 1, z: 1}
+    rotation: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0, z: 0}
+    fileName:
+    structureName: New Structure
+    isShop: 0
+    shopId:
+    colliderSize: {x: 0, y: 0, z: 0}
+    colliderCenter: {x: 0, y: 0, z: 0}
+    hasColliders: 1
 --- !u!65 &6615877233883412725
 BoxCollider:
   m_ObjectHideFlags: 0

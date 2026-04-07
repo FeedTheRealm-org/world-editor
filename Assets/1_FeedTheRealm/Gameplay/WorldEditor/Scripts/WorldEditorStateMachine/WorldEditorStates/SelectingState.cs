@@ -25,7 +25,8 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
         public void OnPrimaryAction()
         {
             GameObject selectedObject = Raycaster.GetGameObject(
-                worldEditor,
+                worldEditor.playerCamera,
+                worldEditor.inputReader,
                 WorldLayers.WorldObjectLayerMask
             );
             if (!selectedObject)
