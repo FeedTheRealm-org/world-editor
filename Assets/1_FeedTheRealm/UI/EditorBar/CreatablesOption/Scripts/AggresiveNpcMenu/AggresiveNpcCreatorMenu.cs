@@ -37,9 +37,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private Button editCharacterButton;
         private Button closeButton;
         private Button saveButton;
+        private Image spritePreview;
 
         private GameObject characterEditorInstance;
         private CharacterEditController characterEditor;
+        private AggresiveNpcCharacterPreviewRenderer characterPreviewRenderer;
+        private bool pendingPreviewRefresh;
 
         public void SetupEditor(AggresiveNpc npc)
         {
@@ -48,6 +51,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (isActiveAndEnabled)
             {
                 SetupEditMode();
+                pendingPreviewRefresh = true;
+                RefreshCharacterPreview();
             }
         }
 
@@ -68,6 +73,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 SetupCreateMode();
             }
+
+            pendingPreviewRefresh = true;
+            RefreshCharacterPreview();
         }
 
         private void OnDisable()
@@ -85,6 +93,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 editCharacterButton.clicked -= OpenCharacterEditor;
 
             DestroyCharacterEditorInstance();
+            DisposeCharacterPreviewRenderer();
+
+            if (spritePreview != null)
+            {
+                spritePreview.image = null;
+            }
         }
 
         private void Update()
@@ -92,6 +106,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (characterEditorInstance != null && !characterEditorInstance.activeSelf)
             {
                 DestroyCharacterEditorInstance();
+                SetCharacterPreviewVisible(true);
+            }
+
+            if (pendingPreviewRefresh && characterEditorInstance == null)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
             }
         }
 
@@ -107,6 +128,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
+            spritePreview = root.Q<Image>("SpritePreview");
 
             closeButton.clicked += ReturnToList;
         }
@@ -147,16 +169,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (!EnsureCharacterEditorInstance())
                 return;
 
-            var categorySprites = editingEnemyData?.category_sprites ?? pendingCategorySprites;
-            if (categorySprites == null)
-                categorySprites = new Dictionary<string, string>();
-
-            var characterInfo = new CharacterInfoResponse
-            {
-                character_name = editingEnemyData?.name ?? nameInput?.value ?? string.Empty,
-                character_bio = editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
-                category_sprites = categorySprites
-            };
+            var characterInfo = BuildCharacterInfo();
 
             characterEditor.SetupWithCharacterInfo(characterInfo, SaveCharacterInfo);
             SetCharacterEditorVisible(true);
@@ -167,10 +180,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (editingEnemyData != null)
             {
                 editingEnemyData.category_sprites = categorySprites;
+                pendingPreviewRefresh = true;
                 return;
             }
 
             pendingCategorySprites = categorySprites ?? new Dictionary<string, string>();
+            pendingPreviewRefresh = true;
         }
 
         private void PopulateFields()
@@ -262,15 +277,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 if (!EnsureCharacterEditorInstance())
                     return;
 
+                SetCharacterPreviewVisible(false);
                 characterEditorInstance.SetActive(true);
                 return;
             }
 
-            if (characterEditorInstance == null)
-                return;
+            if (characterEditorInstance != null)
+            {
+                characterEditorInstance.SetActive(false);
+                DestroyCharacterEditorInstance();
+            }
 
-            characterEditorInstance.SetActive(false);
-            DestroyCharacterEditorInstance();
+            SetCharacterPreviewVisible(true);
+
+            if (pendingPreviewRefresh)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
         }
 
         private bool EnsureCharacterEditorInstance()
@@ -332,6 +356,67 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
                 root.SetActive(false);
             }
+        }
+
+        private CharacterInfoResponse BuildCharacterInfo()
+        {
+            var categorySprites = editingEnemyData?.category_sprites ?? pendingCategorySprites;
+            if (categorySprites == null)
+                categorySprites = new Dictionary<string, string>();
+
+            return new CharacterInfoResponse
+            {
+                character_name = editingEnemyData?.name ?? nameInput?.value ?? string.Empty,
+                character_bio = editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
+                category_sprites = new Dictionary<string, string>(categorySprites)
+            };
+        }
+
+        private void RefreshCharacterPreview()
+        {
+            if (spritePreview == null)
+                return;
+
+            if (!EnsureCharacterPreviewRenderer())
+            {
+                spritePreview.image = null;
+                return;
+            }
+
+            characterPreviewRenderer.Refresh(spritePreview, BuildCharacterInfo());
+        }
+
+        private bool EnsureCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer != null)
+                return true;
+
+            ResolveCharacterEditorPrefabFallback();
+
+            if (characterEditorPrefab == null)
+            {
+                Debug.LogError("Character editor prefab is not assigned.", this);
+                return false;
+            }
+
+            characterPreviewRenderer = new AggresiveNpcCharacterPreviewRenderer(characterEditorPrefab);
+            return true;
+        }
+
+        private void SetCharacterPreviewVisible(bool isVisible)
+        {
+            characterPreviewRenderer?.SetVisible(isVisible);
+        }
+
+        private void DisposeCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer == null)
+            {
+                return;
+            }
+
+            characterPreviewRenderer.Dispose();
+            characterPreviewRenderer = null;
         }
 
         private void DestroyCharacterEditorInstance()
