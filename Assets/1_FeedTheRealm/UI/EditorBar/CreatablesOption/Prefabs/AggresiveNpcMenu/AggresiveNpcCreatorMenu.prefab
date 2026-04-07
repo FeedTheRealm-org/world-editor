@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
   m_ParentUI: {fileID: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c328ac26c88ffb1c0b17183512280d14, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCreatorMenuController
   aggresiveNpcMenuPrefab: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
   characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}

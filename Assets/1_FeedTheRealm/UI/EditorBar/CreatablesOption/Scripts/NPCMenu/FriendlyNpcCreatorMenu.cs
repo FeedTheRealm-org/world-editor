@@ -4,8 +4,8 @@ using System.Linq;
 using API;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -345,7 +345,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             {
                 character_name = editingData?.name ?? nameInput?.value ?? string.Empty,
                 character_bio = editingData?.description ?? descriptionInput?.value ?? string.Empty,
-                category_sprites = new Dictionary<string, string>(categorySprites)
+                category_sprites = new Dictionary<string, string>(categorySprites),
             };
         }
 
@@ -471,7 +471,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 npcDialogData.SetMessageQuestMap(messageQuestAssignments);
             }
 
-            var categorySprites = editingData?.category_sprites
+            var categorySprites =
+                editingData?.category_sprites
                 ?? pendingCategorySprites
                 ?? new Dictionary<string, string>();
 

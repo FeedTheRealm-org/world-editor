@@ -1,11 +1,11 @@
 using System;
-using API;
 using System.Collections.Generic;
 using System.Linq;
+using API;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -191,7 +191,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         {
             if (editingEnemyData != null)
             {
-                editingEnemyData.category_sprites = categorySprites ?? new Dictionary<string, string>();
+                editingEnemyData.category_sprites =
+                    categorySprites ?? new Dictionary<string, string>();
                 pendingPreviewRefresh = true;
                 return;
             }
@@ -343,8 +344,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             return new CharacterInfoResponse
             {
                 character_name = editingEnemyData?.name ?? nameInput?.value ?? string.Empty,
-                character_bio = editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
-                category_sprites = new Dictionary<string, string>(categorySprites)
+                character_bio =
+                    editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
+                category_sprites = new Dictionary<string, string>(categorySprites),
             };
         }
 

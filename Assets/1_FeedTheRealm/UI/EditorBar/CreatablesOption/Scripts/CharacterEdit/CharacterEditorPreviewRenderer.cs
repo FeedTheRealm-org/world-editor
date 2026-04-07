@@ -74,7 +74,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             previewInstance = UnityEngine.Object.Instantiate(characterEditorPrefab);
             previewInstance.name = $"{characterEditorPrefab.name}_Preview";
 
-            previewController = previewInstance.GetComponentInChildren<CharacterEditController>(true);
+            previewController = previewInstance.GetComponentInChildren<CharacterEditController>(
+                true
+            );
             previewCamera = previewInstance.GetComponentInChildren<Camera>(true);
 
             if (previewController == null || previewCamera == null)
@@ -123,9 +125,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             {
                 character_name = safeSource.character_name ?? string.Empty,
                 character_bio = safeSource.character_bio ?? string.Empty,
-                category_sprites = safeSource.category_sprites != null
-                    ? new Dictionary<string, string>(safeSource.category_sprites)
-                    : new Dictionary<string, string>()
+                category_sprites =
+                    safeSource.category_sprites != null
+                        ? new Dictionary<string, string>(safeSource.category_sprites)
+                        : new Dictionary<string, string>(),
             };
         }
     }

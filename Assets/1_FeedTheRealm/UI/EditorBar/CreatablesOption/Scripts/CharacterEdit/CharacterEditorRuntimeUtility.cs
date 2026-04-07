@@ -26,9 +26,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             var embeddedEditors = host.GetComponentsInChildren<CharacterEditController>(true);
             foreach (var embeddedEditor in embeddedEditors)
             {
-                var root = embeddedEditor.transform.parent != null
-                    ? embeddedEditor.transform.parent.gameObject
-                    : embeddedEditor.gameObject;
+                var root =
+                    embeddedEditor.transform.parent != null
+                        ? embeddedEditor.transform.parent.gameObject
+                        : embeddedEditor.gameObject;
 
                 root.SetActive(false);
             }
