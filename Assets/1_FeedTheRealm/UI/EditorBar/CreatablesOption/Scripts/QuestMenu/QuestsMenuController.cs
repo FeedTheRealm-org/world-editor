@@ -1,6 +1,9 @@
+using System;
+using Enums;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -91,8 +94,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         public override void OpenMenu(GameObject menuPrefab)
         {
             var menuInstance = resolver.Instantiate(menuPrefab);
+            var editor = menuInstance.GetComponent<QuestCreatorMenu>();
             if (editingQuest != null)
-                menuInstance.GetComponent<QuestCreatorMenu>()?.SetupEditor(editingQuest);
+            {
+                editor?.SetupEditor(editingQuest);
+            }
+            else
+            {
+                var stagingQuestData = new QuestData(
+                    Guid.NewGuid().ToString(),
+                    string.Empty,
+                    string.Empty,
+                    QuestType.EnemySlays,
+                    string.Empty,
+                    1,
+                    null,
+                    null
+                );
+                editor?.SetupStagingQuest(stagingQuestData);
+            }
+
             Destroy(gameObject);
         }
     }
