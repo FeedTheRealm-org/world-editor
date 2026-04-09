@@ -68,6 +68,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
         void OnDisable()
         {
+            addRewardButton.clicked -= AddReward;
+            returnButton.clicked -= ReturnToQuestEditor;
+            if (returnToQuestEditorButton != null)
+                returnToQuestEditorButton.clicked -= ReturnToQuestEditor;
+            closeButton.clicked -= CloseMenu;
             rewardTypeDropdown?.UnregisterValueChangedCallback(OnRewardTypeChanged);
         }
 
@@ -75,6 +80,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         {
             this.questData = questData;
             this.isNewQuest = isNewQuest;
+
+            if (this.questData != null && this.questData.rewards == null)
+                this.questData.rewards = new List<QuestRewardData>();
+
             RefreshRewardList();
         }
 
@@ -163,25 +172,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                     );
                     break;
                 case QuestRewardType.Item:
-                    reward = new QuestRewardData(
-                        rewardType,
-                        0,
-                        GetSelectedItemId() ?? string.Empty,
-                        string.Empty
-                    );
+                    var itemId = GetSelectedItemId();
+                    if (string.IsNullOrEmpty(itemId))
+                        return;
+
+                    reward = new QuestRewardData(rewardType, 0, itemId, string.Empty);
                     break;
                 case QuestRewardType.LootTable:
-                    reward = new QuestRewardData(
-                        rewardType,
-                        0,
-                        string.Empty,
-                        GetSelectedLootTableId() ?? string.Empty
-                    );
+                    var lootTableId = GetSelectedLootTableId();
+                    if (string.IsNullOrEmpty(lootTableId))
+                        return;
+
+                    reward = new QuestRewardData(rewardType, 0, string.Empty, lootTableId);
                     break;
                 default:
                     reward = new QuestRewardData(rewardType, 0, string.Empty, string.Empty);
                     break;
             }
+
+            if (questData.rewards == null)
+                questData.rewards = new List<QuestRewardData>();
 
             questData.rewards.Add(reward);
             RefreshRewardList();
@@ -190,7 +200,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         private void RefreshRewardList()
         {
             rewardsScrollView.Clear();
-            if (questData == null)
+            if (questData == null || questData.rewards == null)
                 return;
 
             foreach (var reward in questData.rewards)

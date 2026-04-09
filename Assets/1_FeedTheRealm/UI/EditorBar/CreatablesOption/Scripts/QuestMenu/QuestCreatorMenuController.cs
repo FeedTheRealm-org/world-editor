@@ -76,6 +76,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         void OnDisable()
         {
             questTypeDropdown?.UnregisterValueChangedCallback(OnQuestTypeChanged);
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            root.Q<Button>("Return").clicked -= ReturnToList;
+            if (rewardsButton != null)
+                rewardsButton.clicked -= OpenRewardsMenu;
+            if (closeButton != null)
+                closeButton.clicked -= CloseMenu;
+            saveButton.clicked -= CreateNewObject;
         }
 
         public void SetupEditor(Quest quest)
