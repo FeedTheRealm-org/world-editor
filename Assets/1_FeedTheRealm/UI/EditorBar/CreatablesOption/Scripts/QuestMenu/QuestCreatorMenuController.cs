@@ -176,11 +176,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
             var summaries = questData.rewards.Select(reward =>
             {
-                if (reward.rewardType == QuestData.QuestRewardType.Gold)
+                if (reward.rewardType == QuestRewardType.Gold)
                     return $"Gold: {reward.goldAmount}";
-                if (reward.rewardType == QuestData.QuestRewardType.Item)
+                if (reward.rewardType == QuestRewardType.Item)
                     return $"Item: {GetItemNameById(reward.itemId)}";
-                if (reward.rewardType == QuestData.QuestRewardType.LootTable)
+                if (reward.rewardType == QuestRewardType.LootTable)
                     return $"LootTable: {GetLootTableNameById(reward.lootTableId)}";
                 return "Reward";
             });

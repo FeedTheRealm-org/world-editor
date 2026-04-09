@@ -53,8 +53,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             lootTableRow = root.Q<VisualElement>("LootTableRow");
             goldRow = root.Q<VisualElement>("GoldRow");
 
-            rewardTypeDropdown.choices = Enum.GetNames(typeof(QuestData.QuestRewardType)).ToList();
-            rewardTypeDropdown.value = QuestData.QuestRewardType.Gold.ToString();
+            rewardTypeDropdown.choices = Enum.GetNames(typeof(QuestRewardType)).ToList();
+            rewardTypeDropdown.value = QuestRewardType.Gold.ToString();
             UpdateRewardTypeUI(rewardTypeDropdown.value);
 
             rewardTypeDropdown.RegisterValueChangedCallback(OnRewardTypeChanged);
@@ -89,19 +89,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             lootTableRow.style.display = DisplayStyle.None;
             goldRow.style.display = DisplayStyle.None;
 
-            if (!Enum.TryParse<QuestData.QuestRewardType>(rewardTypeValue, out var rewardType))
+            if (!Enum.TryParse<QuestRewardType>(rewardTypeValue, out var rewardType))
                 return;
 
             switch (rewardType)
             {
-                case QuestData.QuestRewardType.Gold:
+                case QuestRewardType.Gold:
                     goldRow.style.display = DisplayStyle.Flex;
                     break;
-                case QuestData.QuestRewardType.Item:
+                case QuestRewardType.Item:
                     itemRow.style.display = DisplayStyle.Flex;
                     PopulateItemDropdown();
                     break;
-                case QuestData.QuestRewardType.LootTable:
+                case QuestRewardType.LootTable:
                     lootTableRow.style.display = DisplayStyle.Flex;
                     PopulateLootTableDropdown();
                     break;
@@ -148,35 +148,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             if (questData == null)
                 return;
 
-            if (
-                !Enum.TryParse<QuestData.QuestRewardType>(
-                    rewardTypeDropdown.value,
-                    out var rewardType
-                )
-            )
+            if (!Enum.TryParse<QuestRewardType>(rewardTypeDropdown.value, out var rewardType))
                 return;
 
-            QuestData.QuestRewardData reward;
+            QuestRewardData reward;
             switch (rewardType)
             {
-                case QuestData.QuestRewardType.Gold:
-                    reward = new QuestData.QuestRewardData(
+                case QuestRewardType.Gold:
+                    reward = new QuestRewardData(
                         rewardType,
                         goldAmountField.value,
                         string.Empty,
                         string.Empty
                     );
                     break;
-                case QuestData.QuestRewardType.Item:
-                    reward = new QuestData.QuestRewardData(
+                case QuestRewardType.Item:
+                    reward = new QuestRewardData(
                         rewardType,
                         0,
                         GetSelectedItemId() ?? string.Empty,
                         string.Empty
                     );
                     break;
-                case QuestData.QuestRewardType.LootTable:
-                    reward = new QuestData.QuestRewardData(
+                case QuestRewardType.LootTable:
+                    reward = new QuestRewardData(
                         rewardType,
                         0,
                         string.Empty,
@@ -184,12 +179,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                     );
                     break;
                 default:
-                    reward = new QuestData.QuestRewardData(
-                        rewardType,
-                        0,
-                        string.Empty,
-                        string.Empty
-                    );
+                    reward = new QuestRewardData(rewardType, 0, string.Empty, string.Empty);
                     break;
             }
 
@@ -240,13 +230,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             }
         }
 
-        private string GetRewardDisplayText(QuestData.QuestRewardData reward)
+        private string GetRewardDisplayText(QuestRewardData reward)
         {
-            if (reward.rewardType == QuestData.QuestRewardType.Gold)
+            if (reward.rewardType == QuestRewardType.Gold)
                 return $"Gold: {reward.goldAmount}";
-            if (reward.rewardType == QuestData.QuestRewardType.Item)
+            if (reward.rewardType == QuestRewardType.Item)
                 return $"Item: {GetItemNameById(reward.itemId)}";
-            if (reward.rewardType == QuestData.QuestRewardType.LootTable)
+            if (reward.rewardType == QuestRewardType.LootTable)
                 return $"LootTable: {GetLootTableNameById(reward.lootTableId)}";
             return "Reward";
         }
