@@ -51,7 +51,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             messageItemBuilder = new NPCMessageItemBuilder(
                 creatablesManager,
-                messageQuestAssignments
+                messageQuestAssignments,
+                FlushToNpcDialog
             );
 
             PopulateDialogDropdown();
