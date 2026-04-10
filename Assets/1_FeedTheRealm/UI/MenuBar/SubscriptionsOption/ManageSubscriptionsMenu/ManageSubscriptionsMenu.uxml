@@ -1,0 +1,89 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+
+    <ui:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="flex-grow: 1; justify-content: flex-start; min-width: 640px; max-width: 900px;">
+
+            <!-- ── Header ─────────────────────────────────────────────────── -->
+            <ui:VisualElement name="Header" class="header">
+                <ui:Label text="Zone Subscriptions" class="header-label" style="flex-grow: 1;"/>
+                <ui:Button text="Close" name="Close" class="button"/>
+            </ui:VisualElement>
+
+            <!-- ── Not Logged In ──────────────────────────────────────────── -->
+            <ui:VisualElement name="NotLoggedInPanel" style="flex-grow: 1; align-items: center; justify-content: center; display: flex;">
+                <ui:Label
+                    text="You must be logged in to manage your subscriptions."
+                    class="header-label"
+                    style="font-size: 14px; margin-bottom: 4px; -unity-text-align: middle-center;"/>
+                <ui:Label
+                    text="Sign in to view billing details, manage zones and active worlds."
+                    style="font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 24px; -unity-text-align: middle-center;"/>
+                <ui:Button text="Log In" name="LoginButton" class="button" style="min-width: 120px; padding: 6px 24px;"/>
+            </ui:VisualElement>
+
+            <!-- ── Loading ────────────────────────────────────────────────── -->
+            <ui:VisualElement name="LoadingPanel" style="flex-grow: 1; align-items: center; justify-content: center; display: none;">
+                <ui:Label text="Loading subscription..." class="header-label" style="font-size: 13px; color: rgba(255,255,255,0.5);"/>
+            </ui:VisualElement>
+
+            <!-- ── Subscription Panel ─────────────────────────────────────── -->
+            <ui:VisualElement name="SubscriptionPanel" style="flex-grow: 1; flex-direction: column; display: none;">
+
+                <!-- Billing summary cards -->
+                <ui:VisualElement style="flex-direction: row; padding: 16px 20px 8px 20px; margin-bottom: 4px;">
+
+                    <ui:VisualElement style="flex-direction: column; flex-grow: 1; margin-right: 10px; padding: 12px 14px; background-color: rgba(255,255,255,0.05); border-radius: 6px;">
+                        <ui:Label text="NEXT BILLING" style="font-size: 9px; color: rgba(255,255,255,0.4); margin-bottom: 5px; letter-spacing: 1px;"/>
+                        <ui:Label name="BillingDateValue" text="—" style="font-size: 17px; -unity-font-style: bold;"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement style="flex-direction: column; flex-grow: 1; margin-right: 10px; padding: 12px 14px; background-color: rgba(255,255,255,0.05); border-radius: 6px;">
+                        <ui:Label text="AMOUNT DUE" style="font-size: 9px; color: rgba(255,255,255,0.4); margin-bottom: 5px; letter-spacing: 1px;"/>
+                        <ui:Label name="AmountDueValue" text="—" style="font-size: 17px; -unity-font-style: bold;"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement style="flex-direction: column; flex-grow: 1; margin-right: 10px; padding: 12px 14px; background-color: rgba(255,255,255,0.05); border-radius: 6px;">
+                        <ui:Label text="ACTIVE ZONES" style="font-size: 9px; color: rgba(255,255,255,0.4); margin-bottom: 5px; letter-spacing: 1px;"/>
+                        <ui:Label name="ActiveZonesValue" text="—" style="font-size: 17px; -unity-font-style: bold;"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement style="flex-direction: column; flex-grow: 1; padding: 12px 14px; background-color: rgba(255,255,255,0.05); border-radius: 6px;">
+                        <ui:Label text="FREE ZONES" style="font-size: 9px; color: rgba(100,220,130,0.7); margin-bottom: 5px; letter-spacing: 1px;"/>
+                        <ui:Label name="FreeZonesValue" text="—" style="font-size: 17px; -unity-font-style: bold; color: rgba(100,220,130,1);"/>
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- Divider -->
+                <ui:VisualElement style="height: 1px; background-color: rgba(255,255,255,0.08); margin: 0 20px 8px 20px;"/>
+
+                <!-- Slot controls -->
+                <ui:VisualElement style="flex-direction: row; align-items: center; padding: 6px 20px 12px 20px;">
+                    <ui:Label text="SLOTS" style="font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-right: 14px;"/>
+                    <ui:Button text="−" name="DecreaseSlots" class="button" style="width: 28px; min-width: 28px; padding: 0; font-size: 15px;"/>
+                    <ui:Label name="SlotCountLabel" text="1" style="min-width: 38px; -unity-text-align: middle-center; font-size: 15px; -unity-font-style: bold;"/>
+                    <ui:Button text="+" name="IncreaseSlots" class="button" style="width: 28px; min-width: 28px; padding: 0; font-size: 15px;"/>
+                    <ui:Button text="Update" name="UpdateSlots" class="button" style="margin-left: 14px; padding: 4px 18px;"/>
+                    <ui:Label name="SlotFeedbackLabel" text="" style="margin-left: 12px; font-size: 11px; color: rgba(100,220,130,1); flex-grow: 1;"/>
+                </ui:VisualElement>
+
+                <!-- Divider -->
+                <ui:VisualElement style="height: 1px; background-color: rgba(255,255,255,0.08); margin: 0 20px 0 20px;"/>
+
+                <!-- List column headers -->
+                <ui:VisualElement style="flex-direction: row; align-items: center; padding: 8px 20px 4px 20px;">
+                    <ui:Label text="WORLD / ZONE" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; flex-grow: 1;"/>
+                    <ui:Label text="SLOT" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; min-width: 64px; -unity-text-align: middle-center;"/>
+                    <ui:Label text="STATUS" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; min-width: 64px; -unity-text-align: middle-center;"/>
+                    <ui:VisualElement style="min-width: 96px;"/>
+                </ui:VisualElement>
+
+                <!-- Worlds list -->
+                <ui:ListView name="WorldsList" class="list" style="flex-grow: 1; margin: 0 8px 8px 8px;"/>
+
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
