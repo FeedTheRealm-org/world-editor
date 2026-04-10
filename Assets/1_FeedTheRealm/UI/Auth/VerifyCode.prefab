@@ -69,6 +69,5 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FeedTheRealm_Shared::VerifyCodeController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
-  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  loginUI: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}

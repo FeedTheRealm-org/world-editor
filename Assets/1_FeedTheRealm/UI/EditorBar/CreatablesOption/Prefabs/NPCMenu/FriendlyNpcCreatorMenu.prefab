@@ -69,3 +69,5 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NPCCreatorMenuController
   npcsMenuPrefab: {fileID: 6958354529743035616, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
+  characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}
+  characterEditor: {fileID: 0}

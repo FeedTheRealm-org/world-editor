@@ -46,6 +46,15 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private GltfService gltfService;
 
+        [SerializeField]
+        private AssetsService assetsService;
+
+        [SerializeField]
+        private PlayerService playerService;
+
+        [SerializeField]
+        private Session.Session session;
+
         [Header("Event Channels")]
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
@@ -66,6 +75,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<WorldsRepository>(Lifetime.Singleton);
             builder.Register<CreatablesRepository>(Lifetime.Singleton);
             builder.Register<ZonesRepository>(Lifetime.Singleton);
+            builder
+                .Register<PlayerSpriteRepository>(Lifetime.Singleton)
+                .As<CharacterSpriteRepository>();
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -105,6 +117,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);
+            builder.RegisterInstance(assetsService);
+            builder.RegisterInstance(playerService);
+            builder.RegisterInstance(session);
             builder.RegisterInstance(config);
             builder.RegisterInstance(logger);
         }

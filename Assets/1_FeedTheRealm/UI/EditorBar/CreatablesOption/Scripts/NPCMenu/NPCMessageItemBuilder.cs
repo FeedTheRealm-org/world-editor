@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
@@ -11,14 +12,17 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
     {
         private readonly CreatablesManager creatablesManager;
         private readonly Dictionary<string, string> messageQuestAssignments;
+        private readonly Action onAssignmentsChanged;
 
         public NPCMessageItemBuilder(
             CreatablesManager creatablesManager,
-            Dictionary<string, string> messageQuestAssignments
+            Dictionary<string, string> messageQuestAssignments,
+            Action onAssignmentsChanged = null
         )
         {
             this.creatablesManager = creatablesManager;
             this.messageQuestAssignments = messageQuestAssignments;
+            this.onAssignmentsChanged = onAssignmentsChanged;
         }
 
         public VisualElement CreateMessageItem(MessageData message)
@@ -81,7 +85,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                     .GetAll<Quest>()
                     .FirstOrDefault(q => q.data.title == evt.newValue);
                 if (selected != null)
+                {
                     messageQuestAssignments[message.id] = selected.Id;
+                    onAssignmentsChanged?.Invoke();
+                }
             });
 
             return dropdown;
@@ -109,7 +116,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                     .GetAll<Quest>()
                     .FirstOrDefault(q => q.data.title == questDropdown.value);
                 if (initial != null)
+                {
                     messageQuestAssignments[message.id] = initial.Id;
+                    onAssignmentsChanged?.Invoke();
+                }
             };
 
             if (!string.IsNullOrEmpty(currentQuestId))
@@ -134,6 +144,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 questDropdown.style.display = DisplayStyle.None;
                 button.style.display = DisplayStyle.None;
                 addQuestButton.style.display = DisplayStyle.Flex;
+                onAssignmentsChanged?.Invoke();
             };
 
             if (string.IsNullOrEmpty(currentQuestId))
