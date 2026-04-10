@@ -28,6 +28,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         private QuestData editingData;
         private QuestData stagingData;
         private bool isNewQuest;
+        private const int MaxQuestNameLength = 40;
+        private const int MaxQuestContentLength = 100;
 
         private TextField nameInput;
         private TextField contentInput;
@@ -164,6 +166,36 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             );
         }
 
+        private bool ValidateQuestFields(out string error)
+        {
+            if (string.IsNullOrEmpty(nameInput.value))
+            {
+                error = "Quest name is required.";
+                return false;
+            }
+
+            if (nameInput.value.Length > MaxQuestNameLength)
+            {
+                error = $"Quest name must be at most {MaxQuestNameLength} characters.";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(contentInput.value))
+            {
+                error = "Quest content is required.";
+                return false;
+            }
+
+            if (contentInput.value.Length > MaxQuestContentLength)
+            {
+                error = $"Quest content must be at most {MaxQuestContentLength} characters.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
+        }
+
         private void OpenRewardsMenu()
         {
             var menuInstance = resolver.Instantiate(rewardMenuPrefab);
@@ -192,7 +224,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 return "Reward";
             });
 
-            rewardsSummary.text = "Rewards: " + string.Join(", ", summaries);
+            var summaryText = "Rewards: " + string.Join(", ", summaries);
+            rewardsSummary.text = TruncateText(summaryText, 125);
+        }
+
+        private static string TruncateText(string text, int maxLength)
+        {
+            if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
+                return text;
+
+            return text.Substring(0, Math.Max(0, maxLength - 3)) + "...";
         }
 
         private void OnQuestTypeChanged(ChangeEvent<string> evt)
@@ -270,6 +311,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
         private void CreateNewObject()
         {
+            if (!ValidateQuestFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save quest: {error}", "error", Color.red);
+                return;
+            }
+
             var questData = CurrentQuestData;
             var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
             string targetId =
@@ -290,6 +337,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             ReturnToList();
         }
 
-        private void ReturnToList() => OpenMenu(questsMenuPrefab);
+        private void ReturnToList()
+        {
+            if (!ValidateQuestFields(out var error))
+            {
+                ToastNotification.Show($"Failed to return: {error}", "error", Color.red);
+                return;
+            }
+
+            OpenMenu(questsMenuPrefab);
+        }
     }
 }

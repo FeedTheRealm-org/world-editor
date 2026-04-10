@@ -24,6 +24,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private NPCData editingData;
         private string selectedDialogId = "";
+        private const int MaxNpcNameLength = 25;
         private Dictionary<string, string> messageQuestAssignments = new();
         private NPCMessageItemBuilder messageItemBuilder;
 
@@ -303,8 +304,32 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 spritePreview.sprite = sprite;
         }
 
+        private bool ValidateNpcName(out string error)
+        {
+            if (string.IsNullOrEmpty(nameInput.value))
+            {
+                error = "NPC name is required.";
+                return false;
+            }
+
+            if (nameInput.value.Length > MaxNpcNameLength)
+            {
+                error = $"NPC name must be at most {MaxNpcNameLength} characters.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
+        }
+
         private void CreateNewObject()
         {
+            if (!ValidateNpcName(out var error))
+            {
+                ToastNotification.Show($"Failed to save NPC: {error}", "error", Color.red);
+                return;
+            }
+
             NPCDialogData npcDialogData = null;
             if (!string.IsNullOrEmpty(selectedDialogId))
             {
@@ -324,6 +349,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             ReturnToList();
         }
 
-        private void ReturnToList() => OpenMenu(npcsMenuPrefab);
+        private void ReturnToList()
+        {
+            if (!ValidateNpcName(out var error))
+            {
+                ToastNotification.Show($"Failed to return: {error}", "error", Color.red);
+                return;
+            }
+
+            OpenMenu(npcsMenuPrefab);
+        }
     }
 }
