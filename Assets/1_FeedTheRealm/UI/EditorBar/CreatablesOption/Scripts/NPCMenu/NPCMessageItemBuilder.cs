@@ -12,17 +12,17 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
     {
         private readonly CreatablesManager creatablesManager;
         private readonly Dictionary<string, string> messageQuestAssignments;
-        private readonly Action onAssignmentChanged;
+        private readonly Action onAssignmentsChanged;
 
         public NPCMessageItemBuilder(
             CreatablesManager creatablesManager,
             Dictionary<string, string> messageQuestAssignments,
-            Action onAssignmentChanged
+            Action onAssignmentsChanged = null
         )
         {
             this.creatablesManager = creatablesManager;
             this.messageQuestAssignments = messageQuestAssignments;
-            this.onAssignmentChanged = onAssignmentChanged;
+            this.onAssignmentsChanged = onAssignmentsChanged;
         }
 
         public VisualElement CreateMessageItem(MessageData message)
@@ -87,12 +87,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 if (selected != null)
                 {
                     messageQuestAssignments[message.id] = selected.Id;
-                    onAssignmentChanged?.Invoke();
+                    onAssignmentsChanged?.Invoke();
                 }
                 else
                 {
                     messageQuestAssignments.Remove(message.id);
-                    onAssignmentChanged?.Invoke();
+                    onAssignmentsChanged?.Invoke();
                 }
             });
 
@@ -123,7 +123,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 if (initial != null)
                 {
                     messageQuestAssignments[message.id] = initial.Id;
-                    onAssignmentChanged?.Invoke();
+                    onAssignmentsChanged?.Invoke();
                 }
                 else
                 {
@@ -131,7 +131,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                     if (fallback != null)
                     {
                         messageQuestAssignments[message.id] = fallback.Id;
-                        onAssignmentChanged?.Invoke();
+                        onAssignmentsChanged?.Invoke();
                     }
                 }
             };
@@ -158,7 +158,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 questDropdown.style.display = DisplayStyle.None;
                 button.style.display = DisplayStyle.None;
                 addQuestButton.style.display = DisplayStyle.Flex;
-                onAssignmentChanged?.Invoke();
+                onAssignmentsChanged?.Invoke();
             };
 
             if (string.IsNullOrEmpty(currentQuestId))

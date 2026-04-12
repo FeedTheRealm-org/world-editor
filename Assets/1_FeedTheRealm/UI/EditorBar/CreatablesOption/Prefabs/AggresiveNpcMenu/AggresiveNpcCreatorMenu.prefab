@@ -69,3 +69,4 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCreatorMenuController
   aggresiveNpcMenuPrefab: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
+  characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}

@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using API;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,6 +25,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private EditBuffer<EnemyData> editBuffer;
         private string currentLootTableId;
 
+        [SerializeField]
+        private GameObject characterEditorPrefab;
+
         private TextField nameInput;
         private TextField descriptionInput;
         private IntegerField healthPointsInput;
@@ -29,16 +35,36 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private IntegerField speedInput;
         private IntegerField rangeInput;
         private DropdownField lootTableInput;
+        private Button editCharacterButton;
         private Button closeButton;
         private Button saveButton;
         private Button returnButton;
 
+        private Image spritePreview;
+        private GameObject characterEditorInstance;
+        private CharacterEditController characterEditor;
+        private CharacterEditorPreviewRenderer characterPreviewRenderer;
+        private bool pendingPreviewRefresh;
+
         public void SetupEditor(AggresiveNpc npc)
         {
             editBuffer = new EditBuffer<EnemyData>(npc.data);
+
+            if (npc.data.category_sprites != null)
+                editBuffer.Working.category_sprites = new Dictionary<string, string>(
+                    npc.data.category_sprites
+                );
+            else
+                editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
             currentLootTableId = editBuffer.Working.lootTableId;
 
-            SetupEditMode();
+            if (isActiveAndEnabled)
+            {
+                SetupEditMode();
+                pendingPreviewRefresh = true;
+                RefreshCharacterPreview();
+            }
         }
 
         private void OnEnable()
@@ -47,7 +73,70 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             InitializeFields(root);
             PopulateLootTables();
-            SetupCreateMode();
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            CharacterEditorRuntimeUtility.HideEmbeddedCharacterEditors(this);
+
+            SetCharacterEditorVisible(false);
+            SetSpritePreviewVisible(true);
+
+            if (editBuffer != null)
+            {
+                SetupEditMode();
+            }
+            else
+            {
+                SetupCreateMode();
+            }
+
+            pendingPreviewRefresh = true;
+            RefreshCharacterPreview();
+        }
+
+        private void OnDisable()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= ReturnToList;
+
+            if (returnButton != null)
+                returnButton.clicked -= ReturnToList;
+
+            if (saveButton != null)
+            {
+                saveButton.clicked -= CreateNewObject;
+                saveButton.clicked -= ReturnToList;
+                saveButton.clicked -= SaveExistingEnemy;
+            }
+
+            if (editCharacterButton != null)
+                editCharacterButton.clicked -= OpenCharacterEditor;
+
+            DestroyCharacterEditorInstance();
+            DisposeCharacterPreviewRenderer();
+
+            if (spritePreview != null)
+            {
+                spritePreview.image = null;
+            }
+        }
+
+        private void Update()
+        {
+            if (characterEditorInstance != null && !characterEditorInstance.activeSelf)
+            {
+                DestroyCharacterEditorInstance();
+                SetCharacterPreviewVisible(true);
+                SetSpritePreviewVisible(true);
+            }
+
+            if (pendingPreviewRefresh && characterEditorInstance == null)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
         }
 
         private void InitializeFields(VisualElement root)
@@ -59,9 +148,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             speedInput = root.Q<IntegerField>("Speed");
             rangeInput = root.Q<IntegerField>("Range");
             lootTableInput = root.Q<DropdownField>("LootTableField");
+            editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
             returnButton = root.Q<Button>("Return");
+            spritePreview = root.Q<Image>("SpritePreview");
 
             closeButton.clicked += ReturnToList;
             if (returnButton != null)
@@ -76,9 +167,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SetupCreateMode()
         {
+            var newEnemy = new EnemyData(
+                Guid.NewGuid().ToString(),
+                "",
+                "",
+                0,
+                0,
+                0,
+                0,
+                null,
+                new Dictionary<string, string>()
+            );
+            editBuffer = new EditBuffer<EnemyData>(newEnemy);
+            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
+            PopulateFields();
+            BindEditMode();
+
             saveButton.text = "Create Enemy";
             saveButton.clicked -= SaveExistingEnemy;
+            saveButton.clicked -= CreateNewObject;
             saveButton.clicked += CreateNewObject;
+
+            editCharacterButton.clicked -= OpenCharacterEditor;
+            editCharacterButton.clicked += OpenCharacterEditor;
         }
 
         private void SetupEditMode()
@@ -90,6 +202,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             saveButton.clicked -= SaveExistingEnemy;
             saveButton.text = "Save Enemy";
             saveButton.clicked += SaveExistingEnemy;
+
+            editCharacterButton.clicked -= OpenCharacterEditor;
+            editCharacterButton.clicked += OpenCharacterEditor;
+        }
+
+        private void OpenCharacterEditor()
+        {
+            if (!EnsureCharacterEditorInstance())
+                return;
+
+            var characterInfo = BuildCharacterInfo();
+
+            characterEditor.SetupWithCharacterInfo(characterInfo, SaveCharacterInfo);
+            SetCharacterEditorVisible(true);
+        }
+
+        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        {
+            if (editBuffer != null)
+            {
+                editBuffer.Working.category_sprites =
+                    categorySprites ?? new Dictionary<string, string>();
+            }
+            pendingPreviewRefresh = true;
         }
 
         private void PopulateFields()
@@ -132,6 +268,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             );
             speedInput.RegisterValueChangedCallback(evt => editBuffer.Working.speed = evt.newValue);
             rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
+
+            lootTableInput.RegisterValueChangedCallback(evt =>
+            {
+                var selected = creatblesManager
+                    .GetAll<LootTable>()
+                    .FirstOrDefault(lt => lt.data.name == evt.newValue);
+                editBuffer.Working.lootTableId = selected?.data.id;
+            });
         }
 
         private void CreateNewObject()
@@ -142,30 +286,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 return;
             }
 
-            var lootTables = creatblesManager.GetAll<LootTable>();
-            var selectedLootTable = lootTables.FirstOrDefault(lt =>
-                lt.data.name == lootTableInput.value
-            );
+            if (editBuffer != null)
+            {
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
 
-            var enemyData = new EnemyData(
-                Guid.NewGuid().ToString(),
-                nameInput.value,
-                descriptionInput.value ?? "",
-                healthPointsInput.value,
-                damageInput.value,
-                speedInput.value,
-                rangeInput.value,
-                null,
-                selectedLootTable?.data.id
-            );
-
-            var enemy = new AggresiveNpc(enemyData);
-
-            creatblesManager.Add(enemy);
+                var enemy = new AggresiveNpc(editBuffer.Original);
+                creatblesManager.Add(enemy);
+            }
 
             ToastNotification.Show("Aggressive NPC created successfully!", "success", Color.green);
 
-            OpenMenu(aggresiveNpcMenuPrefab);
+            ReturnToList();
         }
 
         private void SaveExistingEnemy()
@@ -185,10 +319,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 editBuffer.Working.lootTableId = selectedLootTable?.data.id;
                 editBuffer.Commit();
+
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
             }
 
             ToastNotification.Show("Aggressive NPC updated successfully!", "success", Color.green);
-            OpenMenu(aggresiveNpcMenuPrefab);
+            ReturnToList();
         }
 
         private bool ValidateEnemyFields(out string error)
@@ -224,7 +362,142 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void ReturnToList()
         {
+            SetCharacterEditorVisible(false);
             OpenMenu(aggresiveNpcMenuPrefab);
+        }
+
+        private void SetCharacterEditorVisible(bool isVisible)
+        {
+            if (isVisible)
+            {
+                if (!EnsureCharacterEditorInstance())
+                    return;
+
+                SetCharacterPreviewVisible(false);
+                SetSpritePreviewVisible(false);
+                characterEditorInstance.SetActive(true);
+                return;
+            }
+
+            if (characterEditorInstance != null)
+            {
+                characterEditorInstance.SetActive(false);
+                DestroyCharacterEditorInstance();
+            }
+
+            SetCharacterPreviewVisible(true);
+            SetSpritePreviewVisible(true);
+
+            if (pendingPreviewRefresh)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
+        }
+
+        private bool EnsureCharacterEditorInstance()
+        {
+            if (characterEditorInstance != null && characterEditor != null)
+                return true;
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+
+            return CharacterEditorRuntimeUtility.TryInstantiateCharacterEditor(
+                this,
+                characterEditorPrefab,
+                out characterEditorInstance,
+                out characterEditor
+            );
+        }
+
+        private CharacterInfoResponse BuildCharacterInfo()
+        {
+            var categorySprites =
+                editBuffer != null
+                    ? editBuffer.Working.category_sprites
+                    : new Dictionary<string, string>();
+
+            return new CharacterInfoResponse
+            {
+                character_name =
+                    (editBuffer != null ? editBuffer.Working.name : nameInput?.value)
+                    ?? string.Empty,
+                character_bio =
+                    (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
+                    ?? string.Empty,
+                category_sprites = new Dictionary<string, string>(categorySprites),
+            };
+        }
+
+        private void RefreshCharacterPreview()
+        {
+            if (spritePreview == null)
+                return;
+
+            if (!EnsureCharacterPreviewRenderer())
+            {
+                spritePreview.image = null;
+                return;
+            }
+
+            characterPreviewRenderer.Refresh(spritePreview, BuildCharacterInfo());
+        }
+
+        private bool EnsureCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer != null)
+                return true;
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+
+            if (characterEditorPrefab == null)
+            {
+                Debug.LogError("Character editor prefab is not assigned.", this);
+                return false;
+            }
+
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+            return true;
+        }
+
+        private void SetCharacterPreviewVisible(bool isVisible)
+        {
+            characterPreviewRenderer?.SetVisible(isVisible);
+        }
+
+        private void SetSpritePreviewVisible(bool isVisible)
+        {
+            if (spritePreview == null)
+                return;
+
+            spritePreview.style.visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+            spritePreview.style.opacity = isVisible ? 1f : 0f;
+            spritePreview.pickingMode = isVisible ? PickingMode.Position : PickingMode.Ignore;
+        }
+
+        private void DisposeCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer == null)
+            {
+                return;
+            }
+
+            characterPreviewRenderer.Dispose();
+            characterPreviewRenderer = null;
+        }
+
+        private void DestroyCharacterEditorInstance()
+        {
+            CharacterEditorRuntimeUtility.DestroyCharacterEditorInstance(
+                ref characterEditorInstance,
+                ref characterEditor
+            );
         }
     }
 }

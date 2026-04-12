@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using API;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 using VContainer;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
@@ -22,11 +22,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         [SerializeField]
         private GameObject npcsMenuPrefab;
 
+        [SerializeField]
+        private GameObject characterEditorPrefab;
+
         private NPCData editingData;
         private EditBuffer<NPCData> editBuffer;
         private bool isEditingNpc;
         private string currentDialogId = "";
         private const int MaxNpcNameLength = 25;
+        private string selectedDialogId = string.Empty;
         private Dictionary<string, string> messageQuestAssignments = new();
         private NPCMessageItemBuilder messageItemBuilder;
 
@@ -37,20 +41,49 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private Label messagesLabel;
         private Image spritePreview;
         private string currentSpritePath;
+        private Button editCharacterButton;
         private Button saveButton;
         private Button closeButton;
+        private Button returnButton;
+
+        private GameObject characterEditorInstance;
+        private CharacterEditController characterEditorController;
+        private CharacterEditorPreviewRenderer characterPreviewRenderer;
+        private bool pendingPreviewRefresh;
+
+        public void SetupEditor(FriendlyNpc npc)
+        {
+            editingData = npc.data;
+
+            if (isActiveAndEnabled)
+            {
+                SetupEditMode();
+                pendingPreviewRefresh = true;
+                RefreshCharacterPreview();
+            }
+        }
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
             dialogDropdown = root.Q<DropdownField>("DialogDropdown");
             messagesScrollView = root.Q<ScrollView>("MessagesScrollView");
             messagesLabel = root.Q<Label>("MessagesLabel");
             spritePreview = root.Q<Image>("SpritePreview");
+            editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
+            returnButton = root.Q<Button>("Return");
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            CharacterEditorRuntimeUtility.HideEmbeddedCharacterEditors(this);
+            SetSpritePreviewVisible(true);
 
             messageItemBuilder = new NPCMessageItemBuilder(
                 creatablesManager,
@@ -59,25 +92,138 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             );
 
             PopulateDialogDropdown();
-            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
+            RegisterCallbacks();
 
-            root.Q<Button>("LoadSprite").clicked += LoadSprite;
-            root.Q<Button>("Return").clicked += ReturnToList;
-            closeButton.clicked += CloseMenu;
-            saveButton.clicked += CreateNewObject;
+            if (editingData != null)
+            {
+                SetupEditMode();
+            }
+            else
+            {
+                SetupCreateMode();
+            }
+
+            pendingPreviewRefresh = true;
+            RefreshCharacterPreview();
+        }
+
+        private void Update()
+        {
+            if (characterEditorInstance != null && !characterEditorInstance.activeSelf)
+            {
+                DestroyCharacterEditorInstance();
+                SetCharacterPreviewVisible(true);
+                SetSpritePreviewVisible(true);
+            }
+
+            if (pendingPreviewRefresh && characterEditorInstance == null)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
         }
 
         void OnDisable()
         {
-            dialogDropdown?.UnregisterValueChangedCallback(OnDialogChanged);
+            UnregisterCallbacks();
+            DestroyCharacterEditorInstance();
+            DisposeCharacterPreviewRenderer();
+
+            if (spritePreview != null)
+            {
+                spritePreview.image = null;
+            }
         }
 
-        public void SetupEditor(FriendlyNpc npc)
+        private void RegisterCallbacks()
         {
-            editingData = npc.data;
+            if (closeButton != null)
+                closeButton.clicked += ReturnToList;
+
+            if (returnButton != null)
+                returnButton.clicked += ReturnToList;
+
+            if (editCharacterButton != null)
+                editCharacterButton.clicked += OpenCharacterEditor;
+            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
+            nameInput.RegisterValueChangedCallback(OnNameChanged);
+            descriptionInput.RegisterValueChangedCallback(OnDescriptionChanged);
+        }
+
+        private void UnregisterCallbacks()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= ReturnToList;
+
+            if (returnButton != null)
+                returnButton.clicked -= ReturnToList;
+
+            if (editCharacterButton != null)
+                editCharacterButton.clicked -= OpenCharacterEditor;
+
+            if (saveButton != null)
+            {
+                saveButton.clicked -= CreateNewObject;
+                saveButton.clicked -= ReturnToList;
+                saveButton.clicked -= SaveExistingNpc;
+            }
+
+            dialogDropdown?.UnregisterValueChangedCallback(OnDialogChanged);
+            nameInput?.UnregisterValueChangedCallback(OnNameChanged);
+            descriptionInput?.UnregisterValueChangedCallback(OnDescriptionChanged);
+        }
+
+        private void OnNameChanged(ChangeEvent<string> evt)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.name = evt.newValue;
+        }
+
+        private void OnDescriptionChanged(ChangeEvent<string> evt)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.description = evt.newValue;
+        }
+
+        private void SetupCreateMode()
+        {
+            selectedDialogId = string.Empty;
+            messageQuestAssignments.Clear();
+
+            var newNpcData = new NPCData(
+                Guid.NewGuid().ToString(),
+                "",
+                "",
+                null,
+                new Dictionary<string, string>()
+            );
+            editBuffer = new EditBuffer<NPCData>(newNpcData);
+            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
+            dialogDropdown.SetValueWithoutNotify("None");
+            HideDialogMessages();
+
+            saveButton.text = "Create NPC";
+            saveButton.clicked -= ReturnToList;
+            saveButton.clicked -= CreateNewObject;
+            saveButton.clicked += CreateNewObject;
+        }
+
+        private void SetupEditMode()
+        {
             editBuffer = new EditBuffer<NPCData>(editingData);
+            if (editingData.category_sprites != null)
+            {
+                editBuffer.Working.category_sprites = new Dictionary<string, string>(
+                    editingData.category_sprites
+                );
+            }
+            else
+            {
+                editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            }
+
             isEditingNpc = true;
-            currentSpritePath = editingData.spriteFilePath;
             currentDialogId = editingData.npcDialog?.dialogId ?? string.Empty;
 
             messageQuestAssignments.Clear();
@@ -89,7 +235,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             }
 
             PopulateFields();
-            BindEditMode();
+
             saveButton.clicked -= CreateNewObject;
             saveButton.clicked -= SaveExistingNpc;
             saveButton.text = "Save NPC";
@@ -103,17 +249,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 nameInput.value = editBuffer.Working.name;
                 descriptionInput.value = editBuffer.Working.description;
             }
-            LoadExistingSprite(currentSpritePath);
 
             if (string.IsNullOrEmpty(currentDialogId))
+            {
+                dialogDropdown.SetValueWithoutNotify("None");
+                HideDialogMessages();
                 return;
+            }
 
             var dialog = creatablesManager
                 .GetAll<Dialog>()
                 .FirstOrDefault(d => d.Id == currentDialogId);
 
             if (dialog == null)
+            {
+                selectedDialogId = string.Empty;
+                dialogDropdown.SetValueWithoutNotify("None");
+                HideDialogMessages();
                 return;
+            }
 
             dialogDropdown.SetValueWithoutNotify(dialog.data.name);
 
@@ -134,16 +288,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             LoadDialogMessages(dialog);
         }
 
-        private void BindEditMode()
-        {
-            if (editBuffer == null)
-                return;
-            nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
-            descriptionInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.description = evt.newValue
-            );
-        }
-
         private void PopulateDialogDropdown()
         {
             var dialogs = creatablesManager.GetAll<Dialog>();
@@ -155,6 +299,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnDialogChanged(ChangeEvent<string> evt)
         {
+            messageQuestAssignments.Clear();
+
             if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
             {
                 currentDialogId = "";
@@ -191,32 +337,172 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             }
         }
 
-        private void LoadSprite()
+        private void HideDialogMessages()
         {
-            CustomFileBrowser.ShowFilePickerDialog(
-                onSuccess: paths =>
-                {
-                    if (paths == null || paths.Length == 0)
-                        return;
-                    if (!paths[0].EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-                        return;
-                    var sprite = CustomFileBrowser.LoadSpriteFromDisk(paths[0]);
-                    if (sprite == null)
-                        return;
-                    spritePreview.sprite = sprite;
-                    currentSpritePath = paths[0];
-                },
-                onCancel: () => { }
+            messagesScrollView.Clear();
+            messagesScrollView.style.display = DisplayStyle.None;
+            messagesLabel.style.display = DisplayStyle.None;
+        }
+
+        private void OnMessageQuestAssignmentsChanged()
+        {
+            if (editBuffer?.Working.npcDialog == null)
+                return;
+
+            editBuffer.Working.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+        }
+
+        private void OpenCharacterEditor()
+        {
+            if (!EnsureCharacterEditorInstance())
+                return;
+
+            var characterInfo = BuildCharacterInfo();
+
+            characterEditorController.SetupWithCharacterInfo(characterInfo, SaveCharacterInfo);
+            SetCharacterEditorVisible(true);
+        }
+
+        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        {
+            if (editBuffer != null)
+            {
+                editBuffer.Working.category_sprites =
+                    categorySprites ?? new Dictionary<string, string>();
+            }
+            pendingPreviewRefresh = true;
+        }
+
+        private CharacterInfoResponse BuildCharacterInfo()
+        {
+            var categorySprites =
+                editBuffer != null
+                    ? editBuffer.Working.category_sprites
+                    : new Dictionary<string, string>();
+
+            return new CharacterInfoResponse
+            {
+                character_name =
+                    (editBuffer != null ? editBuffer.Working.name : nameInput?.value)
+                    ?? string.Empty,
+                character_bio =
+                    (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
+                    ?? string.Empty,
+                category_sprites = new Dictionary<string, string>(categorySprites),
+            };
+        }
+
+        private void RefreshCharacterPreview()
+        {
+            if (spritePreview == null)
+                return;
+
+            if (!EnsureCharacterPreviewRenderer())
+            {
+                spritePreview.image = null;
+                return;
+            }
+
+            characterPreviewRenderer.Refresh(spritePreview, BuildCharacterInfo());
+        }
+
+        private bool EnsureCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer != null)
+                return true;
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+
+            if (characterEditorPrefab == null)
+            {
+                Debug.LogError("Character editor prefab is not assigned.", this);
+                return false;
+            }
+
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+            return true;
+        }
+
+        private void SetCharacterPreviewVisible(bool isVisible)
+        {
+            characterPreviewRenderer?.SetVisible(isVisible);
+        }
+
+        private bool EnsureCharacterEditorInstance()
+        {
+            if (characterEditorInstance != null && characterEditorController != null)
+                return true;
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+
+            return CharacterEditorRuntimeUtility.TryInstantiateCharacterEditor(
+                this,
+                characterEditorPrefab,
+                out characterEditorInstance,
+                out characterEditorController
             );
         }
 
-        private void LoadExistingSprite(string spritePath)
+        private void SetCharacterEditorVisible(bool isVisible)
         {
-            if (string.IsNullOrEmpty(spritePath))
+            if (isVisible)
+            {
+                if (!EnsureCharacterEditorInstance())
+                    return;
+
+                SetCharacterPreviewVisible(false);
+                SetSpritePreviewVisible(false);
+                characterEditorInstance.SetActive(true);
                 return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(spritePath);
-            if (sprite != null)
-                spritePreview.sprite = sprite;
+            }
+
+            if (characterEditorInstance != null)
+            {
+                characterEditorInstance.SetActive(false);
+                DestroyCharacterEditorInstance();
+            }
+
+            SetCharacterPreviewVisible(true);
+            SetSpritePreviewVisible(true);
+
+            if (pendingPreviewRefresh)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
+        }
+
+        private void DisposeCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer == null)
+                return;
+
+            characterPreviewRenderer.Dispose();
+            characterPreviewRenderer = null;
+        }
+
+        private void SetSpritePreviewVisible(bool isVisible)
+        {
+            if (spritePreview == null)
+                return;
+
+            spritePreview.style.visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+            spritePreview.style.opacity = isVisible ? 1f : 0f;
+            spritePreview.pickingMode = isVisible ? PickingMode.Position : PickingMode.Ignore;
+        }
+
+        private void DestroyCharacterEditorInstance()
+        {
+            CharacterEditorRuntimeUtility.DestroyCharacterEditorInstance(
+                ref characterEditorInstance,
+                ref characterEditorController
+            );
         }
 
         private bool ValidateNpcName(out string error)
@@ -245,38 +531,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 return;
             }
 
-            NPCDialogData npcDialogData = null;
-            if (!string.IsNullOrEmpty(currentDialogId))
-            {
-                npcDialogData = new NPCDialogData(currentDialogId);
-                npcDialogData.SetMessageQuestMap(messageQuestAssignments);
-            }
-
-            var npcData = new NPCData(
-                Guid.NewGuid().ToString(),
-                nameInput.value,
-                descriptionInput.value ?? "",
-                currentSpritePath ?? "",
-                npcDialogData
-            );
-
-            creatablesManager.Add(new FriendlyNpc(npcData));
-            ToastNotification.Show("Friendly NPC created successfully!", "success", Color.green);
-            ReturnToList();
-        }
-
-        private void SaveExistingNpc()
-        {
-            if (!ValidateNpcName(out var error))
-            {
-                ToastNotification.Show($"Failed to save NPC: {error}", "error", Color.red);
-                return;
-            }
-
             if (editBuffer != null)
             {
-                editBuffer.Working.spriteFilePath = currentSpritePath ?? string.Empty;
-
                 if (!string.IsNullOrEmpty(currentDialogId))
                 {
                     if (editBuffer.Working.npcDialog == null)
@@ -292,6 +548,46 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 }
 
                 editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+
+                var npc = new FriendlyNpc(editBuffer.Original);
+                creatablesManager.Add(npc);
+            }
+
+            ToastNotification.Show("Friendly NPC created successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
+        private void SaveExistingNpc()
+        {
+            if (!ValidateNpcName(out var error))
+            {
+                ToastNotification.Show($"Failed to save NPC: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+            {
+                if (!string.IsNullOrEmpty(currentDialogId))
+                {
+                    if (editBuffer.Working.npcDialog == null)
+                        editBuffer.Working.npcDialog = new NPCDialogData(currentDialogId);
+                    else
+                        editBuffer.Working.npcDialog.dialogId = currentDialogId;
+
+                    editBuffer.Working.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+                }
+                else
+                {
+                    editBuffer.Working.npcDialog = null;
+                }
+
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
             }
 
             ToastNotification.Show("Friendly NPC saved successfully!", "success", Color.green);
@@ -300,6 +596,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void ReturnToList()
         {
+            SetCharacterEditorVisible(false);
             OpenMenu(npcsMenuPrefab);
         }
     }
