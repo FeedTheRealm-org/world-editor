@@ -74,7 +74,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             string shopName = shopNameField.value?.Trim();
             if (string.IsNullOrEmpty(shopName))
             {
-                logger.Log("Shop name cannot be empty.", this, Logging.LogType.Warning);
+                ToastNotification.Show("Shop name is required.", "error", Color.red);
                 return;
             }
 
@@ -87,6 +87,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             if (existing == null)
                 creatablesManager.Add(new Shop(editingData));
 
+            ToastNotification.Show("Shop saved successfully!", "success", Color.green);
             ReturnToList();
         }
 
@@ -94,17 +95,17 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         {
             if (editingData == null)
             {
-                logger.Log(
+                ToastNotification.Show(
                     "Save the shop first before adding items.",
-                    this,
-                    Logging.LogType.Warning
+                    "error",
+                    Color.red
                 );
                 return;
             }
 
             if (itemSelector.value == ItemPlaceholder || string.IsNullOrEmpty(itemSelector.value))
             {
-                logger.Log("Select an item first.", this, Logging.LogType.Warning);
+                ToastNotification.Show("Please select an item to add.", "warning", Color.yellow);
                 return;
             }
 

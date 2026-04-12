@@ -3,7 +3,7 @@
     <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
         <ui:VisualElement name="MenuContainer" class="menu-container menu" style="max-height: 55%; height: 540px;">
             <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
-                <ui:Label text="Generic Quest" class="header-label"/>
+                <ui:Label text="Quest" class="header-label"/>
                 <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
                     <ui:Button text="Return To Menu" name="Return" class="button"/>
                     <ui:Button text="Close" name="Close" class="button"/>

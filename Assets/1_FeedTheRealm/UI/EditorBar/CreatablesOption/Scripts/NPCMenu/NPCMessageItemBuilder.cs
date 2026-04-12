@@ -89,6 +89,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                     messageQuestAssignments[message.id] = selected.Id;
                     onAssignmentChanged?.Invoke();
                 }
+                else
+                {
+                    messageQuestAssignments.Remove(message.id);
+                    onAssignmentChanged?.Invoke();
+                }
             });
 
             return dropdown;
@@ -119,6 +124,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 {
                     messageQuestAssignments[message.id] = initial.Id;
                     onAssignmentChanged?.Invoke();
+                }
+                else
+                {
+                    var fallback = creatablesManager.GetAll<Quest>().FirstOrDefault();
+                    if (fallback != null)
+                    {
+                        messageQuestAssignments[message.id] = fallback.Id;
+                        onAssignmentChanged?.Invoke();
+                    }
                 }
             };
 
@@ -162,10 +176,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             {
                 var current = quests.FirstOrDefault(q => q.Id == currentQuestId);
                 if (current != null)
-                    dropdown.value = current.data.title;
+                    dropdown.SetValueWithoutNotify(current.data.title);
             }
             else if (dropdown.choices.Count > 0)
-                dropdown.value = dropdown.choices[0];
+                dropdown.SetValueWithoutNotify(dropdown.choices[0]);
         }
     }
 }

@@ -19,7 +19,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         [SerializeField]
         private GameObject aggresiveNpcMenuPrefab;
 
-        private EnemyData editingEnemyData;
+        private EditBuffer<EnemyData> editBuffer;
+        private string currentLootTableId;
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -30,10 +31,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private DropdownField lootTableInput;
         private Button closeButton;
         private Button saveButton;
+        private Button returnButton;
 
         public void SetupEditor(AggresiveNpc npc)
         {
-            editingEnemyData = npc.data;
+            editBuffer = new EditBuffer<EnemyData>(npc.data);
+            currentLootTableId = editBuffer.Working.lootTableId;
+
             SetupEditMode();
         }
 
@@ -57,8 +61,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             lootTableInput = root.Q<DropdownField>("LootTableField");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
+            returnButton = root.Q<Button>("Return");
 
             closeButton.clicked += ReturnToList;
+            if (returnButton != null)
+                returnButton.clicked += ReturnToList;
         }
 
         private void PopulateLootTables()
@@ -70,6 +77,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void SetupCreateMode()
         {
             saveButton.text = "Create Enemy";
+            saveButton.clicked -= SaveExistingEnemy;
             saveButton.clicked += CreateNewObject;
         }
 
@@ -78,60 +86,63 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             PopulateFields();
             BindEditMode();
 
-            saveButton.text = "Return to List";
             saveButton.clicked -= CreateNewObject;
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked -= SaveExistingEnemy;
+            saveButton.text = "Save Enemy";
+            saveButton.clicked += SaveExistingEnemy;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingEnemyData.name;
-            descriptionInput.value = editingEnemyData.description;
-            healthPointsInput.value = editingEnemyData.healthPoints;
-            damageInput.value = editingEnemyData.damage;
-            speedInput.value = editingEnemyData.speed;
-            rangeInput.value = editingEnemyData.range;
+            if (editBuffer != null)
+            {
+                nameInput.value = editBuffer.Working.name;
+                descriptionInput.value = editBuffer.Working.description;
+                healthPointsInput.value = editBuffer.Working.healthPoints;
+                damageInput.value = editBuffer.Working.damage;
+                speedInput.value = editBuffer.Working.speed;
+                rangeInput.value = editBuffer.Working.range;
+            }
 
             var lootTables = creatblesManager.GetAll<LootTable>();
-            var selected = lootTables.FirstOrDefault(lt =>
-                lt.data.id == editingEnemyData.lootTableId
-            );
-
-            if (selected != null)
-                lootTableInput.value = selected.data.name;
+            if (!string.IsNullOrEmpty(currentLootTableId))
+            {
+                var selected = lootTables.FirstOrDefault(lt => lt.data.id == currentLootTableId);
+                lootTableInput.value = selected?.data.name ?? string.Empty;
+            }
+            else if (lootTables.Any())
+            {
+                lootTableInput.value = lootTables[0].data.name;
+            }
         }
 
         private void BindEditMode()
         {
-            nameInput.RegisterValueChangedCallback(evt => editingEnemyData.name = evt.newValue);
-
+            if (editBuffer == null)
+                return;
+            nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
             descriptionInput.RegisterValueChangedCallback(evt =>
-                editingEnemyData.description = evt.newValue
+                editBuffer.Working.description = evt.newValue
             );
-
             healthPointsInput.RegisterValueChangedCallback(evt =>
-                editingEnemyData.healthPoints = evt.newValue
+                editBuffer.Working.healthPoints = evt.newValue
             );
-
-            damageInput.RegisterValueChangedCallback(evt => editingEnemyData.damage = evt.newValue);
-
-            speedInput.RegisterValueChangedCallback(evt => editingEnemyData.speed = evt.newValue);
-
-            rangeInput.RegisterValueChangedCallback(evt => editingEnemyData.range = evt.newValue);
-
-            lootTableInput.RegisterValueChangedCallback(evt =>
-            {
-                var lootTables = creatblesManager.GetAll<LootTable>();
-                var selected = lootTables.FirstOrDefault(lt => lt.data.name == evt.newValue);
-
-                editingEnemyData.lootTableId = selected?.data.id;
-            });
+            damageInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.damage = evt.newValue
+            );
+            speedInput.RegisterValueChangedCallback(evt => editBuffer.Working.speed = evt.newValue);
+            rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
         }
 
         private void CreateNewObject()
         {
-            var lootTables = creatblesManager.GetAll<LootTable>();
+            if (!ValidateEnemyFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                return;
+            }
 
+            var lootTables = creatblesManager.GetAll<LootTable>();
             var selectedLootTable = lootTables.FirstOrDefault(lt =>
                 lt.data.name == lootTableInput.value
             );
@@ -152,9 +163,63 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             creatblesManager.Add(enemy);
 
-            Debug.Log($"Enemy created: {enemy.data.name}");
+            ToastNotification.Show("Aggressive NPC created successfully!", "success", Color.green);
 
             OpenMenu(aggresiveNpcMenuPrefab);
+        }
+
+        private void SaveExistingEnemy()
+        {
+            if (!ValidateEnemyFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                return;
+            }
+
+            var lootTables = creatblesManager.GetAll<LootTable>();
+            var selectedLootTable = lootTables.FirstOrDefault(lt =>
+                lt.data.name == lootTableInput.value
+            );
+
+            if (editBuffer != null)
+            {
+                editBuffer.Working.lootTableId = selectedLootTable?.data.id;
+                editBuffer.Commit();
+            }
+
+            ToastNotification.Show("Aggressive NPC updated successfully!", "success", Color.green);
+            OpenMenu(aggresiveNpcMenuPrefab);
+        }
+
+        private bool ValidateEnemyFields(out string error)
+        {
+            var name = editBuffer != null ? editBuffer.Working.name : nameInput.value;
+            var health =
+                editBuffer != null ? editBuffer.Working.healthPoints : healthPointsInput.value;
+            var damage = editBuffer != null ? editBuffer.Working.damage : damageInput.value;
+            var speed = editBuffer != null ? editBuffer.Working.speed : speedInput.value;
+            var range = editBuffer != null ? editBuffer.Working.range : rangeInput.value;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                error = "Enemy name is required.";
+                return false;
+            }
+
+            if (health <= 0)
+            {
+                error = "Health points must be greater than zero.";
+                return false;
+            }
+
+            if (damage < 0 || speed < 0 || range < 0)
+            {
+                error = "Enemy stats cannot be negative.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
         }
 
         private void ReturnToList()

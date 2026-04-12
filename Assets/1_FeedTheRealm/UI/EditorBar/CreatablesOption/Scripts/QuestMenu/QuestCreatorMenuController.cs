@@ -8,6 +8,7 @@ using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.WSA;
 using VContainer;
 using VContainer.Unity;
 
@@ -27,6 +28,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
         private QuestData editingData;
         private QuestData stagingData;
+        private EditBuffer<QuestData> editBuffer;
         private bool isNewQuest;
         private const int MaxQuestNameLength = 40;
         private const int MaxQuestContentLength = 100;
@@ -90,17 +92,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         public void SetupEditor(Quest quest)
         {
             editingData = quest.data;
+            editBuffer = new EditBuffer<QuestData>(editingData);
             isNewQuest = false;
+            saveButton.text = "Save Quest";
             PopulateFields();
             BindEditMode();
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked -= SaveExistingQuest;
+            saveButton.clicked += SaveExistingQuest;
         }
 
         public void SetupStagingQuest(QuestData stagingData)
         {
             this.stagingData = stagingData;
+            editBuffer = new EditBuffer<QuestData>(stagingData);
             isNewQuest = true;
             saveButton.text = "Save Quest";
             saveButton.clicked -= ReturnToList;
@@ -110,7 +115,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             BindEditMode();
         }
 
-        private QuestData CurrentQuestData => editingData ?? stagingData;
+        private QuestData CurrentQuestData => editBuffer != null ? editBuffer.Working : stagingData;
 
         private void PopulateFields()
         {
@@ -309,6 +314,55 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             return lootTable?.data.name ?? "Unknown LootTable";
         }
 
+        private bool ValidateQuestTarget(QuestType questType, string targetId, out string error)
+        {
+            if (questType == QuestType.EnemySlays && string.IsNullOrEmpty(targetId))
+            {
+                error = "An enemy must be selected for this quest type.";
+                return false;
+            }
+
+            if (questType == QuestType.NpcInteract && string.IsNullOrEmpty(targetId))
+            {
+                error = "An NPC must be selected for this quest type.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
+        }
+
+        private void SaveExistingQuest()
+        {
+            if (!ValidateQuestFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save quest: {error}", "error", Color.red);
+                return;
+            }
+
+            var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
+            string targetId =
+                questType == QuestType.EnemySlays
+                    ? GetEnemyId(enemyDropdown.value)
+                    : GetNpcId(npcDropdown.value);
+
+            if (!ValidateQuestTarget(questType, targetId, out error))
+            {
+                ToastNotification.Show($"Failed to save quest: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+            {
+                editBuffer.Working.targetId = targetId;
+                editBuffer.Working.type = questType;
+                editBuffer.Commit();
+            }
+
+            ToastNotification.Show("Quest updated successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
         private void CreateNewObject()
         {
             if (!ValidateQuestFields(out var error))
@@ -317,12 +371,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 return;
             }
 
-            var questData = CurrentQuestData;
             var questType = Enum.Parse<QuestType>(questTypeDropdown.value);
             string targetId =
                 questType == QuestType.EnemySlays
                     ? GetEnemyId(enemyDropdown.value)
                     : GetNpcId(npcDropdown.value);
+
+            if (!ValidateQuestTarget(questType, targetId, out error))
+            {
+                ToastNotification.Show($"Failed to save quest: {error}", "error", Color.red);
+                return;
+            }
+
+            var questData = CurrentQuestData;
             int targetAmount = questType == QuestType.NpcInteract ? 1 : targetAmountField.value;
 
             questData.title = nameInput.value;
@@ -331,20 +392,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
             questData.targetId = targetId;
             questData.targetAmount = targetAmount;
 
-            if (isNewQuest)
-                creatablesManager.Add(new Quest(questData));
+            if (editBuffer != null)
+                editBuffer.Commit();
 
+            if (isNewQuest && editBuffer != null)
+                creatablesManager.Add(new Quest(editBuffer.Original));
+
+            ToastNotification.Show("Quest saved successfully!", "success", Color.green);
             ReturnToList();
         }
 
         private void ReturnToList()
         {
-            if (!ValidateQuestFields(out var error))
-            {
-                ToastNotification.Show($"Failed to return: {error}", "error", Color.red);
-                return;
-            }
-
             OpenMenu(questsMenuPrefab);
         }
     }

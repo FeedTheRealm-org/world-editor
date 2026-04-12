@@ -19,9 +19,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         private Dialog currentDialog;
         private MessageData editingMessage;
+        private EditBuffer<MessageData> editBuffer;
         private const int MaxMessageLength = 90;
         private bool isEditingMessage;
-        private string pendingContent;
 
         private TextField contentField;
         private Button saveButton;
@@ -44,7 +44,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             currentDialog = dialog;
             editingMessage = message;
             isEditingMessage = editingMessage != null;
-            pendingContent = message?.content ?? string.Empty;
+
+            if (isEditingMessage)
+                editBuffer = new EditBuffer<MessageData>(editingMessage);
 
             PopulateFields();
             BindEditMode();
@@ -66,12 +68,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         private void PopulateFields()
         {
-            contentField.value = pendingContent;
+            contentField.value = editBuffer != null ? editBuffer.Working.content : string.Empty;
         }
 
         private void BindEditMode()
         {
-            contentField.RegisterValueChangedCallback(evt => pendingContent = evt.newValue);
+            if (editBuffer != null)
+                contentField.RegisterValueChangedCallback(evt =>
+                    editBuffer.Working.content = evt.newValue
+                );
         }
 
         private bool ValidateMessageContent(out string error)
@@ -103,7 +108,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             var message = new MessageData(
                 Guid.NewGuid().ToString(),
                 sender: "",
-                content: pendingContent
+                content: contentField.value
             );
 
             currentDialog.data.messages.Add(message);
@@ -112,6 +117,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 this,
                 Logging.LogType.Info
             );
+            ToastNotification.Show("Message created successfully!", "success", Color.green);
             ReturnToList();
         }
 
@@ -123,12 +129,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 return;
             }
 
-            editingMessage.content = pendingContent;
+            if (editBuffer != null)
+                editBuffer.Commit();
             logger.Log(
                 $"Saved existing message for dialog: {currentDialog.data.name}",
                 this,
                 Logging.LogType.Info
             );
+            ToastNotification.Show("Message saved successfully!", "success", Color.green);
             ReturnToList();
         }
 
