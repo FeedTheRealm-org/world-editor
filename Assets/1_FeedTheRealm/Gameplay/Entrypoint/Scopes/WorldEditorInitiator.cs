@@ -76,8 +76,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<CreatablesRepository>(Lifetime.Singleton);
             builder.Register<ZonesRepository>(Lifetime.Singleton);
             builder
-                .Register<PlayerSpriteRepository>(Lifetime.Singleton)
-                .As<CharacterSpriteRepository>();
+                .Register<PlayerInfoRepository>(Lifetime.Singleton)
+                .As<CharacterInfoRepository>();
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
