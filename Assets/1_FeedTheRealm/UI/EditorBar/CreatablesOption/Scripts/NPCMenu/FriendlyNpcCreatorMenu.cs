@@ -26,9 +26,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private GameObject characterEditorPrefab;
 
         private NPCData editingData;
+        private EditBuffer<NPCData> editBuffer;
+        private bool isEditingNpc;
+        private string currentDialogId = "";
+        private const int MaxNpcNameLength = 25;
         private string selectedDialogId = string.Empty;
         private Dictionary<string, string> messageQuestAssignments = new();
-        private Dictionary<string, string> pendingCategorySprites = new();
         private NPCMessageItemBuilder messageItemBuilder;
 
         private TextField nameInput;
@@ -37,9 +40,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private ScrollView messagesScrollView;
         private Label messagesLabel;
         private Image spritePreview;
+        private string currentSpritePath;
         private Button editCharacterButton;
         private Button saveButton;
         private Button closeButton;
+        private Button returnButton;
 
         private GameObject characterEditorInstance;
         private CharacterEditController characterEditorController;
@@ -71,6 +76,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
+            returnButton = root.Q<Button>("Return");
 
             characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
                 this,
@@ -82,7 +88,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             messageItemBuilder = new NPCMessageItemBuilder(
                 creatablesManager,
                 messageQuestAssignments,
-                OnMessageQuestAssignmentsChanged
+                null
             );
 
             PopulateDialogDropdown();
@@ -131,8 +137,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void RegisterCallbacks()
         {
-            closeButton.clicked += ReturnToList;
-            editCharacterButton.clicked += OpenCharacterEditor;
+            if (closeButton != null)
+                closeButton.clicked += ReturnToList;
+
+            if (returnButton != null)
+                returnButton.clicked += ReturnToList;
+
+            if (editCharacterButton != null)
+                editCharacterButton.clicked += OpenCharacterEditor;
             dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
             nameInput.RegisterValueChangedCallback(OnNameChanged);
             descriptionInput.RegisterValueChangedCallback(OnDescriptionChanged);
@@ -143,6 +155,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             if (closeButton != null)
                 closeButton.clicked -= ReturnToList;
 
+            if (returnButton != null)
+                returnButton.clicked -= ReturnToList;
+
             if (editCharacterButton != null)
                 editCharacterButton.clicked -= OpenCharacterEditor;
 
@@ -150,6 +165,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             {
                 saveButton.clicked -= CreateNewObject;
                 saveButton.clicked -= ReturnToList;
+                saveButton.clicked -= SaveExistingNpc;
             }
 
             dialogDropdown?.UnregisterValueChangedCallback(OnDialogChanged);
@@ -159,21 +175,31 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnNameChanged(ChangeEvent<string> evt)
         {
-            if (editingData != null)
-                editingData.name = evt.newValue;
+            if (editBuffer != null)
+                editBuffer.Working.name = evt.newValue;
         }
 
         private void OnDescriptionChanged(ChangeEvent<string> evt)
         {
-            if (editingData != null)
-                editingData.description = evt.newValue;
+            if (editBuffer != null)
+                editBuffer.Working.description = evt.newValue;
         }
 
         private void SetupCreateMode()
         {
             selectedDialogId = string.Empty;
             messageQuestAssignments.Clear();
-            pendingCategorySprites.Clear();
+
+            var newNpcData = new NPCData(
+                Guid.NewGuid().ToString(),
+                "",
+                "",
+                null,
+                new Dictionary<string, string>()
+            );
+            editBuffer = new EditBuffer<NPCData>(newNpcData);
+            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
             dialogDropdown.SetValueWithoutNotify("None");
             HideDialogMessages();
 
@@ -185,25 +211,47 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void SetupEditMode()
         {
+            editBuffer = new EditBuffer<NPCData>(editingData);
+            if (editingData.category_sprites != null)
+            {
+                editBuffer.Working.category_sprites = new Dictionary<string, string>(
+                    editingData.category_sprites
+                );
+            }
+            else
+            {
+                editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            }
+
+            isEditingNpc = true;
+            currentDialogId = editingData.npcDialog?.dialogId ?? string.Empty;
+
+            messageQuestAssignments.Clear();
+            if (editingData.npcDialog != null)
+            {
+                var questMap = editingData.npcDialog.GetMessageQuestMap();
+                foreach (var kvp in questMap)
+                    messageQuestAssignments[kvp.Key] = kvp.Value;
+            }
+
             PopulateFields();
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked -= ReturnToList;
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked -= SaveExistingNpc;
+            saveButton.text = "Save NPC";
+            saveButton.clicked += SaveExistingNpc;
         }
 
         private void PopulateFields()
         {
-            nameInput.SetValueWithoutNotify(editingData.name);
-            descriptionInput.SetValueWithoutNotify(editingData.description);
-
-            if (
-                editingData.npcDialog == null
-                || string.IsNullOrEmpty(editingData.npcDialog.dialogId)
-            )
+            if (editBuffer != null)
             {
-                selectedDialogId = string.Empty;
+                nameInput.value = editBuffer.Working.name;
+                descriptionInput.value = editBuffer.Working.description;
+            }
+
+            if (string.IsNullOrEmpty(currentDialogId))
+            {
                 dialogDropdown.SetValueWithoutNotify("None");
                 HideDialogMessages();
                 return;
@@ -211,7 +259,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             var dialog = creatablesManager
                 .GetAll<Dialog>()
-                .FirstOrDefault(d => d.Id == editingData.npcDialog.dialogId);
+                .FirstOrDefault(d => d.Id == currentDialogId);
 
             if (dialog == null)
             {
@@ -222,12 +270,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             }
 
             dialogDropdown.SetValueWithoutNotify(dialog.data.name);
-            selectedDialogId = dialog.Id;
 
             messageQuestAssignments.Clear();
-            var questMap = editingData.npcDialog.GetMessageQuestMap();
-            foreach (var kvp in questMap)
-                messageQuestAssignments[kvp.Key] = kvp.Value;
+            if (editBuffer != null && editBuffer.Working.npcDialog != null)
+            {
+                var questMap = editBuffer.Working.npcDialog.GetMessageQuestMap();
+                foreach (var kvp in questMap)
+                    messageQuestAssignments[kvp.Key] = kvp.Value;
+            }
+            else if (editingData != null && editingData.npcDialog != null)
+            {
+                var questMap = editingData.npcDialog.GetMessageQuestMap();
+                foreach (var kvp in questMap)
+                    messageQuestAssignments[kvp.Key] = kvp.Value;
+            }
 
             LoadDialogMessages(dialog);
         }
@@ -243,17 +299,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnDialogChanged(ChangeEvent<string> evt)
         {
-            // Dialog changed explicitly by user, clear stale assignments before reloading messages.
             messageQuestAssignments.Clear();
 
             if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
             {
-                selectedDialogId = string.Empty;
-                HideDialogMessages();
-
-                if (editingData != null)
-                    editingData.npcDialog = null;
-
+                currentDialogId = "";
+                messagesScrollView.style.display = DisplayStyle.None;
+                messagesLabel.style.display = DisplayStyle.None;
                 return;
             }
 
@@ -263,23 +315,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             if (dialog == null)
             {
-                selectedDialogId = string.Empty;
-                HideDialogMessages();
+                currentDialogId = "";
                 return;
             }
 
-            selectedDialogId = dialog.Id;
-
-            if (editingData != null)
-            {
-                if (editingData.npcDialog == null)
-                    editingData.npcDialog = new NPCDialogData(dialog.Id);
-                else
-                    editingData.npcDialog.dialogId = dialog.Id;
-
-                editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
-            }
-
+            currentDialogId = dialog.Id;
+            messageQuestAssignments.Clear();
             LoadDialogMessages(dialog);
         }
 
@@ -305,10 +346,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnMessageQuestAssignmentsChanged()
         {
-            if (editingData?.npcDialog == null)
+            if (editBuffer?.Working.npcDialog == null)
                 return;
 
-            editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+            editBuffer.Working.npcDialog.SetMessageQuestMap(messageQuestAssignments);
         }
 
         private void OpenCharacterEditor()
@@ -324,27 +365,29 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
         {
-            if (editingData != null)
+            if (editBuffer != null)
             {
-                editingData.category_sprites = categorySprites ?? new Dictionary<string, string>();
-                pendingPreviewRefresh = true;
-                return;
+                editBuffer.Working.category_sprites =
+                    categorySprites ?? new Dictionary<string, string>();
             }
-
-            pendingCategorySprites = categorySprites ?? new Dictionary<string, string>();
             pendingPreviewRefresh = true;
         }
 
         private CharacterInfoResponse BuildCharacterInfo()
         {
-            var categorySprites = editingData?.category_sprites ?? pendingCategorySprites;
-            if (categorySprites == null)
-                categorySprites = new Dictionary<string, string>();
+            var categorySprites =
+                editBuffer != null
+                    ? editBuffer.Working.category_sprites
+                    : new Dictionary<string, string>();
 
             return new CharacterInfoResponse
             {
-                character_name = editingData?.name ?? nameInput?.value ?? string.Empty,
-                character_bio = editingData?.description ?? descriptionInput?.value ?? string.Empty,
+                character_name =
+                    (editBuffer != null ? editBuffer.Working.name : nameInput?.value)
+                    ?? string.Empty,
+                character_bio =
+                    (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
+                    ?? string.Empty,
                 category_sprites = new Dictionary<string, string>(categorySprites),
             };
         }
@@ -462,29 +505,92 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             );
         }
 
-        private void CreateNewObject()
+        private bool ValidateNpcName(out string error)
         {
-            NPCDialogData npcDialogData = null;
-            if (!string.IsNullOrEmpty(selectedDialogId))
+            if (string.IsNullOrEmpty(nameInput.value))
             {
-                npcDialogData = new NPCDialogData(selectedDialogId);
-                npcDialogData.SetMessageQuestMap(messageQuestAssignments);
+                error = "NPC name is required.";
+                return false;
             }
 
-            var categorySprites =
-                editingData?.category_sprites
-                ?? pendingCategorySprites
-                ?? new Dictionary<string, string>();
+            if (nameInput.value.Length > MaxNpcNameLength)
+            {
+                error = $"NPC name must be at most {MaxNpcNameLength} characters.";
+                return false;
+            }
 
-            var npcData = new NPCData(
-                Guid.NewGuid().ToString(),
-                nameInput.value,
-                descriptionInput.value ?? "",
-                npcDialogData,
-                categorySprites
-            );
+            error = string.Empty;
+            return true;
+        }
 
-            creatablesManager.Add(new FriendlyNpc(npcData));
+        private void CreateNewObject()
+        {
+            if (!ValidateNpcName(out var error))
+            {
+                ToastNotification.Show($"Failed to save NPC: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+            {
+                if (!string.IsNullOrEmpty(currentDialogId))
+                {
+                    if (editBuffer.Working.npcDialog == null)
+                        editBuffer.Working.npcDialog = new NPCDialogData(currentDialogId);
+                    else
+                        editBuffer.Working.npcDialog.dialogId = currentDialogId;
+
+                    editBuffer.Working.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+                }
+                else
+                {
+                    editBuffer.Working.npcDialog = null;
+                }
+
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+
+                var npc = new FriendlyNpc(editBuffer.Original);
+                creatablesManager.Add(npc);
+            }
+
+            ToastNotification.Show("Friendly NPC created successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
+        private void SaveExistingNpc()
+        {
+            if (!ValidateNpcName(out var error))
+            {
+                ToastNotification.Show($"Failed to save NPC: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+            {
+                if (!string.IsNullOrEmpty(currentDialogId))
+                {
+                    if (editBuffer.Working.npcDialog == null)
+                        editBuffer.Working.npcDialog = new NPCDialogData(currentDialogId);
+                    else
+                        editBuffer.Working.npcDialog.dialogId = currentDialogId;
+
+                    editBuffer.Working.npcDialog.SetMessageQuestMap(messageQuestAssignments);
+                }
+                else
+                {
+                    editBuffer.Working.npcDialog = null;
+                }
+
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+            }
+
+            ToastNotification.Show("Friendly NPC saved successfully!", "success", Color.green);
             ReturnToList();
         }
 

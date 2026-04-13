@@ -22,11 +22,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         [SerializeField]
         private GameObject aggresiveNpcMenuPrefab;
 
+        private EditBuffer<EnemyData> editBuffer;
+        private string currentLootTableId;
+
         [SerializeField]
         private GameObject characterEditorPrefab;
-
-        private EnemyData editingEnemyData;
-        private Dictionary<string, string> pendingCategorySprites = new();
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -38,17 +38,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private Button editCharacterButton;
         private Button closeButton;
         private Button saveButton;
-        private Image spritePreview;
+        private Button returnButton;
 
+        private Image spritePreview;
         private GameObject characterEditorInstance;
         private CharacterEditController characterEditor;
         private CharacterEditorPreviewRenderer characterPreviewRenderer;
         private bool pendingPreviewRefresh;
-        private bool editModeBindingsRegistered;
 
         public void SetupEditor(AggresiveNpc npc)
         {
-            editingEnemyData = npc.data;
+            editBuffer = new EditBuffer<EnemyData>(npc.data);
+
+            if (npc.data.category_sprites != null)
+                editBuffer.Working.category_sprites = new Dictionary<string, string>(
+                    npc.data.category_sprites
+                );
+            else
+                editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
+            currentLootTableId = editBuffer.Working.lootTableId;
 
             if (isActiveAndEnabled)
             {
@@ -74,7 +83,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             SetCharacterEditorVisible(false);
             SetSpritePreviewVisible(true);
 
-            if (editingEnemyData != null)
+            if (editBuffer != null)
             {
                 SetupEditMode();
             }
@@ -92,10 +101,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (closeButton != null)
                 closeButton.clicked -= ReturnToList;
 
+            if (returnButton != null)
+                returnButton.clicked -= ReturnToList;
+
             if (saveButton != null)
             {
                 saveButton.clicked -= CreateNewObject;
                 saveButton.clicked -= ReturnToList;
+                saveButton.clicked -= SaveExistingEnemy;
             }
 
             if (editCharacterButton != null)
@@ -138,9 +151,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
+            returnButton = root.Q<Button>("Return");
             spritePreview = root.Q<Image>("SpritePreview");
 
             closeButton.clicked += ReturnToList;
+            if (returnButton != null)
+                returnButton.clicked += ReturnToList;
         }
 
         private void PopulateLootTables()
@@ -151,10 +167,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SetupCreateMode()
         {
-            pendingCategorySprites.Clear();
+            var newEnemy = new EnemyData(
+                Guid.NewGuid().ToString(),
+                "",
+                "",
+                0,
+                0,
+                0,
+                0,
+                null,
+                new Dictionary<string, string>()
+            );
+            editBuffer = new EditBuffer<EnemyData>(newEnemy);
+            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
+            PopulateFields();
+            BindEditMode();
 
             saveButton.text = "Create Enemy";
-            saveButton.clicked -= ReturnToList;
+            saveButton.clicked -= SaveExistingEnemy;
             saveButton.clicked -= CreateNewObject;
             saveButton.clicked += CreateNewObject;
 
@@ -167,10 +198,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             PopulateFields();
             BindEditMode();
 
-            saveButton.text = "Return to List";
             saveButton.clicked -= CreateNewObject;
-            saveButton.clicked -= ReturnToList;
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked -= SaveExistingEnemy;
+            saveButton.text = "Save Enemy";
+            saveButton.clicked += SaveExistingEnemy;
 
             editCharacterButton.clicked -= OpenCharacterEditor;
             editCharacterButton.clicked += OpenCharacterEditor;
@@ -189,97 +220,144 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
         {
-            if (editingEnemyData != null)
+            if (editBuffer != null)
             {
-                editingEnemyData.category_sprites =
+                editBuffer.Working.category_sprites =
                     categorySprites ?? new Dictionary<string, string>();
-                pendingPreviewRefresh = true;
-                return;
             }
-
-            pendingCategorySprites = categorySprites ?? new Dictionary<string, string>();
             pendingPreviewRefresh = true;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingEnemyData.name;
-            descriptionInput.value = editingEnemyData.description;
-            healthPointsInput.value = editingEnemyData.healthPoints;
-            damageInput.value = editingEnemyData.damage;
-            speedInput.value = editingEnemyData.speed;
-            rangeInput.value = editingEnemyData.range;
+            if (editBuffer != null)
+            {
+                nameInput.value = editBuffer.Working.name;
+                descriptionInput.value = editBuffer.Working.description;
+                healthPointsInput.value = editBuffer.Working.healthPoints;
+                damageInput.value = editBuffer.Working.damage;
+                speedInput.value = editBuffer.Working.speed;
+                rangeInput.value = editBuffer.Working.range;
+            }
 
             var lootTables = creatblesManager.GetAll<LootTable>();
-            var selected = lootTables.FirstOrDefault(lt =>
-                lt.data.id == editingEnemyData.lootTableId
-            );
-
-            if (selected != null)
-                lootTableInput.value = selected.data.name;
+            if (!string.IsNullOrEmpty(currentLootTableId))
+            {
+                var selected = lootTables.FirstOrDefault(lt => lt.data.id == currentLootTableId);
+                lootTableInput.value = selected?.data.name ?? string.Empty;
+            }
+            else if (lootTables.Any())
+            {
+                lootTableInput.value = lootTables[0].data.name;
+            }
         }
 
         private void BindEditMode()
         {
-            if (editModeBindingsRegistered)
+            if (editBuffer == null)
                 return;
-
-            nameInput.RegisterValueChangedCallback(evt => editingEnemyData.name = evt.newValue);
-
+            nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
             descriptionInput.RegisterValueChangedCallback(evt =>
-                editingEnemyData.description = evt.newValue
+                editBuffer.Working.description = evt.newValue
             );
-
             healthPointsInput.RegisterValueChangedCallback(evt =>
-                editingEnemyData.healthPoints = evt.newValue
+                editBuffer.Working.healthPoints = evt.newValue
             );
-
-            damageInput.RegisterValueChangedCallback(evt => editingEnemyData.damage = evt.newValue);
-
-            speedInput.RegisterValueChangedCallback(evt => editingEnemyData.speed = evt.newValue);
-
-            rangeInput.RegisterValueChangedCallback(evt => editingEnemyData.range = evt.newValue);
+            damageInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.damage = evt.newValue
+            );
+            speedInput.RegisterValueChangedCallback(evt => editBuffer.Working.speed = evt.newValue);
+            rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
 
             lootTableInput.RegisterValueChangedCallback(evt =>
             {
-                var lootTables = creatblesManager.GetAll<LootTable>();
-                var selected = lootTables.FirstOrDefault(lt => lt.data.name == evt.newValue);
-
-                editingEnemyData.lootTableId = selected?.data.id;
+                var selected = creatblesManager
+                    .GetAll<LootTable>()
+                    .FirstOrDefault(lt => lt.data.name == evt.newValue);
+                editBuffer.Working.lootTableId = selected?.data.id;
             });
-
-            editModeBindingsRegistered = true;
         }
 
         private void CreateNewObject()
         {
-            var lootTables = creatblesManager.GetAll<LootTable>();
+            if (!ValidateEnemyFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                return;
+            }
 
+            if (editBuffer != null)
+            {
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+
+                var enemy = new AggresiveNpc(editBuffer.Original);
+                creatblesManager.Add(enemy);
+            }
+
+            ToastNotification.Show("Aggressive NPC created successfully!", "success", Color.green);
+
+            ReturnToList();
+        }
+
+        private void SaveExistingEnemy()
+        {
+            if (!ValidateEnemyFields(out var error))
+            {
+                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                return;
+            }
+
+            var lootTables = creatblesManager.GetAll<LootTable>();
             var selectedLootTable = lootTables.FirstOrDefault(lt =>
                 lt.data.name == lootTableInput.value
             );
 
-            var enemyData = new EnemyData(
-                Guid.NewGuid().ToString(),
-                nameInput.value,
-                descriptionInput.value ?? "",
-                healthPointsInput.value,
-                damageInput.value,
-                speedInput.value,
-                rangeInput.value,
-                selectedLootTable?.data.id,
-                editingEnemyData?.category_sprites
-                    ?? pendingCategorySprites
-                    ?? new Dictionary<string, string>()
-            );
+            if (editBuffer != null)
+            {
+                editBuffer.Working.lootTableId = selectedLootTable?.data.id;
+                editBuffer.Commit();
 
-            var enemy = new AggresiveNpc(enemyData);
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+            }
 
-            creatblesManager.Add(enemy);
+            ToastNotification.Show("Aggressive NPC updated successfully!", "success", Color.green);
+            ReturnToList();
+        }
 
-            Debug.Log($"Enemy created: {enemy.data.name}");
+        private bool ValidateEnemyFields(out string error)
+        {
+            var name = editBuffer != null ? editBuffer.Working.name : nameInput.value;
+            var health =
+                editBuffer != null ? editBuffer.Working.healthPoints : healthPointsInput.value;
+            var damage = editBuffer != null ? editBuffer.Working.damage : damageInput.value;
+            var speed = editBuffer != null ? editBuffer.Working.speed : speedInput.value;
+            var range = editBuffer != null ? editBuffer.Working.range : rangeInput.value;
 
-            OpenMenu(aggresiveNpcMenuPrefab);
+            if (string.IsNullOrEmpty(name))
+            {
+                error = "Enemy name is required.";
+                return false;
+            }
+
+            if (health <= 0)
+            {
+                error = "Health points must be greater than zero.";
+                return false;
+            }
+
+            if (damage < 0 || speed < 0 || range < 0)
+            {
+                error = "Enemy stats cannot be negative.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
         }
 
         private void ReturnToList()
@@ -337,15 +415,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private CharacterInfoResponse BuildCharacterInfo()
         {
-            var categorySprites = editingEnemyData?.category_sprites ?? pendingCategorySprites;
-            if (categorySprites == null)
-                categorySprites = new Dictionary<string, string>();
+            var categorySprites =
+                editBuffer != null
+                    ? editBuffer.Working.category_sprites
+                    : new Dictionary<string, string>();
 
             return new CharacterInfoResponse
             {
-                character_name = editingEnemyData?.name ?? nameInput?.value ?? string.Empty,
+                character_name =
+                    (editBuffer != null ? editBuffer.Working.name : nameInput?.value)
+                    ?? string.Empty,
                 character_bio =
-                    editingEnemyData?.description ?? descriptionInput?.value ?? string.Empty,
+                    (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
+                    ?? string.Empty,
                 category_sprites = new Dictionary<string, string>(categorySprites),
             };
         }
