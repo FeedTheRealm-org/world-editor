@@ -68,4 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5039cbd1b6fa20aea5b2c5539dee50e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::QuestCreatorMenuController
+  AllowInputWhileOpen: 0
   questsMenuPrefab: {fileID: 4031289694855511202, guid: 36f2a1fea5a9d123f8ca85e5760a80a0, type: 3}
+  rewardMenuPrefab: {fileID: 3597311331052864353, guid: 1859aad3c72aee4ef96a7bf0b8b94923, type: 3}

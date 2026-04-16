@@ -26,6 +26,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private Config config;
 
         private WeaponItemData editingData;
+        private EditBuffer<WeaponItemData> editBuffer;
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -35,7 +36,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private FloatField rangeInput;
         private IntegerField ammoInput;
         private Image spritePreview;
-        private string pendingSpritePath;
+        private string currentSpritePath;
         private Button saveButton;
         private Button closeButton;
 
@@ -46,7 +47,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             descriptionInput = root.Q<TextField>("DescriptionField");
             weaponTypeInput = root.Q<DropdownField>("WeaponTypeField");
             weaponTypeInput.choices = Enum.GetNames(typeof(WeaponType)).ToList();
-            weaponTypeInput.value = WeaponType.None.ToString();
+            weaponTypeInput.value = WeaponType.Melee.ToString();
             damageInput = root.Q<IntegerField>("DamageField");
             attackSpeedInput = root.Q<FloatField>("AttackSpeedField");
             rangeInput = root.Q<FloatField>("RangeField");
@@ -64,41 +65,54 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         public void SetupEditor(Weapon weapon)
         {
             editingData = weapon.data;
+            editBuffer = new EditBuffer<WeaponItemData>(editingData);
+            currentSpritePath = editingData.spriteFilePath;
+
             PopulateFields();
             BindEditMode();
+
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked += ReturnToList;
+            saveButton.text = "Save Weapon";
+            saveButton.clicked += SaveExistingObject;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingData.name;
-            descriptionInput.value = editingData.description;
-            weaponTypeInput.value = editingData.weaponType.ToString();
-            damageInput.value = editingData.damage;
-            attackSpeedInput.value = editingData.attackSpeed;
-            rangeInput.value = editingData.range;
-            ammoInput.value = editingData.ammo;
-            LoadExistingSprite(editingData.spriteFilePath);
+            var dataToDisplay = editBuffer != null ? editBuffer.Working : editingData;
+            if (dataToDisplay == null)
+                return;
+
+            nameInput.value = dataToDisplay.name;
+            descriptionInput.value = dataToDisplay.description;
+            weaponTypeInput.value = dataToDisplay.weaponType.ToString();
+            damageInput.value = dataToDisplay.damage;
+            attackSpeedInput.value = dataToDisplay.attackSpeed;
+            rangeInput.value = dataToDisplay.range;
+            ammoInput.value = dataToDisplay.ammo;
+            LoadExistingSprite(dataToDisplay.spriteFilePath);
         }
 
         private void BindEditMode()
         {
-            nameInput.RegisterValueChangedCallback(evt => editingData.name = evt.newValue);
+            if (editBuffer == null)
+                return;
+
+            nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
             descriptionInput.RegisterValueChangedCallback(evt =>
-                editingData.description = evt.newValue
+                editBuffer.Working.description = evt.newValue
             );
             weaponTypeInput.RegisterValueChangedCallback(evt =>
-                editingData.weaponType = Enum.Parse<WeaponType>(evt.newValue)
+                editBuffer.Working.weaponType = Enum.Parse<WeaponType>(evt.newValue)
             );
 
-            damageInput.RegisterValueChangedCallback(evt => editingData.damage = evt.newValue);
-            attackSpeedInput.RegisterValueChangedCallback(evt =>
-                editingData.attackSpeed = evt.newValue
+            damageInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.damage = evt.newValue
             );
-            rangeInput.RegisterValueChangedCallback(evt => editingData.range = evt.newValue);
-            ammoInput.RegisterValueChangedCallback(evt => editingData.ammo = evt.newValue);
+            attackSpeedInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.attackSpeed = evt.newValue
+            );
+            rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
+            ammoInput.RegisterValueChangedCallback(evt => editBuffer.Working.ammo = evt.newValue);
         }
 
         private void LoadSprite()
@@ -117,9 +131,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                     if (sprite == null)
                         return;
                     spritePreview.sprite = sprite;
-                    pendingSpritePath = paths[0];
+                    currentSpritePath = paths[0];
                     if (editingData != null)
-                        editingData.spriteFilePath = pendingSpritePath;
+                        editingData.spriteFilePath = currentSpritePath;
                 },
                 onCancel: () => Debug.Log("Sprite selection canceled.")
             );
@@ -138,13 +152,45 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 spritePreview.sprite = sprite;
         }
 
+        private bool ValidateFields()
+        {
+            if (string.IsNullOrEmpty(currentSpritePath))
+            {
+                ToastNotification.Show("Failed to save: sprite is required.", "error", Color.red);
+                return false;
+            }
+            if (string.IsNullOrEmpty(nameInput.value))
+            {
+                ToastNotification.Show("Failed to save: name is required.", "error", Color.red);
+                return false;
+            }
+            if (
+                damageInput.value < 0
+                || attackSpeedInput.value < 0
+                || rangeInput.value < 0
+                || ammoInput.value < 0
+            )
+            {
+                ToastNotification.Show(
+                    "Failed to save: some stats cannot be negative.",
+                    "error",
+                    Color.red
+                );
+                return false;
+            }
+            return true;
+        }
+
         private void CreateNewObject()
         {
+            if (!ValidateFields())
+                return;
+
             var itemData = new ItemData(
                 Guid.NewGuid().ToString(),
                 nameInput.value,
                 descriptionInput.value ?? "",
-                pendingSpritePath
+                currentSpritePath
             );
 
             var weaponData = new WeaponItemData(
@@ -157,7 +203,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             );
 
             creatablesManager.Add(new Weapon(weaponData));
+            ToastNotification.Show("Weapon item created successfully!", "success", Color.green);
             ReturnToList();
+        }
+
+        private void SaveExistingObject()
+        {
+            if (!ValidateFields())
+                return;
+
+            if (editBuffer != null)
+            {
+                editBuffer.Working.spriteFilePath = currentSpritePath;
+                editBuffer.Commit();
+                ToastNotification.Show("Weapon item saved successfully!", "success", Color.green);
+                ReturnToList();
+            }
         }
 
         private void ReturnToList() => OpenMenu(itemsMenuPrefab);

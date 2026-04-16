@@ -104,6 +104,7 @@ InitTestScene*.unity*
 
 # Asset libraries - ignore contents but keep meta files
 /[Aa]ssets/RPGPP_LT/
+/[Aa]ssets/HeroEditor4D/
 /[Aa]ssets/Samples/
 /[Aa]ssets/TextMesh Pro/
 /[Aa]ssets/TextMesh Pro.meta

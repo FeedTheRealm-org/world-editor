@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using API;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 using VContainer;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
@@ -22,307 +22,562 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         [SerializeField]
         private GameObject npcsMenuPrefab;
 
+        [SerializeField]
+        private GameObject characterEditorPrefab;
+
+        [SerializeField]
+        private VisualTreeAsset progressionItemTemplate;
+
         private NPCData editingData;
-        private string selectedDialogId = "";
-        private Dictionary<string, string> messageQuestAssignments = new();
-        private NPCMessageItemBuilder messageItemBuilder;
+        private EditBuffer<NPCData> editBuffer;
+        private const int MaxNpcNameLength = 25;
+
+        private List<NPCDialogData> dialogProgression = new();
+        private NPCDialogProgressionItemBuilder progressionItemBuilder;
 
         private TextField nameInput;
         private TextField descriptionInput;
         private DropdownField dialogDropdown;
-        private ScrollView messagesScrollView;
-        private Label messagesLabel;
+        private Button addDialogButton;
+        private ScrollView progressionScrollView;
+        private Label progressionLabel;
         private Image spritePreview;
-        private string pendingSpritePath;
+        private Button editCharacterButton;
         private Button saveButton;
         private Button closeButton;
+        private Button returnButton;
 
-        void OnEnable()
-        {
-            var root = GetComponent<UIDocument>().rootVisualElement;
-            nameInput = root.Q<TextField>("NameField");
-            descriptionInput = root.Q<TextField>("DescriptionField");
-            dialogDropdown = root.Q<DropdownField>("DialogDropdown");
-            messagesScrollView = root.Q<ScrollView>("MessagesScrollView");
-            messagesLabel = root.Q<Label>("MessagesLabel");
-            spritePreview = root.Q<Image>("SpritePreview");
-            saveButton = root.Q<Button>("SaveButton");
-            closeButton = root.Q<Button>("Close");
-
-            messageItemBuilder = new NPCMessageItemBuilder(
-                creatablesManager,
-                messageQuestAssignments
-            );
-
-            PopulateDialogDropdown();
-            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
-
-            root.Q<Button>("LoadSprite").clicked += LoadSprite;
-            root.Q<Button>("Return").clicked += ReturnToList;
-            closeButton.clicked += CloseMenu;
-            saveButton.clicked += CreateNewObject;
-        }
-
-        void OnDisable()
-        {
-            dialogDropdown?.UnregisterValueChangedCallback(OnDialogChanged);
-        }
+        private GameObject characterEditorInstance;
+        private CharacterEditController characterEditorController;
+        private CharacterEditorPreviewRenderer characterPreviewRenderer;
+        private bool pendingPreviewRefresh;
 
         public void SetupEditor(FriendlyNpc npc)
         {
             editingData = npc.data;
-            PopulateFields();
-            BindEditMode();
+            if (isActiveAndEnabled)
+            {
+                SetupEditMode();
+                pendingPreviewRefresh = true;
+                RefreshCharacterPreview();
+            }
+        }
+
+        void OnEnable()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+
+            nameInput = root.Q<TextField>("NameField");
+            descriptionInput = root.Q<TextField>("DescriptionField");
+            dialogDropdown = root.Q<DropdownField>("DialogDropdown");
+            addDialogButton = root.Q<Button>("AddDialogButton");
+            progressionScrollView = root.Q<ScrollView>("ProgressionScrollView");
+            progressionLabel = root.Q<Label>("ProgressionLabel");
+            spritePreview = root.Q<Image>("SpritePreview");
+            editCharacterButton = root.Q<Button>("EditCharacter");
+            saveButton = root.Q<Button>("SaveButton");
+            closeButton = root.Q<Button>("Close");
+            returnButton = root.Q<Button>("Return");
+
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            CharacterEditorRuntimeUtility.HideEmbeddedCharacterEditors(this);
+            SetSpritePreviewVisible(true);
+
+            progressionItemBuilder = new NPCDialogProgressionItemBuilder(
+                progressionItemTemplate,
+                creatablesManager,
+                OnProgressionChanged
+            );
+
+            PopulateDialogDropdown();
+            RegisterCallbacks();
+
+            if (editingData != null)
+                SetupEditMode();
+            else
+                SetupCreateMode();
+
+            pendingPreviewRefresh = true;
+            RefreshCharacterPreview();
+        }
+
+        private void Update()
+        {
+            if (characterEditorInstance != null && !characterEditorInstance.activeSelf)
+            {
+                DestroyCharacterEditorInstance();
+                SetCharacterPreviewVisible(true);
+                SetSpritePreviewVisible(true);
+            }
+
+            if (pendingPreviewRefresh && characterEditorInstance == null)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
+        }
+
+        void OnDisable()
+        {
+            UnregisterCallbacks();
+            DestroyCharacterEditorInstance();
+            DisposeCharacterPreviewRenderer();
+            if (spritePreview != null)
+                spritePreview.image = null;
+        }
+
+        private void SetupCreateMode()
+        {
+            dialogProgression.Clear();
+
+            var newData = new NPCData(
+                Guid.NewGuid().ToString(),
+                "",
+                "",
+                new List<NPCDialogData>(),
+                new Dictionary<string, string>()
+            );
+            editBuffer = new EditBuffer<NPCData>(newData);
+            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+
+            RefreshProgressionUI();
+
+            saveButton.text = "Create NPC";
+            saveButton.clicked -= ReturnToList;
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked += CreateNewObject;
+        }
+
+        private void SetupEditMode()
+        {
+            editBuffer = new EditBuffer<NPCData>(editingData);
+            editBuffer.Working.category_sprites =
+                editingData.category_sprites != null
+                    ? new Dictionary<string, string>(editingData.category_sprites)
+                    : new Dictionary<string, string>();
+
+            dialogProgression =
+                editingData.dialogProgression != null
+                    ? editingData.dialogProgression.Select(CloneDialogData).ToList()
+                    : new List<NPCDialogData>();
+
+            PopulateFields();
+
+            saveButton.clicked -= CreateNewObject;
+            saveButton.clicked -= SaveExistingNpc;
+            saveButton.text = "Save NPC";
+            saveButton.clicked += SaveExistingNpc;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingData.name;
-            descriptionInput.value = editingData.description;
-            LoadExistingSprite(editingData.spriteFilePath);
-
-            if (
-                editingData.npcDialog == null
-                || string.IsNullOrEmpty(editingData.npcDialog.dialogId)
-            )
-                return;
-
-            var dialog = creatablesManager
-                .GetAll<Dialog>()
-                .FirstOrDefault(d => d.Id == editingData.npcDialog.dialogId);
-
-            if (dialog == null)
-                return;
-
-            dialogDropdown.value = dialog.data.name;
-            selectedDialogId = dialog.Id;
-
-            messageQuestAssignments.Clear();
-            var questMap = editingData.npcDialog.GetMessageQuestMap();
-            foreach (var kvp in questMap)
-                messageQuestAssignments[kvp.Key] = kvp.Value;
-
-            LoadDialogMessages(dialog);
-        }
-
-        private void BindEditMode()
-        {
-            nameInput.RegisterValueChangedCallback(evt => editingData.name = evt.newValue);
-            descriptionInput.RegisterValueChangedCallback(evt =>
-                editingData.description = evt.newValue
-            );
-
-            dialogDropdown.RegisterValueChangedCallback(evt =>
+            if (editBuffer != null)
             {
-                if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
-                {
-                    editingData.npcDialog = null;
-                    return;
-                }
-
-                var dialog = creatablesManager
-                    .GetAll<Dialog>()
-                    .FirstOrDefault(d => d.data.name == evt.newValue);
-
-                if (dialog == null)
-                    return;
-
-                selectedDialogId = dialog.Id;
-
-                if (editingData.npcDialog == null)
-                    editingData.npcDialog = new NPCDialogData(dialog.Id);
-                else
-                    editingData.npcDialog.dialogId = dialog.Id;
-
-                editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
-            });
+                nameInput.value = editBuffer.Working.name;
+                descriptionInput.value = editBuffer.Working.description;
+            }
+            RefreshProgressionUI();
         }
 
         private void PopulateDialogDropdown()
         {
             var dialogs = creatablesManager.GetAll<Dialog>();
-            // unregister before setting choices to avoid spurious OnDialogChanged calls
-            dialogDropdown.UnregisterValueChangedCallback(OnDialogChanged);
             dialogDropdown.choices = new List<string> { "None" }
                 .Concat(dialogs.Select(d => d.data.name))
                 .ToList();
-            dialogDropdown.value = "None";
-            dialogDropdown.RegisterValueChangedCallback(OnDialogChanged);
+            dialogDropdown.SetValueWithoutNotify("None");
         }
 
-        private void OnDialogChanged(ChangeEvent<string> evt)
+        private void RefreshProgressionUI()
         {
-            if (evt.newValue == "None" || string.IsNullOrEmpty(evt.newValue))
+            progressionScrollView.Clear();
+
+            bool hasEntries = dialogProgression.Count > 0;
+            progressionScrollView.style.display = hasEntries
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
+            progressionLabel.style.display = hasEntries ? DisplayStyle.Flex : DisplayStyle.None;
+
+            for (int i = 0; i < dialogProgression.Count; i++)
             {
-                selectedDialogId = "";
-                messagesScrollView.style.display = DisplayStyle.None;
-                messagesLabel.style.display = DisplayStyle.None;
+                int idx = i;
+                var item = progressionItemBuilder.Build(
+                    dialogProgression[idx],
+                    idx + 1,
+                    onRemove: () => RemoveEntry(idx),
+                    onMoveUp: () => MoveEntry(idx, -1),
+                    onMoveDown: () => MoveEntry(idx, +1)
+                );
+                progressionScrollView.Add(item);
+            }
+        }
+
+        private void AddProgressionEntry()
+        {
+            if (dialogDropdown.value == "None" || string.IsNullOrEmpty(dialogDropdown.value))
+            {
+                ToastNotification.Show("Select a dialog before adding.", "error", Color.red);
                 return;
             }
 
             var dialog = creatablesManager
                 .GetAll<Dialog>()
-                .FirstOrDefault(d => d.data.name == evt.newValue);
+                .FirstOrDefault(d => d.data.name == dialogDropdown.value);
 
             if (dialog == null)
+                return;
+
+            if (dialogProgression.Any(e => e.dialogId == dialog.Id))
             {
-                selectedDialogId = "";
+                ToastNotification.Show(
+                    "That dialog is already in the progression.",
+                    "error",
+                    Color.red
+                );
                 return;
             }
 
-            selectedDialogId = dialog.Id;
-            LoadDialogMessages(dialog);
+            dialogProgression.Add(new NPCDialogData(dialog.Id));
+            RefreshProgressionUI();
+            OnProgressionChanged();
         }
 
-        private void LoadDialogMessages(Dialog dialog)
+        private void RemoveEntry(int index)
         {
-            messagesScrollView.Clear();
-            messagesScrollView.style.display = DisplayStyle.Flex;
-            messagesLabel.style.display = DisplayStyle.Flex;
+            if (index < 0 || index >= dialogProgression.Count)
+                return;
+            dialogProgression.RemoveAt(index);
+            RefreshProgressionUI();
+            OnProgressionChanged();
+        }
 
-            foreach (var message in dialog.data.messages)
+        private void MoveEntry(int index, int direction)
+        {
+            int newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= dialogProgression.Count)
+                return;
+
+            var temp = dialogProgression[index];
+            dialogProgression[index] = dialogProgression[newIndex];
+            dialogProgression[newIndex] = temp;
+
+            RefreshProgressionUI();
+            OnProgressionChanged();
+        }
+
+        private void OnProgressionChanged()
+        {
+            if (editBuffer?.Working != null)
+                editBuffer.Working.dialogProgression = dialogProgression;
+        }
+
+        private bool ValidateNpcName(out string error)
+        {
+            if (string.IsNullOrEmpty(nameInput.value))
             {
-                var item = messageItemBuilder.CreateMessageItem(message);
-                messagesScrollView.Add(item);
+                error = "NPC name is required.";
+                return false;
             }
-        }
-
-        private void LoadSprite()
-        {
-            CustomFileBrowser.ShowFilePickerDialog(
-                onSuccess: paths =>
-                {
-                    if (paths == null || paths.Length == 0)
-                        return;
-                    if (!paths[0].EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-                        return;
-                    var sprite = CustomFileBrowser.LoadSpriteFromDisk(paths[0]);
-                    if (sprite == null)
-                        return;
-                    spritePreview.sprite = sprite;
-                    pendingSpritePath = paths[0];
-                    if (editingData != null)
-                        editingData.spriteFilePath = pendingSpritePath;
-                },
-                onCancel: () => { }
-            );
-        }
-
-        private DropdownField CreateQuestDropdown(MessageData message, string currentQuestId)
-        {
-            var dropdown = new DropdownField();
-            dropdown.AddToClassList("npc-quest-dropdown");
-            dropdown.style.display = string.IsNullOrEmpty(currentQuestId)
-                ? DisplayStyle.None
-                : DisplayStyle.Flex;
-
-            PopulateQuestDropdown(dropdown, currentQuestId);
-
-            dropdown.RegisterValueChangedCallback(evt =>
+            if (nameInput.value.Length > MaxNpcNameLength)
             {
-                var selected = creatablesManager
-                    .GetAll<Quest>()
-                    .FirstOrDefault(q => q.data.title == evt.newValue);
-                if (selected != null)
+                error = $"NPC name must be at most {MaxNpcNameLength} characters.";
+                return false;
+            }
+            error = string.Empty;
+            return true;
+        }
+
+        private bool ValidateProgression(out string error)
+        {
+            for (int i = 0; i < dialogProgression.Count; i++)
+            {
+                var entry = dialogProgression[i];
+
+                if (!entry.HasQuestAssigned)
                 {
-                    messageQuestAssignments[message.id] = selected.Id;
-                    FlushToNpcDialog(); // flush after every quest assignment change
+                    entry.repeatableQuestCooldown = string.Empty;
+                    entry.onQuestAcceptedDialogId = string.Empty;
                 }
-            });
 
-            return dropdown;
-        }
+                bool isLast = i == dialogProgression.Count - 1;
+                bool hasNext = !isLast;
 
-        private void PopulateQuestDropdown(DropdownField dropdown, string currentQuestId = "")
-        {
-            var quests = creatablesManager.GetAll<Quest>();
-            dropdown.choices = quests.Select(q => q.data.title).ToList();
-
-            if (!string.IsNullOrEmpty(currentQuestId))
-            {
-                var current = quests.FirstOrDefault(q => q.Id == currentQuestId);
-                if (current != null)
-                    dropdown.value = current.data.title;
-            }
-            else if (dropdown.choices.Count > 0)
-                dropdown.value = dropdown.choices[0];
-        }
-
-        private Button CreateRemoveQuestButton(
-            MessageData message,
-            DropdownField questDropdown,
-            Button addQuestButton,
-            string currentQuestId
-        )
-        {
-            var button = new Button { text = "✕" };
-            button.AddToClassList("npc-remove-quest-button");
-
-            button.clicked += () =>
-            {
-                questDropdown.style.display = DisplayStyle.Flex;
-                button.style.display = DisplayStyle.None;
-
-                var removeButton = button.parent?.Q<Button>();
-                if (removeButton != null && removeButton.text == "✕")
-                    removeButton.style.display = DisplayStyle.Flex;
-
-                var initial = creatablesManager
-                    .GetAll<Quest>()
-                    .FirstOrDefault(q => q.data.title == questDropdown.value);
-                if (initial != null)
+                if (hasNext && !entry.HasQuestAssigned)
                 {
-                    messageQuestAssignments[message.id] = initial.Id;
-                    FlushToNpcDialog(); // flush on add too
+                    var dialog = creatablesManager
+                        .GetAll<Dialog>()
+                        .FirstOrDefault(d => d.Id == entry.dialogId);
+                    string name = dialog?.data.name ?? $"entry {i + 1}";
+                    error =
+                        $"Dialog \"{name}\" (position {i + 1}) has no quest assigned. "
+                        + "A quest is required to advance to the next dialog.";
+                    return false;
                 }
-            };
 
-            if (string.IsNullOrEmpty(currentQuestId))
-                button.style.display = DisplayStyle.None;
+                if (entry.IsRepeatable && hasNext)
+                {
+                    var dialog = creatablesManager
+                        .GetAll<Dialog>()
+                        .FirstOrDefault(d => d.Id == entry.dialogId);
+                    string name = dialog?.data.name ?? $"entry {i + 1}";
+                    error =
+                        $"Dialog \"{name}\" (position {i + 1}) is marked as Repeatable "
+                        + "but has dialogs after it. A repeatable dialog must be the last entry.";
+                    return false;
+                }
+            }
 
-            return button;
-        }
-
-        private void FlushToNpcDialog()
-        {
-            if (editingData?.npcDialog == null)
-                return;
-            editingData.npcDialog.SetMessageQuestMap(messageQuestAssignments);
-        }
-
-        private void LoadExistingSprite(string spritePath)
-        {
-            if (string.IsNullOrEmpty(spritePath))
-                return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(spritePath);
-            if (sprite != null)
-                spritePreview.sprite = sprite;
+            error = string.Empty;
+            return true;
         }
 
         private void CreateNewObject()
         {
-            NPCDialogData npcDialogData = null;
-            if (!string.IsNullOrEmpty(selectedDialogId))
+            if (!ValidateNpcName(out var nameError))
             {
-                npcDialogData = new NPCDialogData(selectedDialogId);
-                npcDialogData.SetMessageQuestMap(messageQuestAssignments);
+                ToastNotification.Show($"Failed to save NPC: {nameError}", "error", Color.red);
+                return;
             }
 
-            var npcData = new NPCData(
-                Guid.NewGuid().ToString(),
-                nameInput.value,
-                descriptionInput.value ?? "",
-                pendingSpritePath ?? "",
-                npcDialogData
-            );
+            if (!ValidateProgression(out var progError))
+            {
+                ToastNotification.Show($"Failed to save NPC: {progError}", "error", Color.red);
+                return;
+            }
 
-            creatablesManager.Add(new FriendlyNpc(npcData));
+            if (editBuffer != null)
+            {
+                editBuffer.Working.dialogProgression = dialogProgression;
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+
+                creatablesManager.Add(new FriendlyNpc(editBuffer.Original));
+            }
+
+            ToastNotification.Show("Friendly NPC created successfully!", "success", Color.green);
             ReturnToList();
         }
 
-        private void ReturnToList() => OpenMenu(npcsMenuPrefab);
+        private void SaveExistingNpc()
+        {
+            if (!ValidateNpcName(out var nameError))
+            {
+                ToastNotification.Show($"Failed to save NPC: {nameError}", "error", Color.red);
+                return;
+            }
+
+            if (!ValidateProgression(out var progError))
+            {
+                ToastNotification.Show($"Failed to save NPC: {progError}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+            {
+                editBuffer.Working.dialogProgression = dialogProgression;
+                editBuffer.Commit();
+                editBuffer.Original.category_sprites = new Dictionary<string, string>(
+                    editBuffer.Working.category_sprites
+                );
+            }
+
+            ToastNotification.Show("Friendly NPC saved successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
+        private void ReturnToList()
+        {
+            SetCharacterEditorVisible(false);
+            OpenMenu(npcsMenuPrefab);
+        }
+
+        private void RegisterCallbacks()
+        {
+            if (closeButton != null)
+                closeButton.clicked += ReturnToList;
+            if (returnButton != null)
+                returnButton.clicked += ReturnToList;
+            if (editCharacterButton != null)
+                editCharacterButton.clicked += OpenCharacterEditor;
+            if (addDialogButton != null)
+                addDialogButton.clicked += AddProgressionEntry;
+
+            nameInput.RegisterValueChangedCallback(OnNameChanged);
+            descriptionInput.RegisterValueChangedCallback(OnDescriptionChanged);
+        }
+
+        private void UnregisterCallbacks()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= ReturnToList;
+            if (returnButton != null)
+                returnButton.clicked -= ReturnToList;
+            if (editCharacterButton != null)
+                editCharacterButton.clicked -= OpenCharacterEditor;
+            if (addDialogButton != null)
+                addDialogButton.clicked -= AddProgressionEntry;
+
+            if (saveButton != null)
+            {
+                saveButton.clicked -= CreateNewObject;
+                saveButton.clicked -= ReturnToList;
+                saveButton.clicked -= SaveExistingNpc;
+            }
+
+            nameInput?.UnregisterValueChangedCallback(OnNameChanged);
+            descriptionInput?.UnregisterValueChangedCallback(OnDescriptionChanged);
+        }
+
+        private void OnNameChanged(ChangeEvent<string> evt)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.name = evt.newValue;
+        }
+
+        private void OnDescriptionChanged(ChangeEvent<string> evt)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.description = evt.newValue;
+        }
+
+        private void OpenCharacterEditor()
+        {
+            if (!EnsureCharacterEditorInstance())
+                return;
+            characterEditorController.SetupWithCharacterInfo(
+                BuildCharacterInfo(),
+                SaveCharacterInfo
+            );
+            SetCharacterEditorVisible(true);
+        }
+
+        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.category_sprites =
+                    categorySprites ?? new Dictionary<string, string>();
+            pendingPreviewRefresh = true;
+        }
+
+        private CharacterInfoResponse BuildCharacterInfo() =>
+            new CharacterInfoResponse
+            {
+                character_name = (editBuffer?.Working.name ?? nameInput?.value) ?? string.Empty,
+                character_bio =
+                    (editBuffer?.Working.description ?? descriptionInput?.value) ?? string.Empty,
+                category_sprites = new Dictionary<string, string>(
+                    editBuffer?.Working.category_sprites ?? new Dictionary<string, string>()
+                ),
+            };
+
+        private void RefreshCharacterPreview()
+        {
+            if (spritePreview == null)
+                return;
+            if (!EnsureCharacterPreviewRenderer())
+            {
+                spritePreview.image = null;
+                return;
+            }
+            characterPreviewRenderer.Refresh(spritePreview, BuildCharacterInfo());
+        }
+
+        private bool EnsureCharacterPreviewRenderer()
+        {
+            if (characterPreviewRenderer != null)
+                return true;
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            if (characterEditorPrefab == null)
+            {
+                Debug.LogError("Character editor prefab is not assigned.", this);
+                return false;
+            }
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+            return true;
+        }
+
+        private void SetCharacterPreviewVisible(bool v) => characterPreviewRenderer?.SetVisible(v);
+
+        private bool EnsureCharacterEditorInstance()
+        {
+            if (characterEditorInstance != null && characterEditorController != null)
+                return true;
+            characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
+                this,
+                characterEditorPrefab
+            );
+            return CharacterEditorRuntimeUtility.TryInstantiateCharacterEditor(
+                this,
+                characterEditorPrefab,
+                out characterEditorInstance,
+                out characterEditorController
+            );
+        }
+
+        private void SetCharacterEditorVisible(bool isVisible)
+        {
+            if (isVisible)
+            {
+                if (!EnsureCharacterEditorInstance())
+                    return;
+                SetCharacterPreviewVisible(false);
+                SetSpritePreviewVisible(false);
+                characterEditorInstance.SetActive(true);
+                return;
+            }
+
+            if (characterEditorInstance != null)
+            {
+                characterEditorInstance.SetActive(false);
+                DestroyCharacterEditorInstance();
+            }
+            SetCharacterPreviewVisible(true);
+            SetSpritePreviewVisible(true);
+            if (pendingPreviewRefresh)
+            {
+                RefreshCharacterPreview();
+                pendingPreviewRefresh = false;
+            }
+        }
+
+        private void DisposeCharacterPreviewRenderer()
+        {
+            characterPreviewRenderer?.Dispose();
+            characterPreviewRenderer = null;
+        }
+
+        private void SetSpritePreviewVisible(bool v)
+        {
+            if (spritePreview == null)
+                return;
+            spritePreview.style.visibility = v ? Visibility.Visible : Visibility.Hidden;
+            spritePreview.style.opacity = v ? 1f : 0f;
+            spritePreview.pickingMode = v ? PickingMode.Position : PickingMode.Ignore;
+        }
+
+        private void DestroyCharacterEditorInstance() =>
+            CharacterEditorRuntimeUtility.DestroyCharacterEditorInstance(
+                ref characterEditorInstance,
+                ref characterEditorController
+            );
+
+        private static NPCDialogData CloneDialogData(NPCDialogData src)
+        {
+            var clone = new NPCDialogData(src.dialogId)
+            {
+                onQuestAcceptedDialogId = src.onQuestAcceptedDialogId,
+                repeatableQuestCooldown = src.repeatableQuestCooldown,
+            };
+            clone.SetMessageQuestMap(src.GetMessageQuestMap());
+            return clone;
+        }
     }
 }

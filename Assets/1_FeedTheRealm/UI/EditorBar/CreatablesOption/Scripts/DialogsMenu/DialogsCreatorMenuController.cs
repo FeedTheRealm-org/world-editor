@@ -19,6 +19,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private GameObject dialogsMenuPrefab;
 
         private DialogData editingData;
+        private EditBuffer<DialogData> editBuffer;
+        private const int MaxDialogNameLength = 40;
 
         private TextField nameInput;
         private Button saveButton;
@@ -39,31 +41,79 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         public void SetupEditor(Dialog dialog)
         {
             editingData = dialog.data;
+            editBuffer = new EditBuffer<DialogData>(editingData);
             PopulateFields();
             BindEditMode();
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked += ReturnToList;
+            saveButton.clicked -= SaveExistingDialog;
+            saveButton.text = "Save Dialog";
+            saveButton.clicked += SaveExistingDialog;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingData.name;
+            if (editBuffer != null)
+                nameInput.value = editBuffer.Working.name;
         }
 
         private void BindEditMode()
         {
-            nameInput.RegisterValueChangedCallback(evt => editingData.name = evt.newValue);
+            if (editBuffer != null)
+                nameInput.RegisterValueChangedCallback(evt =>
+                    editBuffer.Working.name = evt.newValue
+                );
+        }
+
+        private bool ValidateDialogName(out string error)
+        {
+            if (string.IsNullOrEmpty(nameInput.value))
+            {
+                error = "Dialog name is required.";
+                return false;
+            }
+
+            if (nameInput.value.Length > MaxDialogNameLength)
+            {
+                error = $"Dialog name must be at most {MaxDialogNameLength} characters.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
         }
 
         private void CreateNewObject()
         {
+            if (!ValidateDialogName(out var error))
+            {
+                ToastNotification.Show($"Failed to save dialog: {error}", "error", Color.red);
+                return;
+            }
+
             var dialogData = new DialogData(Guid.NewGuid().ToString(), nameInput.value);
 
             creatablesManager.Add(new Dialog(dialogData));
+            ToastNotification.Show("Dialog created successfully!", "success", Color.green);
             ReturnToList();
         }
 
-        private void ReturnToList() => OpenMenu(dialogsMenuPrefab);
+        private void SaveExistingDialog()
+        {
+            if (!ValidateDialogName(out var error))
+            {
+                ToastNotification.Show($"Failed to save dialog: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+                editBuffer.Commit();
+            ToastNotification.Show("Dialog saved successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
+        private void ReturnToList()
+        {
+            OpenMenu(dialogsMenuPrefab);
+        }
     }
 }

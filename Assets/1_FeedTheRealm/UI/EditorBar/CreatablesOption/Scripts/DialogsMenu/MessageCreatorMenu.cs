@@ -19,6 +19,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         private Dialog currentDialog;
         private MessageData editingMessage;
+        private EditBuffer<MessageData> editBuffer;
+        private const int MaxMessageLength = 90;
+        private bool isEditingMessage;
 
         private TextField contentField;
         private Button saveButton;
@@ -40,32 +43,65 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         {
             currentDialog = dialog;
             editingMessage = message;
+            isEditingMessage = editingMessage != null;
 
-            if (editingMessage != null)
+            if (isEditingMessage)
+                editBuffer = new EditBuffer<MessageData>(editingMessage);
+
+            PopulateFields();
+            BindEditMode();
+
+            saveButton.clicked -= CreateNewMessage;
+            saveButton.clicked -= SaveExistingMessage;
+
+            if (isEditingMessage)
             {
-                PopulateFields();
-                BindEditMode();
-                saveButton.clicked -= CreateNewMessage;
-                saveButton.text = "Return to List";
-                saveButton.clicked += ReturnToList;
+                saveButton.text = "Save Message";
+                saveButton.clicked += SaveExistingMessage;
+            }
+            else
+            {
+                saveButton.text = "Save Message";
+                saveButton.clicked += CreateNewMessage;
             }
         }
 
         private void PopulateFields()
         {
-            contentField.value = editingMessage.content;
+            contentField.value = editBuffer != null ? editBuffer.Working.content : string.Empty;
         }
 
         private void BindEditMode()
         {
-            contentField.RegisterValueChangedCallback(evt => editingMessage.content = evt.newValue);
+            if (editBuffer != null)
+                contentField.RegisterValueChangedCallback(evt =>
+                    editBuffer.Working.content = evt.newValue
+                );
+        }
+
+        private bool ValidateMessageContent(out string error)
+        {
+            if (string.IsNullOrEmpty(contentField.value))
+            {
+                error = "Message content is required.";
+                return false;
+            }
+
+            if (contentField.value.Length > MaxMessageLength)
+            {
+                error = $"Message content must be at most {MaxMessageLength} characters.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
         }
 
         private void CreateNewMessage()
         {
-            if (string.IsNullOrEmpty(contentField.value))
+            if (!ValidateMessageContent(out var error))
             {
-                logger.Log("Message content is required.", this, Logging.LogType.Warning);
+                ToastNotification.Show($"Failed to save message: {error}", "error", Color.red);
                 return;
             }
 
@@ -81,6 +117,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 this,
                 Logging.LogType.Info
             );
+            ToastNotification.Show("Message created successfully!", "success", Color.green);
+            ReturnToList();
+        }
+
+        private void SaveExistingMessage()
+        {
+            if (!ValidateMessageContent(out var error))
+            {
+                ToastNotification.Show($"Failed to save message: {error}", "error", Color.red);
+                return;
+            }
+
+            if (editBuffer != null)
+                editBuffer.Commit();
+            logger.Log(
+                $"Saved existing message for dialog: {currentDialog.data.name}",
+                this,
+                Logging.LogType.Info
+            );
+            ToastNotification.Show("Message saved successfully!", "success", Color.green);
             ReturnToList();
         }
 

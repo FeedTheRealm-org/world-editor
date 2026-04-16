@@ -71,7 +71,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             BindEditMode();
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
             saveButton.clicked += ReturnToList;
         }
 
@@ -205,6 +204,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             );
 
             creatablesManager.Add(new LootTable(tableData));
+            ToastNotification.Show("Loot table created successfully!", "success", Color.green);
             ReturnToList();
         }
 

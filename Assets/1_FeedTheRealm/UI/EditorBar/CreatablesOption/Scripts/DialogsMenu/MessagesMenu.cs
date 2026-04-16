@@ -86,7 +86,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
             foreach (var message in currentDialog.data.messages)
             {
                 var entry = itemListTemplate.Instantiate();
-                entry.Q<Label>("Header").text = message.content;
+
+                var headerLabel = entry.Q<Label>("Header");
+                var displayName = message.content ?? string.Empty;
+                if (displayName.Length > 30)
+                    displayName = displayName.Substring(0, 30) + "...";
+                headerLabel.text = displayName;
 
                 var typeLabel = entry.Q<Label>("Type");
                 if (typeLabel != null)
