@@ -105,7 +105,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             if (itemSelector.value == ItemPlaceholder || string.IsNullOrEmpty(itemSelector.value))
             {
-                ToastNotification.Show("Please select an item to add.", "warning", Color.yellow);
+                ToastNotification.Show("Please select an item to add.", "error", Color.yellow);
                 return;
             }
 

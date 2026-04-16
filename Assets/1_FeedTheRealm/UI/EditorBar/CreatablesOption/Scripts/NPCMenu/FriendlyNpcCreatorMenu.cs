@@ -222,7 +222,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             if (dialogDropdown.value == "None" || string.IsNullOrEmpty(dialogDropdown.value))
             {
-                ToastNotification.Show("Select a dialog before adding.", "warning", Color.yellow);
+                ToastNotification.Show("Select a dialog before adding.", "error", Color.red);
                 return;
             }
 
@@ -237,8 +237,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             {
                 ToastNotification.Show(
                     "That dialog is already in the progression.",
-                    "warning",
-                    Color.yellow
+                    "error",
+                    Color.red
                 );
                 return;
             }
