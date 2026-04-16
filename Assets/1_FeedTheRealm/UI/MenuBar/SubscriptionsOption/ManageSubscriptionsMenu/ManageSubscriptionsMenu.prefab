@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1250672075192750366}
-  - component: {fileID: -3094515843254917722}
   - component: {fileID: 8759254890284882899}
+  - component: {fileID: -3094515843254917722}
   m_Layer: 0
   m_Name: ManageSubscriptionsMenu
   m_TagString: Untagged
@@ -33,6 +33,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8759254890284882899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3606013114006336474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5560f4aefd7dc7d4db3369f2d7c2cfc3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.SubscriptionMenu.SubscriptionMenuController
+  AllowInputWhileOpen: 0
+  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
+  authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
+  subscriptionService: {fileID: 11400000, guid: cdcc8632b47d3404abc84626afb9c023, type: 2}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  worldItemTemplate: {fileID: 9197481963319205126, guid: d3c04fe8b30a0d240a99bca96f74fdb5, type: 3}
 --- !u!114 &-3094515843254917722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,21 +74,3 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &8759254890284882899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3606013114006336474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5560f4aefd7dc7d4db3369f2d7c2cfc3, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.SubscriptionMenu.SubscriptionMenuController
-  AllowInputWhileOpen: 0
-  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
-  subscriptionService: {fileID: 11400000, guid: cdcc8632b47d3404abc84626afb9c023, type: 2}
-  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  worldItemTemplate: {fileID: 9197481963319205126, guid: d3c04fe8b30a0d240a99bca96f74fdb5, type: 3}

@@ -17,6 +17,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         private readonly GameObject loginMenuObject;
         private readonly GameObject signUpMenuObject;
         private readonly GameObject verifyCodeMenuObject;
+        private readonly GameObject subscriptionMenuObject;
 
         public WorldUISetupService(
             WorldUIObjectProvider WorldUIObjectProvider,
@@ -35,6 +36,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             loginMenuObject = WorldUIObjectProvider.loginMenuObject;
             signUpMenuObject = WorldUIObjectProvider.signUpMenuObject;
             verifyCodeMenuObject = WorldUIObjectProvider.verifyCodeMenuObject;
+            subscriptionMenuObject = WorldUIObjectProvider.subscriptionMenuObject;
             this.objectResolver = objectResolver;
         }
 
@@ -75,6 +77,11 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 throw new System.Exception(
                     "VerifyCodeMenu GameObject not set in WorldUIObjectProvider!"
                 );
+            if (subscriptionMenuObject == null)
+                throw new System.Exception(
+                    "SubscriptionMenu GameObject not set in WorldUIObjectProvider!"
+                );
+            //objectResolver.Instantiate(subscriptionMenuObject).name = "SubscriptionMenu";
         }
     }
 }

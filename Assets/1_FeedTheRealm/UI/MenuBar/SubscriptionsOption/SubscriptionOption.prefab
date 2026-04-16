@@ -46,5 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
   label: Manage subscriptions
   menuToOpen: {fileID: 8759254890284882899, guid: 1bc7e96ac7818884fa353d91470a7ca9, type: 3}
-  menuOptions:
-  - {fileID: 0}
+  menuOptions: []

@@ -11,7 +11,6 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 {
-    [RequireComponent(typeof(UIDocument))]
     public class SubscriptionMenuController : MenuController
     {
         [SerializeField]
