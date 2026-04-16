@@ -30,7 +30,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private NPCData editingData;
         private EditBuffer<NPCData> editBuffer;
-        private bool isEditingNpc;
         private const int MaxNpcNameLength = 25;
 
         private List<NPCDialogData> dialogProgression = new();
@@ -159,8 +158,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editingData.category_sprites != null
                     ? new Dictionary<string, string>(editingData.category_sprites)
                     : new Dictionary<string, string>();
-
-            isEditingNpc = true;
 
             dialogProgression =
                 editingData.dialogProgression != null
@@ -298,6 +295,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             for (int i = 0; i < dialogProgression.Count; i++)
             {
                 var entry = dialogProgression[i];
+
+                if (!entry.HasQuestAssigned)
+                {
+                    entry.repeatableQuestCooldown = string.Empty;
+                    entry.onQuestAcceptedDialogId = string.Empty;
+                }
+
                 bool isLast = i == dialogProgression.Count - 1;
                 bool hasNext = !isLast;
 

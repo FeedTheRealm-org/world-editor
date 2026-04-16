@@ -35,7 +35,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             var root = itemTemplate.Instantiate();
 
-            var itemRoot = root.Q<VisualElement>("ProgressionItemRoot");
             var toggleRow = root.Q<VisualElement>("ItemToggleRow");
             var content = root.Q<VisualElement>("ItemContent");
             var chevron = root.Q<Label>("ChevronLabel");
@@ -63,8 +62,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             toggleRow.RegisterCallback<ClickEvent>(evt =>
             {
-                if (evt.target is Button)
-                    return;
+                if (evt.target is VisualElement targetElement)
+                {
+                    var current = targetElement;
+                    while (current != null)
+                    {
+                        if (current is Button)
+                            return;
+                        current = current.parent;
+                    }
+                }
 
                 expanded = !expanded;
                 content.style.display = expanded ? DisplayStyle.Flex : DisplayStyle.None;

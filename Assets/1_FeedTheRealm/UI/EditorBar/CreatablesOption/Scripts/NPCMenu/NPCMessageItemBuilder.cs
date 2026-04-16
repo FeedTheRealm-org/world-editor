@@ -90,9 +90,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             toggle.SetValueWithoutNotify(isRepeatable);
 
             if (isRepeatable && CooldownChoices.Contains(currentCooldown))
+            {
                 cooldown.SetValueWithoutNotify(currentCooldown);
+            }
             else
+            {
                 cooldown.SetValueWithoutNotify(CooldownChoices[0]);
+                if (isRepeatable)
+                    onValueChanged?.Invoke(CooldownChoices[0]);
+            }
 
             cooldown.style.display = isRepeatable ? DisplayStyle.Flex : DisplayStyle.None;
 
@@ -270,6 +276,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 e.QuestDropdown.parent == null && e.AddQuestButton.parent == null
             );
 
+            var quests = creatablesManager.GetAll<Quest>();
+            var questById = quests.ToDictionary(q => q.Id, q => q);
+
             foreach (var item in createdElements)
             {
                 bool hasQuest =
@@ -284,12 +293,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                     : DisplayStyle.None;
                 item.QuestDropdown.style.display = hasQuest ? DisplayStyle.Flex : DisplayStyle.None;
 
-                if (hasQuest)
-                {
-                    var q = creatablesManager.GetAll<Quest>().FirstOrDefault(x => x.Id == qid);
-                    if (q != null)
-                        item.QuestDropdown.SetValueWithoutNotify(q.data.title);
-                }
+                if (hasQuest && questById.TryGetValue(qid, out var q))
+                    item.QuestDropdown.SetValueWithoutNotify(q.data.title);
             }
 
             RefreshExtraRowVisibility();
