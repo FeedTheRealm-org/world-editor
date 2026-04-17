@@ -144,13 +144,15 @@ namespace API
             };
             string json = JsonUtility.ToJson(payload);
 
-            var (responseText, result, statusCode) = await SendRequestAsync(
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
                 url,
                 "POST",
                 session.APIToken,
                 json,
                 "CreateCheckoutSession"
             );
+
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
