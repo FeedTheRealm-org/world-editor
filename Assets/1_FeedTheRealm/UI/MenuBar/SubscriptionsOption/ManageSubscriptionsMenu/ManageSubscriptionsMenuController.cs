@@ -13,10 +13,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 {
     public class SubscriptionMenuController : MenuController
     {
-        private const string DefaultCheckoutSuccessUrl =
-            "https://example.com/feed-the-realm/subscription/success";
-        private const string DefaultCheckoutCancelUrl =
-            "https://example.com/feed-the-realm/subscription/cancel";
+        private SubscriptionsCallbackServer callbackServer;
 
         [SerializeField]
         private Logging.Logger logger;
@@ -287,18 +284,29 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
         }
 
+        private void InitCallbackServer()
+        {
+            callbackServer = gameObject.GetComponent<SubscriptionsCallbackServer>();
+            if (callbackServer == null)
+            {
+                callbackServer = gameObject.AddComponent<SubscriptionsCallbackServer>();
+            }
+        }
+
         private async void OnCreateSubscriptionClicked()
         {
             createSubscriptionButton.SetEnabled(false);
             createSubscriptionFeedbackLabel.text = "Opening checkout...";
+
+            InitCallbackServer();
 
             try
             {
                 var (checkoutUrl, error, statusCode) =
                     await subscriptionService.CreateCheckoutSession(
                         MinSlots,
-                        DefaultCheckoutSuccessUrl,
-                        DefaultCheckoutCancelUrl
+                        callbackServer.SuccessUrl,
+                        callbackServer.CancelUrl
                     );
 
                 if (!string.IsNullOrEmpty(error))
@@ -306,6 +314,28 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 if (string.IsNullOrEmpty(checkoutUrl))
                     throw new Exception("Checkout URL was empty.");
+
+                callbackServer.OnSuccessEvent += OnSubscriptionSuccess;
+                callbackServer.OnCancelledEvent += OnSubscriptionCancelled;
+
+                _ = callbackServer
+                    .StartServer(
+                        new SubscriptionData
+                        {
+                            Slots = MinSlots,
+                            PricePerSlot = "N/A", // This should be available or fetched
+                            TotalPrice = "N/A",
+                        }
+                    )
+                    .ContinueWith(task =>
+                    {
+                        if (task.IsFaulted)
+                            logger.Log(
+                                $"Subscription server error: {task.Exception?.Message}",
+                                this,
+                                Logging.LogType.Error
+                            );
+                    });
 
                 Application.OpenURL(checkoutUrl);
                 createSubscriptionFeedbackLabel.text = "Checkout opened in your browser.";
@@ -330,6 +360,30 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     Color.red
                 );
                 createSubscriptionButton.SetEnabled(true);
+            }
+        }
+
+        private void OnSubscriptionSuccess()
+        {
+            UnsubscribeCallbackServer();
+            ToastNotification.Show("Subscription successful!", "success", Color.green);
+            _ = LoadSubscriptionAsync();
+        }
+
+        private void OnSubscriptionCancelled()
+        {
+            UnsubscribeCallbackServer();
+            ToastNotification.Show("Subscription cancelled.", "error", Color.red);
+            createSubscriptionButton.SetEnabled(true);
+            createSubscriptionFeedbackLabel.text = string.Empty;
+        }
+
+        private void UnsubscribeCallbackServer()
+        {
+            if (callbackServer != null)
+            {
+                callbackServer.OnSuccessEvent -= OnSubscriptionSuccess;
+                callbackServer.OnCancelledEvent -= OnSubscriptionCancelled;
             }
         }
 
