@@ -13,6 +13,11 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 {
     public class SubscriptionMenuController : MenuController
     {
+        private const string DefaultCheckoutSuccessUrl =
+            "https://example.com/feed-the-realm/subscription/success";
+        private const string DefaultCheckoutCancelUrl =
+            "https://example.com/feed-the-realm/subscription/cancel";
+
         [SerializeField]
         private Logging.Logger logger;
 
@@ -33,17 +38,21 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         // ── Panels ────────────────────────────────────────────────────────────
         private VisualElement notLoggedInPanel;
+        private VisualElement createSubscriptionPanel;
         private VisualElement subscriptionPanel;
         private VisualElement loadingPanel;
 
         // ── Elements ──────────────────────────────────────────────────────────
         private Button closeButton;
         private Button loginButton;
+        private Button createSubscriptionButton;
 
         private Label billingDateValue;
         private Label amountDueValue;
         private Label activeZonesValue;
         private Label freeZonesValue;
+
+        private Label createSubscriptionFeedbackLabel;
 
         private Button decreaseSlotsButton;
         private Button increaseSlotsButton;
@@ -81,16 +90,20 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private void BindElements(VisualElement root)
         {
             notLoggedInPanel = root.Q<VisualElement>("NotLoggedInPanel");
+            createSubscriptionPanel = root.Q<VisualElement>("CreateSubscriptionPanel");
             subscriptionPanel = root.Q<VisualElement>("SubscriptionPanel");
             loadingPanel = root.Q<VisualElement>("LoadingPanel");
 
             closeButton = root.Q<Button>("Close");
             loginButton = root.Q<Button>("LoginButton");
+            createSubscriptionButton = root.Q<Button>("CreateSubscriptionButton");
 
             billingDateValue = root.Q<Label>("BillingDateValue");
             amountDueValue = root.Q<Label>("AmountDueValue");
             activeZonesValue = root.Q<Label>("ActiveZonesValue");
             freeZonesValue = root.Q<Label>("FreeZonesValue");
+
+            createSubscriptionFeedbackLabel = root.Q<Label>("CreateSubscriptionFeedbackLabel");
 
             decreaseSlotsButton = root.Q<Button>("DecreaseSlots");
             increaseSlotsButton = root.Q<Button>("IncreaseSlots");
@@ -105,6 +118,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             closeButton.clicked += CloseMenu;
             loginButton.clicked += OnLoginClicked;
+            createSubscriptionButton.clicked += OnCreateSubscriptionClicked;
             decreaseSlotsButton.clicked += OnDecreaseSlots;
             increaseSlotsButton.clicked += OnIncreaseSlots;
             updateSlotsButton.clicked += OnUpdateSlotsClicked;
@@ -114,6 +128,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             closeButton.clicked -= CloseMenu;
             loginButton.clicked -= OnLoginClicked;
+            createSubscriptionButton.clicked -= OnCreateSubscriptionClicked;
             decreaseSlotsButton.clicked -= OnDecreaseSlots;
             increaseSlotsButton.clicked -= OnIncreaseSlots;
             updateSlotsButton.clicked -= OnUpdateSlotsClicked;
@@ -139,9 +154,31 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 var (data, error, statusCode) = await subscriptionService.GetSubscription();
 
                 if (!string.IsNullOrEmpty(error))
-                    throw new Exception(
-                        $"Failed to load subscription: {error} (status {statusCode})"
+                {
+                    if (IsMissingSubscription(statusCode, error))
+                    {
+                        logger.Log(
+                            "[SubscriptionMenu] No subscription found for user.",
+                            this,
+                            Logging.LogType.Info
+                        );
+                        RefreshCreateSubscriptionPanel();
+                        ShowPanel(createSubscriptionPanel);
+                        return;
+                    }
+                }
+
+                if (data == null)
+                {
+                    logger.Log(
+                        "[SubscriptionMenu] Subscription response was empty.",
+                        this,
+                        Logging.LogType.Info
                     );
+                    RefreshCreateSubscriptionPanel();
+                    ShowPanel(createSubscriptionPanel);
+                    return;
+                }
 
                 currentSubscription = data;
                 pendingSlotCount = data.total_slots;
@@ -171,6 +208,15 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             );
             activeZonesValue.text = currentSubscription.total_slots.ToString();
             freeZonesValue.text = (currentSubscription.total_slots / 5).ToString();
+        }
+
+        private void RefreshCreateSubscriptionPanel()
+        {
+            if (createSubscriptionFeedbackLabel != null)
+                createSubscriptionFeedbackLabel.text = string.Empty;
+
+            if (createSubscriptionButton != null)
+                createSubscriptionButton.SetEnabled(true);
         }
 
         // ── Slot controls ─────────────────────────────────────────────────────
@@ -238,6 +284,52 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 slotFeedbackLabel.text = "Update failed. Try again.";
                 ToastNotification.Show($"Failed to update slots: {ex.Message}", "error", Color.red);
                 updateSlotsButton.SetEnabled(true);
+            }
+        }
+
+        private async void OnCreateSubscriptionClicked()
+        {
+            createSubscriptionButton.SetEnabled(false);
+            createSubscriptionFeedbackLabel.text = "Opening checkout...";
+
+            try
+            {
+                var (checkoutUrl, error, statusCode) =
+                    await subscriptionService.CreateCheckoutSession(
+                        MinSlots,
+                        DefaultCheckoutSuccessUrl,
+                        DefaultCheckoutCancelUrl
+                    );
+
+                if (!string.IsNullOrEmpty(error))
+                    throw new Exception($"{error} (status {statusCode})");
+
+                if (string.IsNullOrEmpty(checkoutUrl))
+                    throw new Exception("Checkout URL was empty.");
+
+                Application.OpenURL(checkoutUrl);
+                createSubscriptionFeedbackLabel.text = "Checkout opened in your browser.";
+                ToastNotification.Show("Subscription checkout opened.", "success", Color.green);
+                logger.Log(
+                    "[SubscriptionMenu] Subscription checkout opened.",
+                    this,
+                    Logging.LogType.Info
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[SubscriptionMenu] Create subscription error: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                createSubscriptionFeedbackLabel.text = "Could not start checkout. Try again.";
+                ToastNotification.Show(
+                    $"Failed to start checkout: {ex.Message}",
+                    "error",
+                    Color.red
+                );
+                createSubscriptionButton.SetEnabled(true);
             }
         }
 
@@ -359,11 +451,23 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             || GameObject.Find("SignUpMenu") != null
             || GameObject.Find("VerifyCodeMenu") != null;
 
+        private static bool IsMissingSubscription(long statusCode, string error) =>
+            statusCode == 404
+            || (
+                !string.IsNullOrEmpty(error)
+                && error.IndexOf("not found", StringComparison.OrdinalIgnoreCase) >= 0
+            )
+            || (
+                !string.IsNullOrEmpty(error)
+                && error.IndexOf("no subscription", StringComparison.OrdinalIgnoreCase) >= 0
+            );
+
         // ── Helpers ───────────────────────────────────────────────────────────
 
         private void ShowPanel(VisualElement panel)
         {
             notLoggedInPanel.style.display = DisplayStyle.None;
+            createSubscriptionPanel.style.display = DisplayStyle.None;
             subscriptionPanel.style.display = DisplayStyle.None;
             loadingPanel.style.display = DisplayStyle.None;
             panel.style.display = DisplayStyle.Flex;

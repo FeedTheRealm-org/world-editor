@@ -9,9 +9,10 @@ namespace API
     [System.Serializable]
     public class CreateSubscriptionRequest
     {
-        public string user_id;
         public string email;
         public int slots;
+        public string success_url;
+        public string cancel_url;
     }
 
     [System.Serializable]
@@ -71,7 +72,8 @@ namespace API
         [SerializeField]
         private Session.Session session;
 
-        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/subscriptions";
+        private string GetBaseUrl() =>
+            $"{apiConfig.Hostname}:{apiConfig.Port}/payments/subscriptions";
 
         // ── GetSubscription ───────────────────────────────────────────────────
 
@@ -82,7 +84,7 @@ namespace API
             long statusCode
         )> GetSubscription()
         {
-            string url = $"{GetBaseUrl()}/{session.UserId}";
+            string url = $"{GetBaseUrl()}/status";
 
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
@@ -133,21 +135,17 @@ namespace API
         {
             string url = $"{GetBaseUrl()}/checkout";
 
-            // successUrl and cancelUrl are passed as query params to keep the
-            // request body minimal — matches the Go handler's expected shape.
-            string fullUrl =
-                $"{url}?success_url={UnityWebRequest.EscapeURL(successUrl)}&cancel_url={UnityWebRequest.EscapeURL(cancelUrl)}";
-
             var payload = new CreateSubscriptionRequest
             {
-                user_id = session.UserId,
                 email = session.Email,
                 slots = slots,
+                success_url = successUrl,
+                cancel_url = cancelUrl,
             };
             string json = JsonUtility.ToJson(payload);
 
             var (responseText, result, statusCode) = await SendRequestAsync(
-                fullUrl,
+                url,
                 "POST",
                 session.APIToken,
                 json,

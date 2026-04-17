@@ -27,6 +27,21 @@
                 <ui:Label text="Loading subscription..." class="header-label" style="font-size: 13px; color: rgba(255,255,255,0.5);"/>
             </ui:VisualElement>
 
+            <!-- ── Create Subscription ───────────────────────────────────── -->
+            <ui:VisualElement name="CreateSubscriptionPanel" style="flex-grow: 1; align-items: center; justify-content: center; display: none;">
+                <ui:VisualElement style="max-width: 520px; width: 100%; padding: 24px 28px; background-color: rgba(255,255,255,0.05); border-radius: 10px; align-items: center;">
+                    <ui:Label
+                        text="No active subscription found."
+                        class="header-label"
+                        style="font-size: 16px; margin-bottom: 6px; -unity-text-align: middle-center;"/>
+                    <ui:Label
+                        text="Create a subscription to unlock zone slots and billing details for this account."
+                        style="font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 16px; -unity-text-align: middle-center; max-width: 420px;"/>
+                    <ui:Button text="Create Subscription" name="CreateSubscriptionButton" class="button" style="min-width: 160px; padding: 6px 24px; margin-bottom: 10px;"/>
+                    <ui:Label name="CreateSubscriptionFeedbackLabel" text="" style="font-size: 11px; color: rgba(255,255,255,0.45); -unity-text-align: middle-center;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
             <!-- ── Subscription Panel ─────────────────────────────────────── -->
             <ui:VisualElement name="SubscriptionPanel" style="flex-grow: 1; flex-direction: column; display: none;">
 
