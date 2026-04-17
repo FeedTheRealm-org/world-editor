@@ -178,7 +178,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 }
 
                 currentSubscription = data;
-                pendingSlotCount = data.total_slots;
+                pendingSlotCount = data.slots;
 
                 RefreshBillingSummary();
                 RefreshSlotControls();
@@ -198,13 +198,26 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         private void RefreshBillingSummary()
         {
-            billingDateValue.text = currentSubscription.next_billing_date;
+            if (
+                DateTime.TryParse(currentSubscription.next_billing_date, out DateTime parsedDate)
+                && parsedDate.Year > 1
+            )
+            {
+                billingDateValue.text = parsedDate.ToLocalTime().ToString("MMM dd, yyyy");
+            }
+            else
+            {
+                billingDateValue.text = "—";
+            }
+
             amountDueValue.text = FormatTotalPrice(
                 currentSubscription.price_per_slot,
-                currentSubscription.total_slots
+                currentSubscription.slots
             );
-            activeZonesValue.text = currentSubscription.total_slots.ToString();
-            freeZonesValue.text = (currentSubscription.total_slots / 5).ToString();
+            activeZonesValue.text = currentSubscription.used_slots.ToString();
+            freeZonesValue.text = (
+                currentSubscription.slots - currentSubscription.used_slots
+            ).ToString();
         }
 
         private void RefreshCreateSubscriptionPanel()
@@ -223,7 +236,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             slotCountLabel.text = pendingSlotCount.ToString();
             decreaseSlotsButton.SetEnabled(pendingSlotCount > MinSlots);
             increaseSlotsButton.SetEnabled(pendingSlotCount < MaxSlots);
-            updateSlotsButton.SetEnabled(pendingSlotCount != currentSubscription.total_slots);
+            updateSlotsButton.SetEnabled(pendingSlotCount != currentSubscription.slots);
             slotFeedbackLabel.text = string.Empty;
         }
 
@@ -258,7 +271,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     throw new Exception($"{error} (status {statusCode})");
 
                 currentSubscription = data;
-                pendingSlotCount = data.total_slots;
+                pendingSlotCount = data.slots;
 
                 RefreshBillingSummary();
                 RefreshSlotControls();
@@ -438,7 +451,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 entry.RemoveFromHierarchy();
 
                 // Decrement local count so the summary stays in sync without a full reload.
-                currentSubscription.total_slots--;
+                currentSubscription.used_slots--;
                 RefreshBillingSummary();
 
                 ToastNotification.Show("Zone unsubscribed.", "info", Color.aliceBlue);

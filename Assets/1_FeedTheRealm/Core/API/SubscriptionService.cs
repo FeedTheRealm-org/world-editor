@@ -27,15 +27,12 @@ namespace API
     [System.Serializable]
     public class SubscriptionResponse
     {
-        public string id;
-        public string user_id;
-        public string stripe_customer_id;
-        public string stripe_subscription_id;
-        public int total_slots;
+        public int slots;
+        public int used_slots;
         public string status;
         public string next_billing_date;
         public string price_per_slot;
-        public ActiveZone[] active_zones;
+        public ActiveZone[] active_zones; // Assuming this might be needed later or populated separately
     }
 
     [System.Serializable]
