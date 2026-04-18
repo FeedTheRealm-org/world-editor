@@ -324,6 +324,16 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         private async void OnCancelSubscriptionClicked()
         {
+            if (currentSubscription != null && currentSubscription.used_slots > 0)
+            {
+                ToastNotification.Show(
+                    "Cannot cancel subscription. Please delete all your worlds first.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             if (cancelSubscriptionButton != null)
                 cancelSubscriptionButton.SetEnabled(false);
 
