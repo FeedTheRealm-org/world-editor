@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using API;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTRShared.UI.AuthMenu;
@@ -28,10 +29,19 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private Session.Session session;
 
         [SerializeField]
+        private WorldService worldService;
+
+        [SerializeField]
+        private ZoneService zoneService;
+
+        [SerializeField]
         private VisualTreeAsset worldItemTemplate;
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
+
+        [Inject]
+        private DataPersistenceManager dataPersistenceManager;
 
         // ── Panels ────────────────────────────────────────────────────────────
         private VisualElement notLoggedInPanel;
@@ -43,6 +53,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private Button closeButton;
         private Button loginButton;
         private Button createSubscriptionButton;
+        private Button cancelSubscriptionButton;
 
         private Label billingDateValue;
         private Label amountDueValue;
@@ -94,6 +105,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             closeButton = root.Q<Button>("Close");
             loginButton = root.Q<Button>("LoginButton");
             createSubscriptionButton = root.Q<Button>("CreateSubscriptionButton");
+            cancelSubscriptionButton = root.Q<Button>("CancelSubscriptionButton");
 
             billingDateValue = root.Q<Label>("BillingDateValue");
             amountDueValue = root.Q<Label>("AmountDueValue");
@@ -119,6 +131,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             decreaseSlotsButton.clicked += OnDecreaseSlots;
             increaseSlotsButton.clicked += OnIncreaseSlots;
             updateSlotsButton.clicked += OnUpdateSlotsClicked;
+
+            if (cancelSubscriptionButton != null)
+                cancelSubscriptionButton.clicked += OnCancelSubscriptionClicked;
         }
 
         private void UnregisterCallbacks()
@@ -129,6 +144,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             decreaseSlotsButton.clicked -= OnDecreaseSlots;
             increaseSlotsButton.clicked -= OnIncreaseSlots;
             updateSlotsButton.clicked -= OnUpdateSlotsClicked;
+
+            if (cancelSubscriptionButton != null)
+                cancelSubscriptionButton.clicked -= OnCancelSubscriptionClicked;
         }
 
         // ── Load ──────────────────────────────────────────────────────────────
@@ -165,10 +183,15 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     }
                 }
 
-                if (data == null)
+                if (
+                    data == null
+                    || string.Equals(data.status, "canceled", StringComparison.OrdinalIgnoreCase)
+                )
                 {
                     logger.Log(
-                        "[SubscriptionMenu] Subscription response was empty.",
+                        data == null
+                            ? "[SubscriptionMenu] Subscription response was empty."
+                            : "[SubscriptionMenu] Subscription is canceled.",
                         this,
                         Logging.LogType.Info
                     );
@@ -182,7 +205,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 RefreshBillingSummary();
                 RefreshSlotControls();
-                RefreshWorldsList();
+                _ = LoadWorldsListAsync();
 
                 ShowPanel(subscriptionPanel);
             }
@@ -210,10 +233,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 billingDateValue.text = "—";
             }
 
-            amountDueValue.text = FormatTotalPrice(
-                currentSubscription.price_per_slot,
-                currentSubscription.slots
-            );
+            amountDueValue.text = FormatTotalPrice(currentSubscription.amount_due);
             activeZonesValue.text = currentSubscription.used_slots.ToString();
             freeZonesValue.text = (
                 currentSubscription.slots - currentSubscription.used_slots
@@ -263,26 +283,27 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             try
             {
-                var (data, error, statusCode) = await subscriptionService.UpdateSlots(
-                    pendingSlotCount
-                );
+                int targetSlots = pendingSlotCount;
+
+                var (_, error, statusCode) = await subscriptionService.UpdateSlots(targetSlots);
 
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
-                currentSubscription = data;
-                pendingSlotCount = data.slots;
+                // Get the updated state from the server (this updates amount_due, etc.)
+                await LoadSubscriptionAsync();
+
+                // Since LoadSubscriptionAsync might receive old slot counts due to backend/webhook delays,
+                // and it overwrites pendingSlotCount, we must manually force the local state to the known correct value.
+                currentSubscription.slots = targetSlots;
+                pendingSlotCount = targetSlots;
 
                 RefreshBillingSummary();
                 RefreshSlotControls();
 
                 slotFeedbackLabel.text = "Updated successfully.";
                 ToastNotification.Show("Slots updated!", "success", Color.green);
-                logger.Log(
-                    $"[SubscriptionMenu] Slots updated to {pendingSlotCount}.",
-                    this,
-                    Logging.LogType.Info
-                );
+                logger.Log($"[SubscriptionMenu] Slots updated.", this, Logging.LogType.Info);
             }
             catch (Exception ex)
             {
@@ -291,9 +312,56 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     this,
                     Logging.LogType.Error
                 );
+
+                // Reset pending slot count to the actual current state on failure
+                pendingSlotCount = currentSubscription.slots;
+                RefreshSlotControls();
+
                 slotFeedbackLabel.text = "Update failed. Try again.";
                 ToastNotification.Show($"Failed to update slots: {ex.Message}", "error", Color.red);
-                updateSlotsButton.SetEnabled(true);
+            }
+        }
+
+        private async void OnCancelSubscriptionClicked()
+        {
+            if (cancelSubscriptionButton != null)
+                cancelSubscriptionButton.SetEnabled(false);
+
+            try
+            {
+                var (error, statusCode) = await subscriptionService.CancelSubscription();
+
+                if (!string.IsNullOrEmpty(error))
+                    throw new Exception($"{error} (status {statusCode})");
+
+                ToastNotification.Show(
+                    "Subscription cancelled successfully.",
+                    "success",
+                    Color.green
+                );
+                logger.Log(
+                    "[SubscriptionMenu] Subscription cancelled.",
+                    this,
+                    Logging.LogType.Info
+                );
+
+                // Reload the subscription data to show the updated (e.g. absent or cancelled) state
+                await LoadSubscriptionAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[SubscriptionMenu] Cancel subscription error: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                ToastNotification.Show(
+                    $"Failed to cancel subscription: {ex.Message}",
+                    "error",
+                    Color.red
+                );
+                if (cancelSubscriptionButton != null)
+                    cancelSubscriptionButton.SetEnabled(true);
             }
         }
 
@@ -402,77 +470,126 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         // ── Worlds list ───────────────────────────────────────────────────────
 
-        private void RefreshWorldsList()
+        private async Task LoadWorldsListAsync()
         {
             worldsList.Clear();
+            worldsList.hierarchy.Clear();
 
-            if (
-                currentSubscription.active_zones == null
-                || currentSubscription.active_zones.Length == 0
-            )
+            if (worldService == null)
             {
-                var emptyLabel = new Label("No active zones yet.");
+                worldService = FindObjectOfType<WorldService>();
+                zoneService = FindObjectOfType<ZoneService>();
+            }
+
+            var loadingLabel = new Label("Loading worlds...");
+            loadingLabel.AddToClassList("header-label");
+            worldsList.hierarchy.Add(loadingLabel);
+
+            var (amount, worlds, error) = await worldService.GetWorldPage(
+                0,
+                100,
+                "",
+                session.APIToken
+            );
+
+            worldsList.Clear();
+            worldsList.hierarchy.Clear();
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                var errorLabel = new Label($"Error loading worlds: {error}");
+                errorLabel.AddToClassList("header-label");
+                worldsList.hierarchy.Add(errorLabel);
+                return;
+            }
+
+            if (worlds == null || worlds.Count == 0)
+            {
+                var emptyLabel = new Label("No created worlds yet.");
                 emptyLabel.AddToClassList("header-label");
                 worldsList.hierarchy.Add(emptyLabel);
                 return;
             }
 
-            foreach (var zone in currentSubscription.active_zones)
+            foreach (var world in worlds)
             {
                 VisualElement entry = worldItemTemplate.Instantiate();
 
-                entry.Q<Label>("Header").text = zone.world_name;
-                entry.Q<Label>("ZoneName").text = zone.zone_name;
-                entry.Q<Label>("SlotBadge").text = $"Slot #{zone.slot_index}";
-                entry.Q<Label>("StatusBadge").text = zone.is_free ? "Free" : "Paid";
+                entry.Q<Label>("Header").text = world.worldName;
 
-                // Capture to avoid closure bug in loop.
-                var capturedZone = zone;
+                int zoneCount = 0;
+                var (zones, zError, zStatusCode) = await zoneService.GetZonesList(
+                    world.worldId,
+                    session.APIToken
+                );
+
+                if (string.IsNullOrEmpty(zError) && zones != null)
+                {
+                    zoneCount = zones.Count;
+                }
+
+                entry.Q<Label>("ZoneName").text = $"{zoneCount} zone(s)";
+                entry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
+                entry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                var capturedWorld = world;
                 var capturedEntry = entry;
-                entry.Q<Button>("Unsubscribe").clicked += () =>
-                    OnUnsubscribeClicked(capturedZone, capturedEntry);
+                var deleteButton = entry.Q<Button>("Unsubscribe");
+                deleteButton.text = "Delete World";
+                deleteButton.clicked += () => OnDeleteWorldClicked(capturedWorld, capturedEntry);
 
                 worldsList.hierarchy.Add(entry);
             }
         }
 
-        private async void OnUnsubscribeClicked(ActiveZone zone, VisualElement entry)
+        private async void OnDeleteWorldClicked(
+            FTRShared.Runtime.Models.WorldData world,
+            VisualElement entry
+        )
         {
             var button = entry.Q<Button>("Unsubscribe");
             button.SetEnabled(false);
 
             try
             {
-                var (error, statusCode) = await subscriptionService.UnsubscribeZone(zone.zone_id);
+                var (error, statusCode) = await worldService.DeleteWorld(
+                    world.worldId,
+                    session.APIToken
+                );
 
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
                 entry.RemoveFromHierarchy();
 
-                // Decrement local count so the summary stays in sync without a full reload.
-                currentSubscription.used_slots--;
-                RefreshBillingSummary();
-
-                ToastNotification.Show("Zone unsubscribed.", "info", Color.aliceBlue);
-                logger.Log(
-                    $"[SubscriptionMenu] Zone {zone.zone_id} unsubscribed.",
-                    this,
-                    Logging.LogType.Info
+                ToastNotification.Show(
+                    $"World '{world.worldName}' deleted.",
+                    "info",
+                    Color.aliceBlue
                 );
+
+                // Clear the local worldId so future publishes create a new world instead of updating a deleted one.
+                if (dataPersistenceManager != null)
+                {
+                    var localWorldData = dataPersistenceManager.GetWorldData(world.worldName);
+                    if (localWorldData != null && localWorldData.worldId == world.worldId)
+                    {
+                        localWorldData.worldId = "";
+                        dataPersistenceManager.SaveWorldMetadata(localWorldData);
+                    }
+                }
+
+                // Refresh subscription info because deleting a world frees up zones
+                _ = LoadSubscriptionAsync();
             }
             catch (Exception ex)
             {
                 logger.Log(
-                    $"[SubscriptionMenu] Unsubscribe error: {ex.Message}",
+                    $"[SubscriptionMenu] Delete world error: {ex.Message}",
                     this,
                     Logging.LogType.Error
                 );
-                ToastNotification.Show(
-                    $"Failed to unsubscribe zone: {ex.Message}",
-                    "error",
-                    Color.red
-                );
+                ToastNotification.Show($"Failed to delete world: {ex.Message}", "error", Color.red);
                 button.SetEnabled(true);
             }
         }
@@ -540,17 +657,17 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             panel.style.display = DisplayStyle.Flex;
         }
 
-        private static string FormatTotalPrice(string pricePerSlot, int totalSlots)
+        private static string FormatTotalPrice(string amountDue)
         {
             if (
                 decimal.TryParse(
-                    pricePerSlot,
+                    amountDue,
                     System.Globalization.NumberStyles.Any,
                     System.Globalization.CultureInfo.InvariantCulture,
-                    out var price
+                    out var amount
                 )
             )
-                return $"${price * totalSlots:F2}";
+                return $"${amount:F2}";
             return "—";
         }
 

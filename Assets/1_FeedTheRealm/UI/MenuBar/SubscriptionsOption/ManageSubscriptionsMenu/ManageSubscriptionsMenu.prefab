@@ -50,6 +50,8 @@ MonoBehaviour:
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   subscriptionService: {fileID: 11400000, guid: cdcc8632b47d3404abc84626afb9c023, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
+  zoneService: {fileID: 11400000, guid: 3b2018c4bc2ec889f8c145ecf26ee6e7, type: 2}
   worldItemTemplate: {fileID: 9197481963319205126, guid: d3c04fe8b30a0d240a99bca96f74fdb5, type: 3}
 --- !u!114 &-3094515843254917722
 MonoBehaviour:

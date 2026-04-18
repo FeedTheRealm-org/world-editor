@@ -9,7 +9,6 @@ namespace API
     [System.Serializable]
     public class CreateSubscriptionRequest
     {
-        public string email;
         public int slots;
         public string success_url;
         public string cancel_url;
@@ -18,8 +17,7 @@ namespace API
     [System.Serializable]
     public class UpdateSlotsRequest
     {
-        public string user_id;
-        public int new_slots;
+        public int slots;
     }
 
     // ── Response models ───────────────────────────────────────────────────────
@@ -31,7 +29,7 @@ namespace API
         public int used_slots;
         public string status;
         public string next_billing_date;
-        public string price_per_slot;
+        public string amount_due;
         public ActiveZone[] active_zones; // Assuming this might be needed later or populated separately
     }
 
@@ -134,7 +132,6 @@ namespace API
 
             var payload = new CreateSubscriptionRequest
             {
-                email = session.Email,
                 slots = slots,
                 success_url = successUrl,
                 cancel_url = cancelUrl,
@@ -191,14 +188,14 @@ namespace API
             int newSlots
         )
         {
-            string url = $"{GetBaseUrl()}/{session.UserId}/slots";
+            string url = $"{GetBaseUrl()}/slots";
 
-            var payload = new UpdateSlotsRequest { user_id = session.UserId, new_slots = newSlots };
+            var payload = new UpdateSlotsRequest { slots = newSlots };
             string json = JsonUtility.ToJson(payload);
 
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
-                "PATCH",
+                "PUT",
                 session.APIToken,
                 json,
                 "UpdateSlots"
@@ -285,11 +282,11 @@ namespace API
         /// Cancels the entire subscription immediately.
         public async Task<(string error, long statusCode)> CancelSubscription()
         {
-            string url = $"{GetBaseUrl()}/{session.UserId}/cancel";
+            string url = GetBaseUrl();
 
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
-                "POST",
+                "DELETE",
                 session.APIToken,
                 null,
                 "CancelSubscription"

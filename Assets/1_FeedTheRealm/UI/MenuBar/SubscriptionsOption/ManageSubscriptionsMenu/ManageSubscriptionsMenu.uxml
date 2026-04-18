@@ -81,6 +81,7 @@
                     <ui:Button text="+" name="IncreaseSlots" class="button" style="width: 28px; min-width: 28px; padding: 0; font-size: 15px;"/>
                     <ui:Button text="Update" name="UpdateSlots" class="button" style="margin-left: 14px; padding: 4px 18px;"/>
                     <ui:Label name="SlotFeedbackLabel" text="" style="margin-left: 12px; font-size: 11px; color: rgba(100,220,130,1); flex-grow: 1;"/>
+                    <ui:Button text="Cancel Subscription" name="CancelSubscriptionButton" class="button" style="background-color: rgba(220, 53, 69, 0.4); border-color: rgba(220, 53, 69, 0.6); padding: 4px 12px;"/>
                 </ui:VisualElement>
 
                 <!-- Divider -->
