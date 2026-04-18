@@ -37,6 +37,15 @@
                     <ui:Label
                         text="Create a subscription to unlock zone slots and billing details for this account."
                         style="font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 16px; -unity-text-align: middle-center; max-width: 420px;"/>
+
+                    <!-- Initial Slots Controls -->
+                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 16px;">
+                        <ui:Label text="INITIAL SLOTS" style="font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-right: 14px;"/>
+                        <ui:Button text="−" name="DecreaseCreateSlots" class="button" style="width: 28px; min-width: 28px; padding: 0; font-size: 15px;"/>
+                        <ui:Label name="CreateSlotCountLabel" text="1" style="min-width: 38px; -unity-text-align: middle-center; font-size: 15px; -unity-font-style: bold;"/>
+                        <ui:Button text="+" name="IncreaseCreateSlots" class="button" style="width: 28px; min-width: 28px; padding: 0; font-size: 15px;"/>
+                    </ui:VisualElement>
+
                     <ui:Button text="Create Subscription" name="CreateSubscriptionButton" class="button" style="min-width: 160px; padding: 6px 24px; margin-bottom: 10px;"/>
                     <ui:Label name="CreateSubscriptionFeedbackLabel" text="" style="font-size: 11px; color: rgba(255,255,255,0.45); -unity-text-align: middle-center;"/>
                 </ui:VisualElement>

@@ -68,11 +68,16 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private Label slotCountLabel;
         private Label slotFeedbackLabel;
 
+        private Button decreaseCreateSlotsButton;
+        private Button increaseCreateSlotsButton;
+        private Label createSlotCountLabel;
+
         private ListView worldsList;
 
         // ── State ─────────────────────────────────────────────────────────────
         private SubscriptionResponse currentSubscription;
         private int pendingSlotCount;
+        private int pendingCreateSlotCount = MinSlots;
         private bool isAuthFlowActive;
 
         private const int MinSlots = 1;
@@ -120,6 +125,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             slotCountLabel = root.Q<Label>("SlotCountLabel");
             slotFeedbackLabel = root.Q<Label>("SlotFeedbackLabel");
 
+            decreaseCreateSlotsButton = root.Q<Button>("DecreaseCreateSlots");
+            increaseCreateSlotsButton = root.Q<Button>("IncreaseCreateSlots");
+            createSlotCountLabel = root.Q<Label>("CreateSlotCountLabel");
+
             worldsList = root.Q<ListView>("WorldsList");
         }
 
@@ -131,6 +140,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             decreaseSlotsButton.clicked += OnDecreaseSlots;
             increaseSlotsButton.clicked += OnIncreaseSlots;
             updateSlotsButton.clicked += OnUpdateSlotsClicked;
+            decreaseCreateSlotsButton.clicked += OnDecreaseCreateSlots;
+            increaseCreateSlotsButton.clicked += OnIncreaseCreateSlots;
 
             if (cancelSubscriptionButton != null)
                 cancelSubscriptionButton.clicked += OnCancelSubscriptionClicked;
@@ -144,6 +155,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             decreaseSlotsButton.clicked -= OnDecreaseSlots;
             increaseSlotsButton.clicked -= OnIncreaseSlots;
             updateSlotsButton.clicked -= OnUpdateSlotsClicked;
+            decreaseCreateSlotsButton.clicked -= OnDecreaseCreateSlots;
+            increaseCreateSlotsButton.clicked -= OnIncreaseCreateSlots;
 
             if (cancelSubscriptionButton != null)
                 cancelSubscriptionButton.clicked -= OnCancelSubscriptionClicked;
@@ -247,6 +260,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             if (createSubscriptionButton != null)
                 createSubscriptionButton.SetEnabled(true);
+
+            pendingCreateSlotCount = MinSlots;
+            RefreshCreateSlotControls();
         }
 
         // ── Slot controls ─────────────────────────────────────────────────────
@@ -274,6 +290,29 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 return;
             pendingSlotCount++;
             RefreshSlotControls();
+        }
+
+        private void RefreshCreateSlotControls()
+        {
+            createSlotCountLabel.text = pendingCreateSlotCount.ToString();
+            decreaseCreateSlotsButton.SetEnabled(pendingCreateSlotCount > MinSlots);
+            increaseCreateSlotsButton.SetEnabled(pendingCreateSlotCount < MaxSlots);
+        }
+
+        private void OnDecreaseCreateSlots()
+        {
+            if (pendingCreateSlotCount <= MinSlots)
+                return;
+            pendingCreateSlotCount--;
+            RefreshCreateSlotControls();
+        }
+
+        private void OnIncreaseCreateSlots()
+        {
+            if (pendingCreateSlotCount >= MaxSlots)
+                return;
+            pendingCreateSlotCount++;
+            RefreshCreateSlotControls();
         }
 
         private async void OnUpdateSlotsClicked()
@@ -395,7 +434,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             {
                 var (checkoutUrl, error, statusCode) =
                     await subscriptionService.CreateCheckoutSession(
-                        MinSlots,
+                        pendingCreateSlotCount,
                         callbackServer.SuccessUrl,
                         callbackServer.CancelUrl
                     );
