@@ -246,7 +246,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 billingDateValue.text = "—";
             }
 
-            amountDueValue.text = FormatTotalPrice(currentSubscription.amount_due);
+            amountDueValue.text = currentSubscription.amount_due.ToString("C");
             activeZonesValue.text = currentSubscription.used_slots.ToString();
             freeZonesValue.text = (
                 currentSubscription.slots - currentSubscription.used_slots
@@ -432,6 +432,14 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             try
             {
+                var (pricingData, pricingError, pricingStatusCode) =
+                    await subscriptionService.GetPricingInfo();
+
+                if (!string.IsNullOrEmpty(pricingError))
+                    throw new Exception(
+                        $"Failed to get pricing info: {pricingError} (status {pricingStatusCode})"
+                    );
+
                 var (checkoutUrl, error, statusCode) =
                     await subscriptionService.CreateCheckoutSession(
                         pendingCreateSlotCount,
@@ -448,13 +456,35 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 callbackServer.OnSuccessEvent += OnSubscriptionSuccess;
                 callbackServer.OnCancelledEvent += OnSubscriptionCancelled;
 
+                string pricePerSlotStr = pricingData?.price_per_slot ?? "0";
+                string totalPriceStr = "0";
+
+                if (
+                    decimal.TryParse(
+                        pricePerSlotStr,
+                        System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out decimal pricePerSlot
+                    )
+                )
+                {
+                    totalPriceStr = (pricePerSlot * pendingCreateSlotCount).ToString(
+                        "F2",
+                        System.Globalization.CultureInfo.InvariantCulture
+                    );
+                    pricePerSlotStr = pricePerSlot.ToString(
+                        "F2",
+                        System.Globalization.CultureInfo.InvariantCulture
+                    );
+                }
+
                 _ = callbackServer
                     .StartServer(
                         new SubscriptionData
                         {
-                            Slots = MinSlots,
-                            PricePerSlot = "N/A", // This should be available or fetched
-                            TotalPrice = "N/A",
+                            Slots = pendingCreateSlotCount,
+                            PricePerSlot = pricePerSlotStr,
+                            TotalPrice = totalPriceStr,
                         }
                     )
                     .ContinueWith(task =>
@@ -523,12 +553,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             worldsList.Clear();
             worldsList.hierarchy.Clear();
-
-            if (worldService == null)
-            {
-                worldService = FindObjectOfType<WorldService>();
-                zoneService = FindObjectOfType<ZoneService>();
-            }
 
             var loadingLabel = new Label("Loading worlds...");
             loadingLabel.AddToClassList("header-label");
@@ -704,20 +728,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             subscriptionPanel.style.display = DisplayStyle.None;
             loadingPanel.style.display = DisplayStyle.None;
             panel.style.display = DisplayStyle.Flex;
-        }
-
-        private static string FormatTotalPrice(string amountDue)
-        {
-            if (
-                decimal.TryParse(
-                    amountDue,
-                    System.Globalization.NumberStyles.Any,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    out var amount
-                )
-            )
-                return $"${amount:F2}";
-            return "—";
         }
 
         public override void OpenMenu(GameObject menuPrefab)

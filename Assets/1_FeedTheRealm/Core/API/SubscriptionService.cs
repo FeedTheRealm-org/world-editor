@@ -29,7 +29,7 @@ namespace API
         public int used_slots;
         public string status;
         public string next_billing_date;
-        public string amount_due;
+        public float amount_due;
         public ActiveZone[] active_zones; // Assuming this might be needed later or populated separately
     }
 
@@ -37,6 +37,13 @@ namespace API
     public class CheckoutSessionResponse
     {
         public string checkout_url;
+    }
+
+    [System.Serializable]
+    public class PricingInfoResponse
+    {
+        public string price_per_slot;
+        public string next_billing_date;
     }
 
     // Represents one active zone returned inside SubscriptionResponse.active_zones.
@@ -67,8 +74,54 @@ namespace API
         [SerializeField]
         private Session.Session session;
 
-        private string GetBaseUrl() =>
-            $"{apiConfig.Hostname}:{apiConfig.Port}/payments/subscriptions";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/subscriptions";
+
+        // ── GetPricingInfo ────────────────────────────────────────────────────
+
+        public async Task<(
+            PricingInfoResponse data,
+            string error,
+            long statusCode
+        )> GetPricingInfo()
+        {
+            string url = $"{GetBaseUrl()}/pricing";
+
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "GET",
+                session.APIToken,
+                null,
+                "GetPricingInfo"
+            );
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"[SubscriptionService] GetPricingInfo connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    null,
+                    "Unable to connect to server. Please check your internet connection.",
+                    statusCode
+                );
+            }
+
+            if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                var err = ParseError(responseText, statusCode);
+                logger.Log(
+                    $"[SubscriptionService] GetPricingInfo error ({statusCode}): {err}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (null, err, statusCode);
+            }
+
+            var res = JsonUtility.FromJson<DataEnvelope<PricingInfoResponse>>(responseText);
+            return (res.data, null, statusCode);
+        }
 
         // ── GetSubscription ───────────────────────────────────────────────────
 
