@@ -4,63 +4,6 @@ using UnityEngine.Networking;
 
 namespace API
 {
-    // ── Request models ────────────────────────────────────────────────────────
-
-    [System.Serializable]
-    public class CreateSubscriptionRequest
-    {
-        public int slots;
-        public string success_url;
-        public string cancel_url;
-    }
-
-    [System.Serializable]
-    public class UpdateSlotsRequest
-    {
-        public int slots;
-    }
-
-    // ── Response models ───────────────────────────────────────────────────────
-
-    [System.Serializable]
-    public class SubscriptionResponse
-    {
-        public int slots;
-        public int used_slots;
-        public string status;
-        public string next_billing_date;
-        public float amount_due;
-        public ActiveZone[] active_zones; // Assuming this might be needed later or populated separately
-    }
-
-    [System.Serializable]
-    public class CheckoutSessionResponse
-    {
-        public string checkout_url;
-    }
-
-    [System.Serializable]
-    public class PricingInfoResponse
-    {
-        public string price_per_slot;
-        public string next_billing_date;
-    }
-
-    // Represents one active zone returned inside SubscriptionResponse.active_zones.
-    [System.Serializable]
-    public class ActiveZone
-    {
-        public string zone_id;
-        public string world_name;
-        public string zone_name;
-        public int slot_index;
-        public bool is_free;
-        public string status;
-        public string purchased_at;
-    }
-
-    // ── Service ───────────────────────────────────────────────────────────────
-
     [CreateAssetMenu(
         fileName = "SubscriptionService",
         menuName = "Scriptable Objects/API/SubscriptionService"
