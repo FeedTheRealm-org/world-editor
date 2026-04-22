@@ -273,9 +273,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             await ValidateSubscription(errors);
 
             if (errors.Count > 0)
-                throw new Exception(
-                    $"Cannot publish, fix the following issues first:\n\n{string.Join("\n", errors)}"
-                );
+                throw new Exception($"{string.Join("\n", errors)}");
         }
 
         private async Task ValidateSubscription(List<string> errors)
