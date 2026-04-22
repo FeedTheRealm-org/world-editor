@@ -41,7 +41,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
         private StructureObject target;
-
         private PositionGizmo positionGizmo;
         private ScaleGizmo scaleGizmo;
         private BaseGizmo activeGizmo;
