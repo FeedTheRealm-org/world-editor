@@ -339,22 +339,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             if (string.IsNullOrEmpty(currentWorldData.worldId))
             {
-                var (publishedId, error, statusCode) = await worldService.PublishWorld(
-                    currentWorldData,
-                    session.APIToken
-                );
-                if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
-                    throw new Exception(
-                        $"Failed to publish world data: {error} (status {statusCode})"
-                    );
-                currentWorldData.worldId = publishedId;
-                currentWorldData.published_at = DateTime.Now;
-                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                ToastNotification.Show(
-                    "World data published successfully!",
-                    "info",
-                    Color.aliceBlue
-                );
+                await PublishWorldAsNew();
             }
             else if (publishWorldDataToggle.value)
             {
@@ -362,12 +347,47 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     currentWorldData,
                     session.APIToken
                 );
+
                 if (!string.IsNullOrEmpty(error))
+                {
+                    if (statusCode == 404)
+                    {
+                        logger.Log(
+                            "[PublishMenu] World ID not found on server, retrying publish as a new world.",
+                            this,
+                            Logging.LogType.Warning
+                        );
+
+                        await PublishWorldAsNew(
+                            "World data published successfully after fallback!"
+                        );
+                        return;
+                    }
+
                     throw new Exception(
                         $"Failed to update world data: {error} (status {statusCode})"
                     );
+                }
+
                 ToastNotification.Show("World data updated successfully!", "info", Color.aliceBlue);
             }
+        }
+
+        private async Task PublishWorldAsNew(
+            string successMessage = "World data published successfully!"
+        )
+        {
+            var (publishedId, error, statusCode) = await worldService.PublishWorld(
+                currentWorldData,
+                session.APIToken
+            );
+            if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to publish world data: {error} (status {statusCode})");
+
+            currentWorldData.worldId = publishedId;
+            currentWorldData.published_at = DateTime.Now;
+            dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+            ToastNotification.Show(successMessage, "info", Color.aliceBlue);
         }
 
         private async Task PublishCreatables()
