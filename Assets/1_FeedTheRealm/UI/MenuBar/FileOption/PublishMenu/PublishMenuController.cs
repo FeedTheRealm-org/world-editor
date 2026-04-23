@@ -528,18 +528,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (!string.IsNullOrEmpty(error))
                 {
                     logger.Log(
-                        $"Failed to publish zone {zoneId}: {error} (status {statusCode})",
+                        $"Failed to publish zone {zoneId}: {error})",
                         this,
                         Logging.LogType.Error
                     );
                     ToastNotification.Show($"Failed to publish zone {zoneId}.", error, Color.red);
                     continue;
                 }
-                ToastNotification.Show(
-                    $"Zone {zoneId} published successfully!",
-                    "info",
-                    Color.aliceBlue
-                );
             }
         }
 

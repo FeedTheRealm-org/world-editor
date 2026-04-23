@@ -327,7 +327,14 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 var (_, error, statusCode) = await subscriptionService.UpdateSlots(targetSlots);
 
                 if (!string.IsNullOrEmpty(error))
-                    throw new Exception($"{error} (status {statusCode})");
+                {
+                    logger.Log(
+                        $"[SubscriptionMenu] Update slots error: {error} (status {statusCode})",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    throw new Exception($"{error}");
+                }
 
                 // Get the updated state from the server (this updates amount_due, etc.)
                 await LoadSubscriptionAsync();
@@ -346,12 +353,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
             catch (Exception ex)
             {
-                logger.Log(
-                    $"[SubscriptionMenu] Update slots error: {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
-
                 // Reset pending slot count to the actual current state on failure
                 pendingSlotCount = currentSubscription.slots;
                 RefreshSlotControls();
