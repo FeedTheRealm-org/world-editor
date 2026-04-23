@@ -60,6 +60,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
         // Target being edited
         private StructureObject target;
 
+        // Collider visuals
+        private GameObject ActiveColliderVisual =>
+            target.data.colliderType == ColliderType.Cube ? cubeCollider : slopeCollider;
+        private bool isColliderMode;
+
         // Gizmos
         private PositionGizmo positionGizmo;
         private ScaleGizmo scaleGizmo;
@@ -77,8 +82,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             shopToggle = root.Q<Toggle>("ShopToggle");
             shopDropdown = root.Q<DropdownField>("ShopDropdown");
             closeButton = root.Q<Button>("Close");
-            collidersToggle.RegisterValueChangedCallback(OnCollidersToggleChanged);
             colliderTypeDropdown = root.Q<DropdownField>("ColliderType");
+            collidersToggle = root.Q<Toggle>("CollidersToggle");
             colliderTypeDropdown.choices = Enum.GetNames(typeof(ColliderType)).ToList();
             colliderTypeDropdown.RegisterValueChangedCallback(OnColliderTypeChanged);
             tabView = root.Q<TabView>("TabView");
@@ -89,7 +94,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             colliderRotationField.RegisterValueChangedCallback(OnColliderRotationChanged);
             colliderCenterField.RegisterValueChangedCallback(OnColliderCenterChanged);
             colliderSizeField.RegisterValueChangedCallback(OnColliderSizeChanged);
-            collidersToggle = root.Q<Toggle>("CollidersToggle");
+            collidersToggle.RegisterValueChangedCallback(OnCollidersToggleChanged);
 
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
             rotationField.RegisterValueChangedCallback(e =>
@@ -111,16 +116,18 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             tabView.activeTabChanged += (previousTab, newTab) =>
             {
-                bool isColliders = newTab.name == "Colliders";
-                if (isColliders)
+                isColliderMode = newTab.name == "Colliders";
+                if (isColliderMode)
                 {
                     SyncColliderVisual();
-                    ActivateGizmo(null);
+                    ReinitializeGizmosForCollider();
+                    ActivateGizmo(positionGizmo);
                 }
                 else
                 {
                     cubeCollider.SetActive(false);
                     slopeCollider.SetActive(false);
+                    ReinitializeGizmosForTarget();
                     ActivateGizmo(positionGizmo);
                 }
             };
@@ -215,17 +222,70 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private void OnGizmoMoved(Vector3 newPosition)
         {
-            positionField.SetValueWithoutNotify(newPosition);
+            if (isColliderMode)
+            {
+                Vector3 localPosition = target.transform.InverseTransformPoint(newPosition);
+                target.data.colliderCenter = localPosition;
+                colliderCenterField.SetValueWithoutNotify(localPosition);
+                cubeCollider.transform.localPosition = localPosition;
+                slopeCollider.transform.localPosition = localPosition;
+            }
+            else
+            {
+                positionField.SetValueWithoutNotify(newPosition);
+            }
         }
 
         private void OnGizmoScaled(Vector3 newScale)
         {
-            scaleField.SetValueWithoutNotify(newScale);
+            if (isColliderMode)
+            {
+                target.data.colliderSize = newScale;
+                colliderSizeField.SetValueWithoutNotify(newScale);
+                slopeCollider.transform.localScale = newScale;
+                cubeCollider.transform.localScale = newScale;
+            }
+            else
+            {
+                scaleField.SetValueWithoutNotify(newScale);
+            }
         }
 
         private void OnGizmoRotated(Vector3 eulerAngles)
         {
-            rotationField.SetValueWithoutNotify(eulerAngles);
+            if (isColliderMode)
+            {
+                target.data.colliderRotation = eulerAngles;
+                colliderRotationField.SetValueWithoutNotify(eulerAngles);
+                slopeCollider.transform.localRotation = Quaternion.Euler(eulerAngles);
+                cubeCollider.transform.localRotation = Quaternion.Euler(eulerAngles);
+            }
+            else
+            {
+                rotationField.SetValueWithoutNotify(eulerAngles);
+            }
+        }
+
+        private void ReinitializeGizmosForCollider()
+        {
+            var t = ActiveColliderVisual.transform;
+            Debug.Log($"Collider world pos: {t.position} | local pos: {t.localPosition}");
+            if (positionGizmo != null)
+                positionGizmo.Initialize(t, Camera.main);
+            if (scaleGizmo != null)
+                scaleGizmo.Initialize(t, Camera.main);
+            if (rotationGizmo != null)
+                rotationGizmo.Initialize(t, Camera.main);
+        }
+
+        private void ReinitializeGizmosForTarget()
+        {
+            if (positionGizmo != null)
+                positionGizmo.Initialize(target.transform, Camera.main);
+            if (scaleGizmo != null)
+                scaleGizmo.Initialize(target.transform, Camera.main);
+            if (rotationGizmo != null)
+                rotationGizmo.Initialize(target.transform, Camera.main);
         }
 
         // ---- Cube Collider Visualization ----
@@ -289,19 +349,22 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private void OnMoveShortcut()
         {
-            tabView.activeTab = tabView.Q<Tab>("Transform");
+            if (!isColliderMode)
+                tabView.activeTab = tabView.Q<Tab>("Transform");
             ActivateGizmo(positionGizmo);
         }
 
         private void OnScaleShortcut()
         {
-            tabView.activeTab = tabView.Q<Tab>("Transform");
+            if (!isColliderMode)
+                tabView.activeTab = tabView.Q<Tab>("Transform");
             ActivateGizmo(scaleGizmo);
         }
 
         private void OnRotateShortcut()
         {
-            tabView.activeTab = tabView.Q<Tab>("Transform");
+            if (!isColliderMode)
+                tabView.activeTab = tabView.Q<Tab>("Transform");
             ActivateGizmo(rotationGizmo);
         }
 
@@ -351,8 +414,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private void OnColliderTypeChanged(ChangeEvent<string> evt)
         {
             target.data.colliderType = Enum.Parse<ColliderType>(evt.newValue);
-            Debug.Log($"Collider type changed to {target.data.colliderType}");
             SyncColliderVisual();
+            if (isColliderMode)
+                ReinitializeGizmosForCollider();
         }
 
         private void OnCollidersToggleChanged(ChangeEvent<bool> evt)
