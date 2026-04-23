@@ -39,6 +39,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             previewController.SetupWithCharacterInfo(safeInfo, null);
         }
 
+        public async void ApplyLocalOverrides(Dictionary<string, string> localSprites)
+        {
+            if (previewController == null || localSprites == null || localSprites.Count == 0)
+                return;
+
+            // Wait a brief moment to allow the underlying SetupWithCharacterInfo() tasks to clear defaults
+            await System.Threading.Tasks.Task.Delay(100);
+
+            foreach (var kvp in localSprites)
+            {
+                if (System.Enum.TryParse<CharacterPartCategory>(kvp.Key, true, out var part))
+                {
+                    if (System.IO.File.Exists(kvp.Value))
+                    {
+                        previewController.ApplyLocalSpriteOverride(part, kvp.Value);
+                    }
+                }
+            }
+        }
+
         public void SetVisible(bool isVisible)
         {
             if (previewInstance == null)
