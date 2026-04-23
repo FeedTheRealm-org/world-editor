@@ -1,0 +1,24 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+
+    <ui:VisualElement name="WorldEntry" style="flex-direction: row; align-items: center; padding: 9px 12px 9px 16px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.06);">
+
+        <!-- World name + zone name stacked -->
+        <ui:VisualElement style="flex-direction: column; flex-grow: 1;">
+            <ui:Label name="Header" text="World Name" style="font-size: 13px; -unity-font-style: bold;"/>
+            <ui:Label name="ZoneName" text="Zone Name" style="font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px;"/>
+        </ui:VisualElement>
+
+        <!-- Slot badge -->
+        <ui:Label name="SlotBadge" text="Slot #1"
+            style="min-width: 64px; -unity-text-align: middle-center; font-size: 11px; color: rgba(255,255,255,0.55); padding: 2px 6px; border-width: 1px; border-color: rgba(255,255,255,0.12); border-radius: 4px; margin-right: 8px;"/>
+
+        <!-- Free / Paid badge -->
+        <ui:Label name="StatusBadge" text="Paid"
+            style="min-width: 64px; -unity-text-align: middle-center; font-size: 11px; color: rgba(100,220,130,0.9); padding: 2px 6px; border-width: 1px; border-color: rgba(100,220,130,0.25); border-radius: 4px; margin-right: 12px;"/>
+
+        <!-- Unsubscribe -->
+        <ui:Button text="Unsubscribe" name="Unsubscribe" class="button" style="font-size: 11px; padding: 3px 12px; min-width: 96px;"/>
+
+    </ui:VisualElement>
+</ui:UXML>

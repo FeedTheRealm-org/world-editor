@@ -109,7 +109,7 @@ namespace FeedTheRealm.UI.MenuBar
                 enableInputEvent.Raise(false);
                 inputReader?.RaiseSecondaryInteraction();
                 if (menuOption.MenuOptions.Count == 0)
-                    return;
+                    menuOption.Execute();
                 menuStack.Toggle(button, menuOption.MenuOptions);
             };
         }
