@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using Enums;
 using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Inputs;
@@ -20,6 +23,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
         [Inject]
         private CreatablesManager creatablesManager;
 
+        [Header("Scroll Sensitivity")]
         [SerializeField]
         private float positionScrollSensitivity = 1f;
 
@@ -29,18 +33,34 @@ namespace FeedTheRealm.UI.PlaceableEditor
         [SerializeField]
         private float scaleScrollSensitivity = 1f;
 
+        [Header("Colliders Visualization")]
+        [SerializeField]
+        private GameObject cubeCollider;
+
+        [SerializeField]
+        private GameObject slopeCollider;
+
+        // UI Elements
         private Label titleLabel;
+        private TabView tabView;
         private Vector3Field positionField;
         private Vector3Field rotationField;
         private Vector3Field scaleField;
+        private Vector3Field colliderCenterField;
+        private Vector3Field colliderSizeField;
+        private Vector3Field colliderRotationField;
         private Toggle shopToggle;
         private DropdownField shopDropdown;
         private Button closeButton;
         private Toggle collidersToggle;
-
         private FloatField focusedAxisField;
         private Vector3Field focusedVectorField;
+        private DropdownField colliderTypeDropdown;
+
+        // Target being edited
         private StructureObject target;
+
+        // Gizmos
         private PositionGizmo positionGizmo;
         private ScaleGizmo scaleGizmo;
         private BaseGizmo activeGizmo;
@@ -57,8 +77,19 @@ namespace FeedTheRealm.UI.PlaceableEditor
             shopToggle = root.Q<Toggle>("ShopToggle");
             shopDropdown = root.Q<DropdownField>("ShopDropdown");
             closeButton = root.Q<Button>("Close");
-            collidersToggle = root.Q<Toggle>("CollidersToggle");
             collidersToggle.RegisterValueChangedCallback(OnCollidersToggleChanged);
+            colliderTypeDropdown = root.Q<DropdownField>("ColliderType");
+            colliderTypeDropdown.choices = Enum.GetNames(typeof(ColliderType)).ToList();
+            colliderTypeDropdown.RegisterValueChangedCallback(OnColliderTypeChanged);
+            tabView = root.Q<TabView>("TabView");
+
+            colliderCenterField = root.Q<Vector3Field>("ColliderCenter");
+            colliderSizeField = root.Q<Vector3Field>("ColliderSize");
+            colliderRotationField = root.Q<Vector3Field>("ColliderRotation");
+            colliderRotationField.RegisterValueChangedCallback(OnColliderRotationChanged);
+            colliderCenterField.RegisterValueChangedCallback(OnColliderCenterChanged);
+            colliderSizeField.RegisterValueChangedCallback(OnColliderSizeChanged);
+            collidersToggle = root.Q<Toggle>("CollidersToggle");
 
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
             rotationField.RegisterValueChangedCallback(e =>
@@ -72,6 +103,27 @@ namespace FeedTheRealm.UI.PlaceableEditor
             RegisterAxisHandlers(positionField);
             RegisterAxisHandlers(rotationField);
             RegisterAxisHandlers(scaleField);
+            RegisterAxisHandlers(colliderCenterField);
+            RegisterAxisHandlers(colliderSizeField);
+            RegisterAxisHandlers(colliderRotationField);
+
+            root.Q<Button>("ResetColliders").clicked += OnResetColliders;
+
+            tabView.activeTabChanged += (previousTab, newTab) =>
+            {
+                bool isColliders = newTab.name == "Colliders";
+                if (isColliders)
+                {
+                    SyncColliderVisual();
+                    ActivateGizmo(null);
+                }
+                else
+                {
+                    cubeCollider.SetActive(false);
+                    slopeCollider.SetActive(false);
+                    ActivateGizmo(positionGizmo);
+                }
+            };
 
             closeButton.clicked += CloseMenu;
         }
@@ -93,11 +145,28 @@ namespace FeedTheRealm.UI.PlaceableEditor
             rotationField.SetValueWithoutNotify(target.transform.localEulerAngles);
             collidersToggle.SetValueWithoutNotify(target.data.hasColliders);
             scaleField.SetValueWithoutNotify(target.transform.localScale);
+            colliderRotationField.SetValueWithoutNotify(target.data.colliderRotation);
+
+            colliderTypeDropdown.SetValueWithoutNotify(
+                target.data.colliderType == ColliderType.Cube ? "Cube" : "Slope"
+            );
+            SyncColliderVisual();
 
             SetupShopControls();
             SetupGizmos();
+            SetupColliderVisuals();
             SubscribeShortcuts();
-
+            var boxCollider = target.GetComponent<BoxCollider>();
+            var initialCenter =
+                target.data.colliderCenter != Vector3.zero
+                    ? target.data.colliderCenter
+                    : boxCollider.center;
+            var initialSize =
+                target.data.colliderSize != Vector3.zero
+                    ? target.data.colliderSize
+                    : boxCollider.size;
+            colliderCenterField.SetValueWithoutNotify(initialCenter);
+            colliderSizeField.SetValueWithoutNotify(initialSize);
             inputReader.ScrollEvent += OnScroll;
         }
 
@@ -159,6 +228,47 @@ namespace FeedTheRealm.UI.PlaceableEditor
             rotationField.SetValueWithoutNotify(eulerAngles);
         }
 
+        // ---- Cube Collider Visualization ----
+
+        private void SetupColliderVisuals()
+        {
+            var boxCollider = target.GetComponent<BoxCollider>();
+            var initialCenter =
+                target.data.colliderCenter != Vector3.zero
+                    ? target.data.colliderCenter
+                    : boxCollider.center;
+            var initialSize =
+                target.data.colliderSize != Vector3.zero
+                    ? target.data.colliderSize
+                    : boxCollider.size;
+
+            cubeCollider = Instantiate(cubeCollider, target.transform);
+            cubeCollider.transform.localPosition = initialCenter;
+            cubeCollider.transform.localRotation = Quaternion.identity;
+            cubeCollider.transform.localScale = initialSize;
+            cubeCollider.transform.localRotation = Quaternion.Euler(target.data.colliderRotation);
+            cubeCollider.SetActive(false);
+
+            slopeCollider = Instantiate(slopeCollider, target.transform);
+            slopeCollider.transform.localPosition = initialCenter;
+            slopeCollider.transform.localRotation = Quaternion.identity;
+            slopeCollider.transform.localScale = initialSize;
+            slopeCollider.transform.localRotation = Quaternion.Euler(target.data.colliderRotation);
+            slopeCollider.SetActive(false);
+        }
+
+        private void SyncColliderVisual()
+        {
+            bool isCube = target.data.colliderType == ColliderType.Cube;
+            cubeCollider.SetActive(isCube);
+            slopeCollider.SetActive(!isCube);
+        }
+
+        private void SetCubeColliderActive(bool active)
+        {
+            cubeCollider.SetActive(active);
+        }
+
         // ---- Shortcuts ----
 
         private void SubscribeShortcuts()
@@ -177,13 +287,78 @@ namespace FeedTheRealm.UI.PlaceableEditor
             inputReader.HideShortcutEvent -= OnHideShortcut;
         }
 
-        private void OnMoveShortcut() => ActivateGizmo(positionGizmo);
+        private void OnMoveShortcut()
+        {
+            tabView.activeTab = tabView.Q<Tab>("Transform");
+            ActivateGizmo(positionGizmo);
+        }
 
-        private void OnScaleShortcut() => ActivateGizmo(scaleGizmo);
+        private void OnScaleShortcut()
+        {
+            tabView.activeTab = tabView.Q<Tab>("Transform");
+            ActivateGizmo(scaleGizmo);
+        }
+
+        private void OnRotateShortcut()
+        {
+            tabView.activeTab = tabView.Q<Tab>("Transform");
+            ActivateGizmo(rotationGizmo);
+        }
 
         private void OnHideShortcut() => ActivateGizmo(null);
 
-        private void OnRotateShortcut() => ActivateGizmo(rotationGizmo);
+        // --- Collider Controls ----
+        private void OnColliderCenterChanged(ChangeEvent<Vector3> evt)
+        {
+            target.data.colliderCenter = evt.newValue;
+            cubeCollider.transform.localPosition = evt.newValue;
+            slopeCollider.transform.localPosition = evt.newValue;
+        }
+
+        private void OnColliderSizeChanged(ChangeEvent<Vector3> evt)
+        {
+            target.data.colliderSize = evt.newValue;
+            cubeCollider.transform.localScale = evt.newValue;
+            slopeCollider.transform.localScale = evt.newValue;
+        }
+
+        private void OnColliderRotationChanged(ChangeEvent<Vector3> evt)
+        {
+            target.data.colliderRotation = evt.newValue;
+            cubeCollider.transform.localRotation = Quaternion.Euler(evt.newValue);
+            slopeCollider.transform.localRotation = Quaternion.Euler(evt.newValue);
+        }
+
+        private void OnResetColliders()
+        {
+            var boxCollider = target.GetComponent<BoxCollider>();
+            target.data.colliderCenter = boxCollider.center;
+            target.data.colliderSize = boxCollider.size;
+            target.data.colliderRotation = Vector3.zero;
+
+            colliderCenterField.SetValueWithoutNotify(boxCollider.center);
+            colliderSizeField.SetValueWithoutNotify(boxCollider.size);
+            colliderRotationField.SetValueWithoutNotify(Vector3.zero);
+
+            cubeCollider.transform.localPosition = boxCollider.center;
+            cubeCollider.transform.localScale = boxCollider.size;
+            cubeCollider.transform.localRotation = Quaternion.identity;
+            slopeCollider.transform.localPosition = boxCollider.center;
+            slopeCollider.transform.localScale = boxCollider.size;
+            slopeCollider.transform.localRotation = Quaternion.identity;
+        }
+
+        private void OnColliderTypeChanged(ChangeEvent<string> evt)
+        {
+            target.data.colliderType = Enum.Parse<ColliderType>(evt.newValue);
+            Debug.Log($"Collider type changed to {target.data.colliderType}");
+            SyncColliderVisual();
+        }
+
+        private void OnCollidersToggleChanged(ChangeEvent<bool> evt)
+        {
+            target.data.hasColliders = evt.newValue;
+        }
 
         // ---- Shop Controls ----
 
@@ -254,11 +429,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
             target.data.shopId = selected.Id;
         }
 
-        private void OnCollidersToggleChanged(ChangeEvent<bool> evt)
-        {
-            target.data.hasColliders = evt.newValue;
-        }
-
         // ---- Close ----
 
         public override void CloseMenu()
@@ -278,9 +448,13 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 scaleGizmo.gameObject.SetActive(false);
             }
 
+            SetCubeColliderActive(false);
             activeGizmo = null;
             focusedAxisField = null;
             focusedVectorField = null;
+            Destroy(cubeCollider);
+            Destroy(slopeCollider);
+            inputReader.ScrollEvent -= OnScroll;
             base.CloseMenu();
         }
 

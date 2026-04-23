@@ -19,7 +19,8 @@
             </ui:Tab>
             <ui:Tab name="Colliders" label="Colliders" tabindex="1" focusable="false" class="TabContent">
                 <ui:Vector3Field label="Center" name="ColliderCenter" value="0,0,0" class="unity-vector3-field__input" style="width: 972px;"/>
-                <ui:Vector3Field label="Size" value="0,0,0" name="ColliderScale" class="unity-vector3-field__input" style="flex-direction: row;"/>
+                <ui:Vector3Field label="Size" value="0,0,0" name="ColliderSize" class="unity-vector3-field__input" style="flex-direction: row;"/>
+                <ui:Vector3Field label="Rotation" value="0,0,0" name="ColliderRotation" class="unity-vector3-field__input" style="flex-direction: row;"/>
                 <ui:VisualElement name="Buttons" style="flex-grow: 1; justify-content: space-between; flex-direction: row; width: 95%;">
                     <ui:Toggle label="Enable Colliders" name="CollidersToggle" style="-unity-font-style: normal; color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); padding-left: 0%; padding-right: 0%; padding-top: 0%; padding-bottom: 0%; width: 175px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                     <ui:DropdownField label="Collider Type" name="ColliderType" style="align-self: center; color: rgb(255, 255, 255); padding-right: 70px;"/>

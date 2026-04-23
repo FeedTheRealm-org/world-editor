@@ -26,6 +26,9 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 size = gameObject.transform.localScale,
                 colliderSize = collider != null ? collider.size : Vector3.zero,
                 colliderCenter = collider != null ? collider.center : Vector3.zero,
+                colliderRotation =
+                    collider != null ? collider.transform.localEulerAngles : Vector3.zero,
+                colliderType = data.colliderType,
             };
             zoneData.objectPlacementData.Add(savedData);
         }
