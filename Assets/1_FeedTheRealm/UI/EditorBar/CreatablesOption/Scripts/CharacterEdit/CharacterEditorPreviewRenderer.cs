@@ -9,14 +9,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
     internal sealed class CharacterEditorPreviewRenderer : IDisposable
     {
         private readonly GameObject characterEditorPrefab;
+        private readonly bool disableApiFetches;
 
         private GameObject previewInstance;
         private CharacterEditController previewController;
         private Camera previewCamera;
 
-        public CharacterEditorPreviewRenderer(GameObject characterEditorPrefab)
+        public CharacterEditorPreviewRenderer(
+            GameObject characterEditorPrefab,
+            bool disableApiFetches = false
+        )
         {
             this.characterEditorPrefab = characterEditorPrefab;
+            this.disableApiFetches = disableApiFetches;
         }
 
         public void Refresh(Image targetImage, CharacterInfoResponse characterInfo)
@@ -37,26 +42,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
 
             var safeInfo = CloneCharacterInfo(characterInfo);
             previewController.SetupWithCharacterInfo(safeInfo, null);
-        }
-
-        public async void ApplyLocalOverrides(Dictionary<string, string> localSprites)
-        {
-            if (previewController == null || localSprites == null || localSprites.Count == 0)
-                return;
-
-            // Wait a brief moment to allow the underlying SetupWithCharacterInfo() tasks to clear defaults
-            await System.Threading.Tasks.Task.Delay(100);
-
-            foreach (var kvp in localSprites)
-            {
-                if (System.Enum.TryParse<CharacterPartCategory>(kvp.Key, true, out var part))
-                {
-                    if (System.IO.File.Exists(kvp.Value))
-                    {
-                        previewController.ApplyLocalSpriteOverride(part, kvp.Value);
-                    }
-                }
-            }
         }
 
         public void SetVisible(bool isVisible)
@@ -97,6 +82,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             previewController = previewInstance.GetComponentInChildren<CharacterEditController>(
                 true
             );
+
+            if (previewController != null)
+            {
+                previewController.DisableApiFetches = this.disableApiFetches;
+            }
+
             previewCamera = previewInstance.GetComponentInChildren<Camera>(true);
 
             if (previewController == null || previewCamera == null)

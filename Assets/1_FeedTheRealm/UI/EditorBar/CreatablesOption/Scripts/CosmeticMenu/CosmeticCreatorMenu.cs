@@ -396,11 +396,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
             }
 
             characterPreviewRenderer.Refresh(spritePreview, BuildCharacterInfo());
-
-            if (editBuffer != null && editBuffer.Working.category_sprites != null)
-            {
-                characterPreviewRenderer.ApplyLocalOverrides(editBuffer.Working.category_sprites);
-            }
         }
 
         private bool EnsureCharacterPreviewRenderer()
@@ -419,7 +414,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 return false;
             }
 
-            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(
+                characterEditorPrefab,
+                true
+            );
             return true;
         }
 
