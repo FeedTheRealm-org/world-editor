@@ -188,6 +188,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
                             if (characterPreviewRenderer.ValidateLocalOverrides(testSprites))
                             {
+                                editBuffer.Working.category_sprites.Clear();
                                 foreach (var part in parts)
                                 {
                                     editBuffer.Working.category_sprites[part.ToString()] = paths[0];
