@@ -160,7 +160,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                         return;
                     if (!paths[0].EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                     {
-                        Debug.LogWarning("Selected file is not a PNG.");
+                        ToastNotification.Show(
+                            "Selected file is not a valid PNG image.",
+                            "error",
+                            Color.red
+                        );
                         return;
                     }
 
@@ -173,12 +177,37 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                             )
                         )
                         {
+                            if (!EnsureCharacterPreviewRenderer())
+                                return;
+
+                            var testSprites = new Dictionary<string, string>();
                             foreach (var part in parts)
                             {
-                                editBuffer.Working.category_sprites[part.ToString()] = paths[0];
+                                testSprites[part.ToString()] = paths[0];
                             }
-                            pendingPreviewRefresh = true;
-                            RefreshCharacterPreview();
+
+                            if (characterPreviewRenderer.ValidateLocalOverrides(testSprites))
+                            {
+                                foreach (var part in parts)
+                                {
+                                    editBuffer.Working.category_sprites[part.ToString()] = paths[0];
+                                }
+                                pendingPreviewRefresh = true;
+                                RefreshCharacterPreview();
+                                ToastNotification.Show(
+                                    "Sprite applied successfully!",
+                                    "success",
+                                    Color.green
+                                );
+                            }
+                            else
+                            {
+                                ToastNotification.Show(
+                                    "Invalid sprite format or dimensions for this category.",
+                                    "error",
+                                    Color.red
+                                );
+                            }
                         }
                     }
                 },
@@ -305,6 +334,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
             if (string.IsNullOrEmpty(name))
             {
                 error = "Cosmetic name is required.";
+                return false;
+            }
+
+            if (
+                editBuffer == null
+                || editBuffer.Working.category_sprites == null
+                || editBuffer.Working.category_sprites.Count == 0
+            )
+            {
+                error = "Please load at least one valid sprite before saving.";
                 return false;
             }
 

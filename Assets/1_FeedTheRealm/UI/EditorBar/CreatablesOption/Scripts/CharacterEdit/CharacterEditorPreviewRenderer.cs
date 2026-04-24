@@ -44,6 +44,31 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             previewController.SetupWithCharacterInfo(safeInfo, null);
         }
 
+        public bool ValidateLocalOverrides(Dictionary<string, string> localSprites)
+        {
+            if (localSprites == null || localSprites.Count == 0)
+                return true;
+
+            if (!EnsurePreviewInstance() || previewController == null)
+                return false;
+
+            foreach (var kvp in localSprites)
+            {
+                if (System.Enum.TryParse<CharacterPartCategory>(kvp.Key, true, out var part))
+                {
+                    if (System.IO.File.Exists(kvp.Value))
+                    {
+                        if (!previewController.ApplyLocalSpriteOverride(part, kvp.Value))
+                        {
+                            return false; // Failed formatting or dimension
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public void SetVisible(bool isVisible)
         {
             if (previewInstance == null)
