@@ -269,7 +269,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private void ReinitializeGizmosForCollider()
         {
             var t = ActiveColliderVisual.transform;
-            Debug.Log($"Collider world pos: {t.position} | local pos: {t.localPosition}");
             if (positionGizmo != null)
                 positionGizmo.Initialize(t, Camera.main);
             if (scaleGizmo != null)
