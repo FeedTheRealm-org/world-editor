@@ -42,6 +42,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private SubscriptionService subscriptionService;
 
         [SerializeField]
+        private AssetsService assetsService;
+
+        [SerializeField]
         private Session.Session session;
 
         [Inject]
@@ -520,11 +523,179 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 throw new Exception($"Missing sprite files:\n{missing}");
             }
 
+            if (assetsService == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: assetsService is unassigned in PublishMenuController.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception("AssetsService is missing.");
+            }
+
             await spriteService.UploadSprites(
                 spritesRequest,
                 currentWorldData.worldId,
                 session.APIToken
             );
+
+            if (creatablesData != null && creatablesData.cosmetics != null)
+            {
+                await PublishCosmetics(creatablesData);
+            }
+        }
+
+        private async Task PublishCosmetics(CreatablesData creatablesData)
+        {
+            try
+            {
+                var categoryListResp = await assetsService.GetCategoriesAsync();
+                if (categoryListResp == null || categoryListResp.category_list == null)
+                {
+                    logger.Log(
+                        "PublishCosmetics: Failed to fetch categories.",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    return;
+                }
+
+                var categoryIds = new Dictionary<string, string>();
+                foreach (var cat in categoryListResp.category_list)
+                {
+                    if (
+                        !string.IsNullOrEmpty(cat.category_name)
+                        && !string.IsNullOrEmpty(cat.category_id)
+                    )
+                    {
+                        categoryIds[cat.category_name] = cat.category_id;
+                    }
+                }
+
+                var localPathToUploadedSpriteId = new Dictionary<string, string>();
+                bool changed = false;
+
+                foreach (var cosmetic in creatablesData.cosmetics)
+                {
+                    cosmetic.OnAfterDeserialize();
+
+                    var keys = cosmetic.category_sprites.Keys.ToList();
+                    foreach (var categoryName in keys)
+                    {
+                        var spritePath = cosmetic.category_sprites[categoryName];
+                        if (string.IsNullOrEmpty(spritePath))
+                        {
+                            continue;
+                        }
+
+                        string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
+                        if (!File.Exists(fullPath))
+                        {
+                            continue;
+                        }
+
+                        if (
+                            !categoryIds.TryGetValue(categoryName, out string categoryId)
+                            || string.IsNullOrEmpty(categoryId)
+                        )
+                        {
+                            logger.Log(
+                                $"PublishCosmetics: Category '{categoryName}' not found on server.",
+                                this,
+                                Logging.LogType.Warning
+                            );
+                            continue;
+                        }
+
+                        if (
+                            cosmetic.category_urls.TryGetValue(categoryName, out var alreadySavedId)
+                            && !string.IsNullOrEmpty(alreadySavedId)
+                        )
+                        {
+                            localPathToUploadedSpriteId[fullPath] = alreadySavedId;
+                            continue;
+                        }
+
+                        string existingSpriteId = null;
+
+                        if (
+                            !localPathToUploadedSpriteId.TryGetValue(fullPath, out existingSpriteId)
+                        )
+                        {
+                            foreach (var kvp in cosmetic.category_sprites)
+                            {
+                                if (
+                                    kvp.Value == spritePath
+                                    && cosmetic.category_urls.TryGetValue(kvp.Key, out var savedId)
+                                    && !string.IsNullOrEmpty(savedId)
+                                )
+                                {
+                                    existingSpriteId = savedId;
+                                    break;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(existingSpriteId))
+                            {
+                                localPathToUploadedSpriteId[fullPath] = existingSpriteId;
+                            }
+                        }
+
+                        SpriteResponse resp = null;
+
+                        if (!string.IsNullOrEmpty(existingSpriteId))
+                        {
+                            resp = await assetsService.LinkSpriteByIdAsync(
+                                categoryId,
+                                existingSpriteId
+                            );
+                            if (resp != null)
+                            {
+                                resp.sprite_id = existingSpriteId;
+                            }
+                        }
+                        else
+                        {
+                            resp = await assetsService.UploadSpriteAsync(categoryId, fullPath);
+                            if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
+                            {
+                                localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
+                            }
+                        }
+
+                        if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
+                        {
+                            cosmetic.category_urls[categoryName] = resp.sprite_id;
+                            changed = true;
+                        }
+                        else
+                        {
+                            logger.Log(
+                                $"PublishCosmetics: Failed to upload/link sprite for category '{categoryName}'.",
+                                this,
+                                Logging.LogType.Error
+                            );
+                        }
+                    }
+                }
+
+                if (changed)
+                {
+                    dataPersistenceManager.SaveCreatablesData(
+                        worldSelector.selectedWorld,
+                        creatablesData
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"PublishCosmetics Error: {ex.Message}\n{ex.StackTrace}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw;
+            }
         }
 
         private async Task PublishZoneData()

@@ -73,6 +73,11 @@ namespace FeedTheRealm.Core.DataPersistence
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
+        public void SaveCreatablesData(string worldName, CreatablesData creatablesData)
+        {
+            creatablesRepository.SaveCreatables(worldName, creatablesData);
+        }
+
         // ---- Registration Methods ----
 
         private void RegisterEntity(IPersistent<ZoneData> entity)
