@@ -1,0 +1,45 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="Menu" style="width: 791px; background-color: rgba(0, 0, 0, 0.3); padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; align-self: flex-end; align-content: flex-start; justify-content: space-between; bottom: 399px; right: 40px; top: 12%; height: 51%;">
+        <ui:VisualElement name="Content" style="flex-grow: 1; max-height: 220px; justify-content: space-between; margin-bottom: 2%;">
+            <ui:Label text="Chest Editor" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255); margin-bottom: 1%;"/>
+            <ui:TextField label="Chest Name" placeholder-text="new_chest" name="ChestName" style="-unity-font-style: normal; color: rgb(255, 255, 255); -unity-text-align: middle-left;"/>
+            <ui:DropdownField label="Closed Model" style="color: rgb(255, 255, 255);"/>
+            <ui:DropdownField label="Opened Model" style="color: rgb(255, 255, 255);"/>
+        </ui:VisualElement>
+        <ui:TabView name="TabView" reorderable="true" tabindex="0">
+            <ui:Tab name="ClosedModel" label="Closed Model" tabindex="0" focusable="false" class="TabContent">
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Position" name="SyncPosition" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Rotation" name="SyncRotation" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Scale" name="SyncScale" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+            </ui:Tab>
+            <ui:Tab name="OpenedModel" label="Opened Model" tabindex="0" focusable="false" class="TabContent">
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Position" name="SyncPosition" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Rotation" name="SyncRotation" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
+                    <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                    <ui:Button text="Sync Scale" name="SyncScale" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
+                </ui:VisualElement>
+            </ui:Tab>
+        </ui:TabView>
+        <ui:VisualElement name="Footer" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-between; align-self: flex-end; align-items: center; width: 100%; height: 0; max-height: 10%; min-height: initial;">
+            <ui:Button text="Close" name="Close" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: flex-end; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
