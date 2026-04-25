@@ -273,86 +273,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             ValidateSprites(errors);
             await ValidateModels(errors);
-            await ValidateSubscription(errors);
 
             if (errors.Count > 0)
                 throw new Exception($"{string.Join("\n", errors)}");
-        }
-
-        private async Task ValidateSubscription(List<string> errors)
-        {
-            if (subscriptionService == null)
-            {
-                logger.Log(
-                    "[PublishMenu] Missing SubscriptionService.",
-                    this,
-                    Logging.LogType.Error
-                );
-                return;
-            }
-
-            var (data, error, statusCode) = await subscriptionService.GetSubscription();
-
-            if (!string.IsNullOrEmpty(error))
-            {
-                if (statusCode == 404)
-                {
-                    errors.Add("No active subscription found. Please subscribe to publish zones.");
-                }
-                else
-                {
-                    errors.Add($"Failed to verify subscription: {error}");
-                }
-                return;
-            }
-
-            if (
-                data == null
-                || string.Equals(data.status, "canceled", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                errors.Add("Subscription is canceled or inactive. Please renew to publish.");
-                return;
-            }
-
-            int freeZonesCount = data.slots - data.used_slots;
-            int newZonesToPublish = 0;
-
-            List<int> publishedZones = new List<int>();
-            if (!string.IsNullOrEmpty(currentWorldData?.worldId))
-            {
-                var (zones, zError, zStatusCode) = await zoneService.GetZonesList(
-                    currentWorldData.worldId,
-                    session.APIToken
-                );
-                if (string.IsNullOrEmpty(zError) && zones != null)
-                {
-                    publishedZones = zones;
-                }
-            }
-
-            var zonesToPublish = GetZonesToPublish();
-            foreach (var zoneId in zonesToPublish)
-            {
-                var zoneData = dataPersistenceManager.GetZoneData(
-                    worldSelector.selectedWorld,
-                    zoneId
-                );
-                if (zoneData == null)
-                    continue;
-
-                if (!publishedZones.Contains(zoneId))
-                {
-                    newZonesToPublish++;
-                }
-            }
-
-            if (newZonesToPublish > freeZonesCount)
-            {
-                errors.Add(
-                    $"You are trying to publish {newZonesToPublish} new zone(s), but only have {freeZonesCount} free zone(s) available."
-                );
-            }
         }
 
         private void ValidateSprites(List<string> errors)
