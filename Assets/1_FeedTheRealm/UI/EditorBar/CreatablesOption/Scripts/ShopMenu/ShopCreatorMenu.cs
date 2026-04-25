@@ -29,36 +29,76 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         private VisualTreeAsset productItemTemplate;
 
         private ShopData editingData;
+
+        // Header
         private TextField shopNameField;
-        private DropdownField itemSelector;
-        private ListView itemContainer;
         private Button saveButton;
         private Button returnButton;
 
+        // Tabs
+        private VisualElement _tabGold;
+        private VisualElement _tabCosmetic;
+        private Label _tabGoldLabel;
+        private Label _tabCosmeticLabel;
+        private VisualElement _tabGoldContent;
+        private VisualElement _tabCosmeticContent;
+
+        // Gold tab controls
+        private DropdownField itemSelector;
+        private ListView itemContainer;
+
+        // Cosmetic tab controls (stubbed — wired but not populated)
+        private DropdownField cosmeticItemSelector;
+        private ListView cosmeticItemContainer;
+
+        private bool _isGoldTabActive = true;
         private const string ItemPlaceholder = "Select an item to add";
+
+        // ─────────────────────────────────────────────────────────────
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+
+            // Header
             shopNameField = root.Q<TextField>("ShopName");
-            itemSelector = root.Q<DropdownField>("AddItemContaier");
-            itemContainer = root.Q<ListView>("ItemContainer");
             saveButton = root.Q<Button>("Save");
             returnButton = root.Q<Button>("Return");
-            var addItemButton = root.Q<Button>("AddItem");
 
-            // initialize fresh data immediately so items can be added before saving
+            // Tabs
+            _tabGold = root.Q<VisualElement>("TabGold");
+            _tabCosmetic = root.Q<VisualElement>("TabCosmetic");
+            _tabGoldLabel = root.Q<Label>("TabGoldLabel");
+            _tabCosmeticLabel = root.Q<Label>("TabCosmeticLabel");
+            _tabGoldContent = root.Q<VisualElement>("TabGoldContent");
+            _tabCosmeticContent = root.Q<VisualElement>("TabCosmeticContent");
+
+            _tabGold?.RegisterCallback<ClickEvent>(_ => SwitchTab(true));
+            _tabCosmetic?.RegisterCallback<ClickEvent>(_ => SwitchTab(false));
+
+            // Gold tab controls
+            itemSelector = root.Q<DropdownField>("AddItemContaier");
+            itemContainer = root.Q<ListView>("ItemContainer");
+
+            // Cosmetic tab controls (stubbed)
+            cosmeticItemSelector = root.Q<DropdownField>("AddCosmeticItemContainer");
+            cosmeticItemContainer = root.Q<ListView>("CosmeticItemContainer");
+
+            // Initialize fresh data
             editingData = new ShopData { id = Guid.NewGuid().ToString(), shopName = "" };
 
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
 
             returnButton.clicked += ReturnToList;
             saveButton.clicked += Save;
-            addItemButton.clicked += OnAddItemClicked;
+            root.Q<Button>("AddItem").clicked += OnAddItemClicked;
+            // AddCosmeticItem button is intentionally unbound until cosmetics are implemented.
 
             PopulateItemDropdown();
             SetupListView();
             RefreshProductList();
+
+            SwitchTab(true);
         }
 
         public void SetupEditor(Shop shop)
@@ -67,6 +107,31 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             shopNameField.value = editingData.shopName;
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
             RefreshProductList();
+        }
+
+        private void SwitchTab(bool goldTab)
+        {
+            _isGoldTabActive = goldTab;
+
+            if (_tabGoldContent != null)
+                _tabGoldContent.style.display = goldTab ? DisplayStyle.Flex : DisplayStyle.None;
+
+            if (_tabCosmeticContent != null)
+                _tabCosmeticContent.style.display = goldTab ? DisplayStyle.None : DisplayStyle.Flex;
+
+            // Active tab: bottom border highlight + label color
+            _tabGold?.EnableInClassList("editor-tab--active", goldTab);
+            _tabCosmetic?.EnableInClassList("editor-tab--active", !goldTab);
+
+            if (_tabGoldLabel != null)
+                _tabGoldLabel.style.color = goldTab
+                    ? new StyleColor(new Color(1f, 210f / 255f, 80f / 255f))
+                    : new StyleColor(new Color(1f, 1f, 1f, 0.45f));
+
+            if (_tabCosmeticLabel != null)
+                _tabCosmeticLabel.style.color = !goldTab
+                    ? new StyleColor(new Color(200f / 255f, 180f / 255f, 1f))
+                    : new StyleColor(new Color(1f, 1f, 1f, 0.45f));
         }
 
         private void Save()
@@ -80,7 +145,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             editingData.shopName = shopName;
 
-            // only add to manager if this is a new shop (not already registered)
             var existing = creatablesManager
                 .GetAll<Shop>()
                 .FirstOrDefault(s => s.Id == editingData.id);
@@ -125,6 +189,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             choices.AddRange(creatablesManager.GetAll<Weapon>().Select(w => w.data.name));
             itemSelector.choices = choices;
             itemSelector.SetValueWithoutNotify(ItemPlaceholder);
+
+            // Cosmetic dropdown left empty until gem items are implemented.
+            if (cosmeticItemSelector != null)
+            {
+                cosmeticItemSelector.choices = new List<string> { "No cosmetic items yet" };
+                cosmeticItemSelector.SetValueWithoutNotify("No cosmetic items yet");
+            }
         }
 
         private void SetupListView()
@@ -170,6 +241,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                     RefreshProductList();
                 };
             };
+
+            // Cosmetic ListView left unbound until cosmetics are implemented.
         }
 
         private void RefreshProductList()
