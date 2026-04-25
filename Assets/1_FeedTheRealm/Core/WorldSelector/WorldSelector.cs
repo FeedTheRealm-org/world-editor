@@ -6,7 +6,13 @@ namespace FeedTheRealm.Core.DataPersistence
     public class WorldSelector : ScriptableObject
     {
         public string selectedWorld;
-        public int selectedZoneId = 1;
+        private int _selectedZoneId = 1;
+
+        public int selectedZoneId
+        {
+            get => _selectedZoneId < 1 ? 1 : _selectedZoneId;
+            set => _selectedZoneId = value < 1 ? 1 : value;
+        }
 
         public void ClearSelection()
         {
