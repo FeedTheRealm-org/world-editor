@@ -75,7 +75,7 @@ MonoBehaviour:
   positionScrollSensitivity: 1
   rotationScrollSensitivity: 10
   scaleScrollSensitivity: 1
-  cubeCollider: {fileID: 6745135819911923722, guid: 31a16331486c065b883af0ccf3ea7632, type: 3}
+  cubeCollider: {fileID: 8709186894390171328, guid: 5d132cbc2629b56019661483cf9e5d0a, type: 3}
   slopeCollider: {fileID: 8709186894390171328, guid: 42c77d48f1088e9b48e3465c1a52e068, type: 3}
 --- !u!1001 &4941616099015855612
 PrefabInstance:
