@@ -552,37 +552,28 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         )
                         {
                             if (
-                                localPathToUploadedSpriteId.TryGetValue(fullPath, out var freshId)
-                                && freshId != alreadySavedId
+                                localPathToUploadedSpriteId.TryGetValue(
+                                    fullPath,
+                                    out var freshSourceId
+                                )
+                                && freshSourceId != alreadySavedId
                             )
                             {
-                                existingSpriteId = freshId;
+                                existingSpriteId = freshSourceId;
                             }
                             else
                             {
                                 existingSpriteId = alreadySavedId;
-                                localPathToUploadedSpriteId[fullPath] = alreadySavedId;
                             }
                         }
                         else if (
-                            !localPathToUploadedSpriteId.TryGetValue(fullPath, out existingSpriteId)
+                            localPathToUploadedSpriteId.TryGetValue(
+                                fullPath,
+                                out var sourceIdFromSession
+                            )
                         )
                         {
-                            foreach (var kvp in cosmetic.category_sprites)
-                            {
-                                if (
-                                    kvp.Value == spritePath
-                                    && cosmetic.category_urls.TryGetValue(kvp.Key, out var savedId)
-                                    && !string.IsNullOrEmpty(savedId)
-                                )
-                                {
-                                    existingSpriteId = savedId;
-                                    break;
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(existingSpriteId))
-                                localPathToUploadedSpriteId[fullPath] = existingSpriteId;
+                            existingSpriteId = sourceIdFromSession;
                         }
 
                         var resp = await UploadOrLinkSpriteAsync(
@@ -595,7 +586,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
                         if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
                         {
-                            localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
+                            if (!localPathToUploadedSpriteId.ContainsKey(fullPath))
+                                localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
+
                             cosmetic.category_urls[categoryName] = resp.sprite_id;
 
                             string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
@@ -611,6 +604,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                                 if (!File.Exists(newFullPath))
                                 {
                                     File.Move(fullPath, newFullPath);
+                                    logger.Log(
+                                        $"Renamed sprite file '{spritePath}' → '{newFileName}'",
+                                        this
+                                    );
                                 }
 
                                 var keysToUpdate = cosmetic.category_sprites.Keys.ToList();
