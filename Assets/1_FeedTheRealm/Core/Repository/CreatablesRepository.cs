@@ -46,7 +46,14 @@ namespace FeedTheRealm.Core.Repository
                     );
                     return null;
                 }
-                return FileSystemHandler.TryReadJson<CreatablesData>(path, logger);
+
+                var data = FileSystemHandler.TryReadJson<CreatablesData>(path, logger);
+
+                if (data?.cosmetics != null)
+                    foreach (var cosmetic in data.cosmetics)
+                        cosmetic.OnAfterDeserialize();
+
+                return data;
             }
             catch (Exception e)
             {

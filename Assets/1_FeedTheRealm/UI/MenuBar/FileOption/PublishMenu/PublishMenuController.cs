@@ -597,6 +597,36 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         {
                             localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
                             cosmetic.category_urls[categoryName] = resp.sprite_id;
+
+                            string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
+                            if (currentFileName != resp.sprite_id)
+                            {
+                                string ext = Path.GetExtension(spritePath);
+                                string newFileName = resp.sprite_id + ext;
+                                string newFullPath = Path.Combine(
+                                    config.SpritesDirectory,
+                                    newFileName
+                                );
+
+                                if (!File.Exists(newFullPath))
+                                {
+                                    File.Move(fullPath, newFullPath);
+                                }
+
+                                var keysToUpdate = cosmetic.category_sprites.Keys.ToList();
+                                foreach (var key in keysToUpdate)
+                                {
+                                    if (cosmetic.category_sprites[key] == spritePath)
+                                        cosmetic.category_sprites[key] = newFileName;
+                                }
+
+                                localPathToUploadedSpriteId[newFullPath] = resp.sprite_id;
+                                localPathToUploadedSpriteId.Remove(fullPath);
+
+                                spritePath = newFileName;
+                                fullPath = newFullPath;
+                            }
+
                             changed = true;
                         }
                         else
@@ -652,14 +682,11 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
                 if (resp != null)
                 {
-                    resp.sprite_id = existingSpriteId;
                     return resp;
                 }
 
                 if (statusCode != 404)
-                {
                     return null;
-                }
 
                 logger.Log(
                     $"PublishCosmetics: Sprite '{existingSpriteId}' not found on server (404), falling back to upload for category '{categoryName}'.",
