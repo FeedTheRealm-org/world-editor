@@ -468,7 +468,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 return false;
             }
 
-            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(
+                characterEditorPrefab,
+                false
+            );
+            characterPreviewRenderer.SetAssetsWorldId(worldSelector.selectedWorldId);
+
             return true;
         }
 

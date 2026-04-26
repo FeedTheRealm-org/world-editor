@@ -167,5 +167,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
                         : new Dictionary<string, string>(),
             };
         }
+
+        public void SetAssetsWorldId(string worldId)
+        {
+            if (previewController != null)
+                previewController.SetAssetsWorldId(worldId);
+            else if (EnsurePreviewInstance() && previewController != null)
+                previewController.SetAssetsWorldId(worldId);
+        }
     }
 }

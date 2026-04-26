@@ -498,6 +498,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             if (characterPreviewRenderer != null)
                 return true;
+
             characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
                 this,
                 characterEditorPrefab
@@ -507,7 +508,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 Debug.LogError("Character editor prefab is not assigned.", this);
                 return false;
             }
-            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(
+                characterEditorPrefab,
+                false
+            );
+            characterPreviewRenderer.SetAssetsWorldId(worldSelector.selectedWorldId);
+
             return true;
         }
 
