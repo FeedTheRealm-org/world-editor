@@ -18,5 +18,6 @@ namespace FeedTheRealm.Core.Library
         AggresiveNpcSpawner,
         PlayerSpawnpointSpawner,
         Portal,
+        Chest,
     }
 }

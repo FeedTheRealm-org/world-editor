@@ -47,7 +47,6 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         /// </summary>
         public async UniTask<GameObject> GetItem(string structureId)
         {
-            logger.Log($"GetItem called for {structureId}");
             GameObject instance = null;
             try
             {
@@ -72,7 +71,6 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                 instance.GetComponent<ILoadable<StructureData>>().Load(instanceModelData);
                 instance.SetActive(true);
 
-                logger.Log($"Successfully instantiated {structureId}");
                 return instance;
             }
             catch (System.Exception e)
@@ -103,10 +101,6 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         public List<PlaceableOption> ListAvailableItems()
         {
             List<StructureData> models = modelsRepository.GetModelsData().Values.ToList();
-            logger.Log(
-                $"Listing {models.Count} structures from ModelsRepository.",
-                Logging.LogType.Info
-            );
             return models
                 .Select(model => new PlaceableOption
                 {

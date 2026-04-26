@@ -23,3 +23,4 @@ MonoBehaviour:
   friendlyNPCSpawnerPrefab: {fileID: 5537282333109391366, guid: 994e067732e28fe4da14144b2fb9006f, type: 3}
   playerSpawnpointPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
   portalPrefab: {fileID: 5537282333109391366, guid: 9c0bd65e3420572b09e3952caea3b733, type: 3}
+  chestPrefab: {fileID: 8418757689684725357, guid: a90e7dfe84af22cf39bd039d90b440e5, type: 3}

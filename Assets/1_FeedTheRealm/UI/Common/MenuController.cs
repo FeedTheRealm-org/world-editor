@@ -57,5 +57,10 @@ namespace FeedTheRealm.UI.Common
             resolver.Instantiate(menuPrefab);
             Destroy(gameObject);
         }
+
+        public void EnableMovementToggle(bool enableMovement)
+        {
+            enableInputEvent.Raise(enableMovement);
+        }
     }
 }

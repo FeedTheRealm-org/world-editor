@@ -5,41 +5,30 @@
         <ui:VisualElement name="Content" style="flex-grow: 1; max-height: 220px; justify-content: space-between; margin-bottom: 2%;">
             <ui:Label text="Chest Editor" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255); margin-bottom: 1%;"/>
             <ui:TextField label="Chest Name" placeholder-text="new_chest" name="ChestName" style="-unity-font-style: normal; color: rgb(255, 255, 255); -unity-text-align: middle-left;"/>
-            <ui:DropdownField label="Closed Model" style="color: rgb(255, 255, 255);"/>
-            <ui:DropdownField label="Opened Model" style="color: rgb(255, 255, 255);"/>
+            <ui:DropdownField label="Chest Loot" name="ChestLootSelector" style="color: rgb(255, 255, 255);"/>
+            <ui:DropdownField label="Closed Model" name="ClosedModelSelector" style="color: rgb(255, 255, 255);"/>
+            <ui:DropdownField label="Opened Model" name="OpenedModelSelector" style="color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
         <ui:TabView name="TabView" reorderable="true" tabindex="0">
-            <ui:Tab name="ClosedModel" label="Closed Model" tabindex="0" focusable="false" class="TabContent">
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Position" name="SyncPosition" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Rotation" name="SyncRotation" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Scale" name="SyncScale" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
+            <ui:Tab name="Chest" label="Chest Transform" tabindex="0" focusable="false" class="TabContent">
+                <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
             </ui:Tab>
-            <ui:Tab name="OpenedModel" label="Opened Model" tabindex="0" focusable="false" class="TabContent">
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Position" name="SyncPosition" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Rotation" name="SyncRotation" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; width: 595px; justify-content: space-between; align-self: stretch;">
-                    <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                    <ui:Button text="Sync Scale" name="SyncScale" style="align-self: center; height: 10%; min-height: 16%; justify-content: space-between;"/>
-                </ui:VisualElement>
+            <ui:Tab name="ClosedChest" label="Closed Chest" tabindex="0" focusable="false" class="TabContent">
+                <ui:Vector3Field label="Position Offset" name="ClosedPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Rotation Offset" name="ClosedRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Scale Offset" name="ClosedScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+            </ui:Tab>
+            <ui:Tab name="OpenedChest" label="Opened Chest" tabindex="0" focusable="false" class="TabContent">
+                <ui:Vector3Field label="Position Offset" name="OpendPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Rotation Offset" name="OpendRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Scale Offset" name="OpendScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
             </ui:Tab>
         </ui:TabView>
         <ui:VisualElement name="Footer" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-between; align-self: flex-end; align-items: center; width: 100%; height: 0; max-height: 10%; min-height: initial;">
             <ui:Button text="Close" name="Close" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: flex-end; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
+            <ui:Button text="Reset Transform" name="ResetTransform" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: flex-end; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
