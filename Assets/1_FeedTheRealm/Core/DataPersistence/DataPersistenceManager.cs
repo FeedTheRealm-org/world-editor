@@ -176,5 +176,11 @@ namespace FeedTheRealm.Core.DataPersistence
         {
             return modelsRepository.GetModelFilepath(modelId);
         }
+
+        public string GetCurrentWorldId(string selectedWorld)
+        {
+            var worldData = GetWorldData(selectedWorld);
+            return worldData != null ? worldData.worldId : null;
+        }
     }
 }

@@ -84,6 +84,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             worldSelector.selectedWorld = worldName;
             worldSelector.selectedZoneId =
                 dataPersistenceManager.GetWorldData(worldName)?.startingZone ?? 1;
+            worldSelector.selectedWorldId = dataPersistenceManager.GetCurrentWorldId(worldName);
 
             if (SceneManager.GetActiveScene().name == editorScene.SceneName)
             {

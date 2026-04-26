@@ -404,10 +404,28 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 logger.Log("No creatables data to publish.", this, Logging.LogType.Info);
                 return;
             }
-            await worldService.PublishCreatables(
+
+            logger.Log(
+                $"[PublishMenu] Publishing creatables -> weapons: {creatablesData.weaponItems?.Count ?? 0}, consumables: {creatablesData.consumableItems?.Count ?? 0}, cosmetics: {creatablesData.cosmetics?.Count ?? 0}",
+                this,
+                Logging.LogType.Info
+            );
+
+            var (error, statusCode) = await worldService.PublishCreatables(
                 creatablesData,
                 currentWorldData.worldId,
                 session.APIToken
+            );
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                throw new Exception($"Failed to publish creatables: {error} (status {statusCode})");
+            }
+
+            logger.Log(
+                $"[PublishMenu] Creatables published successfully (status {statusCode}).",
+                this,
+                Logging.LogType.Info
             );
         }
 
@@ -507,15 +525,11 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     {
                         var spritePath = cosmetic.category_sprites[categoryName];
                         if (string.IsNullOrEmpty(spritePath))
-                        {
                             continue;
-                        }
 
                         string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
                         if (!File.Exists(fullPath))
-                        {
                             continue;
-                        }
 
                         if (
                             !categoryIds.TryGetValue(categoryName, out string categoryId)
@@ -530,18 +544,27 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                             continue;
                         }
 
+                        string existingSpriteId = null;
+
                         if (
                             cosmetic.category_urls.TryGetValue(categoryName, out var alreadySavedId)
                             && !string.IsNullOrEmpty(alreadySavedId)
                         )
                         {
-                            localPathToUploadedSpriteId[fullPath] = alreadySavedId;
-                            continue;
+                            if (
+                                localPathToUploadedSpriteId.TryGetValue(fullPath, out var freshId)
+                                && freshId != alreadySavedId
+                            )
+                            {
+                                existingSpriteId = freshId;
+                            }
+                            else
+                            {
+                                existingSpriteId = alreadySavedId;
+                                localPathToUploadedSpriteId[fullPath] = alreadySavedId;
+                            }
                         }
-
-                        string existingSpriteId = null;
-
-                        if (
+                        else if (
                             !localPathToUploadedSpriteId.TryGetValue(fullPath, out existingSpriteId)
                         )
                         {
@@ -559,35 +582,20 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                             }
 
                             if (!string.IsNullOrEmpty(existingSpriteId))
-                            {
                                 localPathToUploadedSpriteId[fullPath] = existingSpriteId;
-                            }
                         }
 
-                        SpriteResponse resp = null;
-
-                        if (!string.IsNullOrEmpty(existingSpriteId))
-                        {
-                            resp = await assetsService.LinkSpriteByIdAsync(
-                                categoryId,
-                                existingSpriteId
-                            );
-                            if (resp != null)
-                            {
-                                resp.sprite_id = existingSpriteId;
-                            }
-                        }
-                        else
-                        {
-                            resp = await assetsService.UploadSpriteAsync(categoryId, fullPath);
-                            if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
-                            {
-                                localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
-                            }
-                        }
+                        var resp = await UploadOrLinkSpriteAsync(
+                            categoryId,
+                            categoryName,
+                            fullPath,
+                            existingSpriteId,
+                            cosmetic.price
+                        );
 
                         if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
                         {
+                            localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
                             cosmetic.category_urls[categoryName] = resp.sprite_id;
                             changed = true;
                         }
@@ -619,6 +627,57 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
                 throw;
             }
+        }
+
+        private async Task<SpriteResponse> UploadOrLinkSpriteAsync(
+            string categoryId,
+            string categoryName,
+            string fullPath,
+            string existingSpriteId,
+            float price
+        )
+        {
+            if (!string.IsNullOrEmpty(existingSpriteId))
+            {
+                Debug.Log(
+                    $"Linking existing sprite for category '{categoryName}' with sprite ID '{existingSpriteId}' from world id '{currentWorldData.worldId}' with price {price}"
+                );
+
+                var (resp, statusCode) = await assetsService.LinkSpriteByIdAsync(
+                    categoryId,
+                    existingSpriteId,
+                    currentWorldData.worldId,
+                    price
+                );
+
+                if (resp != null)
+                {
+                    resp.sprite_id = existingSpriteId;
+                    return resp;
+                }
+
+                if (statusCode != 404)
+                {
+                    return null;
+                }
+
+                logger.Log(
+                    $"PublishCosmetics: Sprite '{existingSpriteId}' not found on server (404), falling back to upload for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+
+            Debug.Log(
+                $"Uploading new sprite for category '{categoryName}' from world id '{currentWorldData.worldId}' with price {price}"
+            );
+
+            return await assetsService.UploadSpriteAsync(
+                categoryId,
+                fullPath,
+                currentWorldData.worldId,
+                price
+            );
         }
 
         private async Task PublishZoneData()

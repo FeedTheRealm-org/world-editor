@@ -222,6 +222,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 Guid.NewGuid().ToString(),
                 "",
                 "",
+                0f,
                 new Dictionary<string, string>()
             );
             editBuffer = new EditBuffer<CosmeticData>(newCosmetic);

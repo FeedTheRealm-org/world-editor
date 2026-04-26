@@ -24,6 +24,10 @@ namespace FeedTheRealm.Core.Repository
 
         public void SaveCreatables(string worldName, CreatablesData creatables)
         {
+            if (creatables?.cosmetics != null)
+                foreach (var cosmetic in creatables.cosmetics)
+                    cosmetic.OnBeforeSerialize();
+
             string path = GetCreatablesPath(worldName);
             if (FileSystemHandler.TryWriteJson(path, creatables, logger))
                 logger.Log($"Saved creatables to '{path}'");

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using API;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -17,7 +18,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
     public class AggresiveNpcCreatorMenu : MenuController
     {
         [Inject]
-        private CreatablesManager creatblesManager;
+        private CreatablesManager creatablesManager;
 
         [SerializeField]
         private GameObject aggresiveNpcMenuPrefab;
@@ -27,6 +28,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         [SerializeField]
         private GameObject characterEditorPrefab;
+
+        [SerializeField]
+        private WorldSelector worldSelector;
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -161,7 +165,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void PopulateLootTables()
         {
-            var lootTables = creatblesManager.GetAll<LootTable>();
+            var lootTables = creatablesManager.GetAll<LootTable>();
             lootTableInput.choices = lootTables.Select(lt => lt.data.name).ToList();
         }
 
@@ -212,6 +216,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (!EnsureCharacterEditorInstance())
                 return;
 
+            characterEditor.SetAssetsWorldId(worldSelector.selectedWorldId);
+
             var characterInfo = BuildCharacterInfo();
 
             characterEditor.SetupWithCharacterInfo(characterInfo, SaveCharacterInfo);
@@ -240,7 +246,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 rangeInput.value = editBuffer.Working.range;
             }
 
-            var lootTables = creatblesManager.GetAll<LootTable>();
+            var lootTables = creatablesManager.GetAll<LootTable>();
             if (!string.IsNullOrEmpty(currentLootTableId))
             {
                 var selected = lootTables.FirstOrDefault(lt => lt.data.id == currentLootTableId);
@@ -271,7 +277,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             lootTableInput.RegisterValueChangedCallback(evt =>
             {
-                var selected = creatblesManager
+                var selected = creatablesManager
                     .GetAll<LootTable>()
                     .FirstOrDefault(lt => lt.data.name == evt.newValue);
                 editBuffer.Working.lootTableId = selected?.data.id;
@@ -294,7 +300,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 );
 
                 var enemy = new AggresiveNpc(editBuffer.Original);
-                creatblesManager.Add(enemy);
+                creatablesManager.Add(enemy);
             }
 
             ToastNotification.Show("Aggressive NPC created successfully!", "success", Color.green);
@@ -310,7 +316,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 return;
             }
 
-            var lootTables = creatblesManager.GetAll<LootTable>();
+            var lootTables = creatablesManager.GetAll<LootTable>();
             var selectedLootTable = lootTables.FirstOrDefault(lt =>
                 lt.data.name == lootTableInput.value
             );

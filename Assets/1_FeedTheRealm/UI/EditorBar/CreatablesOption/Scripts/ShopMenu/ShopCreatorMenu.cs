@@ -54,6 +54,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         private bool _isGoldTabActive = true;
         private const string ItemPlaceholder = "Select an item to add";
 
+        private HashSet<string> _initialCosmeticIds = new HashSet<string>();
+
         // ─────────────────────────────────────────────────────────────
 
         void OnEnable()
@@ -85,6 +87,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             cosmeticItemContainer = root.Q<ListView>("CosmeticItemContainer");
 
             // Initialize fresh data
+            _initialCosmeticIds.Clear();
             editingData = new ShopData { id = Guid.NewGuid().ToString(), shopName = "" };
 
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
@@ -92,9 +95,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             returnButton.clicked += ReturnToList;
             saveButton.clicked += Save;
             root.Q<Button>("AddItem").clicked += OnAddItemClicked;
-            // AddCosmeticItem button is intentionally unbound until cosmetics are implemented.
 
-            PopulateItemDropdown();
+            var addCosmeticItemBtn = root.Q<Button>("AddCosmeticItem");
+            if (addCosmeticItemBtn != null)
+                addCosmeticItemBtn.clicked += OnAddItemClicked;
+
             SetupListView();
             RefreshProductList();
 
@@ -104,6 +109,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         public void SetupEditor(Shop shop)
         {
             editingData = shop.data;
+            _initialCosmeticIds.Clear();
+            if (editingData != null && editingData.products != null)
+            {
+                foreach (var p in editingData.products)
+                {
+                    if (FindItem(p.productId) is Cosmetic)
+                        _initialCosmeticIds.Add(p.productId);
+                }
+            }
             shopNameField.value = editingData.shopName;
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
             RefreshProductList();
@@ -132,6 +146,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 _tabCosmeticLabel.style.color = !goldTab
                     ? new StyleColor(new Color(200f / 255f, 180f / 255f, 1f))
                     : new StyleColor(new Color(1f, 1f, 1f, 0.45f));
+            PopulateItemDropdown(_isGoldTabActive);
         }
 
         private void Save()
@@ -151,6 +166,29 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             if (existing == null)
                 creatablesManager.Add(new Shop(editingData));
 
+            var currentCosmeticIds = new HashSet<string>();
+            foreach (var product in editingData.products)
+            {
+                if (FindItem(product.productId) is Cosmetic cosmetic)
+                {
+                    cosmetic.data.price = product.price;
+                    currentCosmeticIds.Add(product.productId);
+                }
+            }
+
+            foreach (var pastId in _initialCosmeticIds)
+            {
+                if (!currentCosmeticIds.Contains(pastId))
+                {
+                    var cosmetic = creatablesManager
+                        .GetAll<Cosmetic>()
+                        .FirstOrDefault(c => c.Id == pastId);
+                    if (cosmetic != null)
+                        cosmetic.data.price = 0;
+                }
+            }
+            _initialCosmeticIds = new HashSet<string>(currentCosmeticIds);
+
             ToastNotification.Show("Shop saved successfully!", "success", Color.green);
             ReturnToList();
         }
@@ -167,55 +205,80 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 return;
             }
 
-            if (itemSelector.value == ItemPlaceholder || string.IsNullOrEmpty(itemSelector.value))
+            var selector = _isGoldTabActive ? itemSelector : cosmeticItemSelector;
+            if (selector == null)
+                return;
+
+            if (selector.value == ItemPlaceholder || string.IsNullOrEmpty(selector.value))
             {
                 ToastNotification.Show("Please select an item to add.", "error", Color.yellow);
                 return;
             }
 
-            string itemId = FindItemId(itemSelector.value);
+            string itemId = FindItemId(selector.value);
             if (itemId == null)
                 return;
 
             editingData.products.Add(new ProductData(itemId, 0));
             RefreshProductList();
-            itemSelector.SetValueWithoutNotify(ItemPlaceholder);
+            selector.SetValueWithoutNotify(ItemPlaceholder);
         }
 
-        private void PopulateItemDropdown()
+        private void PopulateItemDropdown(bool goldTab)
         {
-            var choices = new List<string> { ItemPlaceholder };
-            choices.AddRange(creatablesManager.GetAll<ConsumableItem>().Select(i => i.data.name));
-            choices.AddRange(creatablesManager.GetAll<Weapon>().Select(w => w.data.name));
-            itemSelector.choices = choices;
-            itemSelector.SetValueWithoutNotify(ItemPlaceholder);
-
-            // Cosmetic dropdown left empty until gem items are implemented.
-            if (cosmeticItemSelector != null)
+            if (goldTab)
             {
-                cosmeticItemSelector.choices = new List<string> { "No cosmetic items yet" };
-                cosmeticItemSelector.SetValueWithoutNotify("No cosmetic items yet");
+                var choices = new List<string> { ItemPlaceholder };
+                choices.AddRange(
+                    creatablesManager.GetAll<ConsumableItem>().Select(i => i.data.name)
+                );
+                choices.AddRange(creatablesManager.GetAll<Weapon>().Select(w => w.data.name));
+                itemSelector.choices = choices;
+                itemSelector.SetValueWithoutNotify(ItemPlaceholder);
+            }
+            else
+            {
+                var choices = new List<string> { ItemPlaceholder };
+                choices.AddRange(creatablesManager.GetAll<Cosmetic>().Select(i => i.data.name));
+                Debug.Log("Cosmetic choices: " + string.Join(", ", choices));
+                cosmeticItemSelector.choices = choices;
+                cosmeticItemSelector.SetValueWithoutNotify(ItemPlaceholder);
             }
         }
 
         private void SetupListView()
         {
-            itemContainer.fixedItemHeight = 120;
-            itemContainer.selectionType = SelectionType.None;
+            SetupSingleListView(itemContainer);
+            SetupSingleListView(cosmeticItemContainer);
+        }
 
-            itemContainer.makeItem = () =>
+        private void SetupSingleListView(ListView listView)
+        {
+            if (listView == null)
+            {
+                return;
+            }
+
+            listView.fixedItemHeight = 120;
+            listView.selectionType = SelectionType.None;
+
+            listView.makeItem = () =>
             {
                 var ve = productItemTemplate.Instantiate();
                 ve.style.marginBottom = 8;
                 return ve;
             };
 
-            itemContainer.bindItem = (ve, index) =>
+            listView.bindItem = (ve, index) =>
             {
-                if (editingData == null || index >= editingData.products.Count)
+                if (
+                    editingData == null
+                    || listView.itemsSource == null
+                    || index >= listView.itemsSource.Count
+                )
                     return;
 
-                var product = editingData.products[index];
+                var product = (ProductData)listView.itemsSource[index];
                 var item = FindItem(product.productId);
                 if (item == null)
                     return;
@@ -241,23 +304,39 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                     RefreshProductList();
                 };
             };
-
-            // Cosmetic ListView left unbound until cosmetics are implemented.
         }
 
         private void RefreshProductList()
         {
             if (editingData == null)
                 return;
-            itemContainer.itemsSource = editingData.products;
-            itemContainer.RefreshItems();
+
+            var goldProducts = editingData
+                .products.Where(p => FindItem(p.productId) is ConsumableItem or Weapon)
+                .ToList();
+            var cosmeticProducts = editingData
+                .products.Where(p => FindItem(p.productId) is Cosmetic)
+                .ToList();
+
+            if (itemContainer != null)
+            {
+                itemContainer.itemsSource = goldProducts;
+                itemContainer.RefreshItems();
+            }
+
+            if (cosmeticItemContainer != null)
+            {
+                cosmeticItemContainer.itemsSource = cosmeticProducts;
+                cosmeticItemContainer.RefreshItems();
+            }
         }
 
         private object FindItem(string id)
         {
             return (object)
                     creatablesManager.GetAll<ConsumableItem>().FirstOrDefault(i => i.Id == id)
-                ?? creatablesManager.GetAll<Weapon>().FirstOrDefault(w => w.Id == id);
+                ?? (object)creatablesManager.GetAll<Weapon>().FirstOrDefault(w => w.Id == id)
+                ?? (object)creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
         }
 
         private string FindItemId(string displayName)
@@ -267,9 +346,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 .FirstOrDefault(i => i.data.name == displayName);
             if (consumable != null)
                 return consumable.Id;
-            return creatablesManager
+
+            var weapon = creatablesManager
                 .GetAll<Weapon>()
-                .FirstOrDefault(w => w.data.name == displayName)
+                .FirstOrDefault(w => w.data.name == displayName);
+            if (weapon != null)
+                return weapon.Id;
+
+            return creatablesManager
+                .GetAll<Cosmetic>()
+                .FirstOrDefault(c => c.data.name == displayName)
                 ?.Id;
         }
 
@@ -278,6 +364,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             {
                 ConsumableItem c => c.data.name,
                 Weapon w => w.data.name,
+                Cosmetic c => c.data.name,
                 _ => "",
             };
 
@@ -287,6 +374,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             {
                 ConsumableItem c => c.data.spriteFilePath,
                 Weapon w => w.data.spriteFilePath,
+                Cosmetic c => c.data.category_sprites.Values.FirstOrDefault(v =>
+                    !string.IsNullOrEmpty(v)
+                ),
                 _ => null,
             };
             if (string.IsNullOrEmpty(path))
