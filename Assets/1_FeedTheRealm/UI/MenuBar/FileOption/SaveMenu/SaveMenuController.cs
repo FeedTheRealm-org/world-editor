@@ -142,6 +142,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
                 dataPersistenceManager.SaveWorldMetadata(currentWorldData);
                 worldSelector.selectedWorld = validatedWorldName;
                 ToastNotification.Show("World data saved", "success", Color.green);
+                CloseMenu();
             }
             catch (Exception ex)
             {

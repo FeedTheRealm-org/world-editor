@@ -21,6 +21,7 @@ MonoBehaviour:
   enableInputEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}
   refreshZonesEvent: {fileID: 11400000, guid: f828652c704830b158870a29769c0e61, type: 2}
   refreshPlaceableLibraryEvent: {fileID: 11400000, guid: d891f22fbbdab8b46b933f633c40bc7e, type: 2}
+  closeAllEvent: {fileID: 11400000, guid: 28bd1ed534883b97b975e4a40cd9071b, type: 2}
   tickEvent: {fileID: 11400000, guid: 2cc95b74b8a1ad36f88f366fcbf4e8e3, type: 2}
   fixedTickEvent: {fileID: 11400000, guid: 5bcf141af277623009f9582fea19b6f1, type: 2}
   lateTickEvent: {fileID: 11400000, guid: 3ac78d2c84182126eb836dab55d71af3, type: 2}

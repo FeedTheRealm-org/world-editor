@@ -604,14 +604,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 currentWorldData.worldId,
                 session.APIToken
             );
+
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to upload models: {error}");
+
             logger.Log(
                 $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
                 this,
                 Logging.LogType.Info
             );
-
-            if (!string.IsNullOrEmpty(error))
-                throw new Exception($"Failed to upload models: {error}");
         }
     }
 }
