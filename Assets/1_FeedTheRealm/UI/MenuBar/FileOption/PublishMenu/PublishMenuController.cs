@@ -590,6 +590,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                                 localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
 
                             cosmetic.category_urls[categoryName] = resp.sprite_id;
+                            cosmetic.category_prices[categoryName] = cosmetic.price;
 
                             string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
                             if (currentFileName != resp.sprite_id)
