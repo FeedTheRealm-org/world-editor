@@ -560,43 +560,33 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishModels(ZoneData zoneData)
         {
-            if (zoneData.objectPlacementData.Count == 0)
-            {
-                logger.Log(
-                    "[WorldPublisher] No structures in zone, skipping model upload.",
-                    this,
-                    Logging.LogType.Info
-                );
-                return;
-            }
+            var modelRequests = new List<ModelRequest>();
 
             var existingModels = await modelService.ListWorldModels(
                 currentWorldData.worldId,
                 session.APIToken
             );
 
-            var newModels = zoneData
-                .objectPlacementData.GroupBy(s => s.id)
-                .Select(g => g.First())
-                .Where(s => !existingModels.ContainsKey(s.id))
-                .ToList();
+            CollectModelRequests(
+                zoneData.objectPlacementData.Select(s => s.id),
+                existingModels,
+                modelRequests
+            );
 
-            if (newModels.Count == 0)
-                return;
+            CollectModelRequests(
+                zoneData
+                    .chestPlacements.SelectMany(c =>
+                        new[] { c.closedChestModelData?.modelId, c.opendedChestModelData?.modelId }
+                    )
+                    .Where(id => !string.IsNullOrEmpty(id)),
+                existingModels,
+                modelRequests
+            );
 
-            List<ModelRequest> modelRequests = new();
-
-            // Validate all model files exist before attempting upload
-            foreach (var model in newModels)
+            if (modelRequests.Count == 0)
             {
-                var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
-                if (string.IsNullOrEmpty(modelPath))
-                {
-                    throw new Exception(
-                        $"Model file for '{model.id}' not found. Please ensure all model files are present before publishing."
-                    );
-                }
-                modelRequests.Add(new ModelRequest { id = model.id, filePath = modelPath });
+                logger.Log("[WorldPublisher] No new models to upload.", this, Logging.LogType.Info);
+                return;
             }
 
             string error = await modelService.UploadModels(
@@ -609,10 +599,33 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 throw new Exception($"Failed to upload models: {error}");
 
             logger.Log(
-                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
+                $"[WorldPublisher] Successfully uploaded {modelRequests.Count} new models for zone {zoneData.zoneId}.",
                 this,
                 Logging.LogType.Info
             );
+        }
+
+        private void CollectModelRequests(
+            IEnumerable<string> modelIds,
+            Dictionary<string, ModelInfo> existingModels,
+            List<ModelRequest> modelRequests
+        )
+        {
+            var newIds = modelIds
+                .GroupBy(id => id)
+                .Select(g => g.First())
+                .Where(id => !existingModels.ContainsKey(id));
+
+            foreach (var id in newIds)
+            {
+                var modelPath = dataPersistenceManager.GetModelFilepath(id);
+                if (string.IsNullOrEmpty(modelPath))
+                    throw new Exception(
+                        $"Model file for '{id}' not found. Please ensure all model files are present before publishing."
+                    );
+
+                modelRequests.Add(new ModelRequest { id = id, filePath = modelPath });
+            }
         }
     }
 }

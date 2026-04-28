@@ -12,7 +12,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
     public class ChestObject : Placeable<ChestData>
     {
         [Inject]
-        private PlaceablesLibrary placeablesLibrary;
+        private StructureLibrary structureLibrary;
 
         public override PlaceableObjectCategories Category => PlaceableObjectCategories.Chest;
 
@@ -21,7 +21,9 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         private async void Start()
         {
-            if (data == null || string.IsNullOrEmpty(data.id))
+            bool isNew = data == null || string.IsNullOrEmpty(data.id);
+
+            if (isNew)
             {
                 data = new ChestData
                 {
@@ -38,21 +40,18 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 };
             }
 
-            closedChestModel = await SetModel(data.closedChestModelData.modelId);
-            closedChestModel.transform.localPosition = data.closedChestModelData.relativePosition;
-            closedChestModel.transform.localRotation = Quaternion.Euler(
-                data.closedChestModelData.relativeRotation
+            closedChestModel = await ApplyModel(
+                data.closedChestModelData.modelId,
+                data.closedChestModelData,
+                isNew,
+                active: true
             );
-            closedChestModel.transform.localScale = data.closedChestModelData.relativeSize;
-            closedChestModel.SetActive(true);
-
-            openChestModel = await SetModel(data.opendedChestModelData.modelId);
-            openChestModel.transform.localPosition = data.opendedChestModelData.relativePosition;
-            openChestModel.transform.localRotation = Quaternion.Euler(
-                data.opendedChestModelData.relativeRotation
+            openChestModel = await ApplyModel(
+                data.opendedChestModelData.modelId,
+                data.opendedChestModelData,
+                isNew,
+                active: false
             );
-            openChestModel.transform.localScale = data.opendedChestModelData.relativeSize;
-            openChestModel.SetActive(false);
         }
 
         // public methods for editor
@@ -153,12 +152,33 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         // Helper methods
 
+        private async Task<GameObject> ApplyModel(
+            string modelId,
+            ChestModelData modelData,
+            bool isNew,
+            bool active
+        )
+        {
+            var model = await SetModel(modelId);
+
+            if (isNew)
+            {
+                modelData.relativePosition = model.transform.localPosition;
+                modelData.relativeRotation = model.transform.localEulerAngles;
+                modelData.relativeSize = model.transform.localScale;
+            }
+
+            model.transform.localPosition = modelData.relativePosition;
+            model.transform.localRotation = Quaternion.Euler(modelData.relativeRotation);
+            model.transform.localScale = modelData.relativeSize;
+            model.SetActive(active);
+
+            return model;
+        }
+
         private async Task<GameObject> SetModel(string modelId)
         {
-            GameObject model = await placeablesLibrary.GetObject(
-                PlaceableObjectCategories.Structure,
-                modelId
-            );
+            GameObject model = await structureLibrary.GetItem(modelId);
             model.transform.SetParent(transform, false);
 
             var modelCollider = model.GetComponent<BoxCollider>();

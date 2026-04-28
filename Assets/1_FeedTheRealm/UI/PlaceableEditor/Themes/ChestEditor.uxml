@@ -1,15 +1,16 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement name="Menu" style="width: 791px; background-color: rgba(0, 0, 0, 0.3); padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; align-self: flex-end; align-content: flex-start; justify-content: space-between; bottom: 399px; right: 40px; top: 12%; height: 51%;">
+    <ui:VisualElement name="Menu" style="width: 791px; background-color: rgba(0, 0, 0, 0.3); padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; align-self: flex-end; align-content: flex-start; justify-content: space-between; bottom: 399px; right: 40px; top: 12%; height: 55%;">
         <ui:VisualElement name="Content" style="flex-grow: 1; max-height: 220px; justify-content: space-between; margin-bottom: 2%;">
             <ui:Label text="Chest Editor" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255); margin-bottom: 1%;"/>
             <ui:TextField label="Chest Name" placeholder-text="new_chest" name="ChestName" style="-unity-font-style: normal; color: rgb(255, 255, 255); -unity-text-align: middle-left;"/>
             <ui:DropdownField label="Chest Loot" name="ChestLootSelector" style="color: rgb(255, 255, 255);"/>
             <ui:DropdownField label="Closed Model" name="ClosedModelSelector" style="color: rgb(255, 255, 255);"/>
             <ui:DropdownField label="Opened Model" name="OpenedModelSelector" style="color: rgb(255, 255, 255);"/>
+            <ui:SliderInt label="Chest Reset Cooldown (Minutes)" value="2" high-value="100" name="ResetCooldown" show-input-field="true" style="width: 733px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
-        <ui:TabView name="TabView" reorderable="true" tabindex="0">
+        <ui:TabView name="TabView" reorderable="true" tabindex="0" style="margin-top: 2%;">
             <ui:Tab name="Chest" label="Chest Transform" tabindex="0" focusable="false" class="TabContent">
                 <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
                 <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>

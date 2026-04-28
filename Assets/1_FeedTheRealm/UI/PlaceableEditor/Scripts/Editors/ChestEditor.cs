@@ -44,6 +44,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private DropdownField openedModelSelector;
         private Button closeButton;
         private Button resetTransformButton;
+        private SliderInt resetCooldownSlider;
 
         // Chest tab
         private Vector3Field positionField;
@@ -84,6 +85,12 @@ namespace FeedTheRealm.UI.PlaceableEditor
             openedModelSelector = root.Q<DropdownField>("OpenedModelSelector");
             closeButton = root.Q<Button>("Close");
             resetTransformButton = root.Q<Button>("ResetTransform");
+
+            resetCooldownSlider = root.Q<SliderInt>("ResetCooldown");
+            resetCooldownSlider.RegisterValueChangedCallback(e =>
+                target.data.chestCooldownMinutes = e.newValue
+            );
+
             tabView = root.Q<TabView>("TabView");
 
             positionField = root.Q<Vector3Field>("Position");
@@ -209,6 +216,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             headerLabel.text = target.data.name;
             chestNameField.SetValueWithoutNotify(target.data.name);
+
+            resetCooldownSlider.SetValueWithoutNotify(target.data.chestCooldownMinutes);
 
             positionField.SetValueWithoutNotify(target.transform.position);
             rotationField.SetValueWithoutNotify(target.transform.localEulerAngles);
