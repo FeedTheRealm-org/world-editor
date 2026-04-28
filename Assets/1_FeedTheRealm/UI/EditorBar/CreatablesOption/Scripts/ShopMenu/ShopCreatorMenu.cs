@@ -8,10 +8,9 @@ using FeedTheRealm.UI.Common;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 using VContainer;
 
-namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
+namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 {
     [RequireComponent(typeof(UIDocument))]
     public class ShopCreatorMenu : MenuController
@@ -31,9 +30,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         private ShopData editingData;
 
         private TextField shopNameField;
-        private Button saveButton;
-        private Button returnButton;
-
         private VisualElement _tabGold;
         private VisualElement _tabCosmetic;
         private Label _tabGoldLabel;
@@ -47,30 +43,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
         private bool _isGoldTabActive = true;
         private const string ItemPlaceholder = "Select an item to add";
-        private HashSet<string> _initialCosmeticIds = new HashSet<string>();
-
-        private class GoldItemBinding
-        {
-            public ProductData product;
-        }
-
-        private class CosmeticItemBinding
-        {
-            public ProductData product;
-            public Cosmetic cosmetic;
-
-            public Action onDelete;
-            public Action onEdit;
-            public Action onConfirm;
-        }
+        private HashSet<string> _initialCosmeticIds = new();
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             shopNameField = root.Q<TextField>("ShopName");
-            saveButton = root.Q<Button>("Save");
-            returnButton = root.Q<Button>("Return");
+            root.Q<Button>("Save").clicked += Save;
+            root.Q<Button>("Return").clicked += ReturnToList;
+            root.Q<Button>("AddItem").clicked += OnAddGoldItemClicked;
+            root.Q<Button>("AddCosmeticItem")
+                ?.RegisterCallback<ClickEvent>(_ => OnAddCosmeticItemClicked());
 
             _tabGold = root.Q<VisualElement>("TabGold");
             _tabCosmetic = root.Q<VisualElement>("TabCosmetic");
@@ -84,22 +68,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             itemSelector = root.Q<DropdownField>("AddItemContaier");
             itemContainer = root.Q<ListView>("ItemContainer");
-
             cosmeticItemSelector = root.Q<DropdownField>("AddCosmeticItemContainer");
             cosmeticItemContainer = root.Q<ListView>("CosmeticItemContainer");
 
             _initialCosmeticIds.Clear();
             editingData = new ShopData { id = Guid.NewGuid().ToString(), shopName = "" };
-
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
-
-            returnButton.clicked += ReturnToList;
-            saveButton.clicked += Save;
-            root.Q<Button>("AddItem").clicked += OnAddGoldItemClicked;
-
-            var addCosmeticItemBtn = root.Q<Button>("AddCosmeticItem");
-            if (addCosmeticItemBtn != null)
-                addCosmeticItemBtn.clicked += OnAddCosmeticItemClicked;
 
             SetupListViews();
             RefreshProductList();
@@ -109,15 +83,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         public void SetupEditor(Shop shop)
         {
             editingData = shop.data;
-            _initialCosmeticIds.Clear();
-            if (editingData?.products != null)
-            {
-                foreach (var p in editingData.products)
-                {
-                    if (p.IsCosmetic)
-                        _initialCosmeticIds.Add(p.productId);
-                }
-            }
+            _initialCosmeticIds =
+                editingData?.products.Where(p => p.IsCosmetic).Select(p => p.productId).ToHashSet()
+                ?? new HashSet<string>();
+
             shopNameField.value = editingData.shopName;
             shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
             RefreshProductList();
@@ -127,24 +96,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
         {
             _isGoldTabActive = goldTab;
 
-            if (_tabGoldContent != null)
-                _tabGoldContent.style.display = goldTab ? DisplayStyle.Flex : DisplayStyle.None;
-            if (_tabCosmeticContent != null)
-                _tabCosmeticContent.style.display = goldTab ? DisplayStyle.None : DisplayStyle.Flex;
-
+            _tabGoldContent?.SetDisplay(goldTab);
+            _tabCosmeticContent?.SetDisplay(!goldTab);
             _tabGold?.EnableInClassList("editor-tab--active", goldTab);
             _tabCosmetic?.EnableInClassList("editor-tab--active", !goldTab);
 
+            var inactiveColor = new StyleColor(new Color(1f, 1f, 1f, 0.45f));
             if (_tabGoldLabel != null)
                 _tabGoldLabel.style.color = goldTab
                     ? new StyleColor(new Color(1f, 210f / 255f, 80f / 255f))
-                    : new StyleColor(new Color(1f, 1f, 1f, 0.45f));
+                    : inactiveColor;
             if (_tabCosmeticLabel != null)
                 _tabCosmeticLabel.style.color = !goldTab
                     ? new StyleColor(new Color(200f / 255f, 180f / 255f, 1f))
-                    : new StyleColor(new Color(1f, 1f, 1f, 0.45f));
+                    : inactiveColor;
 
-            PopulateItemDropdown(_isGoldTabActive);
+            PopulateDropdown(
+                goldTab ? itemSelector : cosmeticItemSelector,
+                goldTab
+                    ? creatablesManager
+                        .GetAll<ConsumableItem>()
+                        .Select(i => i.data.name)
+                        .Concat(creatablesManager.GetAll<Weapon>().Select(w => w.data.name))
+                    : creatablesManager.GetAll<Cosmetic>().Select(c => c.data.name)
+            );
         }
 
         private void Save()
@@ -158,41 +133,23 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             editingData.shopName = shopName;
 
-            var existing = creatablesManager
-                .GetAll<Shop>()
-                .FirstOrDefault(s => s.Id == editingData.id);
-            if (existing == null)
+            if (!creatablesManager.GetAll<Shop>().Any(s => s.Id == editingData.id))
                 creatablesManager.Add(new Shop(editingData));
 
-            var currentCosmeticIds = new HashSet<string>();
-            foreach (var product in editingData.products)
+            var currentIds = new HashSet<string>();
+            foreach (var product in editingData.products.Where(p => p.IsCosmetic))
             {
-                if (!product.IsCosmetic)
-                    continue;
-
-                var cosmetic = creatablesManager
-                    .GetAll<Cosmetic>()
-                    .FirstOrDefault(c => c.Id == product.productId);
+                var cosmetic = FindCosmetic(product.productId);
                 if (cosmetic == null)
                     continue;
-
                 cosmetic.data.category_prices[product.categoryName] = product.price;
-                currentCosmeticIds.Add(product.productId);
+                currentIds.Add(product.productId);
             }
 
-            foreach (var pastId in _initialCosmeticIds)
-            {
-                if (currentCosmeticIds.Contains(pastId))
-                    continue;
+            foreach (var pastId in _initialCosmeticIds.Where(id => !currentIds.Contains(id)))
+                FindCosmetic(pastId)?.data.category_prices.Clear();
 
-                var cosmetic = creatablesManager
-                    .GetAll<Cosmetic>()
-                    .FirstOrDefault(c => c.Id == pastId);
-                if (cosmetic != null)
-                    cosmetic.data.category_prices.Clear();
-            }
-            _initialCosmeticIds = new HashSet<string>(currentCosmeticIds);
-
+            _initialCosmeticIds = currentIds;
             ToastNotification.Show("Shop saved successfully!", "success", Color.green);
             ReturnToList();
         }
@@ -208,7 +165,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 );
                 return;
             }
-
             if (
                 itemSelector == null
                 || itemSelector.value == ItemPlaceholder
@@ -223,10 +179,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             if (itemId == null)
                 return;
 
-            bool alreadyAdded = editingData.products.Any(p =>
-                p.productId == itemId && !p.IsCosmetic
-            );
-            if (alreadyAdded)
+            if (editingData.products.Any(p => p.productId == itemId && !p.IsCosmetic))
             {
                 ToastNotification.Show("Item already in shop.", "error", Color.yellow);
                 return;
@@ -246,25 +199,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             if (itemId == null)
                 return;
 
-            var cosmetic = creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == itemId);
+            var cosmetic = FindCosmetic(itemId);
             if (cosmetic == null)
                 return;
 
             foreach (var kvp in cosmetic.data.category_sprites)
             {
-                bool alreadyAdded = editingData.products.Any(p =>
-                    p.productId == itemId && p.categoryName == kvp.Key
-                );
-                if (alreadyAdded)
+                if (
+                    editingData.products.Any(p =>
+                        p.productId == itemId && p.categoryName == kvp.Key
+                    )
+                )
                     continue;
 
-                string defaultName = $"{cosmetic.data.name} - {kvp.Key}";
                 editingData.products.Add(
                     new ProductData(
                         productId: itemId,
                         price: 0,
                         currency: CurrencyType.Gems,
-                        displayName: defaultName,
+                        displayName: $"{cosmetic.data.name} - {kvp.Key}",
                         categoryName: kvp.Key
                     )
                 );
@@ -272,27 +225,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             RefreshProductList();
             cosmeticItemSelector.SetValueWithoutNotify(ItemPlaceholder);
-        }
-
-        private void PopulateItemDropdown(bool goldTab)
-        {
-            if (goldTab)
-            {
-                var choices = new List<string> { ItemPlaceholder };
-                choices.AddRange(
-                    creatablesManager.GetAll<ConsumableItem>().Select(i => i.data.name)
-                );
-                choices.AddRange(creatablesManager.GetAll<Weapon>().Select(w => w.data.name));
-                itemSelector.choices = choices;
-                itemSelector.SetValueWithoutNotify(ItemPlaceholder);
-            }
-            else
-            {
-                var choices = new List<string> { ItemPlaceholder };
-                choices.AddRange(creatablesManager.GetAll<Cosmetic>().Select(i => i.data.name));
-                cosmeticItemSelector.choices = choices;
-                cosmeticItemSelector.SetValueWithoutNotify(ItemPlaceholder);
-            }
         }
 
         private void SetupListViews()
@@ -311,30 +243,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             itemContainer.makeItem = () =>
             {
-                var ve = productItemTemplate.Instantiate();
-                ve.style.marginBottom = 8;
-
+                var ve = MakeProductItem();
                 HideNameEditControls(ve);
 
                 var binding = new GoldItemBinding();
                 ve.userData = binding;
 
-                var priceField = ve.Q<IntegerField>("ProductPrice");
-                if (priceField != null)
-                    priceField.RegisterValueChangedCallback(evt =>
+                ve.Q<IntegerField>("ProductPrice")
+                    ?.RegisterValueChangedCallback(evt =>
                     {
                         if (binding.product != null)
                             binding.product.price = evt.newValue;
                     });
-
                 ve.Q<Button>("Delete")
                     ?.RegisterCallback<ClickEvent>(_ =>
                     {
-                        if (binding.product != null && editingData != null)
-                        {
-                            editingData.products.Remove(binding.product);
-                            RefreshProductList();
-                        }
+                        if (binding.product == null || editingData == null)
+                            return;
+                        editingData.products.Remove(binding.product);
+                        RefreshProductList();
                     });
 
                 return ve;
@@ -357,16 +284,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 if (nameLabel != null)
                     nameLabel.text = GetItemName(item);
 
-                LoadItemSprite(item, ve.Q<Image>("Preview"));
-
-                var priceField = ve.Q<IntegerField>("ProductPrice");
-                priceField?.SetValueWithoutNotify(binding.product.price);
+                ShopSpriteLoader.LoadItemSprite(item, ve.Q<Image>("Preview"));
+                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(binding.product.price);
             };
 
             itemContainer.unbindItem = (ve, _) =>
             {
-                if (ve.userData is GoldItemBinding binding)
-                    binding.product = null;
+                if (ve.userData is GoldItemBinding b)
+                    b.product = null;
             };
         }
 
@@ -380,26 +305,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
             cosmeticItemContainer.makeItem = () =>
             {
-                var ve = productItemTemplate.Instantiate();
-                ve.style.marginBottom = 8;
+                var ve = MakeProductItem();
+                ve.Q<DropdownField>("CurrencyType")?.SetDisplay(false);
 
                 var binding = new CosmeticItemBinding();
                 ve.userData = binding;
 
-                var priceField = ve.Q<IntegerField>("ProductPrice");
-                if (priceField != null)
-                    priceField.RegisterValueChangedCallback(evt =>
+                ve.Q<IntegerField>("ProductPrice")
+                    ?.RegisterValueChangedCallback(evt =>
                     {
                         if (binding.product != null)
                             binding.product.price = evt.newValue;
                     });
-
                 ve.Q<Button>("EditName")
                     ?.RegisterCallback<ClickEvent>(_ => binding.onEdit?.Invoke());
-
                 ve.Q<Button>("ConfirmName")
                     ?.RegisterCallback<ClickEvent>(_ => binding.onConfirm?.Invoke());
-
                 ve.Q<Button>("Delete")
                     ?.RegisterCallback<ClickEvent>(_ => binding.onDelete?.Invoke());
 
@@ -413,10 +334,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
 
                 var binding = (CosmeticItemBinding)ve.userData;
                 binding.product = (ProductData)cosmeticItemContainer.itemsSource[index];
-                binding.cosmetic = creatablesManager
-                    .GetAll<Cosmetic>()
-                    .FirstOrDefault(c => c.Id == binding.product.productId);
-
+                binding.cosmetic = FindCosmetic(binding.product.productId);
                 if (binding.cosmetic == null)
                     return;
 
@@ -433,28 +351,21 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                     nameLabel.text = resolvedName;
                 if (nameInput != null)
                     nameInput.SetValueWithoutNotify(resolvedName);
-                if (nameRow != null)
-                    nameRow.style.display = DisplayStyle.Flex;
-                if (nameEditRow != null)
-                    nameEditRow.style.display = DisplayStyle.None;
+                nameRow?.SetDisplay(true);
+                nameEditRow?.SetDisplay(false);
 
-                var priceField = ve.Q<IntegerField>("ProductPrice");
-                priceField?.SetValueWithoutNotify(binding.product.price);
-
-                LoadCosmeticSprite(
+                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(binding.product.price);
+                ShopSpriteLoader.LoadCosmeticSprite(
                     binding.cosmetic,
                     binding.product.categoryName,
                     ve.Q<Image>("Preview")
                 );
-
                 binding.product.currency = CurrencyType.Gems;
 
                 binding.onEdit = () =>
                 {
-                    if (nameRow != null)
-                        nameRow.style.display = DisplayStyle.None;
-                    if (nameEditRow != null)
-                        nameEditRow.style.display = DisplayStyle.Flex;
+                    nameRow?.SetDisplay(false);
+                    nameEditRow?.SetDisplay(true);
                     if (nameInput != null)
                     {
                         nameInput.SetValueWithoutNotify(nameLabel?.text ?? "");
@@ -468,32 +379,28 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                     binding.product.displayName = newName;
                     if (nameLabel != null)
                         nameLabel.text = newName;
-                    if (nameRow != null)
-                        nameRow.style.display = DisplayStyle.Flex;
-                    if (nameEditRow != null)
-                        nameEditRow.style.display = DisplayStyle.None;
+                    nameRow?.SetDisplay(true);
+                    nameEditRow?.SetDisplay(false);
                 };
 
                 binding.onDelete = () =>
                 {
-                    if (editingData != null)
-                    {
-                        editingData.products.Remove(binding.product);
-                        RefreshProductList();
-                    }
+                    editingData?.products.Remove(binding.product);
+                    RefreshProductList();
                 };
             };
 
             cosmeticItemContainer.unbindItem = (ve, _) =>
             {
-                if (ve.userData is CosmeticItemBinding binding)
+                cosmeticItemContainer.unbindItem = (ve, _) =>
                 {
-                    binding.product = null;
-                    binding.cosmetic = null;
-                    binding.onEdit = null;
-                    binding.onConfirm = null;
-                    binding.onDelete = null;
-                }
+                    if (ve.userData is CosmeticItemBinding b)
+                    {
+                        b.product = null;
+                        b.cosmetic = null;
+                        b.onEdit = b.onConfirm = b.onDelete = null;
+                    }
+                };
             };
         }
 
@@ -502,56 +409,71 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
             if (editingData == null)
                 return;
 
-            var goldProducts = editingData
-                .products.Where(p =>
-                    !p.IsCosmetic && (FindItem(p.productId) is ConsumableItem or Weapon)
-                )
-                .ToList();
-
-            var cosmeticProducts = editingData.products.Where(p => p.IsCosmetic).ToList();
-
             if (itemContainer != null)
             {
-                itemContainer.itemsSource = goldProducts;
+                itemContainer.itemsSource = editingData
+                    .products.Where(p =>
+                        !p.IsCosmetic && FindItem(p.productId) is ConsumableItem or Weapon
+                    )
+                    .ToList();
                 itemContainer.RefreshItems();
             }
 
             if (cosmeticItemContainer != null)
             {
-                cosmeticItemContainer.itemsSource = cosmeticProducts;
+                cosmeticItemContainer.itemsSource = editingData
+                    .products.Where(p => p.IsCosmetic)
+                    .ToList();
                 cosmeticItemContainer.RefreshItems();
             }
         }
 
-        private object FindItem(string id)
+        private VisualElement MakeProductItem()
         {
-            return (object)
-                    creatablesManager.GetAll<ConsumableItem>().FirstOrDefault(i => i.Id == id)
-                ?? (object)creatablesManager.GetAll<Weapon>().FirstOrDefault(w => w.Id == id)
-                ?? (object)creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
+            var ve = productItemTemplate.Instantiate();
+            ve.style.marginBottom = 8;
+            return ve;
         }
 
-        private string FindItemId(string displayName)
+        private static void PopulateDropdown(DropdownField dropdown, IEnumerable<string> names)
         {
-            var consumable = creatablesManager
+            var choices = new List<string> { ItemPlaceholder };
+            choices.AddRange(names);
+            dropdown.choices = choices;
+            dropdown.SetValueWithoutNotify(ItemPlaceholder);
+        }
+
+        private static void HideNameEditControls(VisualElement ve)
+        {
+            ve.Q<VisualElement>("NameRow")?.SetDisplay(true);
+            ve.Q<VisualElement>("NameEditRow")?.SetDisplay(false);
+            ve.Q<Button>("EditName")?.SetDisplay(false);
+            ve.Q<Button>("ConfirmName")?.SetDisplay(false);
+        }
+
+        private Cosmetic FindCosmetic(string id) =>
+            creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
+
+        private object FindItem(string id) =>
+            (object)creatablesManager.GetAll<ConsumableItem>().FirstOrDefault(i => i.Id == id)
+            ?? (object)creatablesManager.GetAll<Weapon>().FirstOrDefault(w => w.Id == id)
+            ?? creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
+
+        private string FindItemId(string displayName) =>
+            creatablesManager
                 .GetAll<ConsumableItem>()
-                .FirstOrDefault(i => i.data.name == displayName);
-            if (consumable != null)
-                return consumable.Id;
-
-            var weapon = creatablesManager
+                .FirstOrDefault(i => i.data.name == displayName)
+                ?.Id
+            ?? creatablesManager
                 .GetAll<Weapon>()
-                .FirstOrDefault(w => w.data.name == displayName);
-            if (weapon != null)
-                return weapon.Id;
-
-            return creatablesManager
+                .FirstOrDefault(w => w.data.name == displayName)
+                ?.Id
+            ?? creatablesManager
                 .GetAll<Cosmetic>()
                 .FirstOrDefault(c => c.data.name == displayName)
                 ?.Id;
-        }
 
-        private string GetItemName(object item) =>
+        private static string GetItemName(object item) =>
             item switch
             {
                 ConsumableItem c => c.data.name,
@@ -560,54 +482,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
                 _ => "",
             };
 
-        private void LoadItemSprite(object item, Image image)
-        {
-            string path = item switch
-            {
-                ConsumableItem c => c.data.spriteFilePath,
-                Weapon w => w.data.spriteFilePath,
-                Cosmetic c => c.data.category_sprites.Values.FirstOrDefault(v =>
-                    !string.IsNullOrEmpty(v)
-                ),
-                _ => null,
-            };
-            if (string.IsNullOrEmpty(path))
-                return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(path);
-            if (sprite != null)
-                image.sprite = sprite;
-        }
-
-        private void LoadCosmeticSprite(Cosmetic cosmetic, string categoryName, Image image)
-        {
-            if (image == null)
-                return;
-            if (
-                !cosmetic.data.category_sprites.TryGetValue(categoryName, out var path)
-                || string.IsNullOrEmpty(path)
-            )
-                return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(path);
-            if (sprite != null)
-                image.sprite = sprite;
-        }
-
-        private void HideNameEditControls(VisualElement ve)
-        {
-            var nameRow = ve.Q<VisualElement>("NameRow");
-            var nameEditRow = ve.Q<VisualElement>("NameEditRow");
-            if (nameRow != null)
-                nameRow.style.display = DisplayStyle.Flex;
-            if (nameEditRow != null)
-                nameEditRow.style.display = DisplayStyle.None;
-            var editBtn = ve.Q<Button>("EditName");
-            var confirmBtn = ve.Q<Button>("ConfirmName");
-            if (editBtn != null)
-                editBtn.style.display = DisplayStyle.None;
-            if (confirmBtn != null)
-                confirmBtn.style.display = DisplayStyle.None;
-        }
-
         private void ReturnToList() => OpenMenu(shopsMenuPrefab);
+    }
+
+    internal static class VisualElementExtensions
+    {
+        internal static void SetDisplay(this VisualElement ve, bool visible) =>
+            ve.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
     }
 }

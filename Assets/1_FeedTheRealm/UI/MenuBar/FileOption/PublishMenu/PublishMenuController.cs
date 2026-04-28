@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
@@ -55,6 +57,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
 
         private Button publishButton;
         private Button loginButton;
@@ -551,20 +556,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                             && !string.IsNullOrEmpty(alreadySavedId)
                         )
                         {
-                            if (
-                                localPathToUploadedSpriteId.TryGetValue(
-                                    fullPath,
-                                    out var freshSourceId
-                                )
-                                && freshSourceId != alreadySavedId
-                            )
-                            {
-                                existingSpriteId = freshSourceId;
-                            }
-                            else
-                            {
-                                existingSpriteId = alreadySavedId;
-                            }
+                            existingSpriteId = alreadySavedId;
                         }
                         else if (
                             localPathToUploadedSpriteId.TryGetValue(
@@ -618,7 +610,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                                         cosmetic.category_sprites[key] = newFileName;
                                 }
 
-                                localPathToUploadedSpriteId[newFullPath] = resp.sprite_id;
+                                if (!localPathToUploadedSpriteId.ContainsKey(newFullPath))
+                                    localPathToUploadedSpriteId[newFullPath] = resp.sprite_id;
                                 localPathToUploadedSpriteId.Remove(fullPath);
 
                                 spritePath = newFileName;
@@ -644,6 +637,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         worldSelector.selectedWorld,
                         creatablesData
                     );
+                    SyncCosmeticsInMemory(creatablesData);
                 }
             }
             catch (Exception ex)
@@ -703,6 +697,30 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 currentWorldData.worldId,
                 price
             );
+        }
+
+        private void SyncCosmeticsInMemory(CreatablesData publishedData)
+        {
+            var inMemoryCosmetics = creatablesManager.GetAll<Cosmetic>();
+
+            foreach (var publishedCosmetic in publishedData.cosmetics)
+            {
+                var inMemory = inMemoryCosmetics.FirstOrDefault(c => c.Id == publishedCosmetic.id);
+                if (inMemory == null)
+                    continue;
+
+                inMemory.data.category_sprites = new Dictionary<string, string>(
+                    publishedCosmetic.category_sprites
+                );
+                inMemory.data.category_urls = new Dictionary<string, string>(
+                    publishedCosmetic.category_urls
+                );
+                inMemory.data.category_prices = new Dictionary<string, float>(
+                    publishedCosmetic.category_prices
+                );
+
+                inMemory.data.OnBeforeSerialize();
+            }
         }
 
         private async Task PublishZoneData()

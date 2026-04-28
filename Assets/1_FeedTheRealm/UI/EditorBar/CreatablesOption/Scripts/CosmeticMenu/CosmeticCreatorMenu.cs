@@ -46,12 +46,20 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         {
             editBuffer = new EditBuffer<CosmeticData>(cosmetic.data);
 
-            if (cosmetic.data.category_sprites != null)
-                editBuffer.Working.category_sprites = new Dictionary<string, string>(
-                    cosmetic.data.category_sprites
-                );
-            else
-                editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            editBuffer.Working.category_sprites =
+                cosmetic.data.category_sprites != null
+                    ? new Dictionary<string, string>(cosmetic.data.category_sprites)
+                    : new Dictionary<string, string>();
+
+            editBuffer.Working.category_urls =
+                cosmetic.data.category_urls != null
+                    ? new Dictionary<string, string>(cosmetic.data.category_urls)
+                    : new Dictionary<string, string>();
+
+            editBuffer.Working.category_prices =
+                cosmetic.data.category_prices != null
+                    ? new Dictionary<string, float>(cosmetic.data.category_prices)
+                    : new Dictionary<string, float>();
 
             if (isActiveAndEnabled)
             {

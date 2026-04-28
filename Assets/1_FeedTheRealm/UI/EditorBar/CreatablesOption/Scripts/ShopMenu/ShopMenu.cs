@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.EditorBar.ElementOption.ShopMenu
+namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 {
     [RequireComponent(typeof(UIDocument))]
     public class ShopsMenu : MenuController

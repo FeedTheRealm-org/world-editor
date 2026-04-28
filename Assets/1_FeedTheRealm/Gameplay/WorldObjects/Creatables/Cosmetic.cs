@@ -36,25 +36,26 @@ namespace FeedTheRealm.Gameplay.Creatables
             foreach (var key in keys)
             {
                 var spriteFilePath = data.category_sprites[key];
-                if (!string.IsNullOrEmpty(spriteFilePath) && Path.IsPathRooted(spriteFilePath))
-                {
-                    if (savedPaths.TryGetValue(spriteFilePath, out string existingSavedName))
-                    {
-                        data.category_sprites[key] = existingSavedName;
-                    }
-                    else
-                    {
-                        string savedFileName = FileSystemHandler.SaveSprite(
-                            spriteFilePath,
-                            config.SpritesDirectory,
-                            data.id
-                        );
 
-                        if (savedFileName != null)
-                        {
-                            data.category_sprites[key] = savedFileName;
-                            savedPaths[spriteFilePath] = savedFileName;
-                        }
+                if (string.IsNullOrEmpty(spriteFilePath) || !Path.IsPathRooted(spriteFilePath))
+                    continue;
+
+                if (savedPaths.TryGetValue(spriteFilePath, out string existingSavedName))
+                {
+                    data.category_sprites[key] = existingSavedName;
+                }
+                else
+                {
+                    string savedFileName = FileSystemHandler.SaveSprite(
+                        spriteFilePath,
+                        config.SpritesDirectory,
+                        data.id
+                    );
+
+                    if (savedFileName != null)
+                    {
+                        data.category_sprites[key] = savedFileName;
+                        savedPaths[spriteFilePath] = savedFileName;
                     }
                 }
             }
