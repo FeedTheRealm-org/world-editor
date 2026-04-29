@@ -16,6 +16,7 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject signUpMenuObject;
         public GameObject verifyCodeMenuObject;
         public GameObject subscriptionMenuObject;
+        public GameObject transactionsMenuObject;
 
         [Header("Placeable Editor UI")]
         public GameObject placeableEditor;
