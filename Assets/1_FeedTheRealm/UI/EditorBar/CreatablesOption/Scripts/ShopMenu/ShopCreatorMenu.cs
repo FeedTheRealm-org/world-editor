@@ -142,7 +142,17 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 var cosmetic = FindCosmetic(product.productId);
                 if (cosmetic == null)
                     continue;
-                cosmetic.data.category_prices[product.categoryName] = product.price;
+
+                if (
+                    cosmetic.data.categories.TryGetValue(
+                        product.categoryName,
+                        out var categoryEntry
+                    )
+                )
+                {
+                    categoryEntry.price = product.price;
+                }
+
                 cosmetic.data.OnBeforeSerialize();
                 currentIds.Add(product.productId);
             }
@@ -152,20 +162,20 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 var cosmetic = FindCosmetic(pastId);
                 if (cosmetic != null)
                 {
-                    if (
-                        cosmetic.data.category_urls != null
-                        && cosmetic.data.category_urls.Values.Contains(pastId)
-                    )
+                    var categoryEntry = cosmetic.data.categories.FirstOrDefault(x =>
+                        x.Value.url_id == pastId
+                        || (string.IsNullOrEmpty(x.Value.url_id) && cosmetic.data.id == pastId)
+                    );
+                    if (categoryEntry.Key != null)
                     {
-                        var category = cosmetic
-                            .data.category_urls.FirstOrDefault(x => x.Value == pastId)
-                            .Key;
-                        if (!string.IsNullOrEmpty(category))
-                            cosmetic.data.category_prices.Remove(category);
+                        categoryEntry.Value.price = 0;
                     }
                     else if (cosmetic.Id == pastId)
                     {
-                        cosmetic.data.category_prices.Clear();
+                        foreach (var cat in cosmetic.data.categories.Values)
+                        {
+                            cat.price = 0;
+                        }
                     }
                     cosmetic.data.OnBeforeSerialize();
                 }
@@ -225,14 +235,11 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             if (cosmetic == null)
                 return;
 
-            foreach (var kvp in cosmetic.data.category_sprites)
+            foreach (var kvp in cosmetic.data.categories)
             {
-                string productIdToUse =
-                    cosmetic.data.category_urls != null
-                    && cosmetic.data.category_urls.TryGetValue(kvp.Key, out var url)
-                    && !string.IsNullOrEmpty(url)
-                        ? url
-                        : itemId;
+                string productIdToUse = !string.IsNullOrEmpty(kvp.Value.url_id)
+                    ? kvp.Value.url_id
+                    : itemId;
 
                 if (
                     editingData.products.Any(p =>
@@ -485,7 +492,10 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 .GetAll<Cosmetic>()
                 .FirstOrDefault(c =>
                     c.Id == id
-                    || (c.data.category_urls != null && c.data.category_urls.Values.Contains(id))
+                    || (
+                        c.data.categories != null
+                        && c.data.categories.Values.Any(v => v.url_id == id)
+                    )
                 );
 
         private object FindItem(string id) =>
@@ -495,7 +505,10 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 .GetAll<Cosmetic>()
                 .FirstOrDefault(c =>
                     c.Id == id
-                    || (c.data.category_urls != null && c.data.category_urls.Values.Contains(id))
+                    || (
+                        c.data.categories != null
+                        && c.data.categories.Values.Any(v => v.url_id == id)
+                    )
                 );
 
         private string FindItemId(string displayName) =>

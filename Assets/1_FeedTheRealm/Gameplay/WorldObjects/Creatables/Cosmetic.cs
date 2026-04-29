@@ -19,11 +19,15 @@ namespace FeedTheRealm.Gameplay.Creatables
 
         public override void OnDelete()
         {
-            foreach (var kvp in data.category_sprites)
+            foreach (var kvp in data.categories)
             {
-                if (kvp.Value.StartsWith(config.SpritesDirectory))
+                var spritePath = kvp.Value?.sprite_path;
+                if (
+                    !string.IsNullOrEmpty(spritePath)
+                    && spritePath.StartsWith(config.SpritesDirectory)
+                )
                 {
-                    FileSystemHandler.DeleteFile(kvp.Value);
+                    FileSystemHandler.DeleteFile(spritePath);
                 }
             }
         }
@@ -31,18 +35,19 @@ namespace FeedTheRealm.Gameplay.Creatables
         public override void Save(ref CreatablesData creatablesData)
         {
             var savedPaths = new Dictionary<string, string>();
-            var keys = new List<string>(data.category_sprites.Keys);
+            var keys = new List<string>(data.categories.Keys);
 
             foreach (var key in keys)
             {
-                var spriteFilePath = data.category_sprites[key];
+                var entry = data.categories[key];
+                var spriteFilePath = entry?.sprite_path;
 
                 if (string.IsNullOrEmpty(spriteFilePath) || !Path.IsPathRooted(spriteFilePath))
                     continue;
 
                 if (savedPaths.TryGetValue(spriteFilePath, out string existingSavedName))
                 {
-                    data.category_sprites[key] = existingSavedName;
+                    entry.sprite_path = existingSavedName;
                 }
                 else
                 {
@@ -54,7 +59,7 @@ namespace FeedTheRealm.Gameplay.Creatables
 
                     if (savedFileName != null)
                     {
-                        data.category_sprites[key] = savedFileName;
+                        entry.sprite_path = savedFileName;
                         savedPaths[spriteFilePath] = savedFileName;
                     }
                 }

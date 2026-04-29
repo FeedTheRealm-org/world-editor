@@ -208,9 +208,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private async void OnLoginClicked()
         {
             if (isAuthFlowActive || IsAuthMenuOpen())
-            {
                 return;
-            }
+
             var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
             var loginMenuObject = worldUIObjectProvider.loginMenuObject;
             var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
@@ -525,10 +524,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 {
                     cosmetic.OnAfterDeserialize();
 
-                    var keys = cosmetic.category_sprites.Keys.ToList();
-                    foreach (var categoryName in keys)
+                    var categoryNames = cosmetic.categories.Keys.ToList();
+                    foreach (var categoryName in categoryNames)
                     {
-                        var spritePath = cosmetic.category_sprites[categoryName];
+                        var entry = cosmetic.categories[categoryName];
+                        var spritePath = entry.sprite_path;
+
                         if (string.IsNullOrEmpty(spritePath))
                             continue;
 
@@ -550,39 +551,23 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         }
 
                         string existingSpriteId = null;
-
-                        if (
-                            cosmetic.category_urls.TryGetValue(categoryName, out var alreadySavedId)
-                            && !string.IsNullOrEmpty(alreadySavedId)
-                        )
+                        if (!string.IsNullOrEmpty(entry.url_id))
                         {
-                            existingSpriteId = alreadySavedId;
+                            existingSpriteId = entry.url_id;
                         }
                         else if (
-                            localPathToUploadedSpriteId.TryGetValue(
-                                fullPath,
-                                out var sourceIdFromSession
-                            )
+                            localPathToUploadedSpriteId.TryGetValue(fullPath, out var sessionId)
                         )
                         {
-                            existingSpriteId = sourceIdFromSession;
+                            existingSpriteId = sessionId;
                         }
-
-                        float priceToUse =
-                            cosmetic.category_prices != null
-                            && cosmetic.category_prices.TryGetValue(
-                                categoryName,
-                                out float existingPrice
-                            )
-                                ? existingPrice
-                                : cosmetic.price;
 
                         var resp = await UploadOrLinkSpriteAsync(
                             categoryId,
                             categoryName,
                             fullPath,
                             existingSpriteId,
-                            priceToUse
+                            entry.price
                         );
 
                         if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
@@ -590,8 +575,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                             if (!localPathToUploadedSpriteId.ContainsKey(fullPath))
                                 localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
 
-                            cosmetic.category_urls[categoryName] = resp.sprite_id;
-                            cosmetic.category_prices[categoryName] = priceToUse;
+                            entry.url_id = resp.sprite_id;
 
                             string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
                             if (currentFileName != resp.sprite_id)
@@ -612,11 +596,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                                     );
                                 }
 
-                                var keysToUpdate = cosmetic.category_sprites.Keys.ToList();
-                                foreach (var key in keysToUpdate)
+                                foreach (var otherEntry in cosmetic.categories.Values)
                                 {
-                                    if (cosmetic.category_sprites[key] == spritePath)
-                                        cosmetic.category_sprites[key] = newFileName;
+                                    if (otherEntry.sprite_path == spritePath)
+                                        otherEntry.sprite_path = newFileName;
                                 }
 
                                 if (!localPathToUploadedSpriteId.ContainsKey(newFullPath))
@@ -682,9 +665,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
 
                 if (resp != null)
-                {
                     return resp;
-                }
 
                 if (statusCode != 404)
                     return null;
@@ -718,14 +699,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (inMemory == null)
                     continue;
 
-                inMemory.data.category_sprites = new Dictionary<string, string>(
-                    publishedCosmetic.category_sprites
-                );
-                inMemory.data.category_urls = new Dictionary<string, string>(
-                    publishedCosmetic.category_urls
-                );
-                inMemory.data.category_prices = new Dictionary<string, float>(
-                    publishedCosmetic.category_prices
+                inMemory.data.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    publishedCosmetic.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
                 );
 
                 inMemory.data.OnBeforeSerialize();
@@ -791,7 +773,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             List<ModelRequest> modelRequests = new();
 
-            // Validate all model files exist before attempting upload
             foreach (var model in newModels)
             {
                 var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
