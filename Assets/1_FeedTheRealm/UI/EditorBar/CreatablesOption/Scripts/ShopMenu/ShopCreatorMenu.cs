@@ -147,7 +147,24 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             }
 
             foreach (var pastId in _initialCosmeticIds.Where(id => !currentIds.Contains(id)))
-                FindCosmetic(pastId)?.data.category_prices.Clear();
+            {
+                var cosmetic = FindCosmetic(pastId);
+                if (cosmetic != null)
+                {
+                    if (cosmetic.data.category_urls.Values.Contains(pastId))
+                    {
+                        var category = cosmetic
+                            .data.category_urls.FirstOrDefault(x => x.Value == pastId)
+                            .Key;
+                        if (!string.IsNullOrEmpty(category))
+                            cosmetic.data.category_prices.Remove(category);
+                    }
+                    else if (cosmetic.Id == pastId)
+                    {
+                        cosmetic.data.category_prices.Clear();
+                    }
+                }
+            }
 
             _initialCosmeticIds = currentIds;
             ToastNotification.Show("Shop saved successfully!", "success", Color.green);
@@ -205,16 +222,23 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
             foreach (var kvp in cosmetic.data.category_sprites)
             {
+                string productIdToUse =
+                    cosmetic.data.category_urls != null
+                    && cosmetic.data.category_urls.TryGetValue(kvp.Key, out var url)
+                    && !string.IsNullOrEmpty(url)
+                        ? url
+                        : itemId;
+
                 if (
                     editingData.products.Any(p =>
-                        p.productId == itemId && p.categoryName == kvp.Key
+                        p.productId == productIdToUse && p.categoryName == kvp.Key
                     )
                 )
                     continue;
 
                 editingData.products.Add(
                     new ProductData(
-                        productId: itemId,
+                        productId: productIdToUse,
                         price: 0,
                         currency: CurrencyType.Gems,
                         displayName: $"{cosmetic.data.name} - {kvp.Key}",
@@ -452,12 +476,22 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
         }
 
         private Cosmetic FindCosmetic(string id) =>
-            creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
+            creatablesManager
+                .GetAll<Cosmetic>()
+                .FirstOrDefault(c =>
+                    c.Id == id
+                    || (c.data.category_urls != null && c.data.category_urls.Values.Contains(id))
+                );
 
         private object FindItem(string id) =>
             (object)creatablesManager.GetAll<ConsumableItem>().FirstOrDefault(i => i.Id == id)
             ?? (object)creatablesManager.GetAll<Weapon>().FirstOrDefault(w => w.Id == id)
-            ?? creatablesManager.GetAll<Cosmetic>().FirstOrDefault(c => c.Id == id);
+            ?? creatablesManager
+                .GetAll<Cosmetic>()
+                .FirstOrDefault(c =>
+                    c.Id == id
+                    || (c.data.category_urls != null && c.data.category_urls.Values.Contains(id))
+                );
 
         private string FindItemId(string displayName) =>
             creatablesManager
