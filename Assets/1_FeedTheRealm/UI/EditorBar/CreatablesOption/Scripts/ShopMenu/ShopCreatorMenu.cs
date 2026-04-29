@@ -143,6 +143,7 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 if (cosmetic == null)
                     continue;
                 cosmetic.data.category_prices[product.categoryName] = product.price;
+                cosmetic.data.OnBeforeSerialize();
                 currentIds.Add(product.productId);
             }
 
@@ -151,7 +152,10 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 var cosmetic = FindCosmetic(pastId);
                 if (cosmetic != null)
                 {
-                    if (cosmetic.data.category_urls.Values.Contains(pastId))
+                    if (
+                        cosmetic.data.category_urls != null
+                        && cosmetic.data.category_urls.Values.Contains(pastId)
+                    )
                     {
                         var category = cosmetic
                             .data.category_urls.FirstOrDefault(x => x.Value == pastId)
@@ -163,6 +167,7 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                     {
                         cosmetic.data.category_prices.Clear();
                     }
+                    cosmetic.data.OnBeforeSerialize();
                 }
             }
 

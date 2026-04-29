@@ -568,12 +568,21 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                             existingSpriteId = sourceIdFromSession;
                         }
 
+                        float priceToUse =
+                            cosmetic.category_prices != null
+                            && cosmetic.category_prices.TryGetValue(
+                                categoryName,
+                                out float existingPrice
+                            )
+                                ? existingPrice
+                                : cosmetic.price;
+
                         var resp = await UploadOrLinkSpriteAsync(
                             categoryId,
                             categoryName,
                             fullPath,
                             existingSpriteId,
-                            cosmetic.price
+                            priceToUse
                         );
 
                         if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
@@ -582,7 +591,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                                 localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
 
                             cosmetic.category_urls[categoryName] = resp.sprite_id;
-                            cosmetic.category_prices[categoryName] = cosmetic.price;
+                            cosmetic.category_prices[categoryName] = priceToUse;
 
                             string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
                             if (currentFileName != resp.sprite_id)
