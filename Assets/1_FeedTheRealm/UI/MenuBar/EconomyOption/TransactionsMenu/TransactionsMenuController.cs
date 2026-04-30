@@ -37,6 +37,9 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
         private Button closeButton;
         private Button loginButton;
         private Button refreshButton;
+        private Button withdrawButton;
+
+        private Label withdrawFeedbackLabel;
 
         private async void OnEnable()
         {
@@ -62,6 +65,8 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             closeButton = root.Q<Button>("Close");
             loginButton = root.Q<Button>("LoginButton");
             refreshButton = root.Q<Button>("RefreshButton");
+            withdrawButton = root.Q<Button>("WithdrawButton");
+            withdrawFeedbackLabel = root.Q<Label>("WithdrawFeedbackLabel");
         }
 
         private void RegisterCallbacks()
@@ -69,6 +74,9 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             closeButton.clicked += CloseMenu;
             loginButton.clicked += OnLoginClicked;
             refreshButton.clicked += OnRefreshClicked;
+
+            if (withdrawButton != null)
+                withdrawButton.clicked += OnWithdrawClicked;
         }
 
         private void UnregisterCallbacks()
@@ -76,6 +84,9 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             closeButton.clicked -= CloseMenu;
             loginButton.clicked -= OnLoginClicked;
             refreshButton.clicked -= OnRefreshClicked;
+
+            if (withdrawButton != null)
+                withdrawButton.clicked -= OnWithdrawClicked;
         }
 
         private async Task LoadBalanceAsync()
@@ -83,7 +94,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             var (isLogged, _) = await authService.IsLogged();
             if (!isLogged)
             {
-                logger.Log("[BalanceMenu] User not logged in.", this, Logging.LogType.Info);
+                logger.Log("[TransactionMenu] User not logged in.", this, Logging.LogType.Info);
                 session.ClearSession();
                 ShowPanel(notLoggedInPanel);
                 return;
@@ -97,10 +108,16 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
                     session.APIToken
                 );
 
+                logger.Log(
+                    $"[TransactionMenu] GetCreatorBalance response: data={data.balance}, error={error}, statusCode={statusCode}",
+                    this,
+                    Logging.LogType.Info
+                );
+
                 if (!string.IsNullOrEmpty(error))
                 {
                     logger.Log(
-                        $"[BalanceMenu] Error fetching balance: {error} (status {statusCode})",
+                        $"[TransactionMenu] Error fetching balance: {error} (status {statusCode})",
                         this,
                         Logging.LogType.Error
                     );
@@ -114,7 +131,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             }
             catch (Exception ex)
             {
-                logger.Log($"[BalanceMenu] {ex.Message}", this, Logging.LogType.Error);
+                logger.Log($"[TransactionMenu] {ex.Message}", this, Logging.LogType.Error);
                 ToastNotification.Show("Could not load balance.", "error", Color.red);
                 ShowPanel(notLoggedInPanel);
             }
@@ -133,6 +150,22 @@ namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
             refreshButton.SetEnabled(false);
             await LoadBalanceAsync();
             refreshButton.SetEnabled(true);
+        }
+
+        private void OnWithdrawClicked()
+        {
+            if (withdrawFeedbackLabel != null)
+            {
+                if (string.IsNullOrEmpty(withdrawFeedbackLabel.text))
+                {
+                    withdrawFeedbackLabel.text =
+                        "Contact the Feed The Realm team to withdraw your rewards.";
+                }
+                else
+                {
+                    withdrawFeedbackLabel.text = string.Empty;
+                }
+            }
         }
 
         private void OnLoginClicked()

@@ -70,6 +70,16 @@
                         font-size: 36px; -unity-font-style: bold;
                         color: rgba(90,235,140,0.95);
                     "/>
+                    <ui:Button name="WithdrawButton" text="Withdraw" class="button" style="
+                        margin-top: 18px; padding: 8px 32px; font-size: 13px; -unity-font-style: bold;
+                        background-color: rgba(60,200,110,0.25);
+                        border-color: rgba(60,200,110,0.6); border-width: 1px; border-radius: 6px;
+                        color: rgba(255,255,255,0.9);
+                    "/>
+                    <ui:Label name="WithdrawFeedbackLabel" text="" style="
+                        margin-top: 12px; font-size: 16px; color: rgba(240,180,80,0.9);
+                        -unity-text-align: middle-center; white-space: normal; padding-left: 10px; padding-right: 10px;
+                    "/>
                 </ui:VisualElement>
                 <ui:VisualElement style="margin-bottom: 20px;"/>
             </ui:VisualElement>

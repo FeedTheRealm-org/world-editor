@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8e9e706039120418d75faab34160dc, type: 3}
   m_Name: PaymentService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.PaymentService
-  logger: {fileID: 0}
-  apiConfig: {fileID: 0}
+  logger: {fileID: 11400000, guid: a7ad2cfbc8d278049852d0b9afa2c7f4, type: 2}
+  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
