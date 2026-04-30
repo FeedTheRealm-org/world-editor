@@ -13,13 +13,12 @@ using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
-using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
 namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 {
-    [RequireComponent(typeof(UIDocument))]
+    [RequireComponent(typeof(UnityEngine.UIElements.UIDocument))]
     public class PublishMenuController : MenuController
     {
         [SerializeField]
@@ -61,13 +60,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [Inject]
         private CreatablesManager creatablesManager;
 
-        private Button publishButton;
-        private Button loginButton;
-        private Button closeButton;
-        private Label worldNameLabel;
-        private Toggle publishCreatablesToggle;
-        private Toggle publishWorldDataToggle;
-        private VisualElement zoneGroup;
+        private PublishMenuView view;
 
         private WorldData currentWorldData;
         private List<int> availableZones;
@@ -77,121 +70,76 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         void OnEnable()
         {
-            var root = GetComponent<UIDocument>().rootVisualElement;
-
-            publishButton = root.Q<Button>("Publish");
-            loginButton = root.Q<Button>("Login");
-            closeButton = root.Q<Button>("Close");
-            worldNameLabel = root.Q<Label>("WorldName");
-            publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
-            publishWorldDataToggle = root.Q<Toggle>("PublishWorldData");
-            zoneGroup = root.Q<VisualElement>("ZoneGroup");
+            var root = GetComponent<UnityEngine.UIElements.UIDocument>().rootVisualElement;
+            view = new PublishMenuView();
+            view.Initialize(root);
 
             currentWorldData = dataPersistenceManager.GetWorldData(worldSelector.selectedWorld);
-            worldNameLabel.text = currentWorldData?.worldName ?? "No world loaded";
-
             bool isFirstPublish = string.IsNullOrEmpty(currentWorldData?.worldId);
-            publishWorldDataToggle.value = true;
-            publishWorldDataToggle.SetEnabled(!isFirstPublish);
-            publishCreatablesToggle.value = true;
+
+            view.SetWorldName(currentWorldData?.worldName);
+            view.SetPublishWorldDataToggle(true, !isFirstPublish);
+            view.SetPublishCreatablesToggle(true);
+
+            view.OnPublishClicked += OnPublishClicked;
+            view.OnCloseClicked += CloseMenu;
+            view.OnLoginClicked += OnLoginClicked;
+            view.OnAllZonesClicked += OnAllZonesClicked;
+            view.OnZoneClicked += OnZoneClicked;
 
             PopulateZoneGroup();
-
-            publishButton.clicked += OnPublishClicked;
-            closeButton.clicked += CloseMenu;
-            loginButton.clicked += OnLoginClicked;
         }
 
         void OnDisable()
         {
-            publishButton.clicked -= OnPublishClicked;
-            closeButton.clicked -= CloseMenu;
-            loginButton.clicked -= OnLoginClicked;
+            view.OnPublishClicked -= OnPublishClicked;
+            view.OnCloseClicked -= CloseMenu;
+            view.OnLoginClicked -= OnLoginClicked;
+            view.OnAllZonesClicked -= OnAllZonesClicked;
+            view.OnZoneClicked -= OnZoneClicked;
         }
 
         private void PopulateZoneGroup()
         {
             availableZones = dataPersistenceManager.ListZones(worldSelector.selectedWorld);
 
-            if (zoneGroup is ScrollView scrollView)
-            {
-                scrollView.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
-                scrollView.verticalScrollerVisibility = ScrollerVisibility.Auto;
-                scrollView.contentContainer.style.flexDirection = FlexDirection.Column;
-                scrollView.contentContainer.style.width = Length.Percent(100);
-            }
-
-            zoneGroup.Clear();
-            selectedZones.Clear();
-            publishAllZones = true;
-
-            var allButton = CreateZoneButton("All Zones", true);
-            allButton.clicked += () => OnAllZonesClicked(allButton);
-            zoneGroup.Add(allButton);
+            view.ConfigureZoneScrollView();
+            view.ClearZones();
+            view.AddAllZonesButton();
 
             foreach (var zoneId in availableZones)
-            {
-                var id = zoneId;
-                var button = CreateZoneButton($"Zone {id}", false);
-                button.clicked += () => OnZoneClicked(button, id, allButton);
-                zoneGroup.Add(button);
-            }
+                view.AddZoneButton(zoneId);
+
+            view.SetAllZonesSelected(true);
+            selectedZones.Clear();
+            publishAllZones = true;
         }
 
-        private Button CreateZoneButton(string text, bool selected)
-        {
-            var button = new Button { text = text };
-            button.style.marginBottom = 2;
-            button.style.marginLeft = 2;
-            button.style.marginRight = 2;
-            button.style.flexShrink = 0;
-            button.style.alignSelf = Align.Stretch;
-            button.style.width = Length.Percent(100);
-            button.style.marginBottom = 4;
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
-            button.style.color = new StyleColor(Color.white);
-            button.style.borderTopLeftRadius = 6;
-            button.style.borderTopRightRadius = 6;
-            button.style.borderBottomLeftRadius = 6;
-            button.style.borderBottomRightRadius = 6;
-            return button;
-        }
-
-        private void SetButtonSelected(Button button, bool selected)
-        {
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
-        }
-
-        private void OnAllZonesClicked(Button allButton)
+        private void OnAllZonesClicked()
         {
             publishAllZones = true;
             selectedZones.Clear();
-            SetButtonSelected(allButton, true);
-            foreach (var button in zoneGroup.Query<Button>().ToList())
-                if (button != allButton)
-                    SetButtonSelected(button, false);
+            view.SetAllZonesSelected(true);
+            view.DeselectAllZoneButtons();
         }
 
-        private void OnZoneClicked(Button button, int zoneId, Button allButton)
+        private void OnZoneClicked(int zoneId)
         {
             publishAllZones = false;
-            SetButtonSelected(allButton, false);
+            view.SetAllZonesSelected(false);
 
             if (selectedZones.Contains(zoneId))
             {
                 selectedZones.Remove(zoneId);
-                SetButtonSelected(button, false);
+                view.SetZoneSelected(zoneId, false);
+
                 if (selectedZones.Count == 0)
-                    OnAllZonesClicked(allButton);
+                    OnAllZonesClicked();
             }
             else
             {
                 selectedZones.Add(zoneId);
-                SetButtonSelected(button, true);
+                view.SetZoneSelected(zoneId, true);
             }
         }
 
@@ -208,9 +156,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private async void OnLoginClicked()
         {
             if (isAuthFlowActive || IsAuthMenuOpen())
-            {
                 return;
-            }
+
             var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
             var loginMenuObject = worldUIObjectProvider.loginMenuObject;
             var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
@@ -244,18 +191,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         {
             try
             {
-                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                dataPersistenceManager.SaveZone(
-                    currentWorldData.worldName,
-                    worldSelector.selectedZoneId
-                );
-                dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
-                publishButton.SetEnabled(false);
+                SavePrePublishState();
+                view.SetPublishButtonEnabled(false);
+
                 await ValidateBeforePublish();
                 await PublishWorldData();
                 await PublishCreatables();
                 await PublishSprites();
                 await PublishZoneData();
+
                 ToastNotification.Show("World published successfully!", "success", Color.green);
                 CloseMenu();
             }
@@ -266,11 +210,19 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             }
             finally
             {
-                publishButton.SetEnabled(true);
+                view.SetPublishButtonEnabled(true);
             }
         }
 
-        // ---- Validation Functions ----
+        private void SavePrePublishState()
+        {
+            dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+            dataPersistenceManager.SaveZone(
+                currentWorldData.worldName,
+                worldSelector.selectedZoneId
+            );
+            dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
+        }
 
         private async Task ValidateBeforePublish()
         {
@@ -306,7 +258,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private async Task ValidateModels(List<string> errors)
         {
             if (string.IsNullOrEmpty(currentWorldData?.worldId))
-                return; // first publish, no existing models to compare against
+                return;
 
             foreach (var zoneId in GetZonesToPublish())
             {
@@ -317,16 +269,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (zoneData == null || zoneData.objectPlacementData.Count == 0)
                     continue;
 
-                var existingModels = await modelService.ListWorldModels(
-                    currentWorldData.worldId,
-                    session.APIToken
-                );
-
-                var newModels = zoneData
-                    .objectPlacementData.GroupBy(s => s.id)
-                    .Select(g => g.First())
-                    .Where(s => !existingModels.ContainsKey(s.id))
-                    .ToList();
+                var newModels = await GetNewModelsForZoneAsync(zoneData);
 
                 foreach (var model in newModels)
                 {
@@ -339,8 +282,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             }
         }
 
-        // ---- Publish Functions ----
-
         private async Task PublishWorldData()
         {
             if (currentWorldData == null)
@@ -350,7 +291,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             {
                 await PublishWorldAsNew();
             }
-            else if (publishWorldDataToggle.value)
+            else if (view.PublishWorldData)
             {
                 var (updatedId, error, statusCode) = await worldService.UpdateWorld(
                     currentWorldData,
@@ -436,39 +377,57 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishSprites()
         {
-            CreatablesData creatablesData = dataPersistenceManager.GetCreatables(
-                worldSelector.selectedWorld
+            var creatablesData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+            var spritesRequest = BuildSpritesRequest(creatablesData);
+
+            AssertSpriteFilesExist(spritesRequest);
+            AssertAssetsServiceAvailable();
+
+            await spriteService.UploadSprites(
+                spritesRequest,
+                currentWorldData.worldId,
+                session.APIToken
             );
 
-            var spritesRequest = new SpritesRequest();
-
-            List<ItemData> allItems = new List<ItemData>();
-            if (creatablesData != null)
+            if (creatablesData?.cosmetics != null)
             {
-                allItems.AddRange(creatablesData.weaponItems);
-                allItems.AddRange(creatablesData.consumableItems);
+                await PublishCosmetics(creatablesData);
             }
+        }
+
+        private SpritesRequest BuildSpritesRequest(CreatablesData creatablesData)
+        {
+            var request = new SpritesRequest();
+            if (creatablesData == null)
+                return request;
+
+            var allItems = new List<ItemData>();
+            allItems.AddRange(creatablesData.weaponItems);
+            allItems.AddRange(creatablesData.consumableItems);
 
             foreach (var item in allItems)
             {
                 if (!string.IsNullOrEmpty(item.spriteFilePath))
-                    spritesRequest.ids.Add(item.id);
-                // TODO: this should be abstracted, the publish controller should not know about weapon's sprite path structure
-                spritesRequest.spritePath.Add(
-                    Path.Combine(config.SpritesDirectory, item.spriteFilePath)
-                );
+                    request.ids.Add(item.id);
+                request.spritePath.Add(Path.Combine(config.SpritesDirectory, item.spriteFilePath));
             }
 
-            var missingSprites = spritesRequest
-                .spritePath.Where(path => !File.Exists(path))
-                .ToList();
+            return request;
+        }
+
+        private void AssertSpriteFilesExist(SpritesRequest request)
+        {
+            var missingSprites = request.spritePath.Where(path => !File.Exists(path)).ToList();
 
             if (missingSprites.Count > 0)
             {
                 var missing = string.Join("\n", missingSprites);
                 throw new Exception($"Missing sprite files:\n{missing}");
             }
+        }
 
+        private void AssertAssetsServiceAvailable()
+        {
             if (assetsService == null)
             {
                 logger.Log(
@@ -478,175 +437,30 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
                 throw new Exception("AssetsService is missing.");
             }
-
-            await spriteService.UploadSprites(
-                spritesRequest,
-                currentWorldData.worldId,
-                session.APIToken
-            );
-
-            if (creatablesData != null && creatablesData.cosmetics != null)
-            {
-                await PublishCosmetics(creatablesData);
-            }
         }
 
         private async Task PublishCosmetics(CreatablesData creatablesData)
         {
             try
             {
-                var categoryListResp = await assetsService.GetCategoriesAsync();
-                if (categoryListResp == null || categoryListResp.category_list == null)
-                {
-                    logger.Log(
-                        "PublishCosmetics: Failed to fetch categories.",
-                        this,
-                        Logging.LogType.Error
-                    );
-                    return;
-                }
-
-                var categoryIds = new Dictionary<string, string>();
-                foreach (var cat in categoryListResp.category_list)
-                {
-                    if (
-                        !string.IsNullOrEmpty(cat.category_name)
-                        && !string.IsNullOrEmpty(cat.category_id)
-                    )
-                    {
-                        categoryIds[cat.category_name] = cat.category_id;
-                    }
-                }
-
-                var localPathToUploadedSpriteId = new Dictionary<string, string>();
-                bool changed = false;
+                var categoryIds = await FetchCategoryLookupAsync();
+                var uploadCache = new Dictionary<string, string>();
+                bool anyChanges = false;
 
                 foreach (var cosmetic in creatablesData.cosmetics)
                 {
                     cosmetic.OnAfterDeserialize();
-
-                    var keys = cosmetic.category_sprites.Keys.ToList();
-                    foreach (var categoryName in keys)
-                    {
-                        var spritePath = cosmetic.category_sprites[categoryName];
-                        if (string.IsNullOrEmpty(spritePath))
-                            continue;
-
-                        string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
-                        if (!File.Exists(fullPath))
-                            continue;
-
-                        if (
-                            !categoryIds.TryGetValue(categoryName, out string categoryId)
-                            || string.IsNullOrEmpty(categoryId)
-                        )
-                        {
-                            logger.Log(
-                                $"PublishCosmetics: Category '{categoryName}' not found on server.",
-                                this,
-                                Logging.LogType.Warning
-                            );
-                            continue;
-                        }
-
-                        string existingSpriteId = null;
-
-                        if (
-                            cosmetic.category_urls.TryGetValue(categoryName, out var alreadySavedId)
-                            && !string.IsNullOrEmpty(alreadySavedId)
-                        )
-                        {
-                            existingSpriteId = alreadySavedId;
-                        }
-                        else if (
-                            localPathToUploadedSpriteId.TryGetValue(
-                                fullPath,
-                                out var sourceIdFromSession
-                            )
-                        )
-                        {
-                            existingSpriteId = sourceIdFromSession;
-                        }
-
-                        float priceToUse =
-                            cosmetic.category_prices != null
-                            && cosmetic.category_prices.TryGetValue(
-                                categoryName,
-                                out float existingPrice
-                            )
-                                ? existingPrice
-                                : cosmetic.price;
-
-                        var resp = await UploadOrLinkSpriteAsync(
-                            categoryId,
-                            categoryName,
-                            fullPath,
-                            existingSpriteId,
-                            priceToUse
-                        );
-
-                        if (resp != null && !string.IsNullOrEmpty(resp.sprite_id))
-                        {
-                            if (!localPathToUploadedSpriteId.ContainsKey(fullPath))
-                                localPathToUploadedSpriteId[fullPath] = resp.sprite_id;
-
-                            cosmetic.category_urls[categoryName] = resp.sprite_id;
-                            cosmetic.category_prices[categoryName] = priceToUse;
-
-                            string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
-                            if (currentFileName != resp.sprite_id)
-                            {
-                                string ext = Path.GetExtension(spritePath);
-                                string newFileName = resp.sprite_id + ext;
-                                string newFullPath = Path.Combine(
-                                    config.SpritesDirectory,
-                                    newFileName
-                                );
-
-                                if (!File.Exists(newFullPath))
-                                {
-                                    File.Move(fullPath, newFullPath);
-                                    logger.Log(
-                                        $"Renamed sprite file '{spritePath}' → '{newFileName}'",
-                                        this
-                                    );
-                                }
-
-                                var keysToUpdate = cosmetic.category_sprites.Keys.ToList();
-                                foreach (var key in keysToUpdate)
-                                {
-                                    if (cosmetic.category_sprites[key] == spritePath)
-                                        cosmetic.category_sprites[key] = newFileName;
-                                }
-
-                                if (!localPathToUploadedSpriteId.ContainsKey(newFullPath))
-                                    localPathToUploadedSpriteId[newFullPath] = resp.sprite_id;
-                                localPathToUploadedSpriteId.Remove(fullPath);
-
-                                spritePath = newFileName;
-                                fullPath = newFullPath;
-                            }
-
-                            changed = true;
-                        }
-                        else
-                        {
-                            logger.Log(
-                                $"PublishCosmetics: Failed to upload/link sprite for category '{categoryName}'.",
-                                this,
-                                Logging.LogType.Error
-                            );
-                        }
-                    }
+                    bool cosmeticChanged = await ProcessCosmeticAsync(
+                        cosmetic,
+                        categoryIds,
+                        uploadCache
+                    );
+                    anyChanges |= cosmeticChanged;
                 }
 
-                if (changed)
+                if (anyChanges)
                 {
-                    dataPersistenceManager.SaveCreatablesData(
-                        worldSelector.selectedWorld,
-                        creatablesData
-                    );
-                    SyncCosmeticsInMemory(creatablesData);
+                    PersistCosmeticChanges(creatablesData);
                 }
             }
             catch (Exception ex)
@@ -660,6 +474,143 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             }
         }
 
+        private async Task<Dictionary<string, string>> FetchCategoryLookupAsync()
+        {
+            var response = await assetsService.GetCategoriesAsync();
+
+            if (response?.category_list == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: Failed to fetch categories.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return new Dictionary<string, string>();
+            }
+
+            return response
+                .category_list.Where(c =>
+                    !string.IsNullOrEmpty(c.category_name) && !string.IsNullOrEmpty(c.category_id)
+                )
+                .ToDictionary(c => c.category_name, c => c.category_id);
+        }
+
+        private async Task<bool> ProcessCosmeticAsync(
+            CosmeticData cosmetic,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            bool changed = false;
+
+            foreach (var categoryName in cosmetic.categories.Keys.ToList())
+            {
+                var entry = cosmetic.categories[categoryName];
+                bool entryChanged = await ProcessCategoryEntryAsync(
+                    cosmetic,
+                    categoryName,
+                    entry,
+                    categoryIds,
+                    uploadCache
+                );
+                changed |= entryChanged;
+            }
+
+            return changed;
+        }
+
+        private async Task<bool> ProcessCategoryEntryAsync(
+            CosmeticData cosmetic,
+            string categoryName,
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            if (string.IsNullOrEmpty(entry.sprite_path))
+                return false;
+
+            string spritePath = entry.sprite_path;
+            string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
+            if (!File.Exists(fullPath))
+                return false;
+
+            if (
+                !categoryIds.TryGetValue(categoryName, out string categoryId)
+                || string.IsNullOrEmpty(categoryId)
+            )
+            {
+                logger.Log(
+                    $"PublishCosmetics: Category '{categoryName}' not found on server.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return false;
+            }
+
+            string existingSpriteId = ResolveExistingSpriteId(entry, uploadCache, fullPath);
+            var resp = await UploadOrLinkSpriteAsync(
+                categoryId,
+                categoryName,
+                fullPath,
+                existingSpriteId,
+                entry.price
+            );
+
+            if (resp == null || string.IsNullOrEmpty(resp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: Failed to upload/link sprite for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return false;
+            }
+
+            if (!uploadCache.ContainsKey(fullPath))
+                uploadCache[fullPath] = resp.sprite_id;
+
+            entry.url_id = resp.sprite_id;
+
+            string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
+            if (currentFileName != resp.sprite_id)
+            {
+                string ext = Path.GetExtension(spritePath);
+                string newFileName = resp.sprite_id + ext;
+                string newFullPath = Path.Combine(config.SpritesDirectory, newFileName);
+
+                if (!File.Exists(newFullPath))
+                {
+                    File.Move(fullPath, newFullPath);
+                    logger.Log($"Renamed sprite file '{spritePath}' → '{newFileName}'", this);
+                }
+
+                foreach (var otherEntry in cosmetic.categories.Values)
+                {
+                    if (otherEntry.sprite_path == spritePath)
+                        otherEntry.sprite_path = newFileName;
+                }
+
+                if (!uploadCache.ContainsKey(newFullPath))
+                    uploadCache[newFullPath] = resp.sprite_id;
+                uploadCache.Remove(fullPath);
+            }
+
+            return true;
+        }
+
+        private static string ResolveExistingSpriteId(
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> uploadCache,
+            string fullPath
+        )
+        {
+            if (!string.IsNullOrEmpty(entry.url_id))
+                return entry.url_id;
+
+            return uploadCache.TryGetValue(fullPath, out var cachedId) ? cachedId : null;
+        }
+
         private async Task<SpriteResponse> UploadOrLinkSpriteAsync(
             string categoryId,
             string categoryName,
@@ -670,10 +621,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         {
             if (!string.IsNullOrEmpty(existingSpriteId))
             {
-                Debug.Log(
-                    $"Linking existing sprite for category '{categoryName}' with sprite ID '{existingSpriteId}' from world id '{currentWorldData.worldId}' with price {price}"
-                );
-
                 var (resp, statusCode) = await assetsService.LinkSpriteByIdAsync(
                     categoryId,
                     existingSpriteId,
@@ -682,9 +629,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
 
                 if (resp != null)
-                {
                     return resp;
-                }
 
                 if (statusCode != 404)
                     return null;
@@ -696,16 +641,18 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
             }
 
-            Debug.Log(
-                $"Uploading new sprite for category '{categoryName}' from world id '{currentWorldData.worldId}' with price {price}"
-            );
-
             return await assetsService.UploadSpriteAsync(
                 categoryId,
                 fullPath,
                 currentWorldData.worldId,
                 price
             );
+        }
+
+        private void PersistCosmeticChanges(CreatablesData creatablesData)
+        {
+            dataPersistenceManager.SaveCreatablesData(worldSelector.selectedWorld, creatablesData);
+            SyncCosmeticsInMemory(creatablesData);
         }
 
         private void SyncCosmeticsInMemory(CreatablesData publishedData)
@@ -718,14 +665,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (inMemory == null)
                     continue;
 
-                inMemory.data.category_sprites = new Dictionary<string, string>(
-                    publishedCosmetic.category_sprites
-                );
-                inMemory.data.category_urls = new Dictionary<string, string>(
-                    publishedCosmetic.category_urls
-                );
-                inMemory.data.category_prices = new Dictionary<string, float>(
-                    publishedCosmetic.category_prices
+                inMemory.data.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    publishedCosmetic.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
                 );
 
                 inMemory.data.OnBeforeSerialize();
@@ -775,23 +723,32 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 return;
             }
 
-            var existingModels = await modelService.ListWorldModels(
+            var newModels = await GetNewModelsForZoneAsync(zoneData);
+            if (newModels.Count == 0)
+                return;
+
+            var modelRequests = BuildModelRequests(newModels);
+
+            string error = await modelService.UploadModels(
+                modelRequests,
                 currentWorldData.worldId,
                 session.APIToken
             );
 
-            var newModels = zoneData
-                .objectPlacementData.GroupBy(s => s.id)
-                .Select(g => g.First())
-                .Where(s => !existingModels.ContainsKey(s.id))
-                .ToList();
+            logger.Log(
+                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
+                this,
+                Logging.LogType.Info
+            );
 
-            if (newModels.Count == 0)
-                return;
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to upload models: {error}");
+        }
 
-            List<ModelRequest> modelRequests = new();
+        private List<ModelRequest> BuildModelRequests(List<StructureData> newModels)
+        {
+            var modelRequests = new List<ModelRequest>();
 
-            // Validate all model files exist before attempting upload
             foreach (var model in newModels)
             {
                 var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
@@ -804,19 +761,32 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 modelRequests.Add(new ModelRequest { id = model.id, filePath = modelPath });
             }
 
-            string error = await modelService.UploadModels(
-                modelRequests,
+            return modelRequests;
+        }
+
+        private async Task<List<StructureData>> GetNewModelsForZoneAsync(ZoneData zoneData)
+        {
+            var existingModels = await modelService.ListWorldModels(
                 currentWorldData.worldId,
                 session.APIToken
             );
-            logger.Log(
-                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
-                this,
-                Logging.LogType.Info
-            );
 
-            if (!string.IsNullOrEmpty(error))
-                throw new Exception($"Failed to upload models: {error}");
+            return FilterNewModels(zoneData, existingModels);
+        }
+
+        private static List<StructureData> FilterNewModels<T>(
+            ZoneData zoneData,
+            IReadOnlyDictionary<string, T> existingModels
+        )
+        {
+            if (zoneData?.objectPlacementData == null || zoneData.objectPlacementData.Count == 0)
+                return new List<StructureData>();
+
+            return zoneData
+                .objectPlacementData.GroupBy(s => s.id)
+                .Select(g => g.First())
+                .Where(s => !existingModels.ContainsKey(s.id))
+                .ToList();
         }
     }
 }

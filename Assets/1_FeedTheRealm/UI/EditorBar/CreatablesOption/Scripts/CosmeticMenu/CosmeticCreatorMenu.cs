@@ -46,20 +46,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         {
             editBuffer = new EditBuffer<CosmeticData>(cosmetic.data);
 
-            editBuffer.Working.category_sprites =
-                cosmetic.data.category_sprites != null
-                    ? new Dictionary<string, string>(cosmetic.data.category_sprites)
-                    : new Dictionary<string, string>();
-
-            editBuffer.Working.category_urls =
-                cosmetic.data.category_urls != null
-                    ? new Dictionary<string, string>(cosmetic.data.category_urls)
-                    : new Dictionary<string, string>();
-
-            editBuffer.Working.category_prices =
-                cosmetic.data.category_prices != null
-                    ? new Dictionary<string, float>(cosmetic.data.category_prices)
-                    : new Dictionary<string, float>();
+            editBuffer.Working.categories =
+                cosmetic.data.categories != null
+                    ? new Dictionary<string, CosmeticCategoryEntry>(
+                        cosmetic.data.categories.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => new CosmeticCategoryEntry(
+                                kvp.Value.sprite_path,
+                                kvp.Value.url_id,
+                                kvp.Value.price
+                            )
+                        )
+                    )
+                    : new Dictionary<string, CosmeticCategoryEntry>();
 
             if (isActiveAndEnabled)
             {
@@ -190,17 +189,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
                             var testSprites = new Dictionary<string, string>();
                             foreach (var part in parts)
-                            {
                                 testSprites[part.ToString()] = paths[0];
-                            }
 
                             if (characterPreviewRenderer.ValidateLocalOverrides(testSprites))
                             {
-                                editBuffer.Working.category_sprites.Clear();
+                                editBuffer.Working.categories.Clear();
                                 foreach (var part in parts)
                                 {
-                                    editBuffer.Working.category_sprites[part.ToString()] = paths[0];
+                                    var partKey = part.ToString();
+                                    editBuffer.Working.categories[partKey] =
+                                        new CosmeticCategoryEntry(paths[0]);
                                 }
+
                                 pendingPreviewRefresh = true;
                                 RefreshCharacterPreview();
                                 ToastNotification.Show(
@@ -230,11 +230,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 Guid.NewGuid().ToString(),
                 "",
                 "",
-                0f,
                 new Dictionary<string, string>()
             );
             editBuffer = new EditBuffer<CosmeticData>(newCosmetic);
-            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            editBuffer.Working.categories = new Dictionary<string, CosmeticCategoryEntry>();
 
             PopulateFields();
             BindEditMode();
@@ -275,11 +274,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
         private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
         {
-            if (editBuffer != null)
+            if (editBuffer == null)
+                return;
+
+            if (categorySprites == null)
             {
-                editBuffer.Working.category_sprites =
-                    categorySprites ?? new Dictionary<string, string>();
+                editBuffer.Working.categories = new Dictionary<string, CosmeticCategoryEntry>();
             }
+            else
+            {
+                foreach (var kvp in categorySprites)
+                {
+                    if (editBuffer.Working.categories.TryGetValue(kvp.Key, out var existing))
+                        existing.sprite_path = kvp.Value;
+                    else
+                        editBuffer.Working.categories[kvp.Key] = new CosmeticCategoryEntry(
+                            kvp.Value
+                        );
+                }
+            }
+
             pendingPreviewRefresh = true;
         }
 
@@ -313,8 +327,15 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
             if (editBuffer != null)
             {
                 editBuffer.Commit();
-                editBuffer.Original.category_sprites = new Dictionary<string, string>(
-                    editBuffer.Working.category_sprites
+                editBuffer.Original.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
                 );
 
                 var cosmetic = new Cosmetic(editBuffer.Original);
@@ -349,8 +370,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
             if (
                 editBuffer == null
-                || editBuffer.Working.category_sprites == null
-                || editBuffer.Working.category_sprites.Count == 0
+                || editBuffer.Working.categories == null
+                || editBuffer.Working.categories.Count == 0
             )
             {
                 error = "Please load at least one valid sprite before saving.";
@@ -418,7 +439,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         {
             var categorySprites =
                 editBuffer != null
-                    ? editBuffer.Working.category_sprites
+                    ? editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.sprite_path ?? ""
+                    )
                     : new Dictionary<string, string>();
 
             return new CharacterInfoResponse
@@ -488,9 +512,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         private void DisposeCharacterPreviewRenderer()
         {
             if (characterPreviewRenderer == null)
-            {
                 return;
-            }
 
             characterPreviewRenderer.Dispose();
             characterPreviewRenderer = null;

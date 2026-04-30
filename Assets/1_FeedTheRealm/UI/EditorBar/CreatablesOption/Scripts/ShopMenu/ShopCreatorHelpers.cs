@@ -38,9 +38,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             {
                 ConsumableItem c => c.data.spriteFilePath,
                 Weapon w => w.data.spriteFilePath,
-                Cosmetic c => c.data.category_sprites.Values.FirstOrDefault(v =>
-                    !string.IsNullOrEmpty(v)
-                ),
+                Cosmetic c => c
+                    .data.categories.Values.Select(e => e.sprite_path)
+                    .FirstOrDefault(v => !string.IsNullOrEmpty(v)),
                 _ => null,
             };
             LoadSprite(path, image);
@@ -48,9 +48,12 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         internal static void LoadCosmeticSprite(Cosmetic cosmetic, string categoryName, Image image)
         {
-            if (!cosmetic.data.category_sprites.TryGetValue(categoryName, out var path))
+            if (
+                !cosmetic.data.categories.TryGetValue(categoryName, out var entry)
+                || string.IsNullOrEmpty(entry.sprite_path)
+            )
                 return;
-            LoadSprite(path, image);
+            LoadSprite(entry.sprite_path, image);
         }
     }
 }
