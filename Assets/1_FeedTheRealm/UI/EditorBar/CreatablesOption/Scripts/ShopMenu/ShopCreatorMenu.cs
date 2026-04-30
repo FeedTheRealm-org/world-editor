@@ -5,6 +5,7 @@ using Enums;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
+using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,6 +18,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
     {
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private Config config;
 
         [SerializeField]
         private Logging.Logger logger;
@@ -47,6 +51,8 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         void OnEnable()
         {
+            ShopSpriteLoader.SpritesBasePath = config.SpritesDirectory;
+
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             shopNameField = root.Q<TextField>("ShopName");
@@ -393,7 +399,7 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(binding.product.price);
                 ShopSpriteLoader.LoadCosmeticSprite(
                     binding.cosmetic,
-                    binding.product.categoryName,
+                    binding.product,
                     ve.Q<Image>("Preview")
                 );
                 binding.product.currency = CurrencyType.Gems;

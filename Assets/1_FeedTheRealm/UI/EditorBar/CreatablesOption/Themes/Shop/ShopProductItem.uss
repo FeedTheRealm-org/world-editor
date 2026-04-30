@@ -1,0 +1,40 @@
+/* ============================================
+   Shop Product Item - Preview Styles
+   ============================================ */
+
+.shop-preview-container {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    min-height: 120px;
+    max-width: 120px;
+    max-height: 120px;
+    align-self: center;
+    flex-shrink: 0;
+    flex-grow: 0;
+
+    background-color: rgb(60, 60, 60);
+
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+
+    justify-content: center;
+    align-items: center;
+}
+
+.shop-preview-container > #Preview {
+    width: 100%;
+    height: 100%;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
