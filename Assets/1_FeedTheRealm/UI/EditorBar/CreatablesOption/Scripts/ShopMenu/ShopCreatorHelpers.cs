@@ -26,8 +26,6 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
     internal static class ShopSpriteLoader
     {
-        private static SpriteConfigBuilder _configBuilder;
-        private static SpriteConfigDirector _configDirector;
         public static string SpritesBasePath { get; set; } = Application.streamingAssetsPath;
 
         internal static void LoadSprite(string path, Image image)
@@ -69,100 +67,25 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             )
                 return;
 
-            CharacterPartCategory part = CosmeticPartResolver.Resolve(product.categoryName);
-
-            if (part != CharacterPartCategory.None)
-            {
-                TryLoadCroppedSprite(entry.sprite_path, part, image);
-                return;
-            }
-
-            LoadSprite(entry.sprite_path, image);
-        }
-
-        private static void TryLoadCroppedSprite(
-            string path,
-            CharacterPartCategory part,
-            Image image
-        )
-        {
-            EnsureDirectorInitialized();
-
+            string path = entry.sprite_path;
             string fullPath = ResolveFullPath(path);
-
             var fullSprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
 
-            if (fullSprite == null || fullSprite.texture == null)
+            if (fullSprite != null && fullSprite.texture != null)
             {
-                LoadSprite(path, image);
-                return;
-            }
-
-            var configs = GetSpriteConfigsForPart(part);
-            var frontConfig = configs.FirstOrDefault(c => c.Direction == FacingDirection.Front);
-
-            if (frontConfig == null)
-            {
-                Debug.LogWarning(
-                    $"[ShopSpriteLoader] Couldn't find Front config for '{part}', using complete sprite."
+                Sprite cropped = CosmeticIconLoader.CreateCroppedSprite(
+                    fullSprite.texture,
+                    product.categoryName
                 );
-                LoadSprite(path, image);
-                return;
+                if (cropped != null)
+                {
+                    image.sprite = cropped;
+                    image.scaleMode = ScaleMode.ScaleToFit;
+                    return;
+                }
             }
 
-            Texture2D texture = fullSprite.texture;
-            Rect rect = frontConfig.Rect;
-
-            if (
-                rect.x + rect.width > texture.width
-                || rect.y + rect.height > texture.height
-                || rect.width <= 0
-                || rect.height <= 0
-            )
-            {
-                LoadSprite(path, image);
-                return;
-            }
-
-            Sprite cropped = Sprite.Create(
-                texture,
-                rect,
-                frontConfig.Pivot,
-                frontConfig.PixelsPerUnit
-            );
-
-            image.sprite = cropped;
-            image.scaleMode = ScaleMode.ScaleToFit;
-        }
-
-        private static List<SpriteConfig> GetSpriteConfigsForPart(CharacterPartCategory part)
-        {
-            return part switch
-            {
-                CharacterPartCategory.ArmorHelmet => _configDirector.BuildArmorHelmetSpriteConfig(),
-                CharacterPartCategory.ArmorBody => _configDirector.BuildArmorBodySpriteConfig(),
-                CharacterPartCategory.ArmorArmR => _configDirector.BuildArmorArmsSpriteConfig(),
-                CharacterPartCategory.ArmorArmL => _configDirector.BuildArmorArmsSpriteConfig(),
-                CharacterPartCategory.ArmorSleeveR =>
-                    _configDirector.BuildArmorSleevesSpriteConfig(),
-                CharacterPartCategory.ArmorSleeveL =>
-                    _configDirector.BuildArmorSleevesSpriteConfig(),
-                CharacterPartCategory.ArmorHandR => _configDirector.BuildArmorHandsSpriteConfig(),
-                CharacterPartCategory.ArmorHandL => _configDirector.BuildArmorHandsSpriteConfig(),
-                CharacterPartCategory.ArmorLegR => _configDirector.BuildArmorLegsSpriteConfig(),
-                CharacterPartCategory.ArmorLegL => _configDirector.BuildArmorLegsSpriteConfig(),
-                CharacterPartCategory.Hair => _configDirector.BuildHairSpriteConfig(),
-                CharacterPartCategory.Beard => _configDirector.BuildBeardSpriteConfig(),
-                CharacterPartCategory.EyeBrows => _configDirector.BuildEyeBrowsSpriteConfig(),
-                CharacterPartCategory.Eyes => _configDirector.BuildEyesSpriteConfig(),
-                CharacterPartCategory.Mouth => _configDirector.BuildMouthSpriteConfig(),
-                CharacterPartCategory.EarringR => _configDirector.BuildEarringsSpriteConfig(),
-                CharacterPartCategory.EarringL => _configDirector.BuildEarringsSpriteConfig(),
-                CharacterPartCategory.Back => _configDirector.BuildBackSpriteConfig(),
-                CharacterPartCategory.Mask => _configDirector.BuildMaskSpriteConfig(),
-                CharacterPartCategory.EquipmentR => _configDirector.BuildEquipmentSpriteConfig(),
-                _ => new List<SpriteConfig>(),
-            };
+            LoadSprite(path, image);
         }
 
         private static string ResolveFullPath(string path)
@@ -174,15 +97,6 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 return path;
 
             return Path.Combine(SpritesBasePath, path);
-        }
-
-        private static void EnsureDirectorInitialized()
-        {
-            if (_configBuilder == null)
-            {
-                _configBuilder = new SpriteConfigBuilder();
-                _configDirector = new SpriteConfigDirector(_configBuilder);
-            }
         }
     }
 }
