@@ -137,6 +137,16 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 return;
             }
 
+            if (editingData.products.Any(p => p.currency == CurrencyType.Gems && p.price <= 0))
+            {
+                ToastNotification.Show(
+                    "Error: there are cosmetics with price less than or equal to zero.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             editingData.shopName = shopName;
 
             if (!creatablesManager.GetAll<Shop>().Any(s => s.Id == editingData.id))
