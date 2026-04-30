@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FTRShared.Runtime.Models;
+using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
 
@@ -23,13 +26,20 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
     internal static class ShopSpriteLoader
     {
+        public static string SpritesBasePath { get; set; } = Application.streamingAssetsPath;
+
         internal static void LoadSprite(string path, Image image)
         {
             if (image == null || string.IsNullOrEmpty(path))
                 return;
-            var sprite = CustomFileBrowser.LoadSpriteFromDisk(path);
+
+            string fullPath = ResolveFullPath(path);
+            var sprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
             if (sprite != null)
+            {
                 image.sprite = sprite;
+                image.scaleMode = ScaleMode.ScaleToFit;
+            }
         }
 
         internal static void LoadItemSprite(object item, Image image)
@@ -46,14 +56,47 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             LoadSprite(path, image);
         }
 
-        internal static void LoadCosmeticSprite(Cosmetic cosmetic, string categoryName, Image image)
+        internal static void LoadCosmeticSprite(Cosmetic cosmetic, ProductData product, Image image)
         {
+            if (cosmetic == null || product == null || image == null)
+                return;
+
             if (
-                !cosmetic.data.categories.TryGetValue(categoryName, out var entry)
+                !cosmetic.data.categories.TryGetValue(product.categoryName, out var entry)
                 || string.IsNullOrEmpty(entry.sprite_path)
             )
                 return;
-            LoadSprite(entry.sprite_path, image);
+
+            string path = entry.sprite_path;
+            string fullPath = ResolveFullPath(path);
+            var fullSprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
+
+            if (fullSprite != null && fullSprite.texture != null)
+            {
+                Sprite cropped = CosmeticIconLoader.CreateCroppedSprite(
+                    fullSprite.texture,
+                    product.categoryName
+                );
+                if (cropped != null)
+                {
+                    image.sprite = cropped;
+                    image.scaleMode = ScaleMode.ScaleToFit;
+                    return;
+                }
+            }
+
+            LoadSprite(path, image);
+        }
+
+        private static string ResolveFullPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            if (Path.IsPathRooted(path))
+                return path;
+
+            return Path.Combine(SpritesBasePath, path);
         }
     }
 }
