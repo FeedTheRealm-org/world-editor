@@ -348,7 +348,6 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             cosmeticItemContainer.makeItem = () =>
             {
                 var ve = MakeProductItem();
-                ve.Q<DropdownField>("CurrencyType")?.SetDisplay(false);
 
                 var binding = new CosmeticItemBinding();
                 ve.userData = binding;
