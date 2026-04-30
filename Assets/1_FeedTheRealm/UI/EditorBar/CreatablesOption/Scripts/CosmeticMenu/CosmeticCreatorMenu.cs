@@ -18,7 +18,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
     public class CosmeticCreatorMenu : MenuController
     {
         [Inject]
-        private CreatablesManager creatblesManager;
+        private CreatablesManager creatablesManager;
 
         [SerializeField]
         private GameObject cosmeticMenuPrefab;
@@ -339,7 +339,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 );
 
                 var cosmetic = new Cosmetic(editBuffer.Original);
-                creatblesManager.Add(cosmetic);
+                creatablesManager.Add(cosmetic);
             }
 
             ToastNotification.Show("Cosmetic created successfully!", "success", Color.green);
@@ -352,6 +352,21 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
             {
                 ToastNotification.Show($"Failed to save cosmetic: {error}", "error", Color.red);
                 return;
+            }
+
+            if (editBuffer != null)
+            {
+                editBuffer.Commit();
+                editBuffer.Original.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
+                );
             }
 
             ToastNotification.Show("Cosmetic updated successfully!", "success", Color.green);

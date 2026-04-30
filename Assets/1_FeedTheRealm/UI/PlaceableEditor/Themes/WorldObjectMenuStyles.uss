@@ -52,7 +52,7 @@ IntegerField > .unity-base-text-field__input {
 Slider .unity-base-text-field__input {
     background-color: black;
     color: white;
-    text-align: middle-left;
+    -unity-text-align: middle-left;
     border-top-color: white;
     border-bottom-color: white;
     border-left-color: white;

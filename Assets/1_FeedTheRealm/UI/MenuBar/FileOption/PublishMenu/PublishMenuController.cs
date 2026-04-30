@@ -408,8 +408,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             foreach (var item in allItems)
             {
                 if (!string.IsNullOrEmpty(item.spriteFilePath))
+                {
                     request.ids.Add(item.id);
-                request.spritePath.Add(Path.Combine(config.SpritesDirectory, item.spriteFilePath));
+                    request.spritePath.Add(
+                        Path.Combine(config.SpritesDirectory, item.spriteFilePath)
+                    );
+                }
             }
 
             return request;
