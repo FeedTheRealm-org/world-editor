@@ -22,9 +22,9 @@
                 <ui:Vector3Field label="Scale Offset" name="ClosedScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
             </ui:Tab>
             <ui:Tab name="OpenedChest" label="Opened Chest" tabindex="0" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Position Offset" name="OpendPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Rotation Offset" name="OpendRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Scale Offset" name="OpendScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Position Offset" name="OpenedPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Rotation Offset" name="OpenedRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
+                <ui:Vector3Field label="Scale Offset" name="OpenedScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
             </ui:Tab>
         </ui:TabView>
         <ui:VisualElement name="Footer" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-between; align-self: flex-end; align-items: center; width: 100%; height: 0; max-height: 10%; min-height: initial;">

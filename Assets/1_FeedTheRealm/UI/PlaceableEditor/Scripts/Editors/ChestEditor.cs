@@ -101,9 +101,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
             closedRotationField = root.Q<Vector3Field>("ClosedRotation");
             closedScaleField = root.Q<Vector3Field>("ClosedScale");
 
-            openedPositionField = root.Q<Vector3Field>("OpendPosition");
-            openedRotationField = root.Q<Vector3Field>("OpendRotation");
-            openedScaleField = root.Q<Vector3Field>("OpendScale");
+            openedPositionField = root.Q<Vector3Field>("OpenedPosition");
+            openedRotationField = root.Q<Vector3Field>("OpenedRotation");
+            openedScaleField = root.Q<Vector3Field>("OpenedScale");
 
             // chest root transform
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
@@ -198,7 +198,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 if (target == null)
                     return;
                 activeTab = newTab.name;
-                Debug.Log($"Tab changed to: {activeTab}");
                 SyncModelVisibility();
                 ReinitializeGizmosForActiveTab();
             };
@@ -412,6 +411,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
                         target.GetOpenedModel().transform.localPosition = localOpened;
                     break;
             }
+            target.SyncColliderToActiveModel();
         }
 
         private void OnGizmoScaled(Vector3 newScale)

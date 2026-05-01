@@ -560,16 +560,17 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishModels(ZoneData zoneData)
         {
-            var modelRequests = new List<ModelRequest>();
-
             var existingModels = await modelService.ListWorldModels(
                 currentWorldData.worldId,
                 session.APIToken
             );
 
+            var modelRequests = new List<ModelRequest>();
+            var queuedIds = new HashSet<string>(existingModels.Keys);
+
             CollectModelRequests(
                 zoneData.objectPlacementData.Select(s => s.id),
-                existingModels,
+                queuedIds,
                 modelRequests
             );
 
@@ -579,7 +580,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         new[] { c.closedChestModelData?.modelId, c.opendedChestModelData?.modelId }
                     )
                     .Where(id => !string.IsNullOrEmpty(id)),
-                existingModels,
+                queuedIds,
                 modelRequests
             );
 
@@ -607,17 +608,15 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private void CollectModelRequests(
             IEnumerable<string> modelIds,
-            Dictionary<string, ModelInfo> existingModels,
+            HashSet<string> queuedIds,
             List<ModelRequest> modelRequests
         )
         {
-            var newIds = modelIds
-                .GroupBy(id => id)
-                .Select(g => g.First())
-                .Where(id => !existingModels.ContainsKey(id));
-
-            foreach (var id in newIds)
+            foreach (var id in modelIds.Distinct())
             {
+                if (queuedIds.Contains(id))
+                    continue;
+
                 var modelPath = dataPersistenceManager.GetModelFilepath(id);
                 if (string.IsNullOrEmpty(modelPath))
                     throw new Exception(
@@ -625,6 +624,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     );
 
                 modelRequests.Add(new ModelRequest { id = id, filePath = modelPath });
+                queuedIds.Add(id);
             }
         }
     }
