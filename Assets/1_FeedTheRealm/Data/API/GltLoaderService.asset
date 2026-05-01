@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b654ce94245ab6419a31a0f43862169, type: 3}
   m_Name: GltLoaderService
   m_EditorClassIdentifier: FTR.Core::API.GltfService
-  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
   config: {fileID: 11400000, guid: f6ade15aa3e7bf4c4ad3fab235451acb, type: 2}

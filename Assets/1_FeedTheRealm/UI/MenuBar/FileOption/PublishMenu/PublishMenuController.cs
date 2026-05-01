@@ -408,8 +408,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             foreach (var item in allItems)
             {
                 if (!string.IsNullOrEmpty(item.spriteFilePath))
+                {
                     request.ids.Add(item.id);
-                request.spritePath.Add(Path.Combine(config.SpritesDirectory, item.spriteFilePath));
+                    request.spritePath.Add(
+                        Path.Combine(config.SpritesDirectory, item.spriteFilePath)
+                    );
+                }
             }
 
             return request;
@@ -481,11 +485,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             if (response?.category_list == null)
             {
                 logger.Log(
-                    "PublishCosmetics: Failed to fetch categories.",
+                    "PublishCosmetics: Failed to fetch categories from AssetsService.",
                     this,
                     Logging.LogType.Error
                 );
-                return new Dictionary<string, string>();
+                throw new Exception(
+                    "Failed to fetch cosmetic categories from AssetsService. Cannot proceed with cosmetic publishing."
+                );
             }
 
             return response
@@ -533,7 +539,16 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             string spritePath = entry.sprite_path;
             string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
             if (!File.Exists(fullPath))
-                return false;
+            {
+                logger.Log(
+                    $"PublishCosmetics: Sprite file not found for category '{categoryName}': {fullPath}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Missing sprite file for cosmetic '{cosmetic.id}' category '{categoryName}': {fullPath}"
+                );
+            }
 
             if (
                 !categoryIds.TryGetValue(categoryName, out string categoryId)
@@ -541,11 +556,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             )
             {
                 logger.Log(
-                    $"PublishCosmetics: Category '{categoryName}' not found on server.",
+                    $"PublishCosmetics: Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'.",
                     this,
-                    Logging.LogType.Warning
+                    Logging.LogType.Error
                 );
-                return false;
+                throw new Exception(
+                    $"Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'. Cannot publish cosmetic."
+                );
             }
 
             string existingSpriteId = ResolveExistingSpriteId(entry, uploadCache, fullPath);
@@ -560,11 +577,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             if (resp == null || string.IsNullOrEmpty(resp.sprite_id))
             {
                 logger.Log(
-                    $"PublishCosmetics: Failed to upload/link sprite for category '{categoryName}'.",
+                    $"PublishCosmetics: Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. Server returned null or empty sprite_id.",
                     this,
                     Logging.LogType.Error
                 );
-                return false;
+                throw new Exception(
+                    $"Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. AssetsService returned invalid response."
+                );
             }
 
             if (!uploadCache.ContainsKey(fullPath))
@@ -632,7 +651,16 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     return resp;
 
                 if (statusCode != 404)
-                    return null;
+                {
+                    logger.Log(
+                        $"PublishCosmetics: LinkSpriteByIdAsync failed for category '{categoryName}' with status {statusCode}.",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    throw new Exception(
+                        $"AssetsService.LinkSpriteByIdAsync failed for category '{categoryName}' with HTTP status {statusCode}."
+                    );
+                }
 
                 logger.Log(
                     $"PublishCosmetics: Sprite '{existingSpriteId}' not found on server (404), falling back to upload for category '{categoryName}'.",
@@ -641,12 +669,26 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
             }
 
-            return await assetsService.UploadSpriteAsync(
+            var uploadResp = await assetsService.UploadSpriteAsync(
                 categoryId,
                 fullPath,
                 currentWorldData.worldId,
                 price
             );
+
+            if (uploadResp == null || string.IsNullOrEmpty(uploadResp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: UploadSpriteAsync failed for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"AssetsService.UploadSpriteAsync failed for category '{categoryName}'. Server returned invalid response."
+                );
+            }
+
+            return uploadResp;
         }
 
         private void PersistCosmeticChanges(CreatablesData creatablesData)

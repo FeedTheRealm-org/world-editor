@@ -22,12 +22,15 @@ namespace FeedTheRealm.Gameplay.Creatables
             foreach (var kvp in data.categories)
             {
                 var spritePath = kvp.Value?.sprite_path;
-                if (
-                    !string.IsNullOrEmpty(spritePath)
-                    && spritePath.StartsWith(config.SpritesDirectory)
-                )
+                if (!string.IsNullOrEmpty(spritePath))
                 {
-                    FileSystemHandler.DeleteFile(spritePath);
+                    string fullPath = Path.IsPathRooted(spritePath)
+                        ? spritePath
+                        : Path.Combine(config.SpritesDirectory, spritePath);
+                    if (fullPath.StartsWith(config.SpritesDirectory))
+                    {
+                        FileSystemHandler.DeleteFile(fullPath);
+                    }
                 }
             }
         }

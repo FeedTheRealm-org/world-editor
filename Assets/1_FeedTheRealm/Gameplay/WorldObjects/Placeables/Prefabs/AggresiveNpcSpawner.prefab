@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 370544900135714223}
   - component: {fileID: 1638142084274025338}
   - component: {fileID: 5062968973939956887}
-  - component: {fileID: 7579879578991499288}
+  - component: {fileID: 3443706191430294797}
   - component: {fileID: 3677565591372910355}
   m_Layer: 11
   m_Name: AggresiveNpcSpawner
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5537282333109391366}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.62258, y: 1.15, z: -11.46466}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 0.1, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -92,8 +92,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &7579879578991499288
-SphereCollider:
+--- !u!65 &3443706191430294797
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -111,7 +111,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Size: {x: 1.0000001, y: 2, z: 1.0000002}
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!114 &3677565591372910355
 MonoBehaviour:

@@ -443,15 +443,12 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
             cosmeticItemContainer.unbindItem = (ve, _) =>
             {
-                cosmeticItemContainer.unbindItem = (ve, _) =>
+                if (ve.userData is CosmeticItemBinding b)
                 {
-                    if (ve.userData is CosmeticItemBinding b)
-                    {
-                        b.product = null;
-                        b.cosmetic = null;
-                        b.onEdit = b.onConfirm = b.onDelete = null;
-                    }
-                };
+                    b.product = null;
+                    b.cosmetic = null;
+                    b.onEdit = b.onConfirm = b.onDelete = null;
+                }
             };
         }
 

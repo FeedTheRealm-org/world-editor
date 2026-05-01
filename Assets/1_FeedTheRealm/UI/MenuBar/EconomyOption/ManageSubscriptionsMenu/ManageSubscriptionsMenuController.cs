@@ -592,6 +592,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     if (z.is_active)
                         activeZoneCount++;
 
+                VisualElement worldWrapper = new VisualElement();
+
                 // --- World Header Entry ---
                 VisualElement worldEntry = worldItemTemplate.Instantiate();
                 worldEntry.style.backgroundColor = new StyleColor(
@@ -606,7 +608,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 // Set up dropdown
                 var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
-                VisualElement dropDownIconBackground = new VisualElement();
                 bool isExpanded = false;
                 VisualElement zoneContainer = new VisualElement();
 
@@ -643,7 +644,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 );
                 deleteWorldButton.clicked += () => OnDeleteWorldClicked(capturedWorld, worldEntry);
 
-                worldsList.Add(worldEntry);
+                // Agregar worldEntry al wrapper (NO directamente a worldsList)
+                worldWrapper.Add(worldEntry);
 
                 // Initialize a list to hold all the zone toggle buttons so "Activate All" can update them
                 var zoneToggleButtons = new System.Collections.Generic.List<Button>();
@@ -729,7 +731,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                         zoneEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
 
                         var capturedZone = zone;
-                        var capturedEntry = zoneEntry;
 
                         // Toggle Active button
                         var toggleActiveBtn = zoneEntry.Q<Button>("ToggleActive");
@@ -781,8 +782,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                         zoneContainer.Add(zoneEntry);
                     }
-                    worldsList.Add(zoneContainer);
+                    worldWrapper.Add(zoneContainer);
                 }
+
+                worldsList.Add(worldWrapper);
             }
         }
 
@@ -801,7 +804,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
-                entry.RemoveFromHierarchy();
+                VisualElement wrapper = entry.parent;
+                wrapper.RemoveFromHierarchy();
 
                 ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
 

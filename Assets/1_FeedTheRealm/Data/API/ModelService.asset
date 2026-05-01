@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ModelService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.ModelService
   logger: {fileID: 11400000, guid: 3c5c46f2f877f5f02b0d62e8fce1df59, type: 2}
-  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
