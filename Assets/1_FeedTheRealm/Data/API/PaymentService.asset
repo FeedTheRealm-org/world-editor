@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: PaymentService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.PaymentService
   logger: {fileID: 11400000, guid: a7ad2cfbc8d278049852d0b9afa2c7f4, type: 2}
-  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
