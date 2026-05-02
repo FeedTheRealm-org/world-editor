@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
@@ -728,7 +729,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                         zoneEntry.Q<Label>("Header").text = $"Zone {zone.zone_id}";
                         zoneEntry.Q<Label>("ZoneName").text = $"World: {world.name}";
                         zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
-                        zoneEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                        var statusBadge = zoneEntry.Q<Label>("StatusBadge");
+                        statusBadge.style.display = DisplayStyle.Flex;
+                        SetZoneOnlineBadge(statusBadge, zone.is_online);
 
                         var capturedZone = zone;
 
@@ -902,6 +906,82 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             resolver.Instantiate(menuPrefab);
             Destroy(gameObject);
+        }
+
+        private static void SetZoneOnlineBadge(Label badge, bool isOnline)
+        {
+            // ── Stop any existing blink ───────────────────────────────────────
+            if (badge.userData is IVisualElementScheduledItem existing)
+            {
+                existing.Pause();
+                badge.userData = null;
+            }
+
+            var green = new Color(0.20f, 0.85f, 0.40f, 1f);
+            var red = new Color(0.90f, 0.25f, 0.25f, 1f);
+            var greenBg = new Color(0.10f, 0.35f, 0.15f, 0.55f);
+            var redBg = new Color(0.40f, 0.08f, 0.08f, 0.55f);
+            var dotColor = isOnline ? green : red;
+
+            // ── Style the container badge ─────────────────────────────────────
+            badge.text = string.Empty; // text lives in children now
+            badge.style.flexDirection = FlexDirection.Row;
+            badge.style.alignItems = Align.Center;
+            badge.style.backgroundColor = new StyleColor(isOnline ? greenBg : redBg);
+            badge.style.borderTopLeftRadius = new StyleLength(10);
+            badge.style.borderTopRightRadius = new StyleLength(10);
+            badge.style.borderBottomLeftRadius = new StyleLength(10);
+            badge.style.borderBottomRightRadius = new StyleLength(10);
+            badge.style.paddingLeft = 6;
+            badge.style.paddingRight = 6;
+            badge.style.paddingTop = 0;
+            badge.style.paddingBottom = 0;
+            badge.style.marginTop = 0;
+            badge.style.marginBottom = 0;
+            badge.style.height = 18;
+            badge.style.display = DisplayStyle.Flex;
+            badge.style.opacity = 1f;
+
+            // ── Reuse or create child labels ──────────────────────────────────
+            Label dot = badge.Q<Label>("BadgeDot");
+            Label text = badge.Q<Label>("BadgeText");
+
+            if (dot == null)
+            {
+                dot = new Label { name = "BadgeDot" };
+                dot.style.marginRight = 4;
+                badge.Add(dot);
+            }
+
+            if (text == null)
+            {
+                text = new Label { name = "BadgeText" };
+                badge.Add(text);
+            }
+
+            // ── Dot ───────────────────────────────────────────────────────────
+            dot.text = "●";
+            dot.style.fontSize = 10;
+            dot.style.color = new StyleColor(dotColor);
+            dot.style.unityFontStyleAndWeight = FontStyle.Bold;
+
+            // ── Text ──────────────────────────────────────────────────────────
+            text.text = isOnline ? "Online" : "Offline";
+            text.style.fontSize = 10;
+            text.style.color = new StyleColor(dotColor);
+            text.style.unityFontStyleAndWeight = FontStyle.Bold;
+
+            // ── Blink only the dot, always ────────────────────────────────────
+            bool visible = true;
+            var handle = dot
+                .schedule.Execute(() =>
+                {
+                    visible = !visible;
+                    dot.style.opacity = visible ? 1f : 0f;
+                })
+                .Every(600);
+
+            badge.userData = handle;
         }
     }
 }
