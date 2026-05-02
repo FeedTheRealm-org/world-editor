@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.MenuBar.TransactionMenuController
+namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
 {
     public class TransactionMenuController : MenuController
     {
