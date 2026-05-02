@@ -635,7 +635,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             string categoryName,
             string fullPath,
             string existingSpriteId,
-            float price
+            int price
         )
         {
             if (!string.IsNullOrEmpty(existingSpriteId))
