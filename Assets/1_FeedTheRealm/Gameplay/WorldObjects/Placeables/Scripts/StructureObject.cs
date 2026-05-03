@@ -11,6 +11,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         public override void SaveData(ref ZoneData zoneData)
         {
+            var boxCollider = GetComponent<BoxCollider>();
+
             StructureData savedData = new()
             {
                 id = data.id,
@@ -19,12 +21,13 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 isShop = data.isShop,
                 shopId = data.shopId,
                 hasColliders = data.hasColliders,
-
                 position = gameObject.transform.position,
                 rotation = gameObject.transform.rotation.eulerAngles,
                 size = gameObject.transform.localScale,
-                colliderSize = data.colliderSize,
-                colliderCenter = data.colliderCenter,
+                colliderCenter =
+                    data.colliderCenter != Vector3.zero ? data.colliderCenter : boxCollider.center,
+                colliderSize =
+                    data.colliderSize != Vector3.zero ? data.colliderSize : boxCollider.size,
                 colliderRotation = data.colliderRotation,
                 colliderType = data.colliderType,
             };
