@@ -48,16 +48,19 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             if (renderers.Length == 0)
                 return;
 
-            // Merge all renderer bounds into one
             Bounds combined = renderers[0].bounds;
             foreach (var r in renderers)
                 combined.Encapsulate(r.bounds);
 
             BoxCollider collider = GetComponent<BoxCollider>();
-
-            // Convert world-space bounds to local space
             collider.center = transform.InverseTransformPoint(combined.center);
-            collider.size = transform.InverseTransformVector(combined.size);
+
+            Vector3 scale = transform.lossyScale;
+            collider.size = new Vector3(
+                combined.size.x / scale.x,
+                combined.size.y / scale.y,
+                combined.size.z / scale.z
+            );
         }
     }
 }
