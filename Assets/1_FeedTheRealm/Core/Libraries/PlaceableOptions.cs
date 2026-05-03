@@ -10,5 +10,6 @@ namespace FeedTheRealm.Core.Library
         public const string FriendlyNPC = "Friendly NPC";
         public const string PlayerSpawnpoint = "Player Spawnpoint";
         public const string Portal = "Portal";
+        public const string Chest = "Chest";
     }
 }

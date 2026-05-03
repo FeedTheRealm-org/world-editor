@@ -12,6 +12,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             : base(resolver)
         {
             Register(PlaceableOptions.Portal, prefabProvider.portalPrefab);
+            Register(PlaceableOptions.Chest, prefabProvider.chestPrefab);
         }
 
         public override List<PlaceableOption> ListAvailableItems() =>
@@ -22,6 +23,12 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                     category = PlaceableObjectCategories.Misc,
                     id = PlaceableOptions.Portal,
                     displayName = PlaceableOptions.Portal,
+                },
+                new()
+                {
+                    category = PlaceableObjectCategories.Misc,
+                    id = PlaceableOptions.Chest,
+                    displayName = PlaceableOptions.Chest,
                 },
             };
     }

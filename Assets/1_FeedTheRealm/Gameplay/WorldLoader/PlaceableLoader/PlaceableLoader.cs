@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using FeedTheRealm.Core.WorldObjects;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -46,6 +47,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 {
                     var loadedObject = await GetObject(data);
                     loadedObject.GetComponent<ILoadable<TData>>().Load(data);
+                    loadedObject.GetComponent<IPlaceable>().RegisterPlaceable();
                 }
                 catch (Exception ex)
                 {

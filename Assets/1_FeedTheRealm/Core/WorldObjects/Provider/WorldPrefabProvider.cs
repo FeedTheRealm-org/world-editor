@@ -21,5 +21,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject friendlyNPCSpawnerPrefab;
         public GameObject playerSpawnpointPrefab;
         public GameObject portalPrefab;
+        public GameObject chestPrefab;
     }
 }
