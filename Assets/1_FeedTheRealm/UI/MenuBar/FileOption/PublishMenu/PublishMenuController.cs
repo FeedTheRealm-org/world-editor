@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
@@ -36,6 +38,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private ModelService modelService;
 
         [SerializeField]
+        private AssetsService assetsService;
+
+        [SerializeField]
         private ZoneService zoneService;
 
         [SerializeField]
@@ -52,6 +57,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
 
         private Button publishButton;
         private Button loginButton;
@@ -250,6 +258,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 await PublishZoneData();
                 ToastNotification.Show("World published successfully!", "success", Color.green);
                 CloseMenu();
+                worldSelector.selectedWorldId = currentWorldData.worldId;
             }
             catch (Exception ex)
             {
@@ -485,48 +494,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             );
         }
 
-        private async Task PublishSprites()
-        {
-            CreatablesData creatablesData = dataPersistenceManager.GetCreatables(
-                worldSelector.selectedWorld
-            );
-
-            var spritesRequest = new SpritesRequest();
-
-            List<ItemData> allItems = new List<ItemData>();
-            if (creatablesData != null)
-            {
-                allItems.AddRange(creatablesData.weaponItems);
-                allItems.AddRange(creatablesData.consumableItems);
-            }
-
-            foreach (var item in allItems)
-            {
-                if (!string.IsNullOrEmpty(item.spriteFilePath))
-                    spritesRequest.ids.Add(item.id);
-                // TODO: this should be abstracted, the publish controller should not know about weapon's sprite path structure
-                spritesRequest.spritePath.Add(
-                    Path.Combine(config.SpritesDirectory, item.spriteFilePath)
-                );
-            }
-
-            var missingSprites = spritesRequest
-                .spritePath.Where(path => !File.Exists(path))
-                .ToList();
-
-            if (missingSprites.Count > 0)
-            {
-                var missing = string.Join("\n", missingSprites);
-                throw new Exception($"Missing sprite files:\n{missing}");
-            }
-
-            await spriteService.UploadSprites(
-                spritesRequest,
-                currentWorldData.worldId,
-                session.APIToken
-            );
-        }
-
         private async Task PublishZoneData()
         {
             foreach (var zoneId in GetZonesToPublish())
@@ -555,6 +522,356 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     ToastNotification.Show($"Failed to publish zone {zoneId}.", error, Color.red);
                     continue;
                 }
+            }
+        }
+
+        private async Task PublishSprites()
+        {
+            var creatablesData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+            var spritesRequest = BuildSpritesRequest(creatablesData);
+
+            AssertSpriteFilesExist(spritesRequest);
+            AssertAssetsServiceAvailable();
+
+            await spriteService.UploadSprites(
+                spritesRequest,
+                currentWorldData.worldId,
+                session.APIToken
+            );
+
+            if (creatablesData?.cosmetics != null)
+            {
+                await PublishCosmetics(creatablesData);
+            }
+        }
+
+        private SpritesRequest BuildSpritesRequest(CreatablesData creatablesData)
+        {
+            var request = new SpritesRequest();
+            if (creatablesData == null)
+                return request;
+
+            var allItems = new List<ItemData>();
+            allItems.AddRange(creatablesData.weaponItems);
+            allItems.AddRange(creatablesData.consumableItems);
+
+            foreach (var item in allItems)
+            {
+                if (!string.IsNullOrEmpty(item.spriteFilePath))
+                {
+                    request.ids.Add(item.id);
+                    request.spritePath.Add(
+                        Path.Combine(config.SpritesDirectory, item.spriteFilePath)
+                    );
+                }
+            }
+
+            return request;
+        }
+
+        private void AssertSpriteFilesExist(SpritesRequest request)
+        {
+            var missingSprites = request.spritePath.Where(path => !File.Exists(path)).ToList();
+
+            if (missingSprites.Count > 0)
+            {
+                var missing = string.Join("\n", missingSprites);
+                throw new Exception($"Missing sprite files:\n{missing}");
+            }
+        }
+
+        private void AssertAssetsServiceAvailable()
+        {
+            if (assetsService == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: assetsService is unassigned in PublishMenuController.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception("AssetsService is missing.");
+            }
+        }
+
+        private async Task PublishCosmetics(CreatablesData creatablesData)
+        {
+            try
+            {
+                var categoryIds = await FetchCategoryLookupAsync();
+                var uploadCache = new Dictionary<string, string>();
+                bool anyChanges = false;
+
+                foreach (var cosmetic in creatablesData.cosmetics)
+                {
+                    cosmetic.OnAfterDeserialize();
+                    bool cosmeticChanged = await ProcessCosmeticAsync(
+                        cosmetic,
+                        categoryIds,
+                        uploadCache
+                    );
+                    anyChanges |= cosmeticChanged;
+                }
+
+                if (anyChanges)
+                {
+                    PersistCosmeticChanges(creatablesData);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"PublishCosmetics Error: {ex.Message}\n{ex.StackTrace}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw;
+            }
+        }
+
+        private async Task<Dictionary<string, string>> FetchCategoryLookupAsync()
+        {
+            var response = await assetsService.GetCategoriesAsync();
+
+            if (response?.category_list == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: Failed to fetch categories from AssetsService.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    "Failed to fetch cosmetic categories from AssetsService. Cannot proceed with cosmetic publishing."
+                );
+            }
+
+            return response
+                .category_list.Where(c =>
+                    !string.IsNullOrEmpty(c.category_name) && !string.IsNullOrEmpty(c.category_id)
+                )
+                .ToDictionary(c => c.category_name, c => c.category_id);
+        }
+
+        private async Task<bool> ProcessCosmeticAsync(
+            CosmeticData cosmetic,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            bool changed = false;
+
+            foreach (var categoryName in cosmetic.categories.Keys.ToList())
+            {
+                if (categoryName == "EarringL")
+                    continue;
+
+                var entry = cosmetic.categories[categoryName];
+                bool entryChanged = await ProcessCategoryEntryAsync(
+                    cosmetic,
+                    categoryName,
+                    entry,
+                    categoryIds,
+                    uploadCache
+                );
+                changed |= entryChanged;
+            }
+
+            return changed;
+        }
+
+        private async Task<bool> ProcessCategoryEntryAsync(
+            CosmeticData cosmetic,
+            string categoryName,
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            if (string.IsNullOrEmpty(entry.sprite_path))
+                return false;
+
+            string spritePath = entry.sprite_path;
+            string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
+            if (!File.Exists(fullPath))
+            {
+                logger.Log(
+                    $"PublishCosmetics: Sprite file not found for category '{categoryName}': {fullPath}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Missing sprite file for cosmetic '{cosmetic.id}' category '{categoryName}': {fullPath}"
+                );
+            }
+
+            if (
+                !categoryIds.TryGetValue(categoryName, out string categoryId)
+                || string.IsNullOrEmpty(categoryId)
+            )
+            {
+                logger.Log(
+                    $"PublishCosmetics: Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'. Cannot publish cosmetic."
+                );
+            }
+
+            string existingSpriteId = ResolveExistingSpriteId(entry, uploadCache, fullPath);
+            var resp = await UploadOrLinkSpriteAsync(
+                categoryId,
+                categoryName,
+                fullPath,
+                existingSpriteId,
+                entry.price
+            );
+
+            if (resp == null || string.IsNullOrEmpty(resp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. Server returned null or empty sprite_id.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. AssetsService returned invalid response."
+                );
+            }
+
+            if (!uploadCache.ContainsKey(fullPath))
+                uploadCache[fullPath] = resp.sprite_id;
+
+            entry.url_id = resp.sprite_id;
+
+            string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
+            if (currentFileName != resp.sprite_id)
+            {
+                string ext = Path.GetExtension(spritePath);
+                string newFileName = resp.sprite_id + ext;
+                string newFullPath = Path.Combine(config.SpritesDirectory, newFileName);
+
+                if (!File.Exists(newFullPath))
+                {
+                    File.Move(fullPath, newFullPath);
+                    logger.Log($"Renamed sprite file '{spritePath}' → '{newFileName}'", this);
+                }
+
+                foreach (var otherEntry in cosmetic.categories.Values)
+                {
+                    if (otherEntry.sprite_path == spritePath)
+                        otherEntry.sprite_path = newFileName;
+                }
+
+                if (!uploadCache.ContainsKey(newFullPath))
+                    uploadCache[newFullPath] = resp.sprite_id;
+                uploadCache.Remove(fullPath);
+            }
+
+            return true;
+        }
+
+        private static string ResolveExistingSpriteId(
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> uploadCache,
+            string fullPath
+        )
+        {
+            if (!string.IsNullOrEmpty(entry.url_id))
+                return entry.url_id;
+
+            return uploadCache.TryGetValue(fullPath, out var cachedId) ? cachedId : null;
+        }
+
+        private async Task<SpriteResponse> UploadOrLinkSpriteAsync(
+            string categoryId,
+            string categoryName,
+            string fullPath,
+            string existingSpriteId,
+            float price
+        )
+        {
+            if (!string.IsNullOrEmpty(existingSpriteId))
+            {
+                var (resp, statusCode) = await assetsService.LinkSpriteByIdAsync(
+                    categoryId,
+                    existingSpriteId,
+                    currentWorldData.worldId,
+                    price
+                );
+
+                if (resp != null)
+                    return resp;
+
+                if (statusCode != 404)
+                {
+                    logger.Log(
+                        $"PublishCosmetics: LinkSpriteByIdAsync failed for category '{categoryName}' with status {statusCode}.",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    throw new Exception(
+                        $"AssetsService.LinkSpriteByIdAsync failed for category '{categoryName}' with HTTP status {statusCode}."
+                    );
+                }
+
+                logger.Log(
+                    $"PublishCosmetics: Sprite '{existingSpriteId}' not found on server (404), falling back to upload for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+
+            var uploadResp = await assetsService.UploadSpriteAsync(
+                categoryId,
+                fullPath,
+                currentWorldData.worldId,
+                price
+            );
+
+            if (uploadResp == null || string.IsNullOrEmpty(uploadResp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: UploadSpriteAsync failed for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"AssetsService.UploadSpriteAsync failed for category '{categoryName}'. Server returned invalid response."
+                );
+            }
+
+            return uploadResp;
+        }
+
+        private void PersistCosmeticChanges(CreatablesData creatablesData)
+        {
+            dataPersistenceManager.SaveCreatablesData(worldSelector.selectedWorld, creatablesData);
+            SyncCosmeticsInMemory(creatablesData);
+        }
+
+        private void SyncCosmeticsInMemory(CreatablesData publishedData)
+        {
+            var inMemoryCosmetics = creatablesManager.GetAll<Cosmetic>();
+
+            foreach (var publishedCosmetic in publishedData.cosmetics)
+            {
+                var inMemory = inMemoryCosmetics.FirstOrDefault(c => c.Id == publishedCosmetic.id);
+                if (inMemory == null)
+                    continue;
+
+                inMemory.data.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    publishedCosmetic.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
+                );
+
+                inMemory.data.OnBeforeSerialize();
             }
         }
 

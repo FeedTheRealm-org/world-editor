@@ -53,7 +53,7 @@ namespace FeedTheRealm.UI.Common
                 enableInputEvent.OnRaised -= OnInputEventRaised;
             enableInputEvent?.Raise(true);
             enableEditorEvent?.Raise(true);
-            if (gameObject != null)
+            if (this != null)
             {
                 Destroy(gameObject);
             }

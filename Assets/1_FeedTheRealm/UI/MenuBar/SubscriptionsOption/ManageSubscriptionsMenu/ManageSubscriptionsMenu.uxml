@@ -99,13 +99,11 @@
                 <!-- List column headers -->
                 <ui:VisualElement style="flex-direction: row; align-items: center; padding: 8px 20px 4px 20px;">
                     <ui:Label text="WORLD / ZONE" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; flex-grow: 1;"/>
-                    <ui:Label text="SLOT" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; min-width: 64px; -unity-text-align: middle-center;"/>
-                    <ui:Label text="STATUS" style="font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 1px; min-width: 64px; -unity-text-align: middle-center;"/>
                     <ui:VisualElement style="min-width: 96px;"/>
                 </ui:VisualElement>
 
                 <!-- Worlds list -->
-                <ui:ListView name="WorldsList" class="list" style="flex-grow: 1; margin: 0 8px 8px 8px;"/>
+                <ui:ScrollView name="WorldsList" class="list" style="flex-grow: 1; margin: 0 8px 8px 8px;"/>
 
             </ui:VisualElement>
 

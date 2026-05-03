@@ -20,3 +20,13 @@
     padding: 5px 10px;
     width: 100%;
 }
+
+.editor-tab {
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.editor-tab--active {
+    border-bottom-color: rgb(255, 210, 80);
+}

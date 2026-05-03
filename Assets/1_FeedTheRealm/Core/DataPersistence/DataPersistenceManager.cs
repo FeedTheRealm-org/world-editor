@@ -73,6 +73,11 @@ namespace FeedTheRealm.Core.DataPersistence
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
+        public void SaveCreatablesData(string worldName, CreatablesData creatablesData)
+        {
+            creatablesRepository.SaveCreatables(worldName, creatablesData);
+        }
+
         // ---- Registration Methods ----
 
         private void RegisterEntity(IPersistent<ZoneData> entity)
@@ -168,6 +173,12 @@ namespace FeedTheRealm.Core.DataPersistence
         public string GetModelFilepath(string modelId)
         {
             return modelsRepository.GetModelFilepath(modelId);
+        }
+
+        public string GetCurrentWorldId(string selectedWorld)
+        {
+            var worldData = GetWorldData(selectedWorld);
+            return worldData != null ? worldData.worldId : null;
         }
     }
 }

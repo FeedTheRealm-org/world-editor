@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using API;
-using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -10,36 +9,29 @@ using FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 using VContainer;
 
-namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
+namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class AggresiveNpcCreatorMenu : MenuController
+    public class CosmeticCreatorMenu : MenuController
     {
         [Inject]
         private CreatablesManager creatablesManager;
 
         [SerializeField]
-        private GameObject aggresiveNpcMenuPrefab;
+        private GameObject cosmeticMenuPrefab;
 
-        private EditBuffer<EnemyData> editBuffer;
-        private string currentLootTableId;
+        private EditBuffer<CosmeticData> editBuffer;
 
         [SerializeField]
         private GameObject characterEditorPrefab;
 
-        [SerializeField]
-        private WorldSelector worldSelector;
-
         private TextField nameInput;
         private TextField descriptionInput;
-        private IntegerField healthPointsInput;
-        private IntegerField damageInput;
-        private IntegerField speedInput;
-        private IntegerField rangeInput;
-        private DropdownField lootTableInput;
-        private Button editCharacterButton;
+        private DropdownField categoryInput;
+        private Button loadSpriteButton;
         private Button closeButton;
         private Button saveButton;
         private Button returnButton;
@@ -50,18 +42,23 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private CharacterEditorPreviewRenderer characterPreviewRenderer;
         private bool pendingPreviewRefresh;
 
-        public void SetupEditor(AggresiveNpc npc)
+        public void SetupEditor(Cosmetic cosmetic)
         {
-            editBuffer = new EditBuffer<EnemyData>(npc.data);
+            editBuffer = new EditBuffer<CosmeticData>(cosmetic.data);
 
-            if (npc.data.category_sprites != null)
-                editBuffer.Working.category_sprites = new Dictionary<string, string>(
-                    npc.data.category_sprites
-                );
-            else
-                editBuffer.Working.category_sprites = new Dictionary<string, string>();
-
-            currentLootTableId = editBuffer.Working.lootTableId;
+            editBuffer.Working.categories =
+                cosmetic.data.categories != null
+                    ? new Dictionary<string, CosmeticCategoryEntry>(
+                        cosmetic.data.categories.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => new CosmeticCategoryEntry(
+                                kvp.Value.sprite_path,
+                                kvp.Value.url_id,
+                                kvp.Value.price
+                            )
+                        )
+                    )
+                    : new Dictionary<string, CosmeticCategoryEntry>();
 
             if (isActiveAndEnabled)
             {
@@ -76,7 +73,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             InitializeFields(root);
-            PopulateLootTables();
 
             characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
                 this,
@@ -112,11 +108,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 saveButton.clicked -= CreateNewObject;
                 saveButton.clicked -= ReturnToList;
-                saveButton.clicked -= SaveExistingEnemy;
+                saveButton.clicked -= SaveExistingCosmetic;
             }
 
-            if (editCharacterButton != null)
-                editCharacterButton.clicked -= OpenCharacterEditor;
+            if (loadSpriteButton != null)
+                loadSpriteButton.clicked -= LoadSprite;
 
             DestroyCharacterEditorInstance();
             DisposeCharacterPreviewRenderer();
@@ -147,54 +143,108 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         {
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
-            healthPointsInput = root.Q<IntegerField>("HealthPoints");
-            damageInput = root.Q<IntegerField>("AttackDamage");
-            speedInput = root.Q<IntegerField>("Speed");
-            rangeInput = root.Q<IntegerField>("Range");
-            lootTableInput = root.Q<DropdownField>("LootTableField");
-            editCharacterButton = root.Q<Button>("EditCharacter");
+            categoryInput = root.Q<DropdownField>("CategoryField");
+            loadSpriteButton = root.Q<Button>("LoadSprite");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
             returnButton = root.Q<Button>("Return");
             spritePreview = root.Q<Image>("SpritePreview");
+
+            categoryInput.choices = CosmeticCategories.Groupings.Keys.ToList();
+            categoryInput.value = CosmeticCategories.Groupings.Keys.First();
 
             closeButton.clicked += ReturnToList;
             if (returnButton != null)
                 returnButton.clicked += ReturnToList;
         }
 
-        private void PopulateLootTables()
+        private void LoadSprite()
         {
-            var lootTables = creatablesManager.GetAll<LootTable>();
-            lootTableInput.choices = lootTables.Select(lt => lt.data.name).ToList();
+            CustomFileBrowser.ShowFilePickerDialog(
+                onSuccess: paths =>
+                {
+                    if (paths == null || paths.Length == 0)
+                        return;
+                    if (!paths[0].EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ToastNotification.Show(
+                            "Selected file is not a valid PNG image.",
+                            "error",
+                            Color.red
+                        );
+                        return;
+                    }
+
+                    if (editBuffer != null && !string.IsNullOrEmpty(categoryInput.value))
+                    {
+                        if (
+                            CosmeticCategories.Groupings.TryGetValue(
+                                categoryInput.value,
+                                out var parts
+                            )
+                        )
+                        {
+                            if (!EnsureCharacterPreviewRenderer())
+                                return;
+
+                            var testSprites = new Dictionary<string, string>();
+                            foreach (var part in parts)
+                                testSprites[part.ToString()] = paths[0];
+
+                            if (characterPreviewRenderer.ValidateLocalOverrides(testSprites))
+                            {
+                                editBuffer.Working.categories.Clear();
+                                foreach (var part in parts)
+                                {
+                                    var partKey = part.ToString();
+                                    editBuffer.Working.categories[partKey] =
+                                        new CosmeticCategoryEntry(paths[0]);
+                                }
+
+                                pendingPreviewRefresh = true;
+                                RefreshCharacterPreview();
+                                ToastNotification.Show(
+                                    "Sprite applied successfully!",
+                                    "success",
+                                    Color.green
+                                );
+                            }
+                            else
+                            {
+                                ToastNotification.Show(
+                                    "Invalid sprite format or dimensions for this category.",
+                                    "error",
+                                    Color.red
+                                );
+                            }
+                        }
+                    }
+                },
+                onCancel: () => Debug.Log("Sprite selection canceled.")
+            );
         }
 
         private void SetupCreateMode()
         {
-            var newEnemy = new EnemyData(
+            var newCosmetic = new CosmeticData(
                 Guid.NewGuid().ToString(),
                 "",
                 "",
-                0,
-                0,
-                0,
-                0,
-                null,
                 new Dictionary<string, string>()
             );
-            editBuffer = new EditBuffer<EnemyData>(newEnemy);
-            editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            editBuffer = new EditBuffer<CosmeticData>(newCosmetic);
+            editBuffer.Working.categories = new Dictionary<string, CosmeticCategoryEntry>();
 
             PopulateFields();
             BindEditMode();
 
-            saveButton.text = "Create Enemy";
-            saveButton.clicked -= SaveExistingEnemy;
+            saveButton.text = "Create Cosmetic";
+            saveButton.clicked -= SaveExistingCosmetic;
             saveButton.clicked -= CreateNewObject;
             saveButton.clicked += CreateNewObject;
 
-            editCharacterButton.clicked -= OpenCharacterEditor;
-            editCharacterButton.clicked += OpenCharacterEditor;
+            loadSpriteButton.clicked -= LoadSprite;
+            loadSpriteButton.clicked += LoadSprite;
         }
 
         private void SetupEditMode()
@@ -203,20 +253,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             BindEditMode();
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.clicked -= SaveExistingEnemy;
-            saveButton.text = "Save Enemy";
-            saveButton.clicked += SaveExistingEnemy;
+            saveButton.clicked -= SaveExistingCosmetic;
+            saveButton.text = "Save Cosmetic";
+            saveButton.clicked += SaveExistingCosmetic;
 
-            editCharacterButton.clicked -= OpenCharacterEditor;
-            editCharacterButton.clicked += OpenCharacterEditor;
+            loadSpriteButton.clicked -= LoadSprite;
+            loadSpriteButton.clicked += LoadSprite;
         }
 
         private void OpenCharacterEditor()
         {
             if (!EnsureCharacterEditorInstance())
                 return;
-
-            characterEditor.SetAssetsWorldId(worldSelector.selectedWorldId);
 
             var characterInfo = BuildCharacterInfo();
 
@@ -226,11 +274,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
         {
-            if (editBuffer != null)
+            if (editBuffer == null)
+                return;
+
+            if (categorySprites == null)
             {
-                editBuffer.Working.category_sprites =
-                    categorySprites ?? new Dictionary<string, string>();
+                editBuffer.Working.categories = new Dictionary<string, CosmeticCategoryEntry>();
             }
+            else
+            {
+                foreach (var kvp in categorySprites)
+                {
+                    if (editBuffer.Working.categories.TryGetValue(kvp.Key, out var existing))
+                        existing.sprite_path = kvp.Value;
+                    else
+                        editBuffer.Working.categories[kvp.Key] = new CosmeticCategoryEntry(
+                            kvp.Value
+                        );
+                }
+            }
+
             pendingPreviewRefresh = true;
         }
 
@@ -240,21 +303,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 nameInput.value = editBuffer.Working.name;
                 descriptionInput.value = editBuffer.Working.description;
-                healthPointsInput.value = editBuffer.Working.healthPoints;
-                damageInput.value = editBuffer.Working.damage;
-                speedInput.value = editBuffer.Working.speed;
-                rangeInput.value = editBuffer.Working.range;
-            }
-
-            var lootTables = creatablesManager.GetAll<LootTable>();
-            if (!string.IsNullOrEmpty(currentLootTableId))
-            {
-                var selected = lootTables.FirstOrDefault(lt => lt.data.id == currentLootTableId);
-                lootTableInput.value = selected?.data.name ?? string.Empty;
-            }
-            else if (lootTables.Any())
-            {
-                lootTableInput.value = lootTables[0].data.name;
             }
         }
 
@@ -266,99 +314,82 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             descriptionInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.description = evt.newValue
             );
-            healthPointsInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.healthPoints = evt.newValue
-            );
-            damageInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.damage = evt.newValue
-            );
-            speedInput.RegisterValueChangedCallback(evt => editBuffer.Working.speed = evt.newValue);
-            rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
-
-            lootTableInput.RegisterValueChangedCallback(evt =>
-            {
-                var selected = creatablesManager
-                    .GetAll<LootTable>()
-                    .FirstOrDefault(lt => lt.data.name == evt.newValue);
-                editBuffer.Working.lootTableId = selected?.data.id;
-            });
         }
 
         private void CreateNewObject()
         {
-            if (!ValidateEnemyFields(out var error))
+            if (!ValidateCosmeticFields(out var error))
             {
-                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                ToastNotification.Show($"Failed to save cosmetic: {error}", "error", Color.red);
                 return;
             }
 
             if (editBuffer != null)
             {
                 editBuffer.Commit();
-                editBuffer.Original.category_sprites = new Dictionary<string, string>(
-                    editBuffer.Working.category_sprites
+                editBuffer.Original.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
                 );
 
-                var enemy = new AggresiveNpc(editBuffer.Original);
-                creatablesManager.Add(enemy);
+                var cosmetic = new Cosmetic(editBuffer.Original);
+                creatablesManager.Add(cosmetic);
             }
 
-            ToastNotification.Show("Aggressive NPC created successfully!", "success", Color.green);
-
+            ToastNotification.Show("Cosmetic created successfully!", "success", Color.green);
             ReturnToList();
         }
 
-        private void SaveExistingEnemy()
+        private void SaveExistingCosmetic()
         {
-            if (!ValidateEnemyFields(out var error))
+            if (!ValidateCosmeticFields(out var error))
             {
-                ToastNotification.Show($"Failed to save enemy: {error}", "error", Color.red);
+                ToastNotification.Show($"Failed to save cosmetic: {error}", "error", Color.red);
                 return;
             }
 
-            var lootTables = creatablesManager.GetAll<LootTable>();
-            var selectedLootTable = lootTables.FirstOrDefault(lt =>
-                lt.data.name == lootTableInput.value
-            );
-
             if (editBuffer != null)
             {
-                editBuffer.Working.lootTableId = selectedLootTable?.data.id;
                 editBuffer.Commit();
-
-                editBuffer.Original.category_sprites = new Dictionary<string, string>(
-                    editBuffer.Working.category_sprites
+                editBuffer.Original.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
                 );
             }
 
-            ToastNotification.Show("Aggressive NPC updated successfully!", "success", Color.green);
+            ToastNotification.Show("Cosmetic updated successfully!", "success", Color.green);
             ReturnToList();
         }
 
-        private bool ValidateEnemyFields(out string error)
+        private bool ValidateCosmeticFields(out string error)
         {
             var name = editBuffer != null ? editBuffer.Working.name : nameInput.value;
-            var health =
-                editBuffer != null ? editBuffer.Working.healthPoints : healthPointsInput.value;
-            var damage = editBuffer != null ? editBuffer.Working.damage : damageInput.value;
-            var speed = editBuffer != null ? editBuffer.Working.speed : speedInput.value;
-            var range = editBuffer != null ? editBuffer.Working.range : rangeInput.value;
 
             if (string.IsNullOrEmpty(name))
             {
-                error = "Enemy name is required.";
+                error = "Cosmetic name is required.";
                 return false;
             }
 
-            if (health <= 0)
+            if (
+                editBuffer == null
+                || editBuffer.Working.categories == null
+                || editBuffer.Working.categories.Count == 0
+            )
             {
-                error = "Health points must be greater than zero.";
-                return false;
-            }
-
-            if (damage < 0 || speed < 0 || range < 0)
-            {
-                error = "Enemy stats cannot be negative.";
+                error = "Please load at least one valid sprite before saving.";
                 return false;
             }
 
@@ -369,7 +400,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void ReturnToList()
         {
             SetCharacterEditorVisible(false);
-            OpenMenu(aggresiveNpcMenuPrefab);
+            OpenMenu(cosmeticMenuPrefab);
         }
 
         private void SetCharacterEditorVisible(bool isVisible)
@@ -423,7 +454,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         {
             var categorySprites =
                 editBuffer != null
-                    ? editBuffer.Working.category_sprites
+                    ? editBuffer.Working.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.sprite_path ?? ""
+                    )
                     : new Dictionary<string, string>();
 
             return new CharacterInfoResponse
@@ -470,10 +504,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             characterPreviewRenderer = new CharacterEditorPreviewRenderer(
                 characterEditorPrefab,
-                false
+                true
             );
-            characterPreviewRenderer.SetAssetsWorldId(worldSelector.selectedWorldId);
-
             return true;
         }
 
@@ -495,9 +527,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void DisposeCharacterPreviewRenderer()
         {
             if (characterPreviewRenderer == null)
-            {
                 return;
-            }
 
             characterPreviewRenderer.Dispose();
             characterPreviewRenderer = null;

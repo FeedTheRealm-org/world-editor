@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using API;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -27,6 +28,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         [SerializeField]
         private VisualTreeAsset progressionItemTemplate;
+
+        [SerializeField]
+        private WorldSelector worldSelector;
 
         private NPCData editingData;
         private EditBuffer<NPCData> editBuffer;
@@ -449,6 +453,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             if (!EnsureCharacterEditorInstance())
                 return;
+
+            characterEditorController.SetAssetsWorldId(worldSelector.selectedWorldId);
+
             characterEditorController.SetupWithCharacterInfo(
                 BuildCharacterInfo(),
                 SaveCharacterInfo
@@ -491,6 +498,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         {
             if (characterPreviewRenderer != null)
                 return true;
+
             characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
                 this,
                 characterEditorPrefab
@@ -500,7 +508,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 Debug.LogError("Character editor prefab is not assigned.", this);
                 return false;
             }
-            characterPreviewRenderer = new CharacterEditorPreviewRenderer(characterEditorPrefab);
+
+            characterPreviewRenderer = new CharacterEditorPreviewRenderer(
+                characterEditorPrefab,
+                false
+            );
+            characterPreviewRenderer.SetAssetsWorldId(worldSelector.selectedWorldId);
+
             return true;
         }
 

@@ -72,7 +72,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private Button increaseCreateSlotsButton;
         private Label createSlotCountLabel;
 
-        private ListView worldsList;
+        private ScrollView worldsList;
 
         // ── State ─────────────────────────────────────────────────────────────
         private SubscriptionResponse currentSubscription;
@@ -129,7 +129,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             increaseCreateSlotsButton = root.Q<Button>("IncreaseCreateSlots");
             createSlotCountLabel = root.Q<Label>("CreateSlotCountLabel");
 
-            worldsList = root.Q<ListView>("WorldsList");
+            worldsList = root.Q<ScrollView>("WorldsList");
         }
 
         private void RegisterCallbacks()
@@ -553,11 +553,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private async Task LoadWorldsListAsync()
         {
             worldsList.Clear();
-            worldsList.hierarchy.Clear();
 
             var loadingLabel = new Label("Loading worlds...");
             loadingLabel.AddToClassList("header-label");
-            worldsList.hierarchy.Add(loadingLabel);
+            worldsList.Add(loadingLabel);
 
             var (amount, worlds, error) = await worldService.GetWorldPage(
                 0,
@@ -567,13 +566,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             );
 
             worldsList.Clear();
-            worldsList.hierarchy.Clear();
 
             if (!string.IsNullOrEmpty(error))
             {
                 var errorLabel = new Label($"Error loading worlds: {error}");
                 errorLabel.AddToClassList("header-label");
-                worldsList.hierarchy.Add(errorLabel);
+                worldsList.Add(errorLabel);
                 return;
             }
 
@@ -581,45 +579,217 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             {
                 var emptyLabel = new Label("No created worlds yet.");
                 emptyLabel.AddToClassList("header-label");
-                worldsList.hierarchy.Add(emptyLabel);
+                worldsList.Add(emptyLabel);
                 return;
             }
 
             foreach (var world in worlds)
             {
-                VisualElement entry = worldItemTemplate.Instantiate();
+                var zones = world.zones ?? new System.Collections.Generic.List<WorldZoneMetadata>();
+                int zoneCount = zones.Count;
+                int activeZoneCount = 0;
+                foreach (var z in zones)
+                    if (z.is_active)
+                        activeZoneCount++;
 
-                entry.Q<Label>("Header").text = world.worldName;
+                VisualElement worldWrapper = new VisualElement();
 
-                int zoneCount = 0;
-                var (zones, zError, zStatusCode) = await zoneService.GetZonesList(
-                    world.worldId,
-                    session.APIToken
+                // --- World Header Entry ---
+                VisualElement worldEntry = worldItemTemplate.Instantiate();
+                worldEntry.style.backgroundColor = new StyleColor(
+                    new Color(0.1f, 0.1f, 0.1f, 0.5f)
                 );
 
-                if (string.IsNullOrEmpty(zError) && zones != null)
+                worldEntry.Q<Label>("Header").text = world.name;
+                var zoneNameLabel = worldEntry.Q<Label>("ZoneName");
+                zoneNameLabel.text = $"{activeZoneCount}/{zoneCount} active zone(s)";
+                worldEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
+                worldEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                // Set up dropdown
+                var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
+                bool isExpanded = false;
+                VisualElement zoneContainer = new VisualElement();
+
+                if (zoneCount > 0)
                 {
-                    zoneCount = zones.Count;
+                    dropdownBtn.style.display = DisplayStyle.Flex;
+                    dropdownBtn.clicked += () =>
+                    {
+                        isExpanded = !isExpanded;
+                        dropdownBtn.text = isExpanded ? "▼" : "▶";
+                        zoneContainer.style.display = isExpanded
+                            ? DisplayStyle.Flex
+                            : DisplayStyle.None;
+                    };
                 }
 
-                entry.Q<Label>("ZoneName").text = $"{zoneCount} zone(s)";
-                entry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
-                entry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+                dropdownBtn.text = "▶";
+                zoneContainer.style.display = DisplayStyle.None;
+
+                var activateAllBtn = worldEntry.Q<Button>("ToggleActive");
+                bool anyZoneActive = activeZoneCount > 0;
+                activateAllBtn.text = anyZoneActive ? "Deactivate All" : "Activate All";
+                activateAllBtn.style.backgroundColor = new StyleColor(
+                    anyZoneActive
+                        ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                        : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                );
 
                 var capturedWorld = world;
-                var capturedEntry = entry;
-                var deleteButton = entry.Q<Button>("Unsubscribe");
-                deleteButton.text = "Delete World";
-                deleteButton.clicked += () => OnDeleteWorldClicked(capturedWorld, capturedEntry);
+                var deleteWorldButton = worldEntry.Q<Button>("Unsubscribe");
+                deleteWorldButton.text = "Delete World";
+                deleteWorldButton.style.backgroundColor = new StyleColor(
+                    new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                );
+                deleteWorldButton.clicked += () => OnDeleteWorldClicked(capturedWorld, worldEntry);
 
-                worldsList.hierarchy.Add(entry);
+                // Agregar worldEntry al wrapper (NO directamente a worldsList)
+                worldWrapper.Add(worldEntry);
+
+                // Initialize a list to hold all the zone toggle buttons so "Activate All" can update them
+                var zoneToggleButtons = new System.Collections.Generic.List<Button>();
+
+                activateAllBtn.clicked += async () =>
+                {
+                    activateAllBtn.SetEnabled(false);
+                    bool activating = activateAllBtn.text == "Activate All";
+
+                    foreach (var zoneBtn in zoneToggleButtons)
+                    {
+                        zoneBtn.SetEnabled(false);
+                    }
+
+                    // A simple loop to activate/deactivate all. In production, an API to hit /activate_all could be better.
+                    bool success = true;
+                    foreach (var zone in zones)
+                    {
+                        var res = activating
+                            ? await zoneService.ActivateZone(
+                                world.id,
+                                zone.zone_id,
+                                session.APIToken
+                            )
+                            : await zoneService.DeactivateZone(
+                                world.id,
+                                zone.zone_id,
+                                session.APIToken
+                            );
+
+                        if (!string.IsNullOrEmpty(res.error))
+                            success = false;
+                        else
+                            zone.is_active = activating;
+                    }
+
+                    if (success)
+                    {
+                        // Toggle: if we just activated, next action is deactivate (and vice versa)
+                        bool nowAnyActive = activating;
+                        activateAllBtn.text = nowAnyActive ? "Deactivate All" : "Activate All";
+                        activateAllBtn.style.backgroundColor = new StyleColor(
+                            nowAnyActive
+                                ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                                : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                        );
+
+                        foreach (var zoneBtn in zoneToggleButtons)
+                            zoneBtn.text = activating ? "Deactivate" : "Activate";
+
+                        ToastNotification.Show(
+                            $"World {capturedWorld.name} zones {(activating ? "activated" : "deactivated")}.",
+                            "success",
+                            Color.green
+                        );
+                        _ = LoadSubscriptionAsync();
+                    }
+                    else
+                    {
+                        ToastNotification.Show(
+                            $"Some zones in {capturedWorld.name} failed to {(activating ? "activate" : "deactivate")}.",
+                            "error",
+                            Color.red
+                        );
+                    }
+
+                    foreach (var zoneBtn in zoneToggleButtons)
+                        zoneBtn.SetEnabled(true);
+                    activateAllBtn.SetEnabled(true);
+                };
+
+                // --- Zone Entries ---
+                if (zoneCount > 0)
+                {
+                    foreach (var zone in zones)
+                    {
+                        VisualElement zoneEntry = worldItemTemplate.Instantiate();
+                        zoneEntry.style.paddingLeft = 24; // Indent to show it's a child
+
+                        zoneEntry.Q<Label>("Header").text = $"Zone {zone.zone_id}";
+                        zoneEntry.Q<Label>("ZoneName").text = $"World: {world.name}";
+                        zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
+                        zoneEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                        var capturedZone = zone;
+
+                        // Toggle Active button
+                        var toggleActiveBtn = zoneEntry.Q<Button>("ToggleActive");
+                        toggleActiveBtn.text = zone.is_active ? "Deactivate" : "Activate";
+                        zoneToggleButtons.Add(toggleActiveBtn);
+                        toggleActiveBtn.clicked += async () =>
+                        {
+                            toggleActiveBtn.SetEnabled(false);
+                            bool isActivating = toggleActiveBtn.text == "Activate";
+
+                            var res = isActivating
+                                ? await zoneService.ActivateZone(
+                                    world.id,
+                                    capturedZone.zone_id,
+                                    session.APIToken
+                                )
+                                : await zoneService.DeactivateZone(
+                                    world.id,
+                                    capturedZone.zone_id,
+                                    session.APIToken
+                                );
+
+                            string opError = res.error;
+
+                            if (string.IsNullOrEmpty(opError))
+                            {
+                                capturedZone.is_active = isActivating;
+                                toggleActiveBtn.text = isActivating ? "Deactivate" : "Activate";
+                                ToastNotification.Show(
+                                    $"Zone {capturedZone.zone_id} {(isActivating ? "activated" : "deactivated")}.",
+                                    "success",
+                                    Color.green
+                                );
+                                _ = LoadSubscriptionAsync();
+                            }
+                            else
+                            {
+                                ToastNotification.Show(
+                                    $"Failed to {(isActivating ? "activate" : "deactivate")} zone {capturedZone.zone_id}: {opError}",
+                                    "error",
+                                    Color.red
+                                );
+                            }
+                            toggleActiveBtn.SetEnabled(true);
+                        };
+
+                        var unsubscribeBtn = zoneEntry.Q<Button>("Unsubscribe");
+                        unsubscribeBtn.style.display = DisplayStyle.None; // Hide unsubscribe for now on zones
+
+                        zoneContainer.Add(zoneEntry);
+                    }
+                    worldWrapper.Add(zoneContainer);
+                }
+
+                worldsList.Add(worldWrapper);
             }
         }
 
-        private async void OnDeleteWorldClicked(
-            FTRShared.Runtime.Models.WorldData world,
-            VisualElement entry
-        )
+        private async void OnDeleteWorldClicked(API.WorldMetadata world, VisualElement entry)
         {
             var button = entry.Q<Button>("Unsubscribe");
             button.SetEnabled(false);
@@ -627,26 +797,23 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             try
             {
                 var (error, statusCode) = await worldService.DeleteWorld(
-                    world.worldId,
+                    world.id,
                     session.APIToken
                 );
 
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
-                entry.RemoveFromHierarchy();
+                VisualElement wrapper = entry.parent;
+                wrapper.RemoveFromHierarchy();
 
-                ToastNotification.Show(
-                    $"World '{world.worldName}' deleted.",
-                    "info",
-                    Color.aliceBlue
-                );
+                ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
 
                 // Clear the local worldId so future publishes create a new world instead of updating a deleted one.
                 if (dataPersistenceManager != null)
                 {
-                    var localWorldData = dataPersistenceManager.GetWorldData(world.worldName);
-                    if (localWorldData != null && localWorldData.worldId == world.worldId)
+                    var localWorldData = dataPersistenceManager.GetWorldData(world.name);
+                    if (localWorldData != null && localWorldData.worldId == world.id)
                     {
                         localWorldData.worldId = "";
                         dataPersistenceManager.SaveWorldMetadata(localWorldData);

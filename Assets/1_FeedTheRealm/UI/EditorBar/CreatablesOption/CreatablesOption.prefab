@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -1703900619815832400}
   - component: {fileID: 4619736483548598808}
   - component: {fileID: -5979143776995738706}
+  - component: {fileID: -3027860847751254160}
   m_Layer: 0
   m_Name: CreatablesOption
   m_TagString: Untagged
@@ -61,6 +62,7 @@ MonoBehaviour:
   - {fileID: -1703900619815832400}
   - {fileID: 4619736483548598808}
   - {fileID: -5979143776995738706}
+  - {fileID: -3027860847751254160}
 --- !u!114 &6620227208176240371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,4 +167,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
   label: Quest
   menuToOpen: {fileID: 6002012647832702426, guid: 36f2a1fea5a9d123f8ca85e5760a80a0, type: 3}
+  menuOptions: []
+--- !u!114 &-3027860847751254160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733705910565161396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  label: Cosmetic
+  menuToOpen: {fileID: 2314951719984803139, guid: d77b9c31f1380fc5f86667cafa38a56e, type: 3}
   menuOptions: []

@@ -3,10 +3,12 @@
 
     <ui:VisualElement name="WorldEntry" style="flex-direction: row; align-items: center; padding: 9px 12px 9px 16px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.06);">
 
+        <ui:Button name="DropdownBtn" text="▼" style="display: none; background-color: transparent; border-width: 0; color: white; font-size: 10px; width: 22px; height: 22px; margin-right: 4px; padding: 0;"/>
+
         <!-- World name + zone name stacked -->
         <ui:VisualElement style="flex-direction: column; flex-grow: 1;">
-            <ui:Label name="Header" text="World Name" style="font-size: 13px; -unity-font-style: bold;"/>
-            <ui:Label name="ZoneName" text="Zone Name" style="font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px;"/>
+            <ui:Label name="Header" text="World Name" style="font-size: 13px; -unity-font-style: bold; color: white;"/>
+            <ui:Label name="ZoneName" text="Zone Name" style="font-size: 11px; color: white; margin-top: 1px;"/>
         </ui:VisualElement>
 
         <!-- Slot badge -->
@@ -16,6 +18,9 @@
         <!-- Free / Paid badge -->
         <ui:Label name="StatusBadge" text="Paid"
             style="min-width: 64px; -unity-text-align: middle-center; font-size: 11px; color: rgba(100,220,130,0.9); padding: 2px 6px; border-width: 1px; border-color: rgba(100,220,130,0.25); border-radius: 4px; margin-right: 12px;"/>
+
+        <!-- Activate / Deactivate -->
+        <ui:Button text="Activate" name="ToggleActive" class="button" style="font-size: 11px; padding: 3px 12px; min-width: 72px; margin-right: 8px;"/>
 
         <!-- Unsubscribe -->
         <ui:Button text="Unsubscribe" name="Unsubscribe" class="button" style="font-size: 11px; padding: 3px 12px; min-width: 96px;"/>
