@@ -165,27 +165,17 @@ Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__l
 }
 
 #Menu > #TabView > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    font-size: 15px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
-#Menu > #TabView > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header > #unity-tab__header-underline {
-    background-color: rgb(255, 255, 255);
-}
+
 
 #Menu > #TabView > #Colliders > #Buttons {
     min-height: 30px;
     height: auto;
     flex-shrink: 0;
 }
-
 
 #Menu > #TabView > #Colliders > #Buttons > #ColliderType > .unity-popup-field__input {
     width: 147px;

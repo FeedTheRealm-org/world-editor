@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -23,6 +25,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         private readonly DataPersistenceManager dataPersistenceManager;
         private readonly Logging.Logger logger;
         private readonly List<IPlaceableLoader> zoneLoaders;
+        private readonly CloseAllEvent closeAllEvent;
 
         public ZoneLoader(
             WorldSelector worldSelector,
@@ -32,12 +35,15 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             StructureLoader structureLoader,
             AggresiveNpcSpawnerLoader aggresiveNpcSpawnerLoader,
             FriendlyNpcSpawnerLoader friendlyNpcSpawnerLoader,
-            PortalLoader portalLoader
+            PortalLoader portalLoader,
+            ChestLoader chestLoader,
+            CloseAllEvent closeAllEvent
         )
         {
             this.worldSelector = worldSelector;
             this.dataPersistenceManager = dataPersistenceManager;
             this.logger = logger;
+            this.closeAllEvent = closeAllEvent;
 
             zoneLoaders = new List<IPlaceableLoader>
             {
@@ -46,11 +52,13 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 aggresiveNpcSpawnerLoader,
                 friendlyNpcSpawnerLoader,
                 portalLoader,
+                chestLoader,
             };
         }
 
         public async UniTask Load()
         {
+            closeAllEvent.Raise(); // Ensure any open menus are closed before loading a new zone
             dataPersistenceManager.ClearPlaceables();
 
             if (string.IsNullOrEmpty(worldSelector.selectedWorld))

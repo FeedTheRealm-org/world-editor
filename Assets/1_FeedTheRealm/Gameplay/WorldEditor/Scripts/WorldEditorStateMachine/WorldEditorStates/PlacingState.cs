@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Core.WorldObjects;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using UnityEngine;
 
@@ -57,6 +58,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
             float desiredBottomY = hit.point.y;
             float correction = desiredBottomY - bottomY - PLACEMENT_OFFSET;
             instance.transform.position += Vector3.up * correction;
+
+            var placeable = instance.GetComponent<IPlaceable>();
+            placeable.RegisterPlaceable();
         }
 
         public void OnSecondaryAction()

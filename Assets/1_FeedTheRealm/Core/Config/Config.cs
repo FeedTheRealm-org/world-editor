@@ -36,6 +36,10 @@ namespace FTR.Core.Common.Config
         [SerializeField]
         private string zoneFilePrefix = "zone_";
 
+        [Header("UI Configs")]
+        public string defaultOpenChestId;
+        public string defaultClosedChestId;
+
         public string ModelsDataDirectory =>
             Path.Combine(Application.persistentDataPath, modelsDataDirectory);
         public string ModelsDirectory =>

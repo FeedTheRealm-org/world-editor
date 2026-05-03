@@ -91,7 +91,6 @@ namespace FeedTheRealm.Core.DataPersistence
                 return;
             }
             registeredPlaceables.Add(entity);
-            logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
         }
 
         private void RegisterEntity(IPersistent<CreatablesData> entity)
@@ -105,7 +104,6 @@ namespace FeedTheRealm.Core.DataPersistence
                 return;
             }
             registeredCreatables.Add(entity);
-            logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
         }
 
         // ---- Get Methods ----
