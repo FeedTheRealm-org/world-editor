@@ -35,13 +35,7 @@
                     <ui:IntegerField label="Health Points" value="20" name="HealthPoints"
                         class="text unity-text-field__input"
                         style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
-                    <ui:IntegerField label="Attack Damage" value="10" name="AttackDamage"
-                        class="text unity-text-field__input"
-                        style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
-                    <ui:IntegerField label="Speed" value="10" name="Speed"
-                        class="text unity-text-field__input"
-                        style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; width: 586px;" />
-                    <ui:IntegerField label="Range" value="0" name="Range"
+                    <ui:DropdownField label="Weapon" name="WeaponField"
                         class="text unity-text-field__input"
                         style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; width: 586px;" />
                     <ui:DropdownField label="LootTable" name="LootTableField"

@@ -25,6 +25,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         private EditBuffer<EnemyData> editBuffer;
         private string currentLootTableId;
+        private string currentWeaponId;
 
         [SerializeField]
         private GameObject characterEditorPrefab;
@@ -35,9 +36,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private TextField nameInput;
         private TextField descriptionInput;
         private IntegerField healthPointsInput;
-        private IntegerField damageInput;
-        private IntegerField speedInput;
-        private IntegerField rangeInput;
+        private DropdownField weaponInput;
         private DropdownField lootTableInput;
         private Button editCharacterButton;
         private Button closeButton;
@@ -62,6 +61,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 editBuffer.Working.category_sprites = new Dictionary<string, string>();
 
             currentLootTableId = editBuffer.Working.lootTableId;
+            currentWeaponId = editBuffer.Working.weaponId;
 
             if (isActiveAndEnabled)
             {
@@ -77,6 +77,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
             InitializeFields(root);
             PopulateLootTables();
+            PopulateWeapons();
 
             characterEditorPrefab = CharacterEditorRuntimeUtility.ResolveCharacterEditorPrefab(
                 this,
@@ -148,9 +149,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
             healthPointsInput = root.Q<IntegerField>("HealthPoints");
-            damageInput = root.Q<IntegerField>("AttackDamage");
-            speedInput = root.Q<IntegerField>("Speed");
-            rangeInput = root.Q<IntegerField>("Range");
+            weaponInput = root.Q<DropdownField>("WeaponField");
             lootTableInput = root.Q<DropdownField>("LootTableField");
             editCharacterButton = root.Q<Button>("EditCharacter");
             saveButton = root.Q<Button>("SaveButton");
@@ -169,6 +168,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             lootTableInput.choices = lootTables.Select(lt => lt.data.name).ToList();
         }
 
+        private void PopulateWeapons()
+        {
+            var weapons = creatablesManager.GetAll<Weapon>();
+            weaponInput.choices = weapons.Select(w => w.data.name).ToList();
+        }
+
         private void SetupCreateMode()
         {
             var newEnemy = new EnemyData(
@@ -176,9 +181,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 "",
                 "",
                 0,
-                0,
-                0,
-                0,
+                null,
                 null,
                 new Dictionary<string, string>()
             );
@@ -241,9 +244,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 nameInput.value = editBuffer.Working.name;
                 descriptionInput.value = editBuffer.Working.description;
                 healthPointsInput.value = editBuffer.Working.healthPoints;
-                damageInput.value = editBuffer.Working.damage;
-                speedInput.value = editBuffer.Working.speed;
-                rangeInput.value = editBuffer.Working.range;
             }
 
             var lootTables = creatablesManager.GetAll<LootTable>();
@@ -255,6 +255,17 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             else if (lootTables.Any())
             {
                 lootTableInput.value = lootTables[0].data.name;
+            }
+
+            var weapons = creatablesManager.GetAll<Weapon>();
+            if (!string.IsNullOrEmpty(currentWeaponId))
+            {
+                var selected = weapons.FirstOrDefault(w => w.data.id == currentWeaponId);
+                weaponInput.value = selected?.data.name ?? string.Empty;
+            }
+            else if (weapons.Any())
+            {
+                weaponInput.value = weapons[0].data.name;
             }
         }
 
@@ -269,11 +280,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             healthPointsInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.healthPoints = evt.newValue
             );
-            damageInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.damage = evt.newValue
-            );
-            speedInput.RegisterValueChangedCallback(evt => editBuffer.Working.speed = evt.newValue);
-            rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
 
             lootTableInput.RegisterValueChangedCallback(evt =>
             {
@@ -281,6 +287,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                     .GetAll<LootTable>()
                     .FirstOrDefault(lt => lt.data.name == evt.newValue);
                 editBuffer.Working.lootTableId = selected?.data.id;
+            });
+
+            weaponInput.RegisterValueChangedCallback(evt =>
+            {
+                var selected = creatablesManager
+                    .GetAll<Weapon>()
+                    .FirstOrDefault(w => w.data.name == evt.newValue);
+                editBuffer.Working.weaponId = selected?.data.id;
             });
         }
 
@@ -321,9 +335,13 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 lt.data.name == lootTableInput.value
             );
 
+            var weapons = creatablesManager.GetAll<Weapon>();
+            var selectedWeapon = weapons.FirstOrDefault(w => w.data.name == weaponInput.value);
+
             if (editBuffer != null)
             {
                 editBuffer.Working.lootTableId = selectedLootTable?.data.id;
+                editBuffer.Working.weaponId = selectedWeapon?.data.id;
                 editBuffer.Commit();
 
                 editBuffer.Original.category_sprites = new Dictionary<string, string>(
@@ -340,9 +358,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             var name = editBuffer != null ? editBuffer.Working.name : nameInput.value;
             var health =
                 editBuffer != null ? editBuffer.Working.healthPoints : healthPointsInput.value;
-            var damage = editBuffer != null ? editBuffer.Working.damage : damageInput.value;
-            var speed = editBuffer != null ? editBuffer.Working.speed : speedInput.value;
-            var range = editBuffer != null ? editBuffer.Working.range : rangeInput.value;
 
             if (string.IsNullOrEmpty(name))
             {
@@ -353,12 +368,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (health <= 0)
             {
                 error = "Health points must be greater than zero.";
-                return false;
-            }
-
-            if (damage < 0 || speed < 0 || range < 0)
-            {
-                error = "Enemy stats cannot be negative.";
                 return false;
             }
 
