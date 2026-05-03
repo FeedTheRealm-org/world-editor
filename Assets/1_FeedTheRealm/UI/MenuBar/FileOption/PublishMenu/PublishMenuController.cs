@@ -511,6 +511,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             foreach (var categoryName in cosmetic.categories.Keys.ToList())
             {
+                if (categoryName == "EarringL")
+                    continue;
+
                 var entry = cosmetic.categories[categoryName];
                 bool entryChanged = await ProcessCategoryEntryAsync(
                     cosmetic,
