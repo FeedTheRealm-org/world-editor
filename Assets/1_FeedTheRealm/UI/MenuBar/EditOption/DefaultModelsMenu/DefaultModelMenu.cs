@@ -114,7 +114,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                         structureName: ModelFilePrefixes.StripPrefix(modelName),
                         size: Vector3.one,
                         rotation: Vector3.zero,
-                        fileName: fileName,
+                        fileName: ModelFilePrefixes.StripPrefix(fileName),
                         hasColliders: hasColliders,
                         isDefault: true
                     );

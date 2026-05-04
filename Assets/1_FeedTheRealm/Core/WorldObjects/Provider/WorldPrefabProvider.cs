@@ -13,7 +13,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
 
         [Header("World Settings")]
         public GameObject worldPrefab;
-        public LayerMask worldLayerMask;
 
         [Header("Placeable Objects")]
         public GameObject structurePrefab;
