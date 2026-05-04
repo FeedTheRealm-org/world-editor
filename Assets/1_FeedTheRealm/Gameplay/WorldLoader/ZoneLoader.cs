@@ -69,6 +69,15 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 worldSelector.selectedZoneId
             );
 
+            var worldController = Object.FindFirstObjectByType<WorldControllerV2>();
+            if (worldController != null)
+            {
+                worldController.OnFloorMaterialChanged(
+                    zoneData.floorMaterialId,
+                    zoneData.textureGranularity
+                );
+            }
+
             if (zoneData == null)
             {
                 logger.Log("[ZoneLoader] No zone data found, skipping load.");

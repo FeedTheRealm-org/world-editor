@@ -1,16 +1,27 @@
 using System;
 using System.Collections.Generic;
+using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.Repository;
+using FeedTheRealm.Core.WorldObjects;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 {
     [RequireComponent(typeof(UIDocument))]
     public class ChangeMaterialMenu : MenuController
     {
+        [Inject]
+        [SerializeField]
+        private WorldSelector worldSelector;
+
+        [Inject]
+        [SerializeField]
+        private DataPersistenceManager dataPersistenceManager;
+
         [SerializeField]
         private MaterialsRepository materialsRepository;
 
@@ -143,23 +154,24 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             card.Add(info);
 
             // ✅ Apply immediately on click
-            card.RegisterCallback<ClickEvent>(_ => SelectMaterial(mat, card));
+            card.RegisterCallback<ClickEvent>(_ => SelectMaterial(mat.name, card));
 
             return card;
         }
 
         // ── Selection ─────────────────────────────────────────────────────────
 
-        private void SelectMaterial(Material mat, VisualElement card)
+        private void SelectMaterial(string mat, VisualElement card)
         {
             currentSelectedCard?.RemoveFromClassList(SelectedCardClass);
             currentSelectedCard = card;
             card.AddToClassList(SelectedCardClass);
+            Debug.Log($"Selected material: {mat}");
 
             ApplyMaterial(mat);
         }
 
-        private void ApplyMaterial(Material mat)
+        private void ApplyMaterial(string mat)
         {
             if (worldController == null || mat == null)
                 return;

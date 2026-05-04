@@ -56,11 +56,9 @@ namespace FeedTheRealm.Core.DataPersistence
         public void SaveZone(string worldName, int zoneId)
         {
             var zoneData = new ZoneData(worldName, zoneId);
-            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
-            logger.Log($"[DataPersistenceManager] Saving: {registeredPlaceables}");
+            // registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
             foreach (var obj in registeredPlaceables)
                 obj.SaveData(ref zoneData);
-
             zonesRepository.SaveZoneData(worldName, zoneData);
         }
 
@@ -78,10 +76,28 @@ namespace FeedTheRealm.Core.DataPersistence
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
+        // public void UpdateMaterialAndGranularity(string worldName, int zoneId, string materialId, float granularity)
+        // {
+        //     var zoneData = zonesRepository.GetZoneData(worldName, zoneId);
+        //     if (zoneData == null)
+        //     {
+        //         logger.Log(
+        //             $"[DataPersistenceManager] No zone data found for world: {worldName}, zone: {zoneId}",
+        //             Logging.LogType.Warning
+        //         );
+        //         return;
+        //     }
+
+        //     zoneData.floorMaterialId = materialId;
+        //     zoneData.textureGranularity = granularity;
+        //     zonesRepository.SaveZoneData(worldName, zoneData);
+        // }
+
         // ---- Registration Methods ----
 
         private void RegisterEntity(IPersistent<ZoneData> entity)
         {
+            logger.Log($"[DataPersistenceManager] Registering entity: {entity}");
             if (entity == null)
             {
                 logger.Log(

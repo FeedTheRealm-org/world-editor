@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7702241298373389596}
   - component: {fileID: 5335569297615708082}
   - component: {fileID: -6710251040486823034}
+  - component: {fileID: -3091119770074900872}
   m_Layer: 0
   m_Name: ChangeFloorMaterialMenu
   m_TagString: Untagged
@@ -69,5 +70,21 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu.ChangeMaterialMenu
   AllowInputWhileOpen: 0
+  worldSelector: {fileID: 0}
   materialsRepository: {fileID: 11400000, guid: 8eddecd1e78388e4ea262ae3516cd3d1, type: 2}
   worldPrefabProvider: {fileID: 11400000, guid: 36f48e688128bc65b8af8d71ef86f3f1, type: 2}
+  granularityMin: 1
+  granularityMax: 200
+  granularityDefault: 100
+--- !u!114 &-3091119770074900872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3798062503383108717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11cde6f37ee6eaf4bbbe6a0c8f8f68cc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.WorldObjects.FloorPersistent
