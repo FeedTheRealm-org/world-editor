@@ -23,6 +23,9 @@ namespace API
 
         [SerializeField]
         private Config config;
+
+        [SerializeField]
+        public GameObject errorPrefab;
         private const string FILE_PROTOCOL = "file://";
 
         public async UniTask Load(
@@ -63,7 +66,8 @@ namespace API
 
         private void CreateFallback(GameObject parent)
         {
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            ToastNotification.Show($"Model could not be loaded", "error", Color.red);
+            var cube = Instantiate(errorPrefab, parent.transform.position, Quaternion.identity);
             cube.transform.SetParent(parent.transform);
         }
     }

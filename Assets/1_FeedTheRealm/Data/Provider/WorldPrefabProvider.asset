@@ -24,3 +24,4 @@ MonoBehaviour:
   playerSpawnpointPrefab: {fileID: 5537282333109391366, guid: 931782ff677b51c03bfb2daf528b7289, type: 3}
   portalPrefab: {fileID: 5537282333109391366, guid: 9c0bd65e3420572b09e3952caea3b733, type: 3}
   chestPrefab: {fileID: 8418757689684725357, guid: a90e7dfe84af22cf39bd039d90b440e5, type: 3}
+  errorPrefab: {fileID: 5850918430482696323, guid: d77be8fb3a68ac54d89ef22c3a7a9c41, type: 3}
