@@ -84,6 +84,14 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private const int MinSlots = 1;
         private const int MaxSlots = 50;
 
+        // ── Badge state ───────────────────────────────────────────────────────
+        private enum ZoneBadgeState
+        {
+            Online,
+            Degraded,
+            Offline,
+        }
+
         // ─────────────────────────────────────────────────────────────────────
 
         private async void OnEnable()
@@ -586,7 +594,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             foreach (var world in worlds)
             {
-                var zones = world.zones ?? new System.Collections.Generic.List<WorldZoneMetadata>();
+                var zones = world.zones ?? new List<WorldZoneMetadata>();
                 int zoneCount = zones.Count;
                 int activeZoneCount = 0;
                 foreach (var z in zones)
@@ -605,7 +613,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 var zoneNameLabel = worldEntry.Q<Label>("ZoneName");
                 zoneNameLabel.text = $"{activeZoneCount}/{zoneCount} active zone(s)";
                 worldEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
-                worldEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                // ── World status badge (Online / Degraded / Offline) ───────────
+                SetStatusBadge(worldEntry.Q<Label>("StatusBadge"), GetWorldBadgeState(zones));
 
                 // Set up dropdown
                 var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
@@ -645,11 +655,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 );
                 deleteWorldButton.clicked += () => OnDeleteWorldClicked(capturedWorld, worldEntry);
 
-                // Agregar worldEntry al wrapper (NO directamente a worldsList)
                 worldWrapper.Add(worldEntry);
 
                 // Initialize a list to hold all the zone toggle buttons so "Activate All" can update them
-                var zoneToggleButtons = new System.Collections.Generic.List<Button>();
+                var zoneToggleButtons = new List<Button>();
 
                 activateAllBtn.clicked += async () =>
                 {
@@ -657,11 +666,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     bool activating = activateAllBtn.text == "Activate All";
 
                     foreach (var zoneBtn in zoneToggleButtons)
-                    {
                         zoneBtn.SetEnabled(false);
-                    }
 
-                    // A simple loop to activate/deactivate all. In production, an API to hit /activate_all could be better.
                     bool success = true;
                     foreach (var zone in zones)
                     {
@@ -685,7 +691,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                     if (success)
                     {
-                        // Toggle: if we just activated, next action is deactivate (and vice versa)
                         bool nowAnyActive = activating;
                         activateAllBtn.text = nowAnyActive ? "Deactivate All" : "Activate All";
                         activateAllBtn.style.backgroundColor = new StyleColor(
@@ -724,15 +729,17 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     foreach (var zone in zones)
                     {
                         VisualElement zoneEntry = worldItemTemplate.Instantiate();
-                        zoneEntry.style.paddingLeft = 24; // Indent to show it's a child
+                        zoneEntry.style.paddingLeft = 24;
 
                         zoneEntry.Q<Label>("Header").text = $"Zone {zone.zone_id}";
                         zoneEntry.Q<Label>("ZoneName").text = $"World: {world.name}";
                         zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
 
-                        var statusBadge = zoneEntry.Q<Label>("StatusBadge");
-                        statusBadge.style.display = DisplayStyle.Flex;
-                        SetZoneOnlineBadge(statusBadge, zone.is_online);
+                        // ── Zone status badge (Online / Offline) ──────────────
+                        SetStatusBadge(
+                            zoneEntry.Q<Label>("StatusBadge"),
+                            zone.is_online ? ZoneBadgeState.Online : ZoneBadgeState.Offline
+                        );
 
                         var capturedZone = zone;
 
@@ -782,7 +789,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                         };
 
                         var unsubscribeBtn = zoneEntry.Q<Button>("Unsubscribe");
-                        unsubscribeBtn.style.display = DisplayStyle.None; // Hide unsubscribe for now on zones
+                        unsubscribeBtn.style.display = DisplayStyle.None;
 
                         zoneContainer.Add(zoneEntry);
                     }
@@ -813,7 +820,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
 
-                // Clear the local worldId so future publishes create a new world instead of updating a deleted one.
                 if (dataPersistenceManager != null)
                 {
                     var localWorldData = dataPersistenceManager.GetWorldData(world.name);
@@ -824,7 +830,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     }
                 }
 
-                // Refresh subscription info because deleting a world frees up zones
                 _ = LoadSubscriptionAsync();
             }
             catch (Exception ex)
@@ -908,9 +913,28 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             Destroy(gameObject);
         }
 
-        private static void SetZoneOnlineBadge(Label badge, bool isOnline)
+        // ── Badge helpers ─────────────────────────────────────────────────────
+
+        private static ZoneBadgeState GetWorldBadgeState(List<WorldZoneMetadata> zones)
         {
-            // ── Stop any existing blink ───────────────────────────────────────
+            if (zones == null || zones.Count == 0)
+                return ZoneBadgeState.Offline;
+
+            int onlineCount = 0;
+            foreach (var z in zones)
+                if (z.is_online)
+                    onlineCount++;
+
+            if (onlineCount == 0)
+                return ZoneBadgeState.Offline;
+            if (onlineCount == zones.Count)
+                return ZoneBadgeState.Online;
+            return ZoneBadgeState.Degraded;
+        }
+
+        private static void SetStatusBadge(Label badge, ZoneBadgeState state)
+        {
+            // Stop any existing blink
             if (badge.userData is IVisualElementScheduledItem existing)
             {
                 existing.Pause();
@@ -918,16 +942,40 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
 
             var green = new Color(0.20f, 0.85f, 0.40f, 1f);
+            var yellow = new Color(1.00f, 0.80f, 0.10f, 1f);
             var red = new Color(0.90f, 0.25f, 0.25f, 1f);
             var greenBg = new Color(0.10f, 0.35f, 0.15f, 0.55f);
+            var yellowBg = new Color(0.35f, 0.28f, 0.02f, 0.55f);
             var redBg = new Color(0.40f, 0.08f, 0.08f, 0.55f);
-            var dotColor = isOnline ? green : red;
 
-            // ── Style the container badge ─────────────────────────────────────
-            badge.text = string.Empty; // text lives in children now
+            Color dotColor,
+                bgColor;
+            string labelText;
+
+            switch (state)
+            {
+                case ZoneBadgeState.Online:
+                    dotColor = green;
+                    bgColor = greenBg;
+                    labelText = "Online";
+                    break;
+                case ZoneBadgeState.Degraded:
+                    dotColor = yellow;
+                    bgColor = yellowBg;
+                    labelText = "Degraded";
+                    break;
+                default:
+                    dotColor = red;
+                    bgColor = redBg;
+                    labelText = "Offline";
+                    break;
+            }
+
+            // Container
+            badge.text = string.Empty;
             badge.style.flexDirection = FlexDirection.Row;
             badge.style.alignItems = Align.Center;
-            badge.style.backgroundColor = new StyleColor(isOnline ? greenBg : redBg);
+            badge.style.backgroundColor = new StyleColor(bgColor);
             badge.style.borderTopLeftRadius = new StyleLength(10);
             badge.style.borderTopRightRadius = new StyleLength(10);
             badge.style.borderBottomLeftRadius = new StyleLength(10);
@@ -942,7 +990,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             badge.style.display = DisplayStyle.Flex;
             badge.style.opacity = 1f;
 
-            // ── Reuse or create child labels ──────────────────────────────────
+            // Reuse or create children
             Label dot = badge.Q<Label>("BadgeDot");
             Label text = badge.Q<Label>("BadgeText");
 
@@ -959,19 +1007,27 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 badge.Add(text);
             }
 
-            // ── Dot ───────────────────────────────────────────────────────────
+            // Dot
             dot.text = "●";
             dot.style.fontSize = 10;
             dot.style.color = new StyleColor(dotColor);
             dot.style.unityFontStyleAndWeight = FontStyle.Bold;
+            dot.style.paddingTop = 0;
+            dot.style.paddingBottom = 0;
+            dot.style.marginTop = 0;
+            dot.style.marginBottom = 0;
 
-            // ── Text ──────────────────────────────────────────────────────────
-            text.text = isOnline ? "Online" : "Offline";
+            // Text
+            text.text = labelText;
             text.style.fontSize = 10;
             text.style.color = new StyleColor(dotColor);
             text.style.unityFontStyleAndWeight = FontStyle.Bold;
+            text.style.paddingTop = 0;
+            text.style.paddingBottom = 0;
+            text.style.marginTop = 0;
+            text.style.marginBottom = 0;
 
-            // ── Blink only the dot, always ────────────────────────────────────
+            // Blink the dot, always
             bool visible = true;
             var handle = dot
                 .schedule.Execute(() =>
