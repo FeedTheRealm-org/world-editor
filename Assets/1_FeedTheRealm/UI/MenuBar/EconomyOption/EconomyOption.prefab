@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6487499738319282857}
   - component: {fileID: -4926387864115476846}
+  - component: {fileID: 4484139269354780468}
+  - component: {fileID: 7249795516851177008}
   m_Layer: 0
-  m_Name: SubscriptionOption
+  m_Name: EconomyOption
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,6 +46,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
-  label: Manage subscriptions
+  label: Economy
+  menuToOpen: {fileID: 0}
+  menuOptions:
+  - {fileID: 4484139269354780468}
+  - {fileID: 7249795516851177008}
+--- !u!114 &4484139269354780468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944770389112010324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ab60cad0016aa04ba9c60d30ad4ac32, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.SubscriptionMenuOption
+  label: Subscriptions
   menuToOpen: {fileID: 8759254890284882899, guid: 1bc7e96ac7818884fa353d91470a7ca9, type: 3}
+  menuOptions: []
+--- !u!114 &7249795516851177008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944770389112010324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 917092766153c134abb86778be6e331f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.TransactionsMenuOption
+  label: Transactions
+  menuToOpen: {fileID: 6743196948942437142, guid: 2a3eda5b959e0f04c830657a0f176bdf, type: 3}
   menuOptions: []
