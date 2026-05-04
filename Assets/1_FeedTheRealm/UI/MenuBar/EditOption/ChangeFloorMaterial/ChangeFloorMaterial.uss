@@ -62,37 +62,43 @@
   padding: 0 8px;
 }
 
+#unity-text-input {
+  background-color: rgba(30, 30, 30, 0.62);
+  border-color: rgba(255, 255, 255, 0);
+}
+
 .search-field:focus {
   border-color: rgb(55, 138, 221);
 }
 
-/* ── Grid ───────────────────────────────────── */
+/* ── List ───────────────────────────────────── */
 
 .materials-grid {
-  height: 320px;
+  height: 280px;
   flex-shrink: 0;
 }
 
 .materials-grid > #unity-content-container {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  flex-direction: column;
   padding: 4px;
 }
 
-/* ── Material card ──────────────────────────── */
+/* ── Material row ───────────────────────────── */
 
 .material-card {
-  width: 100px;
-  flex-grow: 0;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 56px;
   flex-shrink: 0;
-  margin: 5px;
+  margin: 3px 0;
   border-radius: 8px;
   border-width: 1px;
   border-color: rgb(60, 60, 60);
   background-color: rgb(50, 50, 50);
   overflow: hidden;
   cursor: link;
+  padding-right: 10px;
 }
 
 .material-card:hover {
@@ -104,9 +110,18 @@
   border-color: rgb(55, 138, 221);
 }
 
+/* Texture preview on the left */
 .material-card__swatch {
-  height: 68px;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
   position: relative;
+}
+
+.material-card__preview {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
 .material-card__tex-hint {
@@ -120,11 +135,18 @@
   padding: 1px 4px;
 }
 
+/* Text block */
+.material-card__info {
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 0 10px;
+}
+
 .material-card__name {
-  font-size: 11px;
+  font-size: 12px;
   -unity-font-style: bold;
   color: rgb(220, 220, 220);
-  padding: 5px 6px 2px 6px;
   white-space: nowrap;
   overflow: hidden;
   -unity-text-overflow-position: end;
@@ -133,60 +155,34 @@
 .material-card__badge {
   font-size: 10px;
   color: rgb(140, 140, 140);
-  padding: 0 6px 5px 6px;
+  margin-top: 2px;
 }
 
-/* ── Footer ─────────────────────────────────── */
+/* ── Granularity slider ─────────────────────── */
 
-.menu-footer {
+.granularity-row {
   flex-direction: row;
   align-items: center;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top-width: 1px;
-  border-color: rgb(60, 60, 60);
+  margin-top: 10px;
+  margin-bottom: 2px;
 }
 
-.footer-info {
-  flex-direction: row;
-  align-items: center;
-  flex-grow: 1;
-}
-
-.selected-swatch {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  border-width: 1px;
-  border-color: rgb(80, 80, 80);
-  background-color: rgb(80, 80, 80);
-  flex-shrink: 0;
-  margin-right: 8px;
-}
-
-.selected-label {
+.granularity-label {
   font-size: 12px;
   color: rgb(160, 160, 160);
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.granularity-slider {
   flex-grow: 1;
 }
 
-.apply-button {
-  height: 30px;
-  padding: 0 16px;
-  border-radius: 6px;
-  border-width: 1px;
-  border-color: rgb(55, 138, 221);
-  background-color: rgba(0, 0, 0, 0);
-  color: rgb(55, 138, 221);
-  font-size: 13px;
-}
-
-.apply-button:hover {
-  background-color: rgba(55, 138, 221, 0.12);
-}
-
-.apply-button:disabled {
-  border-color: rgb(70, 70, 70);
-  color: rgb(100, 100, 100);
-  opacity: 0.5;
+.granularity-value {
+  font-size: 12px;
+  color: rgb(200, 200, 200);
+  width: 32px;
+  -unity-text-align: middle-right;
+  flex-shrink: 0;
+  margin-left: 6px;
 }

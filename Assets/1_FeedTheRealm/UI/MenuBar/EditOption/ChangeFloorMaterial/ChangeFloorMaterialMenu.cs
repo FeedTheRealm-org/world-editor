@@ -5,7 +5,6 @@ using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VContainer;
 
 namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 {
@@ -18,33 +17,49 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         [SerializeField]
         private WorldPrefabProvider worldPrefabProvider;
 
+        [Header("Granularity")]
+        [SerializeField]
+        private float granularityMin = 1f;
+
+        [SerializeField]
+        private float granularityMax = 200f;
+
+        [SerializeField]
+        private float granularityDefault = 100f;
+
         private ScrollView materialsGrid;
         private TextField searchField;
-        private Button applyButton;
         private Button closeButton;
-        private Label selectedMaterialLabel;
-        private VisualElement footerSwatch;
+        private Slider granularitySlider;
+        private Label granularityValue;
 
         private List<Material> allMaterials = new();
-        private Material pendingMaterial;
         private VisualElement currentSelectedCard;
+        private WorldControllerV2 worldController;
 
         private const string SelectedCardClass = "material-card--selected";
 
         void OnEnable()
         {
+            worldController = FindFirstObjectByType<WorldControllerV2>();
+
+            if (worldController == null)
+                Debug.LogError("[ChangeMaterialMenu] WorldControllerV2 not found in scene.");
+
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             materialsGrid = root.Q<ScrollView>("MaterialsGrid");
             searchField = root.Q<TextField>("SearchField");
-            applyButton = root.Q<Button>("ApplyMaterial");
             closeButton = root.Q<Button>("Close");
-            selectedMaterialLabel = root.Q<Label>("SelectedMaterialName");
-            footerSwatch = root.Q<VisualElement>("SelectedSwatch");
+            granularitySlider = root.Q<Slider>("GranularitySlider");
+            granularityValue = root.Q<Label>("GranularityValue");
 
-            applyButton.SetEnabled(false);
+            granularitySlider.lowValue = granularityMin;
+            granularitySlider.highValue = granularityMax;
+            granularitySlider.value = granularityDefault;
+            granularityValue.text = Mathf.RoundToInt(granularityDefault).ToString();
 
-            applyButton.clicked += OnApplyClicked;
+            granularitySlider.RegisterValueChangedCallback(OnGranularityChanged);
             closeButton.clicked += CloseMenu;
             searchField.RegisterValueChangedCallback(OnSearchChanged);
 
@@ -53,9 +68,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
         void OnDisable()
         {
-            applyButton.clicked -= OnApplyClicked;
             closeButton.clicked -= CloseMenu;
             searchField.UnregisterValueChangedCallback(OnSearchChanged);
+            granularitySlider.UnregisterValueChangedCallback(OnGranularityChanged);
         }
 
         // ── Data ──────────────────────────────────────────────────────────────
@@ -75,12 +90,17 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             RenderGrid(materialsRepository.Search(evt.newValue));
         }
 
+        private void OnGranularityChanged(ChangeEvent<float> evt)
+        {
+            granularityValue.text = Mathf.RoundToInt(evt.newValue).ToString();
+            worldController?.ApplyTextureGranularity(evt.newValue);
+        }
+
         // ── Grid ──────────────────────────────────────────────────────────────
 
         private void RenderGrid(List<Material> materials)
         {
             materialsGrid.Clear();
-
             foreach (var mat in materials)
                 materialsGrid.Add(BuildMaterialCard(mat));
         }
@@ -90,34 +110,39 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             var card = new VisualElement();
             card.AddToClassList("material-card");
 
-            // ── Swatch ──
+            // ── Swatch / texture preview ──
             var swatch = new VisualElement();
             swatch.AddToClassList("material-card__swatch");
 
-            Color baseColor = GetMaterialBaseColor(mat);
-            swatch.style.backgroundColor = new StyleColor(baseColor);
-
-            // If a texture exists, tint slightly and show a hint label
-            if (mat.HasProperty("_BaseMap") && mat.GetTexture("_BaseMap") != null)
+            if (mat.HasProperty("_BaseMap") && mat.GetTexture("_BaseMap") is Texture2D tex)
             {
-                swatch.style.backgroundColor = new StyleColor(baseColor * 0.85f);
-
-                var texHint = new Label("tex");
-                texHint.AddToClassList("material-card__tex-hint");
-                swatch.Add(texHint);
+                swatch.style.backgroundImage = new StyleBackground(tex);
+                swatch.style.backgroundSize = new StyleBackgroundSize(
+                    new BackgroundSize(BackgroundSizeType.Cover)
+                );
+            }
+            else
+            {
+                swatch.style.backgroundColor = new StyleColor(GetMaterialBaseColor(mat));
             }
 
-            // ── Labels ──
+            // ── Info block ──
+            var info = new VisualElement();
+            info.AddToClassList("material-card__info");
+
             var nameLabel = new Label(mat.name);
             nameLabel.AddToClassList("material-card__name");
 
             var badge = new Label(GetShaderShortName(mat.shader.name));
             badge.AddToClassList("material-card__badge");
 
-            card.Add(swatch);
-            card.Add(nameLabel);
-            card.Add(badge);
+            info.Add(nameLabel);
+            info.Add(badge);
 
+            card.Add(swatch);
+            card.Add(info);
+
+            // ✅ Apply immediately on click
             card.RegisterCallback<ClickEvent>(_ => SelectMaterial(mat, card));
 
             return card;
@@ -131,44 +156,21 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             currentSelectedCard = card;
             card.AddToClassList(SelectedCardClass);
 
-            pendingMaterial = mat;
-            selectedMaterialLabel.text = mat.name;
-            footerSwatch.style.backgroundColor = new StyleColor(GetMaterialBaseColor(mat));
-
-            applyButton.SetEnabled(true);
+            ApplyMaterial(mat);
         }
 
-        private void OnApplyClicked()
+        private void ApplyMaterial(Material mat)
         {
-            if (pendingMaterial == null)
+            if (worldController == null || mat == null)
                 return;
 
             try
             {
-                var worldController = FindFirstObjectByType<WorldControllerV2>();
-
-                if (worldController == null)
-                {
-                    Debug.LogError("[ChangeMaterialMenu] WorldControllerV2 not found in scene.");
-                    return;
-                }
-
-                worldController.OnFloorMaterialChanged(pendingMaterial);
-                ToastNotification.Show(
-                    $"Material '{pendingMaterial.name}' applied!",
-                    "success",
-                    Color.green
-                );
-                CloseMenu();
+                worldController.OnFloorMaterialChanged(mat, granularitySlider.value);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ChangeMaterialMenu] Failed to apply material: {ex.Message}");
-                ToastNotification.Show(
-                    $"Failed to apply material: {ex.Message}",
-                    "error",
-                    Color.red
-                );
             }
         }
 

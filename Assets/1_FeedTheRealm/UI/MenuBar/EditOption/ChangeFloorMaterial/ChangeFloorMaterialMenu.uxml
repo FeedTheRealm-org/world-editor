@@ -18,14 +18,10 @@
                 class="materials-grid"
                 vertical-scroller-visibility="Auto"
                 horizontal-scroller-visibility="Hidden" />
-            <ui:VisualElement class="menu-footer">
-                <ui:VisualElement class="footer-info">
-                    <ui:VisualElement name="SelectedSwatch" class="selected-swatch" />
-                    <ui:Label name="SelectedMaterialName"
-                              text="No material selected"
-                              class="selected-label" />
-                </ui:VisualElement>
-                <ui:Button name="ApplyMaterial" text="Apply" class="apply-button" />
+            <ui:VisualElement class="granularity-row">
+                <ui:Label text="Texture Granularity" class="granularity-label" />
+                <ui:Slider name="GranularitySlider" class="granularity-slider" />
+                <ui:Label name="GranularityValue" text="100" class="granularity-value" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
