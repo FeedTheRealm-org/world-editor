@@ -159,7 +159,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
                 if (string.IsNullOrEmpty(withdrawFeedbackLabel.text))
                 {
                     withdrawFeedbackLabel.text =
-                        "Contact the Feed The Realm team to withdraw your rewards.";
+                        "Contact the Feed The Realm team to withdraw your rewards once you reach 100 USD";
                 }
                 else
                 {

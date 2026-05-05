@@ -31,7 +31,8 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
         [SerializeField]
         private VisualTreeAsset productItemTemplate;
 
-        private ShopData editingData;
+        private EditBuffer<ShopData> editBuffer;
+        private ShopData editingData => editBuffer?.Working;
 
         private TextField shopNameField;
         private VisualElement _tabGold;
@@ -78,8 +79,14 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             cosmeticItemContainer = root.Q<ListView>("CosmeticItemContainer");
 
             _initialCosmeticIds.Clear();
-            editingData = new ShopData { id = Guid.NewGuid().ToString(), shopName = "" };
-            shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
+            editBuffer = new EditBuffer<ShopData>(
+                new ShopData { id = Guid.NewGuid().ToString(), shopName = "" }
+            );
+            shopNameField.RegisterValueChangedCallback(evt =>
+            {
+                if (editingData != null)
+                    editingData.shopName = evt.newValue;
+            });
 
             SetupListViews();
             RefreshProductList();
@@ -88,13 +95,12 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         public void SetupEditor(Shop shop)
         {
-            editingData = shop.data;
+            editBuffer = new EditBuffer<ShopData>(shop.data);
             _initialCosmeticIds =
                 editingData?.products.Where(p => p.IsCosmetic).Select(p => p.productId).ToHashSet()
                 ?? new HashSet<string>();
 
             shopNameField.value = editingData.shopName;
-            shopNameField.RegisterValueChangedCallback(evt => editingData.shopName = evt.newValue);
             RefreshProductList();
         }
 
@@ -149,8 +155,13 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
             editingData.shopName = shopName;
 
-            if (!creatablesManager.GetAll<Shop>().Any(s => s.Id == editingData.id))
-                creatablesManager.Add(new Shop(editingData));
+            if (editBuffer != null)
+            {
+                editBuffer.Commit();
+            }
+
+            if (!creatablesManager.GetAll<Shop>().Any(s => s.Id == editBuffer.Original.id))
+                creatablesManager.Add(new Shop(editBuffer.Original));
 
             var currentIds = new HashSet<string>();
             foreach (var product in editingData.products.Where(p => p.IsCosmetic))
@@ -253,6 +264,11 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
             foreach (var kvp in cosmetic.data.categories)
             {
+                if (kvp.Key == "EarringL")
+                {
+                    continue;
+                }
+
                 string productIdToUse = !string.IsNullOrEmpty(kvp.Value.url_id)
                     ? kvp.Value.url_id
                     : itemId;
@@ -264,12 +280,14 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 )
                     continue;
 
+                string displaySuffix = kvp.Key == "EarringR" ? "Earrings" : kvp.Key;
+
                 editingData.products.Add(
                     new ProductData(
                         productId: productIdToUse,
                         price: 0,
                         currency: CurrencyType.Gems,
-                        displayName: $"{cosmetic.data.name} - {kvp.Key}",
+                        displayName: $"{cosmetic.data.name} - {displaySuffix}",
                         categoryName: kvp.Key
                     )
                 );

@@ -133,6 +133,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
             };
 
             closeButton.clicked += CloseMenu;
+
+            foreach (var renderer in cubeCollider.GetComponentsInChildren<Renderer>())
+                renderer.enabled = true;
+            foreach (var renderer in slopeCollider.GetComponentsInChildren<Renderer>())
+                renderer.enabled = true;
         }
 
         public void Edit(GameObject placeable)
