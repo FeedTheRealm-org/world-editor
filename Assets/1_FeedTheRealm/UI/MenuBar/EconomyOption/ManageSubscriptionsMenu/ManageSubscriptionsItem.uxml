@@ -15,9 +15,8 @@
         <ui:Label name="SlotBadge" text="Slot #1"
             style="min-width: 64px; -unity-text-align: middle-center; font-size: 11px; color: rgba(255,255,255,0.55); padding: 2px 6px; border-width: 1px; border-color: rgba(255,255,255,0.12); border-radius: 4px; margin-right: 8px;"/>
 
-        <!-- Free / Paid badge -->
-        <ui:Label name="StatusBadge" text="Paid"
-            style="min-width: 64px; -unity-text-align: middle-center; font-size: 11px; color: rgba(100,220,130,0.9); padding: 2px 6px; border-width: 1px; border-color: rgba(100,220,130,0.25); border-radius: 4px; margin-right: 12px;"/>
+        <!-- Zone status badge container -->
+        <ui:VisualElement name="ZoneStatusBadgeContainer" style="margin-right: 12px; min-width: 64px; justify-content: center; align-items: center;"/>
 
         <!-- Activate / Deactivate -->
         <ui:Button text="Activate" name="ToggleActive" class="button" style="font-size: 11px; padding: 3px 12px; min-width: 72px; margin-right: 8px;"/>

@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTRShared.UI.AuthMenu;
+using FTRShared.UI.ZoneStatusBadge;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -36,6 +38,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         [SerializeField]
         private VisualTreeAsset worldItemTemplate;
+
+        private ZoneStatusBadgeController zoneStatusBadge;
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
@@ -83,11 +87,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private const int MinSlots = 1;
         private const int MaxSlots = 50;
 
-        // ─────────────────────────────────────────────────────────────────────
+        // ── Lifecycle ─────────────────────────────────────────────────────────
 
         private async void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+            zoneStatusBadge = GetComponent<ZoneStatusBadgeController>();
             BindElements(root);
             RegisterCallbacks();
             await LoadSubscriptionAsync();
@@ -238,13 +243,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 DateTime.TryParse(currentSubscription.next_billing_date, out DateTime parsedDate)
                 && parsedDate.Year > 1
             )
-            {
                 billingDateValue.text = parsedDate.ToLocalTime().ToString("MMM dd, yyyy");
-            }
             else
-            {
                 billingDateValue.text = "—";
-            }
 
             amountDueValue.text = currentSubscription.amount_due.ToString("C");
             activeZonesValue.text = currentSubscription.used_slots.ToString();
@@ -323,7 +324,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             try
             {
                 int targetSlots = pendingSlotCount;
-
                 var (_, error, statusCode) = await subscriptionService.UpdateSlots(targetSlots);
 
                 if (!string.IsNullOrEmpty(error))
@@ -336,11 +336,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     throw new Exception($"{error}");
                 }
 
-                // Get the updated state from the server (this updates amount_due, etc.)
                 await LoadSubscriptionAsync();
 
-                // Since LoadSubscriptionAsync might receive old slot counts due to backend/webhook delays,
-                // and it overwrites pendingSlotCount, we must manually force the local state to the known correct value.
+                // Force local state to the known correct value since backend/webhook delays
+                // may cause LoadSubscriptionAsync to return stale slot counts.
                 currentSubscription.slots = targetSlots;
                 pendingSlotCount = targetSlots;
 
@@ -349,14 +348,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 slotFeedbackLabel.text = "Updated successfully.";
                 ToastNotification.Show("Slots updated!", "success", Color.green);
-                logger.Log($"[SubscriptionMenu] Slots updated.", this, Logging.LogType.Info);
+                logger.Log("[SubscriptionMenu] Slots updated.", this, Logging.LogType.Info);
             }
             catch (Exception ex)
             {
-                // Reset pending slot count to the actual current state on failure
                 pendingSlotCount = currentSubscription.slots;
                 RefreshSlotControls();
-
                 slotFeedbackLabel.text = "Update failed. Try again.";
                 ToastNotification.Show($"Failed to update slots: {ex.Message}", "error", Color.red);
             }
@@ -394,8 +391,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     this,
                     Logging.LogType.Info
                 );
-
-                // Reload the subscription data to show the updated (e.g. absent or cancelled) state
                 await LoadSubscriptionAsync();
             }
             catch (Exception ex)
@@ -419,9 +414,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             callbackServer = gameObject.GetComponent<SubscriptionsCallbackServer>();
             if (callbackServer == null)
-            {
                 callbackServer = gameObject.AddComponent<SubscriptionsCallbackServer>();
-            }
         }
 
         private async void OnCreateSubscriptionClicked()
@@ -585,7 +578,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             foreach (var world in worlds)
             {
-                var zones = world.zones ?? new System.Collections.Generic.List<WorldZoneMetadata>();
+                var zones = world.zones ?? new List<WorldZoneMetadata>();
                 int zoneCount = zones.Count;
                 int activeZoneCount = 0;
                 foreach (var z in zones)
@@ -594,19 +587,24 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 VisualElement worldWrapper = new VisualElement();
 
-                // --- World Header Entry ---
+                // --- World header entry ---
                 VisualElement worldEntry = worldItemTemplate.Instantiate();
                 worldEntry.style.backgroundColor = new StyleColor(
                     new Color(0.1f, 0.1f, 0.1f, 0.5f)
                 );
 
                 worldEntry.Q<Label>("Header").text = world.name;
-                var zoneNameLabel = worldEntry.Q<Label>("ZoneName");
-                zoneNameLabel.text = $"{activeZoneCount}/{zoneCount} active zone(s)";
+                worldEntry.Q<Label>("ZoneName").text =
+                    $"{activeZoneCount}/{zoneCount} active zone(s)";
                 worldEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
-                worldEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
 
-                // Set up dropdown
+                // ── World status badge via shared utility ──────────────────────
+                var worldBadgeContainer = worldEntry.Q<VisualElement>("ZoneStatusBadgeContainer");
+                worldBadgeContainer.Clear();
+                var worldBadge = zoneStatusBadge.Create(zoneStatusBadge.Evaluate(zones));
+                worldBadgeContainer.Add(worldBadge);
+
+                // Dropdown
                 var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
                 bool isExpanded = false;
                 VisualElement zoneContainer = new VisualElement();
@@ -644,11 +642,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 );
                 deleteWorldButton.clicked += () => OnDeleteWorldClicked(capturedWorld, worldEntry);
 
-                // Agregar worldEntry al wrapper (NO directamente a worldsList)
                 worldWrapper.Add(worldEntry);
 
-                // Initialize a list to hold all the zone toggle buttons so "Activate All" can update them
-                var zoneToggleButtons = new System.Collections.Generic.List<Button>();
+                var zoneToggleButtons = new List<Button>();
 
                 activateAllBtn.clicked += async () =>
                 {
@@ -656,11 +652,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     bool activating = activateAllBtn.text == "Activate All";
 
                     foreach (var zoneBtn in zoneToggleButtons)
-                    {
                         zoneBtn.SetEnabled(false);
-                    }
 
-                    // A simple loop to activate/deactivate all. In production, an API to hit /activate_all could be better.
                     bool success = true;
                     foreach (var zone in zones)
                     {
@@ -684,7 +677,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                     if (success)
                     {
-                        // Toggle: if we just activated, next action is deactivate (and vice versa)
                         bool nowAnyActive = activating;
                         activateAllBtn.text = nowAnyActive ? "Deactivate All" : "Activate All";
                         activateAllBtn.style.backgroundColor = new StyleColor(
@@ -717,25 +709,35 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     activateAllBtn.SetEnabled(true);
                 };
 
-                // --- Zone Entries ---
+                // --- Zone entries ---
                 if (zoneCount > 0)
                 {
                     foreach (var zone in zones)
                     {
                         VisualElement zoneEntry = worldItemTemplate.Instantiate();
-                        zoneEntry.style.paddingLeft = 24; // Indent to show it's a child
+                        zoneEntry.style.paddingLeft = 24;
 
                         zoneEntry.Q<Label>("Header").text = $"Zone {zone.zone_id}";
                         zoneEntry.Q<Label>("ZoneName").text = $"World: {world.name}";
                         zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
-                        zoneEntry.Q<Label>("StatusBadge").style.display = DisplayStyle.None;
+
+                        // ── Zone status badge via shared utility ───────────────
+                        var zoneBadgeContainer = zoneEntry.Q<VisualElement>(
+                            "ZoneStatusBadgeContainer"
+                        );
+                        zoneBadgeContainer.Clear();
+                        var zoneBadge = zoneStatusBadge.Create(
+                            zone.is_online
+                                ? ZoneStatusBadgeController.State.Online
+                                : ZoneStatusBadgeController.State.Offline
+                        );
+                        zoneBadgeContainer.Add(zoneBadge);
 
                         var capturedZone = zone;
-
-                        // Toggle Active button
                         var toggleActiveBtn = zoneEntry.Q<Button>("ToggleActive");
                         toggleActiveBtn.text = zone.is_active ? "Deactivate" : "Activate";
                         zoneToggleButtons.Add(toggleActiveBtn);
+
                         toggleActiveBtn.clicked += async () =>
                         {
                             toggleActiveBtn.SetEnabled(false);
@@ -753,9 +755,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                                     session.APIToken
                                 );
 
-                            string opError = res.error;
-
-                            if (string.IsNullOrEmpty(opError))
+                            if (string.IsNullOrEmpty(res.error))
                             {
                                 capturedZone.is_active = isActivating;
                                 toggleActiveBtn.text = isActivating ? "Deactivate" : "Activate";
@@ -769,7 +769,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             else
                             {
                                 ToastNotification.Show(
-                                    $"Failed to {(isActivating ? "activate" : "deactivate")} zone {capturedZone.zone_id}: {opError}",
+                                    $"Failed to {(isActivating ? "activate" : "deactivate")} zone {capturedZone.zone_id}: {res.error}",
                                     "error",
                                     Color.red
                                 );
@@ -777,9 +777,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             toggleActiveBtn.SetEnabled(true);
                         };
 
-                        var unsubscribeBtn = zoneEntry.Q<Button>("Unsubscribe");
-                        unsubscribeBtn.style.display = DisplayStyle.None; // Hide unsubscribe for now on zones
-
+                        zoneEntry.Q<Button>("Unsubscribe").style.display = DisplayStyle.None;
                         zoneContainer.Add(zoneEntry);
                     }
                     worldWrapper.Add(zoneContainer);
@@ -804,12 +802,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
-                VisualElement wrapper = entry.parent;
-                wrapper.RemoveFromHierarchy();
-
+                entry.parent.RemoveFromHierarchy();
                 ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
 
-                // Clear the local worldId so future publishes create a new world instead of updating a deleted one.
                 if (dataPersistenceManager != null)
                 {
                     var localWorldData = dataPersistenceManager.GetWorldData(world.name);
@@ -820,7 +815,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     }
                 }
 
-                // Refresh subscription info because deleting a world frees up zones
                 _ = LoadSubscriptionAsync();
             }
             catch (Exception ex)
@@ -871,6 +865,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
         }
 
+        // ── Helpers ───────────────────────────────────────────────────────────
+
         private static bool IsAuthMenuOpen() =>
             GameObject.Find("LoginMenu") != null
             || GameObject.Find("SignUpMenu") != null
@@ -886,8 +882,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 !string.IsNullOrEmpty(error)
                 && error.IndexOf("no subscription", StringComparison.OrdinalIgnoreCase) >= 0
             );
-
-        // ── Helpers ───────────────────────────────────────────────────────────
 
         private void ShowPanel(VisualElement panel)
         {
