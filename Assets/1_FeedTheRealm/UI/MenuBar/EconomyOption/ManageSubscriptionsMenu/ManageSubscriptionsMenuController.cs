@@ -6,6 +6,7 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.UI.Common;
 using FTRShared.UI.AuthMenu;
+using FTRShared.UI.ZoneStatusBadge;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -37,6 +38,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         [SerializeField]
         private VisualTreeAsset worldItemTemplate;
+
+        [SerializeField]
+        private ZoneStatusBadgeController zoneStatusBadge;
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
@@ -84,15 +88,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private const int MinSlots = 1;
         private const int MaxSlots = 50;
 
-        // ── Badge state ───────────────────────────────────────────────────────
-        private enum ZoneBadgeState
-        {
-            Online,
-            Degraded,
-            Offline,
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
+        // ── Lifecycle ─────────────────────────────────────────────────────────
 
         private async void OnEnable()
         {
@@ -247,13 +243,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 DateTime.TryParse(currentSubscription.next_billing_date, out DateTime parsedDate)
                 && parsedDate.Year > 1
             )
-            {
                 billingDateValue.text = parsedDate.ToLocalTime().ToString("MMM dd, yyyy");
-            }
             else
-            {
                 billingDateValue.text = "—";
-            }
 
             amountDueValue.text = currentSubscription.amount_due.ToString("C");
             activeZonesValue.text = currentSubscription.used_slots.ToString();
@@ -332,7 +324,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             try
             {
                 int targetSlots = pendingSlotCount;
-
                 var (_, error, statusCode) = await subscriptionService.UpdateSlots(targetSlots);
 
                 if (!string.IsNullOrEmpty(error))
@@ -345,11 +336,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     throw new Exception($"{error}");
                 }
 
-                // Get the updated state from the server (this updates amount_due, etc.)
                 await LoadSubscriptionAsync();
 
-                // Since LoadSubscriptionAsync might receive old slot counts due to backend/webhook delays,
-                // and it overwrites pendingSlotCount, we must manually force the local state to the known correct value.
+                // Force local state to the known correct value since backend/webhook delays
+                // may cause LoadSubscriptionAsync to return stale slot counts.
                 currentSubscription.slots = targetSlots;
                 pendingSlotCount = targetSlots;
 
@@ -358,14 +348,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 slotFeedbackLabel.text = "Updated successfully.";
                 ToastNotification.Show("Slots updated!", "success", Color.green);
-                logger.Log($"[SubscriptionMenu] Slots updated.", this, Logging.LogType.Info);
+                logger.Log("[SubscriptionMenu] Slots updated.", this, Logging.LogType.Info);
             }
             catch (Exception ex)
             {
-                // Reset pending slot count to the actual current state on failure
                 pendingSlotCount = currentSubscription.slots;
                 RefreshSlotControls();
-
                 slotFeedbackLabel.text = "Update failed. Try again.";
                 ToastNotification.Show($"Failed to update slots: {ex.Message}", "error", Color.red);
             }
@@ -403,8 +391,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     this,
                     Logging.LogType.Info
                 );
-
-                // Reload the subscription data to show the updated (e.g. absent or cancelled) state
                 await LoadSubscriptionAsync();
             }
             catch (Exception ex)
@@ -428,9 +414,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             callbackServer = gameObject.GetComponent<SubscriptionsCallbackServer>();
             if (callbackServer == null)
-            {
                 callbackServer = gameObject.AddComponent<SubscriptionsCallbackServer>();
-            }
         }
 
         private async void OnCreateSubscriptionClicked()
@@ -603,21 +587,24 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 VisualElement worldWrapper = new VisualElement();
 
-                // --- World Header Entry ---
+                // --- World header entry ---
                 VisualElement worldEntry = worldItemTemplate.Instantiate();
                 worldEntry.style.backgroundColor = new StyleColor(
                     new Color(0.1f, 0.1f, 0.1f, 0.5f)
                 );
 
                 worldEntry.Q<Label>("Header").text = world.name;
-                var zoneNameLabel = worldEntry.Q<Label>("ZoneName");
-                zoneNameLabel.text = $"{activeZoneCount}/{zoneCount} active zone(s)";
+                worldEntry.Q<Label>("ZoneName").text =
+                    $"{activeZoneCount}/{zoneCount} active zone(s)";
                 worldEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
 
-                // ── World status badge (Online / Degraded / Offline) ───────────
-                SetStatusBadge(worldEntry.Q<Label>("StatusBadge"), GetWorldBadgeState(zones));
+                // ── World status badge via shared utility ──────────────────────
+                zoneStatusBadge.Apply(
+                    worldEntry.Q<Label>("StatusBadge"),
+                    zoneStatusBadge.Evaluate(zones)
+                );
 
-                // Set up dropdown
+                // Dropdown
                 var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
                 bool isExpanded = false;
                 VisualElement zoneContainer = new VisualElement();
@@ -657,7 +644,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 worldWrapper.Add(worldEntry);
 
-                // Initialize a list to hold all the zone toggle buttons so "Activate All" can update them
                 var zoneToggleButtons = new List<Button>();
 
                 activateAllBtn.clicked += async () =>
@@ -723,7 +709,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     activateAllBtn.SetEnabled(true);
                 };
 
-                // --- Zone Entries ---
+                // --- Zone entries ---
                 if (zoneCount > 0)
                 {
                     foreach (var zone in zones)
@@ -735,18 +721,14 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                         zoneEntry.Q<Label>("ZoneName").text = $"World: {world.name}";
                         zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
 
-                        // ── Zone status badge (Online / Offline) ──────────────
-                        SetStatusBadge(
-                            zoneEntry.Q<Label>("StatusBadge"),
-                            zone.is_online ? ZoneBadgeState.Online : ZoneBadgeState.Offline
-                        );
+                        // ── Zone status badge via shared utility ───────────────
+                        zoneStatusBadge.Apply(zoneEntry.Q<Label>("StatusBadge"), zone.is_online);
 
                         var capturedZone = zone;
-
-                        // Toggle Active button
                         var toggleActiveBtn = zoneEntry.Q<Button>("ToggleActive");
                         toggleActiveBtn.text = zone.is_active ? "Deactivate" : "Activate";
                         zoneToggleButtons.Add(toggleActiveBtn);
+
                         toggleActiveBtn.clicked += async () =>
                         {
                             toggleActiveBtn.SetEnabled(false);
@@ -764,9 +746,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                                     session.APIToken
                                 );
 
-                            string opError = res.error;
-
-                            if (string.IsNullOrEmpty(opError))
+                            if (string.IsNullOrEmpty(res.error))
                             {
                                 capturedZone.is_active = isActivating;
                                 toggleActiveBtn.text = isActivating ? "Deactivate" : "Activate";
@@ -780,7 +760,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             else
                             {
                                 ToastNotification.Show(
-                                    $"Failed to {(isActivating ? "activate" : "deactivate")} zone {capturedZone.zone_id}: {opError}",
+                                    $"Failed to {(isActivating ? "activate" : "deactivate")} zone {capturedZone.zone_id}: {res.error}",
                                     "error",
                                     Color.red
                                 );
@@ -788,9 +768,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             toggleActiveBtn.SetEnabled(true);
                         };
 
-                        var unsubscribeBtn = zoneEntry.Q<Button>("Unsubscribe");
-                        unsubscribeBtn.style.display = DisplayStyle.None;
-
+                        zoneEntry.Q<Button>("Unsubscribe").style.display = DisplayStyle.None;
                         zoneContainer.Add(zoneEntry);
                     }
                     worldWrapper.Add(zoneContainer);
@@ -815,9 +793,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");
 
-                VisualElement wrapper = entry.parent;
-                wrapper.RemoveFromHierarchy();
-
+                entry.parent.RemoveFromHierarchy();
                 ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
 
                 if (dataPersistenceManager != null)
@@ -880,6 +856,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
         }
 
+        // ── Helpers ───────────────────────────────────────────────────────────
+
         private static bool IsAuthMenuOpen() =>
             GameObject.Find("LoginMenu") != null
             || GameObject.Find("SignUpMenu") != null
@@ -896,8 +874,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 && error.IndexOf("no subscription", StringComparison.OrdinalIgnoreCase) >= 0
             );
 
-        // ── Helpers ───────────────────────────────────────────────────────────
-
         private void ShowPanel(VisualElement panel)
         {
             notLoggedInPanel.style.display = DisplayStyle.None;
@@ -911,133 +887,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         {
             resolver.Instantiate(menuPrefab);
             Destroy(gameObject);
-        }
-
-        // ── Badge helpers ─────────────────────────────────────────────────────
-
-        private static ZoneBadgeState GetWorldBadgeState(List<WorldZoneMetadata> zones)
-        {
-            if (zones == null || zones.Count == 0)
-                return ZoneBadgeState.Offline;
-
-            int onlineCount = 0;
-            foreach (var z in zones)
-                if (z.is_online)
-                    onlineCount++;
-
-            if (onlineCount == 0)
-                return ZoneBadgeState.Offline;
-            if (onlineCount == zones.Count)
-                return ZoneBadgeState.Online;
-            return ZoneBadgeState.Degraded;
-        }
-
-        private static void SetStatusBadge(Label badge, ZoneBadgeState state)
-        {
-            // Stop any existing blink
-            if (badge.userData is IVisualElementScheduledItem existing)
-            {
-                existing.Pause();
-                badge.userData = null;
-            }
-
-            var green = new Color(0.20f, 0.85f, 0.40f, 1f);
-            var yellow = new Color(1.00f, 0.80f, 0.10f, 1f);
-            var red = new Color(0.90f, 0.25f, 0.25f, 1f);
-            var greenBg = new Color(0.10f, 0.35f, 0.15f, 0.55f);
-            var yellowBg = new Color(0.35f, 0.28f, 0.02f, 0.55f);
-            var redBg = new Color(0.40f, 0.08f, 0.08f, 0.55f);
-
-            Color dotColor,
-                bgColor;
-            string labelText;
-
-            switch (state)
-            {
-                case ZoneBadgeState.Online:
-                    dotColor = green;
-                    bgColor = greenBg;
-                    labelText = "Online";
-                    break;
-                case ZoneBadgeState.Degraded:
-                    dotColor = yellow;
-                    bgColor = yellowBg;
-                    labelText = "Degraded";
-                    break;
-                default:
-                    dotColor = red;
-                    bgColor = redBg;
-                    labelText = "Offline";
-                    break;
-            }
-
-            // Container
-            badge.text = string.Empty;
-            badge.style.flexDirection = FlexDirection.Row;
-            badge.style.alignItems = Align.Center;
-            badge.style.backgroundColor = new StyleColor(bgColor);
-            badge.style.borderTopLeftRadius = new StyleLength(10);
-            badge.style.borderTopRightRadius = new StyleLength(10);
-            badge.style.borderBottomLeftRadius = new StyleLength(10);
-            badge.style.borderBottomRightRadius = new StyleLength(10);
-            badge.style.paddingLeft = 6;
-            badge.style.paddingRight = 6;
-            badge.style.paddingTop = 0;
-            badge.style.paddingBottom = 0;
-            badge.style.marginTop = 0;
-            badge.style.marginBottom = 0;
-            badge.style.height = 18;
-            badge.style.display = DisplayStyle.Flex;
-            badge.style.opacity = 1f;
-
-            // Reuse or create children
-            Label dot = badge.Q<Label>("BadgeDot");
-            Label text = badge.Q<Label>("BadgeText");
-
-            if (dot == null)
-            {
-                dot = new Label { name = "BadgeDot" };
-                dot.style.marginRight = 4;
-                badge.Add(dot);
-            }
-
-            if (text == null)
-            {
-                text = new Label { name = "BadgeText" };
-                badge.Add(text);
-            }
-
-            // Dot
-            dot.text = "●";
-            dot.style.fontSize = 10;
-            dot.style.color = new StyleColor(dotColor);
-            dot.style.unityFontStyleAndWeight = FontStyle.Bold;
-            dot.style.paddingTop = 0;
-            dot.style.paddingBottom = 0;
-            dot.style.marginTop = 0;
-            dot.style.marginBottom = 0;
-
-            // Text
-            text.text = labelText;
-            text.style.fontSize = 10;
-            text.style.color = new StyleColor(dotColor);
-            text.style.unityFontStyleAndWeight = FontStyle.Bold;
-            text.style.paddingTop = 0;
-            text.style.paddingBottom = 0;
-            text.style.marginTop = 0;
-            text.style.marginBottom = 0;
-
-            // Blink the dot, always
-            bool visible = true;
-            var handle = dot
-                .schedule.Execute(() =>
-                {
-                    visible = !visible;
-                    dot.style.opacity = visible ? 1f : 0f;
-                })
-                .Every(600);
-
-            badge.userData = handle;
         }
     }
 }
