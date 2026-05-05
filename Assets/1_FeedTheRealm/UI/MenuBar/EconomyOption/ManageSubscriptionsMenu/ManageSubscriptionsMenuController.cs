@@ -39,7 +39,6 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         [SerializeField]
         private VisualTreeAsset worldItemTemplate;
 
-        [SerializeField]
         private ZoneStatusBadgeController zoneStatusBadge;
 
         [Inject]
@@ -93,6 +92,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private async void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+            zoneStatusBadge = GetComponent<ZoneStatusBadgeController>();
             BindElements(root);
             RegisterCallbacks();
             await LoadSubscriptionAsync();
@@ -599,10 +599,10 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 worldEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
 
                 // ── World status badge via shared utility ──────────────────────
-                zoneStatusBadge.Apply(
-                    worldEntry.Q<Label>("StatusBadge"),
-                    zoneStatusBadge.Evaluate(zones)
-                );
+                var worldBadgeContainer = worldEntry.Q<VisualElement>("ZoneStatusBadgeContainer");
+                worldBadgeContainer.Clear();
+                var worldBadge = zoneStatusBadge.Create(zoneStatusBadge.Evaluate(zones));
+                worldBadgeContainer.Add(worldBadge);
 
                 // Dropdown
                 var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
@@ -722,7 +722,16 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                         zoneEntry.Q<Label>("SlotBadge").style.display = DisplayStyle.None;
 
                         // ── Zone status badge via shared utility ───────────────
-                        zoneStatusBadge.Apply(zoneEntry.Q<Label>("StatusBadge"), zone.is_online);
+                        var zoneBadgeContainer = zoneEntry.Q<VisualElement>(
+                            "ZoneStatusBadgeContainer"
+                        );
+                        zoneBadgeContainer.Clear();
+                        var zoneBadge = zoneStatusBadge.Create(
+                            zone.is_online
+                                ? ZoneStatusBadgeController.State.Online
+                                : ZoneStatusBadgeController.State.Offline
+                        );
+                        zoneBadgeContainer.Add(zoneBadge);
 
                         var capturedZone = zone;
                         var toggleActiveBtn = zoneEntry.Q<Button>("ToggleActive");
