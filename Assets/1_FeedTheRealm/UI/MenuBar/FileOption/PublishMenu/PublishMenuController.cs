@@ -797,7 +797,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     categoryId,
                     existingSpriteId,
                     currentWorldData.worldId,
-                    price
+                    price,
+                    fullPath
                 );
 
                 if (resp != null)
