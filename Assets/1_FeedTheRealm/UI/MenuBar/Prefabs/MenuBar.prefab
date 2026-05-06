@@ -51,6 +51,7 @@ MonoBehaviour:
   subscriptionsOptionController: {fileID: 4944770389112010324, guid: 37d9c2377a2352e439cb6b2b636801f8, type: 3}
   helpOptionController: {fileID: 0}
   aboutOptionController: {fileID: 0}
+  loginOptionController: {fileID: 1255577882778575213, guid: cf0a1b0ee406888229cc1180d79fb92c, type: 3}
 --- !u!114 &5259271317908515787
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -50,6 +50,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         private AssetsService assetsService;
 
         [SerializeField]
+        private ModelService modelService;
+
+        [SerializeField]
         private PlayerService playerService;
 
         [SerializeField]
@@ -121,6 +124,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(assetsService);
             builder.RegisterInstance(playerService);
             builder.RegisterInstance(session);
+            builder.RegisterInstance(modelService);
             builder.RegisterInstance(config);
             builder.RegisterInstance(logger);
         }

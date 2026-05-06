@@ -430,7 +430,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             }
             else if (publishWorldDataToggle.value)
             {
-                var (updatedId, error, statusCode) = await worldService.UpdateWorld(
+                var (_, error, statusCode) = await worldService.UpdateWorld(
                     currentWorldData,
                     session.APIToken
                 );
@@ -887,7 +887,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             var queuedIds = new HashSet<string>(existingModels.Keys);
 
             CollectModelRequests(
-                zoneData.objectPlacementData.Select(s => s.id),
+                zoneData.objectPlacementData.Where(s => !s.isDefault).Select(s => s.id),
                 queuedIds,
                 modelRequests
             );
@@ -895,9 +895,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             CollectModelRequests(
                 zoneData
                     .chestPlacements.SelectMany(c =>
-                        new[] { c.closedChestModelData?.modelId, c.opendedChestModelData?.modelId }
+                        new[] { c.closedChestModelData, c.opendedChestModelData }
                     )
-                    .Where(id => !string.IsNullOrEmpty(id)),
+                    .Where(m => m != null && !m.isDefault && !string.IsNullOrEmpty(m.modelId))
+                    .Select(m => m.modelId),
                 queuedIds,
                 modelRequests
             );
