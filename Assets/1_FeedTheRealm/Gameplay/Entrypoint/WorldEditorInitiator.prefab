@@ -57,6 +57,7 @@ MonoBehaviour:
   WorldUIObjectProvider: {fileID: 11400000, guid: 522c26f378da6490e906908c0d09b9c6, type: 2}
   gltfService: {fileID: 11400000, guid: cbcfb360fbc87c237824cc04a950d33f, type: 2}
   assetsService: {fileID: 11400000, guid: cd0887d2ef13cf0deb9953395f896994, type: 2}
+  modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
   playerService: {fileID: 11400000, guid: c32e41c719d74440b9719caf3db30295, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   eventChannelRegistry: {fileID: 11400000, guid: 0485cfe168ab7e2d48f3982acb4b2a85, type: 2}

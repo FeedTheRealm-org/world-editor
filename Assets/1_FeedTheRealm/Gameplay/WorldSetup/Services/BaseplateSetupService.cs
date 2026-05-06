@@ -1,6 +1,7 @@
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Core.WorldSetup;
+using FTR.Core.Common.Config;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldSetup
@@ -10,10 +11,10 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         private readonly GameObject worldPrefab;
         private readonly LayerMask worldLayerMask;
 
-        public BaseplateSetupService(WorldPrefabProvider worldPrefabProvider)
+        public BaseplateSetupService(WorldPrefabProvider worldPrefabProvider, Config config)
         {
             worldPrefab = worldPrefabProvider.worldPrefab;
-            worldLayerMask = worldPrefabProvider.worldLayerMask;
+            worldLayerMask = config.PlacementLayerMask;
         }
 
         public void Setup()

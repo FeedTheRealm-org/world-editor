@@ -119,3 +119,6 @@ InitTestScene*.unity*
 
 /[Aa]ssets/Plugins/
 /[Aa]ssets/Plugins.meta
+
+Assets/DefaultModels/
+Assets/DefaultModels.meta

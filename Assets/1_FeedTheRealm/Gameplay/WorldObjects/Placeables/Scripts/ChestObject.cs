@@ -40,18 +40,21 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 };
             }
 
-            closedChestModel = await ApplyModel(
+            (closedChestModel, bool isClosedModelDefault) = await ApplyModel(
                 data.closedChestModelData.modelId,
                 data.closedChestModelData,
                 isNew,
                 active: true
             );
-            openChestModel = await ApplyModel(
+            data.closedChestModelData.isDefault = isClosedModelDefault;
+
+            (openChestModel, bool isOpenModelDefault) = await ApplyModel(
                 data.opendedChestModelData.modelId,
                 data.opendedChestModelData,
                 isNew,
                 active: false
             );
+            data.opendedChestModelData.isDefault = isOpenModelDefault;
         }
 
         // public methods for editor
@@ -62,7 +65,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             data.closedChestModelData.modelId = modelId;
             if (closedChestModel != null)
                 Destroy(closedChestModel);
-            closedChestModel = await SetModel(modelId);
+            (closedChestModel, bool isDefault) = await SetModel(modelId);
+            data.closedChestModelData.isDefault = isDefault;
             closedChestModel.SetActive(true);
         }
 
@@ -72,7 +76,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             data.opendedChestModelData.modelId = modelId;
             if (openChestModel != null)
                 Destroy(openChestModel);
-            openChestModel = await SetModel(modelId);
+            (openChestModel, bool isDefault) = await SetModel(modelId);
+            data.opendedChestModelData.isDefault = isDefault;
             openChestModel.SetActive(false);
         }
 
@@ -152,14 +157,14 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         // Helper methods
 
-        private async Task<GameObject> ApplyModel(
+        private async Task<(GameObject model, bool isDefault)> ApplyModel(
             string modelId,
             ChestModelData modelData,
             bool isNew,
             bool active
         )
         {
-            var model = await SetModel(modelId);
+            var (model, isDefault) = await SetModel(modelId);
 
             if (isNew)
             {
@@ -173,35 +178,43 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             model.transform.localScale = modelData.relativeSize;
             model.SetActive(active);
 
-            return model;
+            return (model, isDefault);
         }
 
-        private async Task<GameObject> SetModel(string modelId)
+        private async Task<(GameObject model, bool isDefault)> SetModel(string modelId)
         {
             GameObject model = await structureLibrary.GetItem(modelId);
+            bool isDefault = true;
             model.transform.SetParent(transform, false);
-
             var modelCollider = model.GetComponent<BoxCollider>();
             var parentCollider = GetComponent<BoxCollider>();
+            Vector3 worldCenter = model.transform.TransformPoint(modelCollider.center);
+            parentCollider.center = transform.InverseTransformPoint(worldCenter);
 
-            if (modelCollider != null && parentCollider != null)
+            Vector3 modelScale = model.transform.lossyScale;
+            Vector3 parentScale = transform.lossyScale;
+            parentCollider.size = new Vector3(
+                modelCollider.size.x * modelScale.x / parentScale.x,
+                modelCollider.size.y * modelScale.y / parentScale.y,
+                modelCollider.size.z * modelScale.z / parentScale.z
+            );
+            try
             {
-                Vector3 worldCenter = model.transform.TransformPoint(modelCollider.center);
-                parentCollider.center = transform.InverseTransformPoint(worldCenter);
-
-                Vector3 modelScale = model.transform.lossyScale;
-                Vector3 parentScale = transform.lossyScale;
-                parentCollider.size = new Vector3(
-                    modelCollider.size.x * modelScale.x / parentScale.x,
-                    modelCollider.size.y * modelScale.y / parentScale.y,
-                    modelCollider.size.z * modelScale.z / parentScale.z
-                );
+                isDefault = model.GetComponent<StructureObject>().data.isDefault;
+                Destroy(model.GetComponent<StructureObject>());
+                Destroy(model.GetComponent<BoxCollider>());
             }
-
-            Destroy(model.GetComponent<StructureObject>());
-            Destroy(model.GetComponent<BoxCollider>());
-
-            return model;
+            catch (Exception e)
+            {
+                ToastNotification.Show(
+                    $"Chest could not load model, make sure to set a default model in the config",
+                    "error",
+                    Color.red
+                );
+                Debug.LogError($"Failed to apply model '{modelId}' to chest: {e.Message}");
+            }
+            Debug.Log($"Model '{model != null}' applied to chest. Is default: {isDefault}");
+            return (model, isDefault);
         }
     }
 }

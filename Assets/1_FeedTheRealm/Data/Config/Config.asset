@@ -21,5 +21,11 @@ MonoBehaviour:
   worldDataFileName: world.data
   creatablesFileName: creatables.data
   zoneFilePrefix: zone_
+  placementLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  worldLayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
   defaultOpenChestId: bbc147da-338a-4cb5-be5e-2eceb47bbe84
   defaultClosedChestId: 32500ab4-3c6f-4b01-8cb1-c2814d6bf54b
