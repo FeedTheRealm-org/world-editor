@@ -53,7 +53,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
 
         private void RefreshSessionUI()
         {
-            bool isLoggedIn = !string.IsNullOrEmpty(session.APIToken);
+            bool isLoggedIn = !string.IsNullOrEmpty(session.AccessToken);
 
             notLoggedInLabel.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
             loggedInContent.style.display = isLoggedIn ? DisplayStyle.Flex : DisplayStyle.None;

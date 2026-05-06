@@ -82,7 +82,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
         private async Task DownloadDefaultModels()
         {
-            var modelsInfo = await modelService.ListDefaultModels(session.APIToken);
+            var modelsInfo = await modelService.ListDefaultModels();
 
             int total = modelsInfo.Count;
             int current = 0;
@@ -96,7 +96,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                 current++;
                 statusLabel.text = $"Downloading {current}/{total}: {fileName}";
 
-                string tempPath = await modelService.DownloadModel(modelInfo, session.APIToken);
+                string tempPath = await modelService.DownloadModel(modelInfo);
                 if (string.IsNullOrEmpty(tempPath))
                 {
                     Debug.LogWarning($"[DefaultModelMenu] Skipping {fileName} — download failed.");
