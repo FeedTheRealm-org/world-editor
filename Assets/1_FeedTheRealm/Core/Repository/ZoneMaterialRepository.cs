@@ -42,8 +42,6 @@ namespace FeedTheRealm.Core.Repository
 
             skyboxTextures = LoadTexturesFromDisk(config.ZoneSkyboxDirectory);
 
-            skyboxTextures[config.NoSkyboxId] = new TextureEntry(null, null);
-
             logger.Log(
                 $"[ZoneMaterialsRepository] Initialized with {groundTextures.Count} ground and {skyboxTextures.Count} skybox textures.",
                 Logging.LogType.Info
@@ -89,9 +87,6 @@ namespace FeedTheRealm.Core.Repository
 
         public Material GetMaterial(string name, ZoneTextureType type)
         {
-            if (type == ZoneTextureType.Skybox && name == config.NoSkyboxId)
-                return null; // null tells RenderSettings to use Unity default
-
             var cache = GetMaterialCache(type);
             if (cache.TryGetValue(name, out var cached))
                 return cached;

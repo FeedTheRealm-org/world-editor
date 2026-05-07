@@ -26,6 +26,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
         private ScrollView groundMaterialsGrid;
         private ScrollView skyboxMaterialsGrid;
         private TabView tabView;
+        private Button resetSkyboxButton;
 
         private string selectedGroundMaterialId;
         private string selectedSkyboxMaterialId;
@@ -35,6 +36,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+
+            resetSkyboxButton = root.Q<Button>("ResetSkybox");
+            resetSkyboxButton.clicked += OnResetSkyboxClicked;
 
             closeButton = root.Q<Button>("Close");
             addTextureButton = root.Q<Button>("AddTexture");
@@ -251,6 +255,19 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
             PopulateActiveGrid();
             ToastNotification.Show($"'{materialName}' deleted.", "success", Color.green);
+        }
+
+        private void OnResetSkyboxClicked()
+        {
+            RenderSettings.skybox = null;
+            DynamicGI.UpdateEnvironment();
+            zoneManager.ZoneController.Data.skyboxMaterialId = null;
+            selectedSkyboxMaterialId = null;
+
+            foreach (var child in skyboxMaterialsGrid.Children())
+                child.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
+
+            ToastNotification.Show("Skybox reset to default.", "success", Color.green);
         }
 
         private void OnGranularityChanged(ChangeEvent<float> evt)

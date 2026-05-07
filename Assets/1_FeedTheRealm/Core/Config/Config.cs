@@ -54,7 +54,6 @@ namespace FTR.Core.Common.Config
         [Header("Default Zone Material")]
         public Material defaultZoneMaterial;
         public string defaultMaterialId = "DefaultZoneTexture";
-        public string NoSkyboxId = "No Skybox";
 
         public string WorldDirectory =>
             Path.Combine(Application.persistentDataPath, worldsDirectory);
