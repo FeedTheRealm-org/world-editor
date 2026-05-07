@@ -26,6 +26,8 @@ namespace FeedTheRealm.Core.Repository
 
         public void Initialize() { }
 
+        public const string defaultId = "Default";
+
         public ZoneMaterialsRepository(Config config, Logging.Logger logger)
         {
             this.config = config;
@@ -34,13 +36,20 @@ namespace FeedTheRealm.Core.Repository
             Directory.CreateDirectory(config.ZoneSkyboxDirectory);
 
             groundTextures = LoadTexturesFromDisk(config.ZoneGroundDirectory);
-            groundTextures[config.defaultMaterialId] = new TextureEntry(
-                null,
-                config.defaultZoneMaterial.mainTexture as Texture2D
-            );
-            groundMaterialsCache[config.defaultMaterialId] = config.defaultZoneMaterial;
-
             skyboxTextures = LoadTexturesFromDisk(config.ZoneSkyboxDirectory);
+
+            // Register single defaults with "Default" key
+            groundTextures[defaultId] = new TextureEntry(
+                null,
+                config.defaultGroundMaterial?.mainTexture as Texture2D
+            );
+            groundMaterialsCache[defaultId] = config.defaultGroundMaterial;
+
+            skyboxTextures[defaultId] = new TextureEntry(
+                null,
+                config.defaultSkyboxMaterial?.mainTexture as Texture2D
+            );
+            skyboxMaterialsCache[defaultId] = config.defaultSkyboxMaterial;
 
             logger.Log(
                 $"[ZoneMaterialsRepository] Initialized with {groundTextures.Count} ground and {skyboxTextures.Count} skybox textures.",
@@ -48,7 +57,16 @@ namespace FeedTheRealm.Core.Repository
             );
         }
 
-        public string DefaultMaterialId => config.defaultMaterialId;
+        public Material GetDefaultMaterial(ZoneTextureType type)
+        {
+            var id = type == ZoneTextureType.Ground ? defaultId : defaultId;
+            return GetMaterial(id, type);
+        }
+
+        public string DefaultMaterialId => defaultId;
+
+        public bool IsDefaultMaterial(string name, ZoneTextureType type) =>
+            name == (type == ZoneTextureType.Ground ? defaultId : defaultId);
 
         public Dictionary<string, Texture2D> GetTextures(ZoneTextureType type) =>
             GetTextureDict(type).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Texture);
@@ -95,13 +113,18 @@ namespace FeedTheRealm.Core.Repository
             if (!textureDict.TryGetValue(name, out var entry) || entry.Texture == null)
                 return null;
 
-            var shader =
-                type == ZoneTextureType.Ground
-                    ? Shader.Find("Universal Render Pipeline/Lit")
-                    : Shader.Find("Skybox/Panoramic");
+            Material material;
+            if (type == ZoneTextureType.Skybox)
+            {
+                material = new Material(Shader.Find("Skybox/Panoramic"));
+                material.SetTexture("_MainTex", entry.Texture);
+            }
+            else
+            {
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                material.mainTexture = entry.Texture;
+            }
 
-            var material = new Material(shader);
-            material.mainTexture = entry.Texture;
             material.name = name;
             cache[name] = material;
             return material;
@@ -114,6 +137,24 @@ namespace FeedTheRealm.Core.Repository
 
         private Dictionary<string, Material> GetMaterialCache(ZoneTextureType type) =>
             type == ZoneTextureType.Ground ? groundMaterialsCache : skyboxMaterialsCache;
+
+        private void RegisterDefaultMaterials(
+            List<Material> defaults,
+            Dictionary<string, TextureEntry> textureDict,
+            Dictionary<string, Material> materialCache
+        )
+        {
+            foreach (var material in defaults)
+            {
+                if (material == null)
+                    continue;
+                textureDict[material.name] = new TextureEntry(
+                    null,
+                    material.mainTexture as Texture2D
+                );
+                materialCache[material.name] = material;
+            }
+        }
 
         private Dictionary<string, TextureEntry> LoadTexturesFromDisk(string directory)
         {

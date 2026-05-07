@@ -64,19 +64,30 @@ namespace FeedTheRealm.Core.WorldEditor
 
         private void AssignDefaultMaterial()
         {
+            var defaultId = zoneMaterialsRepository.DefaultMaterialId;
+            if (string.IsNullOrEmpty(defaultId))
+            {
+                logger.Log(
+                    "[ZoneManager] No default ground material configured.",
+                    Logging.LogType.Error
+                );
+                return;
+            }
+
             var defaultMaterial = zoneMaterialsRepository.GetMaterial(
-                config.defaultMaterialId,
+                defaultId,
                 ZoneTextureType.Ground
             );
             if (defaultMaterial == null)
             {
                 logger.Log(
-                    $"[ZoneManager] Default material '{config.defaultMaterialId}' not found in repository.",
+                    $"[ZoneManager] Default material '{defaultId}' not found in repository.",
                     Logging.LogType.Error
                 );
                 return;
             }
-            ZoneController.ChangeMaterial(defaultMaterial, config.defaultMaterialId);
+
+            ZoneController.ChangeMaterial(defaultMaterial, defaultId);
         }
 
         private void LoadGroundTexture(ZoneData data)

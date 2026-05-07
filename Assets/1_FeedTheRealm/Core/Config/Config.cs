@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -51,9 +52,12 @@ namespace FTR.Core.Common.Config
         public string defaultOpenChestId;
         public string defaultClosedChestId;
 
-        [Header("Default Zone Material")]
-        public Material defaultZoneMaterial;
-        public string defaultMaterialId = "DefaultZoneTexture";
+        [Header("Default Materials")]
+        [SerializeField]
+        public Material defaultGroundMaterial;
+
+        [SerializeField]
+        public Material defaultSkyboxMaterial;
 
         public string WorldDirectory =>
             Path.Combine(Application.persistentDataPath, worldsDirectory);

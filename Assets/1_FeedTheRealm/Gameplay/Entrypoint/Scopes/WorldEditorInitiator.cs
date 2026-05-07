@@ -104,9 +104,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<ZoneLoader>(Lifetime.Scoped);
 
             // World Setup Services
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
             builder.Register<WorldUISetupService>(Lifetime.Scoped);

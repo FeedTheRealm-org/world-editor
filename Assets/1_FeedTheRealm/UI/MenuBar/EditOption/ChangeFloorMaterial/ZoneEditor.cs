@@ -3,6 +3,7 @@ using System.IO;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.UI.Common;
+using FTR.Core.Common.Config;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Utils;
@@ -18,6 +19,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
         [Inject]
         private ZoneMaterialsRepository zoneMaterialsRepository;
+
+        [Inject]
+        private Config config;
 
         private Button closeButton;
         private Button addTextureButton;
@@ -169,9 +173,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             button.clicked += () => OnMaterialSelected(materialName, container, type);
             container.Add(button);
 
-            bool isDefault =
-                type == ZoneTextureType.Ground
-                && materialName == zoneMaterialsRepository.DefaultMaterialId;
+            bool isDefault = materialName == zoneMaterialsRepository.DefaultMaterialId;
             if (!isDefault)
             {
                 var deleteButton = new Button();
@@ -237,20 +239,32 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
             if (type == ZoneTextureType.Ground && selectedGroundMaterialId == materialName)
             {
-                var defaultMaterial = zoneMaterialsRepository.GetMaterial(
-                    zoneMaterialsRepository.DefaultMaterialId,
+                var fallbackId = zoneMaterialsRepository.DefaultMaterialId;
+                var fallbackMaterial = zoneMaterialsRepository.GetMaterial(
+                    fallbackId,
                     ZoneTextureType.Ground
                 );
-                zoneManager.ZoneController.ChangeMaterial(
-                    defaultMaterial,
-                    zoneMaterialsRepository.DefaultMaterialId
-                );
-                selectedGroundMaterialId = zoneMaterialsRepository.DefaultMaterialId;
+                zoneManager.ZoneController.ChangeMaterial(fallbackMaterial, fallbackId);
+                selectedGroundMaterialId = fallbackId;
             }
             else if (type == ZoneTextureType.Skybox && selectedSkyboxMaterialId == materialName)
             {
-                RenderSettings.skybox = null;
-                selectedSkyboxMaterialId = null;
+                var fallbackId = zoneMaterialsRepository.DefaultMaterialId;
+                if (fallbackId != null)
+                {
+                    var fallbackMaterial = zoneMaterialsRepository.GetMaterial(
+                        fallbackId,
+                        ZoneTextureType.Skybox
+                    );
+                    zoneManager.ZoneController.SetSkyboxMaterial(fallbackMaterial, fallbackId);
+                    selectedSkyboxMaterialId = fallbackId;
+                }
+                else
+                {
+                    RenderSettings.skybox = null;
+                    DynamicGI.UpdateEnvironment();
+                    selectedSkyboxMaterialId = null;
+                }
             }
 
             PopulateActiveGrid();
@@ -259,14 +273,10 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
         private void OnResetSkyboxClicked()
         {
-            RenderSettings.skybox = null;
-            DynamicGI.UpdateEnvironment();
-            zoneManager.ZoneController.Data.skyboxMaterialId = null;
+            zoneManager.ZoneController.SetSkyboxMaterial(config.defaultSkyboxMaterial, null);
             selectedSkyboxMaterialId = null;
-
             foreach (var child in skyboxMaterialsGrid.Children())
                 child.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-
             ToastNotification.Show("Skybox reset to default.", "success", Color.green);
         }
 
