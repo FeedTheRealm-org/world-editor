@@ -14,7 +14,10 @@ namespace FTR.Core.Common.Config
         private string spritesDirectory = "Sprites";
 
         [SerializeField]
-        private string zoneMaterialsDirectory = "ZoneMaterials";
+        private string zoneGroundDirectory = "ZoneMaterials/Floor";
+
+        [SerializeField]
+        private string zoneSkyboxDirectory = "ZoneMaterials/Skybox";
 
         [Header("Persistent Models data directory")]
         [SerializeField]
@@ -51,6 +54,7 @@ namespace FTR.Core.Common.Config
         [Header("Default Zone Material")]
         public Material defaultZoneMaterial;
         public string defaultMaterialId = "DefaultZoneTexture";
+        public string NoSkyboxId = "No Skybox";
 
         public string WorldDirectory =>
             Path.Combine(Application.persistentDataPath, worldsDirectory);
@@ -60,8 +64,10 @@ namespace FTR.Core.Common.Config
             Path.Combine(Application.streamingAssetsPath, modelsDirectory);
         public string SpritesDirectory =>
             Path.Combine(Application.streamingAssetsPath, spritesDirectory);
-        public string ZoneMaterialsDirectory =>
-            Path.Combine(Application.streamingAssetsPath, zoneMaterialsDirectory);
+        public string ZoneGroundDirectory =>
+            Path.Combine(Application.streamingAssetsPath, zoneGroundDirectory);
+        public string ZoneSkyboxDirectory =>
+            Path.Combine(Application.streamingAssetsPath, zoneSkyboxDirectory);
         public string WorldFileExtension => worldsFileExtension;
         public string WorldDataFilename => worldDataFileName;
         public string CreatablesFileName => creatablesFileName;

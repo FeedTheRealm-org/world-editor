@@ -23,9 +23,13 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
         private Button addTextureButton;
         private Button resetGranularityButton;
         private Slider granularitySlider;
-        private ScrollView materialsGrid;
+        private ScrollView groundMaterialsGrid;
+        private ScrollView skyboxMaterialsGrid;
+        private TabView tabView;
 
-        private string selectedMaterialId;
+        private string selectedGroundMaterialId;
+        private string selectedSkyboxMaterialId;
+        private ZoneTextureType activeTab = ZoneTextureType.Ground;
         private const float DEFAULT_GRANULARITY = 100f;
 
         void OnEnable()
@@ -36,15 +40,20 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             addTextureButton = root.Q<Button>("AddTexture");
             resetGranularityButton = root.Q<Button>("ResetGranulairy");
             granularitySlider = root.Q<Slider>("GranularitySlider");
-            materialsGrid = root.Q<ScrollView>("MaterialsGrid");
+            tabView = root.Q<TabView>();
+
+            groundMaterialsGrid = root.Q<Tab>("Ground").Q<ScrollView>("MaterialsGrid");
+            skyboxMaterialsGrid = root.Q<Tab>("Skybox").Q<ScrollView>("MaterialsGrid");
 
             closeButton.clicked += CloseMenu;
             addTextureButton.clicked += OnAddTextureClicked;
             resetGranularityButton.clicked += OnResetGranularityClicked;
             granularitySlider.RegisterValueChangedCallback(OnGranularityChanged);
+            tabView.activeTabChanged += OnTabChanged;
 
             SyncWithActiveZone();
-            PopulateMaterialsGrid();
+            PopulateGroundGrid();
+            PopulateSkyboxGrid();
         }
 
         void OnDisable()
@@ -53,36 +62,69 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             addTextureButton.clicked -= OnAddTextureClicked;
             resetGranularityButton.clicked -= OnResetGranularityClicked;
             granularitySlider.UnregisterValueChangedCallback(OnGranularityChanged);
+            tabView.activeTabChanged -= OnTabChanged;
+        }
+
+        private void OnTabChanged(Tab previous, Tab current)
+        {
+            activeTab = current.name == "Skybox" ? ZoneTextureType.Skybox : ZoneTextureType.Ground;
+            resetGranularityButton.style.display =
+                activeTab == ZoneTextureType.Ground ? DisplayStyle.Flex : DisplayStyle.None;
+            granularitySlider.style.display =
+                activeTab == ZoneTextureType.Ground ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         private void SyncWithActiveZone()
         {
             var data = zoneManager.ZoneController.Data;
-            if (data == null || string.IsNullOrEmpty(data.zoneMaterialId))
+
+            // Sync ground
+            if (!string.IsNullOrEmpty(data?.zoneMaterialId))
+            {
+                selectedGroundMaterialId = data.zoneMaterialId;
+                granularitySlider.SetValueWithoutNotify(data.textureGranularity);
+            }
+            else
             {
                 granularitySlider.SetValueWithoutNotify(DEFAULT_GRANULARITY);
-                return;
             }
 
-            selectedMaterialId = data.zoneMaterialId;
-            granularitySlider.SetValueWithoutNotify(data.textureGranularity);
-
-            foreach (var child in materialsGrid.Children())
-            {
-                var btn = child.Q<Button>();
-                if (btn != null && btn.name == data.zoneMaterialId)
-                    child.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
-            }
+            // Sync skybox
+            if (!string.IsNullOrEmpty(data?.skyboxMaterialId))
+                selectedSkyboxMaterialId = data.skyboxMaterialId;
         }
 
-        private void PopulateMaterialsGrid()
+        private void PopulateGroundGrid()
         {
-            materialsGrid.Clear();
-            foreach (var kvp in zoneMaterialsRepository.GetTextures())
-                materialsGrid.Add(CreateMaterialContainer(kvp.Key, kvp.Value));
+            groundMaterialsGrid.Clear();
+            foreach (var kvp in zoneMaterialsRepository.GetTextures(ZoneTextureType.Ground))
+                groundMaterialsGrid.Add(
+                    CreateMaterialContainer(kvp.Key, kvp.Value, ZoneTextureType.Ground)
+                );
         }
 
-        private VisualElement CreateMaterialContainer(string materialName, Texture2D texture)
+        private void PopulateSkyboxGrid()
+        {
+            skyboxMaterialsGrid.Clear();
+            foreach (var kvp in zoneMaterialsRepository.GetTextures(ZoneTextureType.Skybox))
+                skyboxMaterialsGrid.Add(
+                    CreateMaterialContainer(kvp.Key, kvp.Value, ZoneTextureType.Skybox)
+                );
+        }
+
+        private void PopulateActiveGrid()
+        {
+            if (activeTab == ZoneTextureType.Ground)
+                PopulateGroundGrid();
+            else
+                PopulateSkyboxGrid();
+        }
+
+        private VisualElement CreateMaterialContainer(
+            string materialName,
+            Texture2D texture,
+            ZoneTextureType type
+        )
         {
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
@@ -96,7 +138,6 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             container.style.borderBottomLeftRadius = 5;
             container.style.borderBottomRightRadius = 5;
 
-            // Texture preview
             if (texture != null)
             {
                 var preview = new VisualElement();
@@ -111,7 +152,6 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 container.Add(preview);
             }
 
-            // Material name button
             var button = new Button();
             button.name = materialName;
             button.text = materialName;
@@ -122,11 +162,13 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             button.style.borderBottomWidth = 0;
             button.style.borderLeftWidth = 0;
             button.style.borderRightWidth = 0;
-            button.clicked += () => OnMaterialSelected(materialName, container);
+            button.clicked += () => OnMaterialSelected(materialName, container, type);
             container.Add(button);
 
-            // Delete button (not shown for default)
-            if (materialName != zoneMaterialsRepository.DefaultMaterialId)
+            bool isDefault =
+                type == ZoneTextureType.Ground
+                && materialName == zoneMaterialsRepository.DefaultMaterialId;
+            if (!isDefault)
             {
                 var deleteButton = new Button();
                 deleteButton.text = "✕";
@@ -137,56 +179,83 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 deleteButton.style.borderLeftWidth = 0;
                 deleteButton.style.borderRightWidth = 0;
                 deleteButton.style.width = 30;
-                deleteButton.clicked += () => OnDeleteMaterial(materialName);
+                deleteButton.clicked += () => OnDeleteMaterial(materialName, type);
                 container.Add(deleteButton);
             }
+
+            // Highlight if currently selected
+            string selectedId =
+                type == ZoneTextureType.Ground
+                    ? selectedGroundMaterialId
+                    : selectedSkyboxMaterialId;
+            if (materialName == selectedId)
+                container.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
 
             return container;
         }
 
-        private void OnMaterialSelected(string materialName, VisualElement container)
+        private void OnMaterialSelected(
+            string materialName,
+            VisualElement container,
+            ZoneTextureType type
+        )
         {
-            var material = zoneMaterialsRepository.GetMaterial(materialName);
+            var material = zoneMaterialsRepository.GetMaterial(materialName, type);
             if (material == null)
             {
                 ToastNotification.Show($"Material '{materialName}' not found.", "error", Color.red);
                 return;
             }
 
-            selectedMaterialId = materialName;
-            zoneManager.ZoneController.ChangeMaterial(material, materialName);
-            zoneManager.ZoneController.ApplyTextureGranularity(granularitySlider.value);
-
-            foreach (var child in materialsGrid.Children())
+            var grid = type == ZoneTextureType.Ground ? groundMaterialsGrid : skyboxMaterialsGrid;
+            foreach (var child in grid.Children())
                 child.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-
             container.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
-            ToastNotification.Show($"Material '{materialName}' applied.", "success", Color.green);
+
+            if (type == ZoneTextureType.Ground)
+            {
+                selectedGroundMaterialId = materialName;
+                zoneManager.ZoneController.ChangeMaterial(material, materialName);
+                zoneManager.ZoneController.ApplyTextureGranularity(granularitySlider.value);
+            }
+            else
+            {
+                selectedSkyboxMaterialId = materialName;
+                zoneManager.ZoneController.SetSkyboxMaterial(material, materialName);
+            }
+
+            ToastNotification.Show($"'{materialName}' applied.", "success", Color.green);
         }
 
-        private void OnDeleteMaterial(string materialName)
+        private void OnDeleteMaterial(string materialName, ZoneTextureType type)
         {
-            zoneMaterialsRepository.DeleteMaterial(materialName);
+            zoneMaterialsRepository.DeleteMaterial(materialName, type);
 
-            if (selectedMaterialId == materialName)
+            if (type == ZoneTextureType.Ground && selectedGroundMaterialId == materialName)
             {
                 var defaultMaterial = zoneMaterialsRepository.GetMaterial(
-                    zoneMaterialsRepository.DefaultMaterialId
+                    zoneMaterialsRepository.DefaultMaterialId,
+                    ZoneTextureType.Ground
                 );
                 zoneManager.ZoneController.ChangeMaterial(
                     defaultMaterial,
                     zoneMaterialsRepository.DefaultMaterialId
                 );
-                selectedMaterialId = zoneMaterialsRepository.DefaultMaterialId;
+                selectedGroundMaterialId = zoneMaterialsRepository.DefaultMaterialId;
+            }
+            else if (type == ZoneTextureType.Skybox && selectedSkyboxMaterialId == materialName)
+            {
+                RenderSettings.skybox = null;
+                selectedSkyboxMaterialId = null;
             }
 
-            PopulateMaterialsGrid();
+            PopulateActiveGrid();
             ToastNotification.Show($"'{materialName}' deleted.", "success", Color.green);
         }
 
         private void OnGranularityChanged(ChangeEvent<float> evt)
         {
-            if (string.IsNullOrEmpty(selectedMaterialId))
+            if (string.IsNullOrEmpty(selectedGroundMaterialId))
                 return;
             zoneManager.ZoneController.ApplyTextureGranularity(evt.newValue);
         }
@@ -194,7 +263,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
         private void OnResetGranularityClicked()
         {
             granularitySlider.value = DEFAULT_GRANULARITY;
-            if (!string.IsNullOrEmpty(selectedMaterialId))
+            if (!string.IsNullOrEmpty(selectedGroundMaterialId))
                 zoneManager.ZoneController.ApplyTextureGranularity(DEFAULT_GRANULARITY);
         }
 
@@ -205,11 +274,10 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 {
                     if (paths == null || paths.Length == 0)
                         return;
-
                     try
                     {
-                        zoneMaterialsRepository.AddMaterial(paths[0]);
-                        PopulateMaterialsGrid();
+                        zoneMaterialsRepository.AddMaterial(paths[0], activeTab);
+                        PopulateActiveGrid();
                         ToastNotification.Show(
                             $"Texture '{Path.GetFileNameWithoutExtension(paths[0])}' added successfully!",
                             "success",

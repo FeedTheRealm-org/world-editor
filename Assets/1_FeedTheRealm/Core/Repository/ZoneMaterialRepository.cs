@@ -2,24 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FeedTheRealm.Core.WorldObjects.Provider;
 using FTR.Core.Common.Config;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace FeedTheRealm.Core.Repository
 {
+    public enum ZoneTextureType
+    {
+        Ground,
+        Skybox,
+    }
+
     public class ZoneMaterialsRepository : IInitializable
     {
-        [Inject]
         private Config config;
-
-        [Inject]
         private Logging.Logger logger;
 
-        private Dictionary<string, Material> materialsCache = new();
-        private Dictionary<string, TextureEntry> textures = new();
+        private Dictionary<string, Material> groundMaterialsCache = new();
+        private Dictionary<string, Material> skyboxMaterialsCache = new();
+        private Dictionary<string, TextureEntry> groundTextures = new();
+        private Dictionary<string, TextureEntry> skyboxTextures = new();
 
         public void Initialize() { }
 
@@ -27,68 +30,107 @@ namespace FeedTheRealm.Core.Repository
         {
             this.config = config;
             this.logger = logger;
-            Directory.CreateDirectory(config.ZoneMaterialsDirectory);
-            textures = LoadTexturesFromDisk();
-            textures[config.defaultMaterialId] = new TextureEntry(
+            Directory.CreateDirectory(config.ZoneGroundDirectory);
+            Directory.CreateDirectory(config.ZoneSkyboxDirectory);
+
+            groundTextures = LoadTexturesFromDisk(config.ZoneGroundDirectory);
+            groundTextures[config.defaultMaterialId] = new TextureEntry(
                 null,
                 config.defaultZoneMaterial.mainTexture as Texture2D
             );
-            materialsCache[config.defaultMaterialId] = config.defaultZoneMaterial;
+            groundMaterialsCache[config.defaultMaterialId] = config.defaultZoneMaterial;
+
+            skyboxTextures = LoadTexturesFromDisk(config.ZoneSkyboxDirectory);
+
+            skyboxTextures[config.NoSkyboxId] = new TextureEntry(null, null);
+
             logger.Log(
-                $"[ZoneMaterialsRepository] Initialized with {textures.Count} textures.",
+                $"[ZoneMaterialsRepository] Initialized with {groundTextures.Count} ground and {skyboxTextures.Count} skybox textures.",
                 Logging.LogType.Info
             );
         }
 
-        public Dictionary<string, Texture2D> GetTextures() =>
-            textures.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Texture);
-
         public string DefaultMaterialId => config.defaultMaterialId;
 
-        public void AddMaterial(string sourcePath)
+        public Dictionary<string, Texture2D> GetTextures(ZoneTextureType type) =>
+            GetTextureDict(type).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Texture);
+
+        public void AddMaterial(string sourcePath, ZoneTextureType type)
         {
             if (!File.Exists(sourcePath))
                 return;
+
+            string directory =
+                type == ZoneTextureType.Ground
+                    ? config.ZoneGroundDirectory
+                    : config.ZoneSkyboxDirectory;
             string fileName = Path.GetFileName(sourcePath);
-            string destPath = Path.Combine(config.ZoneMaterialsDirectory, fileName);
+            string destPath = Path.Combine(directory, fileName);
             File.Copy(sourcePath, destPath, overwrite: true);
+
             string name = Path.GetFileNameWithoutExtension(fileName);
             var texture = LoadTextureFromDisk(name, destPath);
             if (texture != null)
-                textures[name] = new TextureEntry(destPath, texture);
+                GetTextureDict(type)[name] = new TextureEntry(destPath, texture);
         }
 
-        public void DeleteMaterial(string name)
+        public void DeleteMaterial(string name, ZoneTextureType type)
         {
+            var dict = GetTextureDict(type);
             if (
-                textures.TryGetValue(name, out var entry)
+                dict.TryGetValue(name, out var entry)
                 && entry.Path != null
                 && File.Exists(entry.Path)
             )
                 File.Delete(entry.Path);
-            textures.Remove(name);
-            materialsCache.Remove(name);
+            dict.Remove(name);
+            GetMaterialCache(type).Remove(name);
         }
 
-        public Material GetMaterial(string name)
+        public Material GetMaterial(string name, ZoneTextureType type)
         {
-            if (materialsCache.TryGetValue(name, out var cached))
+            if (type == ZoneTextureType.Skybox && name == config.NoSkyboxId)
+                return null; // null tells RenderSettings to use Unity default
+
+            var cache = GetMaterialCache(type);
+            if (cache.TryGetValue(name, out var cached))
                 return cached;
-            if (!textures.TryGetValue(name, out var entry) || entry.Texture == null)
+
+            var textureDict = GetTextureDict(type);
+            if (!textureDict.TryGetValue(name, out var entry) || entry.Texture == null)
                 return null;
-            var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+            var shader =
+                type == ZoneTextureType.Ground
+                    ? Shader.Find("Universal Render Pipeline/Lit")
+                    : Shader.Find("Skybox/Panoramic");
+
+            var material = new Material(shader);
             material.mainTexture = entry.Texture;
             material.name = name;
-            materialsCache[name] = material;
+            cache[name] = material;
             return material;
         }
 
-        private HashSet<string> LoadTextureNamesFromDisk()
+        // ------ PRIVATE METHODS ------
+
+        private Dictionary<string, TextureEntry> GetTextureDict(ZoneTextureType type) =>
+            type == ZoneTextureType.Ground ? groundTextures : skyboxTextures;
+
+        private Dictionary<string, Material> GetMaterialCache(ZoneTextureType type) =>
+            type == ZoneTextureType.Ground ? groundMaterialsCache : skyboxMaterialsCache;
+
+        private Dictionary<string, TextureEntry> LoadTexturesFromDisk(string directory)
         {
-            var result = new HashSet<string>();
+            var result = new Dictionary<string, TextureEntry>();
             foreach (var ext in new[] { "*.png", "*.jpg", "*.jpeg" })
-            foreach (var path in Directory.GetFiles(config.ZoneMaterialsDirectory, ext))
-                result.Add(Path.GetFileNameWithoutExtension(path));
+            foreach (var path in Directory.GetFiles(directory, ext))
+            {
+                string name = Path.GetFileNameWithoutExtension(path);
+                var texture = LoadTextureFromDisk(name, path);
+                if (texture != null)
+                    result[name] = new TextureEntry(path, texture);
+            }
             return result;
         }
 
@@ -117,22 +159,6 @@ namespace FeedTheRealm.Core.Repository
                 );
                 return null;
             }
-        }
-
-        private Dictionary<string, TextureEntry> LoadTexturesFromDisk()
-        {
-            var result = new Dictionary<string, TextureEntry>();
-            foreach (var ext in new[] { "*.png", "*.jpg", "*.jpeg" })
-            {
-                foreach (var path in Directory.GetFiles(config.ZoneMaterialsDirectory, ext))
-                {
-                    string name = Path.GetFileNameWithoutExtension(path);
-                    var texture = LoadTextureFromDisk(name, path);
-                    if (texture != null)
-                        result[name] = new TextureEntry(path, texture);
-                }
-            }
-            return result;
         }
 
         private struct TextureEntry

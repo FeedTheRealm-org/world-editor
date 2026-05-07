@@ -49,40 +49,8 @@ namespace FeedTheRealm.Core.WorldEditor
 
         public void LoadData(ZoneData data)
         {
-            if (
-                data?.zoneAreaData == null
-                || string.IsNullOrEmpty(data.zoneAreaData.zoneMaterialId)
-            )
-            {
-                logger.Log(
-                    "[ZoneManager] No zone material data found, loading defaults.",
-                    Logging.LogType.Warning
-                );
-                AssignDefaultMaterial();
-                registryEvent.Raise(this);
-                return;
-            }
-
-            var materialData = data.zoneAreaData;
-            var material = zoneMaterialsRepository.GetMaterial(materialData.zoneMaterialId);
-
-            if (material == null)
-            {
-                logger.Log(
-                    $"[ZoneManager] Material '{materialData.zoneMaterialId}' not found, loading defaults.",
-                    Logging.LogType.Warning
-                );
-                AssignDefaultMaterial();
-                registryEvent.Raise(this);
-                return;
-            }
-
-            logger.Log(
-                $"[ZoneManager] Applying material '{materialData.zoneMaterialId}'.",
-                Logging.LogType.Info
-            );
-            ZoneController.ChangeMaterial(material, materialData.zoneMaterialId);
-            ZoneController.ApplyTextureGranularity(materialData.textureGranularity);
+            LoadGroundTexture(data);
+            LoadSkybox(data);
             registryEvent.Raise(this);
         }
 
@@ -96,7 +64,10 @@ namespace FeedTheRealm.Core.WorldEditor
 
         private void AssignDefaultMaterial()
         {
-            var defaultMaterial = zoneMaterialsRepository.GetMaterial(config.defaultMaterialId);
+            var defaultMaterial = zoneMaterialsRepository.GetMaterial(
+                config.defaultMaterialId,
+                ZoneTextureType.Ground
+            );
             if (defaultMaterial == null)
             {
                 logger.Log(
@@ -106,6 +77,34 @@ namespace FeedTheRealm.Core.WorldEditor
                 return;
             }
             ZoneController.ChangeMaterial(defaultMaterial, config.defaultMaterialId);
+        }
+
+        private void LoadGroundTexture(ZoneData data)
+        {
+            var material = zoneMaterialsRepository.GetMaterial(
+                data.zoneAreaData.zoneMaterialId,
+                ZoneTextureType.Ground
+            );
+            if (string.IsNullOrEmpty(data.zoneAreaData.zoneMaterialId) || material == null)
+            {
+                logger.Log(
+                    "[ZoneManager] No zone material was missing or zone data was not found, loading defaults.",
+                    Logging.LogType.Warning
+                );
+                AssignDefaultMaterial();
+                return;
+            }
+            ZoneController.ChangeMaterial(material, data.zoneAreaData.zoneMaterialId);
+            ZoneController.ApplyTextureGranularity(data.zoneAreaData.textureGranularity);
+        }
+
+        private void LoadSkybox(ZoneData data)
+        {
+            var material = zoneMaterialsRepository.GetMaterial(
+                data.zoneAreaData.skyboxMaterialId,
+                ZoneTextureType.Skybox
+            );
+            ZoneController.SetSkyboxMaterial(material, data.zoneAreaData.skyboxMaterialId);
         }
     }
 }
