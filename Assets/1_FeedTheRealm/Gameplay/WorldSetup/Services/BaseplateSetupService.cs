@@ -13,15 +13,15 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public BaseplateSetupService(WorldPrefabProvider worldPrefabProvider, Config config)
         {
-            worldPrefab = worldPrefabProvider.worldPrefab;
-            worldLayerMask = config.PlacementLayerMask;
+            worldPrefab = worldPrefabProvider.zoneAreaPrefab;
+            worldLayerMask = config.PlaceableLayerMask;
         }
 
         public void Setup()
         {
             var worldInstance = Object.Instantiate(worldPrefab);
             worldInstance.name = "World";
-            worldInstance.layer = Mathf.RoundToInt(Mathf.Log(worldLayerMask.value, 2));
+            worldInstance.layer = worldLayerMask;
             worldInstance.transform.position = Vector3.zero;
         }
     }

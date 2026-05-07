@@ -129,6 +129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
-  label: Change Zone Ground
+  label: Zone Ground
   menuToOpen: {fileID: -6710251040486823034, guid: ee5def4cac9c49c4fa1c11626f1dfe6b, type: 3}
   menuOptions: []

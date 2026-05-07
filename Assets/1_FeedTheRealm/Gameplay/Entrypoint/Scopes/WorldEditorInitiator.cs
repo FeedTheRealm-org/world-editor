@@ -3,6 +3,7 @@ using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.Repository;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
@@ -73,6 +74,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             // Data persistence Manager
             builder.Register<DataPersistenceManager>(Lifetime.Singleton);
 
+            builder.Register<ZoneManager>(Lifetime.Singleton);
+
             // Repositories
             builder.Register<ModelsRepository>(Lifetime.Singleton);
             builder.Register<WorldsRepository>(Lifetime.Singleton);
@@ -81,6 +84,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder
                 .Register<PlayerInfoRepository>(Lifetime.Singleton)
                 .As<CharacterInfoRepository>();
+            builder.Register<ZoneMaterialsRepository>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);

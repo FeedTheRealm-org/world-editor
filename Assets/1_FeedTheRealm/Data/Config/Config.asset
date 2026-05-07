@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0353640ebff8a9ce08a837377517c4e3, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: FTR.Core::FTR.Core.Common.Config.Config
-  ForceReinitialize: 0
   modelsDataDirectory: Models
+  spritesDirectory: Sprites
+  zoneMaterialsDirectory: ZoneMaterials
   modelsDirectory: Models
   worldsDirectory: Worlds
-  spritesDirectory: Sprites
   worldsFileExtension: .world
   worldDataFileName: world.data
   creatablesFileName: creatables.data
   zoneFilePrefix: zone_
-  placementLayerMask:
+  placeableLayerMask:
     serializedVersion: 2
     m_Bits: 512
   worldLayerMask:
@@ -29,3 +29,5 @@ MonoBehaviour:
     m_Bits: 2048
   defaultOpenChestId: bbc147da-338a-4cb5-be5e-2eceb47bbe84
   defaultClosedChestId: 32500ab4-3c6f-4b01-8cb1-c2814d6bf54b
+  defaultZoneMaterial: {fileID: 2100000, guid: f9a94780aa94b7c4985400ab0bedcdbb, type: 2}
+  defaultMaterialId: DefaultZoneTexture

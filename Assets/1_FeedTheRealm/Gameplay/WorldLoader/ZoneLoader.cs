@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -26,6 +27,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         private readonly Logging.Logger logger;
         private readonly List<IPlaceableLoader> zoneLoaders;
         private readonly CloseAllEvent closeAllEvent;
+        private readonly ZoneManager zoneManager;
 
         public ZoneLoader(
             WorldSelector worldSelector,
@@ -35,6 +37,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             StructureLoader structureLoader,
             AggresiveNpcSpawnerLoader aggresiveNpcSpawnerLoader,
             FriendlyNpcSpawnerLoader friendlyNpcSpawnerLoader,
+            ZoneManager zoneManager,
             PortalLoader portalLoader,
             ChestLoader chestLoader,
             CloseAllEvent closeAllEvent
@@ -43,6 +46,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             this.worldSelector = worldSelector;
             this.dataPersistenceManager = dataPersistenceManager;
             this.logger = logger;
+            this.zoneManager = zoneManager;
             this.closeAllEvent = closeAllEvent;
 
             zoneLoaders = new List<IPlaceableLoader>
@@ -69,15 +73,7 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 worldSelector.selectedZoneId
             );
 
-            var worldController = Object.FindFirstObjectByType<WorldControllerV2>();
-            if (worldController != null)
-            {
-                worldController.OnFloorMaterialChanged(
-                    zoneData.floorMaterialId,
-                    zoneData.textureGranularity
-                );
-            }
-
+            zoneManager.LoadData(zoneData);
             if (zoneData == null)
             {
                 logger.Log("[ZoneLoader] No zone data found, skipping load.");

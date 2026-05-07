@@ -110,12 +110,10 @@ InitTestScene*.unity*
 /[Aa]ssets/TextMesh Pro.meta
 /[Aa]ssets/Cartoon_Texture_Pack/
 
-/[Aa]ssets/Resources
+/[Aa]ssets/Resources/
 /[Aa]ssets/Resources.meta
-/[Aa]ssets/StreamingAssets/Models
-/[Aa]ssets/StreamingAssets/Models.meta
-/[Aa]ssets/StreamingAssets/Sprites
-/[Aa]ssets/StreamingAssets/Sprites.meta
+/[Aa]ssets/StreamingAssets/
+
 
 /[Aa]ssets/Plugins/
 /[Aa]ssets/Plugins.meta

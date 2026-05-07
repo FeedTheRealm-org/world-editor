@@ -76,23 +76,6 @@ namespace FeedTheRealm.Core.DataPersistence
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
-        // public void UpdateMaterialAndGranularity(string worldName, int zoneId, string materialId, float granularity)
-        // {
-        //     var zoneData = zonesRepository.GetZoneData(worldName, zoneId);
-        //     if (zoneData == null)
-        //     {
-        //         logger.Log(
-        //             $"[DataPersistenceManager] No zone data found for world: {worldName}, zone: {zoneId}",
-        //             Logging.LogType.Warning
-        //         );
-        //         return;
-        //     }
-
-        //     zoneData.floorMaterialId = materialId;
-        //     zoneData.textureGranularity = granularity;
-        //     zonesRepository.SaveZoneData(worldName, zoneData);
-        // }
-
         // ---- Registration Methods ----
 
         private void RegisterEntity(IPersistent<ZoneData> entity)

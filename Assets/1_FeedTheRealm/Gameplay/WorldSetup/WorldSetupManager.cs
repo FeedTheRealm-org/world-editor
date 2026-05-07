@@ -22,7 +22,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.logger = logger;
             setupServices = new List<ISetup>
             {
-                baseplateSetupService,
+                // baseplateSetupService,
                 cameraSetupService,
                 lightingSetupService,
                 playerSetupService,

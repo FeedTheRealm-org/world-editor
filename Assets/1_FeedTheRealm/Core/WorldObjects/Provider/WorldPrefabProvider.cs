@@ -12,7 +12,7 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject worldEditorPrefab;
 
         [Header("World Settings")]
-        public GameObject worldPrefab;
+        public GameObject zoneAreaPrefab;
 
         [Header("Placeable Objects")]
         public GameObject structurePrefab;
