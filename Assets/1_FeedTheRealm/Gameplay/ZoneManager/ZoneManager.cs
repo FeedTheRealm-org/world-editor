@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
@@ -39,7 +40,7 @@ namespace FeedTheRealm.Core.WorldEditor
             this.config = config;
             this.logger = logger;
             this.registryEvent = registryEvent;
-            SetupZoneArea(worldPrefabProvider.zoneAreaPrefab);
+            InitializeZoneObject(worldPrefabProvider.zoneAreaPrefab);
         }
 
         public void SaveData(ref ZoneData data)
@@ -47,14 +48,26 @@ namespace FeedTheRealm.Core.WorldEditor
             data.zoneAreaData = ZoneController.Data;
         }
 
-        public void LoadData(ZoneData data)
+        public void RegisterZone()
         {
-            LoadGroundTexture(data);
-            LoadSkybox(data);
             registryEvent.Raise(this);
         }
 
-        private void SetupZoneArea(GameObject zonePrefab)
+        public void LoadData(ZoneData data)
+        {
+            if (data == null)
+            {
+                logger.Log("[ZoneManager] No zone data provided, loading defaults.");
+                AssignDefaultMaterial(ZoneTextureType.Ground);
+                AssignDefaultMaterial(ZoneTextureType.Skybox);
+                return;
+            }
+            LoadGroundTexture(data);
+            LoadSkybox(data);
+            logger.Log("[ZoneManager] Zone data loaded.");
+        }
+
+        private void InitializeZoneObject(GameObject zonePrefab)
         {
             var zoneInstance = Object.Instantiate(zonePrefab);
             zoneInstance.name = "Zone";
@@ -62,32 +75,29 @@ namespace FeedTheRealm.Core.WorldEditor
             zoneArea = zoneInstance;
         }
 
-        private void AssignDefaultMaterial()
+        private void AssignDefaultMaterial(ZoneTextureType type)
         {
-            var defaultId = zoneMaterialsRepository.DefaultMaterialId;
-            if (string.IsNullOrEmpty(defaultId))
-            {
-                logger.Log(
-                    "[ZoneManager] No default ground material configured.",
-                    Logging.LogType.Error
-                );
-                return;
-            }
-
+            logger.Log($"[ZoneManager] Assigning default {type} material.");
             var defaultMaterial = zoneMaterialsRepository.GetMaterial(
-                defaultId,
-                ZoneTextureType.Ground
+                ZoneMaterialsRepository.defaultId,
+                type
             );
             if (defaultMaterial == null)
             {
                 logger.Log(
-                    $"[ZoneManager] Default material '{defaultId}' not found in repository.",
+                    $"[ZoneManager] Default {type} material not found.",
                     Logging.LogType.Error
                 );
                 return;
             }
 
-            ZoneController.ChangeMaterial(defaultMaterial, defaultId);
+            if (type == ZoneTextureType.Ground)
+                ZoneController.ChangeMaterial(defaultMaterial, ZoneMaterialsRepository.defaultId);
+            else
+                ZoneController.SetSkyboxMaterial(
+                    defaultMaterial,
+                    ZoneMaterialsRepository.defaultId
+                );
         }
 
         private void LoadGroundTexture(ZoneData data)
@@ -98,11 +108,7 @@ namespace FeedTheRealm.Core.WorldEditor
             );
             if (string.IsNullOrEmpty(data.zoneAreaData.zoneMaterialId) || material == null)
             {
-                logger.Log(
-                    "[ZoneManager] No zone material was missing or zone data was not found, loading defaults.",
-                    Logging.LogType.Warning
-                );
-                AssignDefaultMaterial();
+                AssignDefaultMaterial(ZoneTextureType.Ground);
                 return;
             }
             ZoneController.ChangeMaterial(material, data.zoneAreaData.zoneMaterialId);
@@ -115,6 +121,11 @@ namespace FeedTheRealm.Core.WorldEditor
                 data.zoneAreaData.skyboxMaterialId,
                 ZoneTextureType.Skybox
             );
+            if (string.IsNullOrEmpty(data.zoneAreaData.skyboxMaterialId) || material == null)
+            {
+                AssignDefaultMaterial(ZoneTextureType.Skybox);
+                return;
+            }
             ZoneController.SetSkyboxMaterial(material, data.zoneAreaData.skyboxMaterialId);
         }
     }

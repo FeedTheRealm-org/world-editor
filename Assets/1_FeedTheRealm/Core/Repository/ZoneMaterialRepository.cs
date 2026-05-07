@@ -45,10 +45,7 @@ namespace FeedTheRealm.Core.Repository
             );
             groundMaterialsCache[defaultId] = config.defaultGroundMaterial;
 
-            skyboxTextures[defaultId] = new TextureEntry(
-                null,
-                config.defaultSkyboxMaterial?.mainTexture as Texture2D
-            );
+            skyboxTextures[defaultId] = new TextureEntry(null, null);
             skyboxMaterialsCache[defaultId] = config.defaultSkyboxMaterial;
 
             logger.Log(

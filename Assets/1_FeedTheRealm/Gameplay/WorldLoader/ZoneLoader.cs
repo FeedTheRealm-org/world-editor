@@ -64,16 +64,16 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         {
             closeAllEvent.Raise(); // Ensure any open menus are closed before loading a new zone
             dataPersistenceManager.ClearPlaceables();
-
-            if (string.IsNullOrEmpty(worldSelector.selectedWorld))
-                return;
+            zoneManager.RegisterZone();
 
             ZoneData zoneData = dataPersistenceManager.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
             );
 
+            // we validate if zoneData is null here, do not move
             zoneManager.LoadData(zoneData);
+
             if (zoneData == null)
             {
                 logger.Log("[ZoneLoader] No zone data found, skipping load.");
