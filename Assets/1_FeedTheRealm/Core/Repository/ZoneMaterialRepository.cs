@@ -77,14 +77,20 @@ namespace FeedTheRealm.Core.Repository
                 type == ZoneTextureType.Ground
                     ? config.ZoneGroundDirectory
                     : config.ZoneSkyboxDirectory;
-            string fileName = Path.GetFileName(sourcePath);
+
+            string originalName = Path.GetFileNameWithoutExtension(sourcePath).Replace("@", "-");
+            if (originalName.Length > 100)
+                originalName = originalName[..100];
+            string id = Guid.NewGuid().ToString();
+            string sanitizedName = $"{id}@{originalName}";
+            string fileName = $"{sanitizedName}{Path.GetExtension(sourcePath)}";
             string destPath = Path.Combine(directory, fileName);
+
             File.Copy(sourcePath, destPath, overwrite: true);
 
-            string name = Path.GetFileNameWithoutExtension(fileName);
-            var texture = LoadTextureFromDisk(name, destPath);
+            var texture = LoadTextureFromDisk(sanitizedName, destPath);
             if (texture != null)
-                GetTextureDict(type)[name] = new TextureEntry(destPath, texture);
+                GetTextureDict(type)[sanitizedName] = new TextureEntry(destPath, texture);
         }
 
         public void DeleteMaterial(string name, ZoneTextureType type)

@@ -82,6 +82,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 activeTab == ZoneTextureType.Ground ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
+        private string GetDisplayName(string name) =>
+            name.Contains('@') ? name.Split('@')[1] : name;
+
         private void SyncWithActiveZone()
         {
             var data = zoneManager.ZoneController.Data;
@@ -162,7 +165,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
             var button = new Button();
             button.name = materialName;
-            button.text = materialName;
+            button.text = GetDisplayName(materialName);
             button.style.flexGrow = 1;
             button.style.color = new StyleColor(Color.white);
             button.style.backgroundColor = new StyleColor(Color.clear);
@@ -209,7 +212,11 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             var material = zoneMaterialsRepository.GetMaterial(materialName, type);
             if (material == null)
             {
-                ToastNotification.Show($"Material '{materialName}' not found.", "error", Color.red);
+                ToastNotification.Show(
+                    $"Material '{GetDisplayName(materialName)}' not found.",
+                    "error",
+                    Color.red
+                );
                 return;
             }
 
@@ -230,7 +237,11 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 zoneManager.ZoneController.SetSkyboxMaterial(material, materialName);
             }
 
-            ToastNotification.Show($"'{materialName}' applied.", "success", Color.green);
+            ToastNotification.Show(
+                $"'{GetDisplayName(materialName)}' applied.",
+                "success",
+                Color.green
+            );
         }
 
         private void OnDeleteMaterial(string materialName, ZoneTextureType type)
@@ -268,7 +279,11 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             }
 
             PopulateActiveGrid();
-            ToastNotification.Show($"'{materialName}' deleted.", "success", Color.green);
+            ToastNotification.Show(
+                $"'{GetDisplayName(materialName)}' deleted.",
+                "success",
+                Color.green
+            );
         }
 
         private void OnResetSkyboxClicked()
@@ -306,7 +321,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                         zoneMaterialsRepository.AddMaterial(paths[0], activeTab);
                         PopulateActiveGrid();
                         ToastNotification.Show(
-                            $"Texture '{Path.GetFileNameWithoutExtension(paths[0])}' added successfully!",
+                            $"Texture '{GetDisplayName(Path.GetFileNameWithoutExtension(paths[0]))}' added successfully!",
                             "success",
                             Color.green
                         );

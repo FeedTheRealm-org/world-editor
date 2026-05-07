@@ -15,10 +15,10 @@ namespace FTR.Core.Common.Config
         private string spritesDirectory = "Sprites";
 
         [SerializeField]
-        private string zoneGroundDirectory = "ZoneMaterials/Floor";
+        private string zoneGroundDirectory = "Ground";
 
         [SerializeField]
-        private string zoneSkyboxDirectory = "ZoneMaterials/Skybox";
+        private string zoneSkyboxDirectory = "Skybox";
 
         [Header("Persistent Models data directory")]
         [SerializeField]

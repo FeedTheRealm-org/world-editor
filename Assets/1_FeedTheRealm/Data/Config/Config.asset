@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.Core::FTR.Core.Common.Config.Config
   modelsDataDirectory: Models
   spritesDirectory: Sprites
-  zoneGroundDirectory: ZoneMaterials/Floor
-  zoneSkyboxDirectory: ZoneMaterials/Skybox
+  zoneGroundDirectory: Ground
+  zoneSkyboxDirectory: Skybox
   modelsDirectory: Models
   worldsDirectory: Worlds
   worldsFileExtension: .world
