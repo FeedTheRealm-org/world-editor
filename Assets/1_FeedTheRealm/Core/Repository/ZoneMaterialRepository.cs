@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FTR.Core.Common.Config;
 using UnityEngine;
@@ -17,8 +18,8 @@ namespace FeedTheRealm.Core.Repository
         [Inject]
         private Logging.Logger logger;
 
-        private Dictionary<string, Material> materialsCache;
-        private HashSet<string> textureNames;
+        private Dictionary<string, Material> materialsCache = new();
+        private Dictionary<string, TextureEntry> textures = new();
 
         public void Initialize() { }
 
@@ -27,61 +28,59 @@ namespace FeedTheRealm.Core.Repository
             this.config = config;
             this.logger = logger;
             Directory.CreateDirectory(config.ZoneMaterialsDirectory);
-            textureNames = LoadTextureNamesFromDisk();
-            textureNames.Add(config.defaultMaterialId);
-            materialsCache = new Dictionary<string, Material>
-            {
-                [config.defaultMaterialId] = config.defaultZoneMaterial,
-            };
+            textures = LoadTexturesFromDisk();
+            textures[config.defaultMaterialId] = new TextureEntry(
+                null,
+                config.defaultZoneMaterial.mainTexture as Texture2D
+            );
+            materialsCache[config.defaultMaterialId] = config.defaultZoneMaterial;
             logger.Log(
-                $"[ZoneMaterialsRepository] Initialized with {textureNames.Count} textures.",
+                $"[ZoneMaterialsRepository] Initialized with {textures.Count} textures.",
                 Logging.LogType.Info
             );
         }
 
-        public List<string> GetMaterialNames() => new List<string>(textureNames);
+        public Dictionary<string, Texture2D> GetTextures() =>
+            textures.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Texture);
 
-        public Material GetMaterial(string name)
-        {
-            if (materialsCache.TryGetValue(name, out var cached))
-                return cached;
-
-            if (!textureNames.Contains(name))
-            {
-                logger.Log(
-                    $"[ZoneMaterialsRepository] Texture '{name}' not found.",
-                    Logging.LogType.Warning
-                );
-                return null;
-            }
-
-            var path = GetTexturePath(name);
-            var material = CreateMaterialFromFile(path);
-            if (material == null)
-                return null;
-
-            materialsCache[name] = material;
-            return material;
-        }
+        public string DefaultMaterialId => config.defaultMaterialId;
 
         public void AddMaterial(string sourcePath)
         {
             if (!File.Exists(sourcePath))
                 return;
-
             string fileName = Path.GetFileName(sourcePath);
             string destPath = Path.Combine(config.ZoneMaterialsDirectory, fileName);
             File.Copy(sourcePath, destPath, overwrite: true);
-            textureNames.Add(Path.GetFileNameWithoutExtension(fileName));
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            var texture = LoadTextureFromDisk(name, destPath);
+            if (texture != null)
+                textures[name] = new TextureEntry(destPath, texture);
         }
 
         public void DeleteMaterial(string name)
         {
-            var path = GetTexturePath(name);
-            if (File.Exists(path))
-                File.Delete(path);
-            textureNames.Remove(name);
+            if (
+                textures.TryGetValue(name, out var entry)
+                && entry.Path != null
+                && File.Exists(entry.Path)
+            )
+                File.Delete(entry.Path);
+            textures.Remove(name);
             materialsCache.Remove(name);
+        }
+
+        public Material GetMaterial(string name)
+        {
+            if (materialsCache.TryGetValue(name, out var cached))
+                return cached;
+            if (!textures.TryGetValue(name, out var entry) || entry.Texture == null)
+                return null;
+            var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            material.mainTexture = entry.Texture;
+            material.name = name;
+            materialsCache[name] = material;
+            return material;
         }
 
         private HashSet<string> LoadTextureNamesFromDisk()
@@ -93,18 +92,7 @@ namespace FeedTheRealm.Core.Repository
             return result;
         }
 
-        private string GetTexturePath(string name)
-        {
-            foreach (var ext in new[] { ".png", ".jpg", ".jpeg" })
-            {
-                var path = Path.Combine(config.ZoneMaterialsDirectory, $"{name}{ext}");
-                if (File.Exists(path))
-                    return path;
-            }
-            return null;
-        }
-
-        private Material CreateMaterialFromFile(string path)
+        private Texture2D LoadTextureFromDisk(string name, string path)
         {
             try
             {
@@ -118,19 +106,44 @@ namespace FeedTheRealm.Core.Repository
                     );
                     return null;
                 }
-
-                var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-                material.mainTexture = texture;
-                material.name = Path.GetFileNameWithoutExtension(path);
-                return material;
+                texture.name = name;
+                return texture;
             }
             catch (Exception ex)
             {
                 logger.Log(
-                    $"[ZoneMaterialsRepository] Error creating material from '{path}': {ex.Message}",
+                    $"[ZoneMaterialsRepository] Error loading texture '{name}': {ex.Message}",
                     Logging.LogType.Error
                 );
                 return null;
+            }
+        }
+
+        private Dictionary<string, TextureEntry> LoadTexturesFromDisk()
+        {
+            var result = new Dictionary<string, TextureEntry>();
+            foreach (var ext in new[] { "*.png", "*.jpg", "*.jpeg" })
+            {
+                foreach (var path in Directory.GetFiles(config.ZoneMaterialsDirectory, ext))
+                {
+                    string name = Path.GetFileNameWithoutExtension(path);
+                    var texture = LoadTextureFromDisk(name, path);
+                    if (texture != null)
+                        result[name] = new TextureEntry(path, texture);
+                }
+            }
+            return result;
+        }
+
+        private struct TextureEntry
+        {
+            public string Path;
+            public Texture2D Texture;
+
+            public TextureEntry(string path, Texture2D texture)
+            {
+                Path = path;
+                Texture = texture;
             }
         }
     }

@@ -69,42 +69,82 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
             foreach (var child in materialsGrid.Children())
             {
-                if (child is Button b && b.name == data.zoneMaterialId)
-                    b.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
+                var btn = child.Q<Button>();
+                if (btn != null && btn.name == data.zoneMaterialId)
+                    child.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
             }
         }
 
         private void PopulateMaterialsGrid()
         {
             materialsGrid.Clear();
-
-            var materials = zoneMaterialsRepository.GetMaterialNames();
-            foreach (var materialName in materials)
-            {
-                var button = CreateMaterialButton(materialName);
-                materialsGrid.Add(button);
-            }
+            foreach (var kvp in zoneMaterialsRepository.GetTextures())
+                materialsGrid.Add(CreateMaterialContainer(kvp.Key, kvp.Value));
         }
 
-        private Button CreateMaterialButton(string materialName)
+        private VisualElement CreateMaterialContainer(string materialName, Texture2D texture)
         {
+            var container = new VisualElement();
+            container.style.flexDirection = FlexDirection.Row;
+            container.style.justifyContent = Justify.SpaceBetween;
+            container.style.alignItems = Align.Center;
+            container.style.height = 40;
+            container.style.marginBottom = 4;
+            container.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
+            container.style.borderTopLeftRadius = 5;
+            container.style.borderTopRightRadius = 5;
+            container.style.borderBottomLeftRadius = 5;
+            container.style.borderBottomRightRadius = 5;
+
+            // Texture preview
+            if (texture != null)
+            {
+                var preview = new VisualElement();
+                preview.style.width = 36;
+                preview.style.height = 36;
+                preview.style.marginLeft = 2;
+                preview.style.borderTopLeftRadius = 4;
+                preview.style.borderTopRightRadius = 4;
+                preview.style.borderBottomLeftRadius = 4;
+                preview.style.borderBottomRightRadius = 4;
+                preview.style.backgroundImage = new StyleBackground(texture);
+                container.Add(preview);
+            }
+
+            // Material name button
             var button = new Button();
             button.name = materialName;
             button.text = materialName;
-            button.style.height = 40;
-            button.style.marginBottom = 4;
+            button.style.flexGrow = 1;
             button.style.color = new StyleColor(Color.white);
-            button.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-            button.style.borderTopLeftRadius = 5;
-            button.style.borderTopRightRadius = 5;
-            button.style.borderBottomLeftRadius = 5;
-            button.style.borderBottomRightRadius = 5;
+            button.style.backgroundColor = new StyleColor(Color.clear);
+            button.style.borderTopWidth = 0;
+            button.style.borderBottomWidth = 0;
+            button.style.borderLeftWidth = 0;
+            button.style.borderRightWidth = 0;
+            button.clicked += () => OnMaterialSelected(materialName, container);
+            container.Add(button);
 
-            button.clicked += () => OnMaterialSelected(materialName, button);
-            return button;
+            // Delete button (not shown for default)
+            if (materialName != zoneMaterialsRepository.DefaultMaterialId)
+            {
+                var deleteButton = new Button();
+                deleteButton.text = "✕";
+                deleteButton.style.color = new StyleColor(Color.red);
+                deleteButton.style.backgroundColor = new StyleColor(Color.clear);
+                deleteButton.style.borderTopWidth = 0;
+                deleteButton.style.borderBottomWidth = 0;
+                deleteButton.style.borderLeftWidth = 0;
+                deleteButton.style.borderRightWidth = 0;
+                deleteButton.style.width = 30;
+                deleteButton.clicked += () => OnDeleteMaterial(materialName);
+                container.Add(deleteButton);
+            }
+
+            return container;
         }
 
-        private void OnMaterialSelected(string materialName, Button button)
+        private void OnMaterialSelected(string materialName, VisualElement container)
         {
             var material = zoneMaterialsRepository.GetMaterial(materialName);
             if (material == null)
@@ -118,13 +158,30 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             zoneManager.ZoneController.ApplyTextureGranularity(granularitySlider.value);
 
             foreach (var child in materialsGrid.Children())
-            {
-                if (child is Button b)
-                    b.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-            }
-            button.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
+                child.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
 
+            container.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
             ToastNotification.Show($"Material '{materialName}' applied.", "success", Color.green);
+        }
+
+        private void OnDeleteMaterial(string materialName)
+        {
+            zoneMaterialsRepository.DeleteMaterial(materialName);
+
+            if (selectedMaterialId == materialName)
+            {
+                var defaultMaterial = zoneMaterialsRepository.GetMaterial(
+                    zoneMaterialsRepository.DefaultMaterialId
+                );
+                zoneManager.ZoneController.ChangeMaterial(
+                    defaultMaterial,
+                    zoneMaterialsRepository.DefaultMaterialId
+                );
+                selectedMaterialId = zoneMaterialsRepository.DefaultMaterialId;
+            }
+
+            PopulateMaterialsGrid();
+            ToastNotification.Show($"'{materialName}' deleted.", "success", Color.green);
         }
 
         private void OnGranularityChanged(ChangeEvent<float> evt)

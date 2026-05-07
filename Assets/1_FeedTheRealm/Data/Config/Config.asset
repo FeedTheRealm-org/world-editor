@@ -24,7 +24,7 @@ MonoBehaviour:
   placeableLayerMask:
     serializedVersion: 2
     m_Bits: 512
-  worldLayerMask:
+  worldObjectLayerMask:
     serializedVersion: 2
     m_Bits: 2048
   defaultOpenChestId: bbc147da-338a-4cb5-be5e-2eceb47bbe84
