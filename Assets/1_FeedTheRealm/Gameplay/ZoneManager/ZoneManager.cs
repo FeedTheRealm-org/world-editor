@@ -45,11 +45,13 @@ namespace FeedTheRealm.Core.WorldEditor
 
         public void SaveData(ref ZoneData data)
         {
+            logger.Log("[ZoneManager] Saving zone area data.");
             data.zoneAreaData = ZoneController.Data;
         }
 
         public void RegisterZone()
         {
+            logger.Log("[ZoneManager] Registering zone manager.");
             registryEvent.Raise(this);
         }
 
