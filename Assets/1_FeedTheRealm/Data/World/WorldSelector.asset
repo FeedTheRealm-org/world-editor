@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58a23dac8cf0300bafddb418e865be1, type: 3}
   m_Name: WorldSelector
   m_EditorClassIdentifier: FTR.Core::FeedTheRealm.Core.DataPersistence.WorldSelector
-  selectedWorld: SEVLAND
+  selectedWorld: CoolWorld
+  selectedWorldId: 1a88b6d3-7e27-47d3-9690-b9d8299393de

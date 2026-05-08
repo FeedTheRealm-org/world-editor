@@ -42,7 +42,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
             closeButton = root.Q<Button>("Close");
             addTextureButton = root.Q<Button>("AddTexture");
-            resetGranularityButton = root.Q<Button>("ResetGranulairy");
+            resetGranularityButton = root.Q<Button>("ResetGranularity");
             granularitySlider = root.Q<Slider>("GranularitySlider");
             tabView = root.Q<TabView>();
 
@@ -234,9 +234,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
 
         private void OnDeleteMaterial(string materialName, ZoneTextureType type)
         {
-            zoneMaterialsRepository.DeleteMaterial(materialName, type);
+            zoneMaterialsRepository.DeleteMaterial(materialName);
 
-            if (type == ZoneTextureType.Ground && selectedGroundMaterialId == materialName)
+            if (selectedGroundMaterialId == materialName)
             {
                 var fallbackId = zoneMaterialsRepository.DefaultMaterialId;
                 var fallbackMaterial = zoneMaterialsRepository.GetMaterial(
@@ -246,15 +246,16 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                 zoneManager.ZoneController.ChangeMaterial(fallbackMaterial, fallbackId);
                 selectedGroundMaterialId = fallbackId;
             }
-            else if (type == ZoneTextureType.Skybox && selectedSkyboxMaterialId == materialName)
+
+            if (selectedSkyboxMaterialId == materialName)
             {
                 var fallbackId = zoneMaterialsRepository.DefaultMaterialId;
-                if (fallbackId != null)
+                var fallbackMaterial = zoneMaterialsRepository.GetMaterial(
+                    fallbackId,
+                    ZoneTextureType.Skybox
+                );
+                if (fallbackMaterial != null)
                 {
-                    var fallbackMaterial = zoneMaterialsRepository.GetMaterial(
-                        fallbackId,
-                        ZoneTextureType.Skybox
-                    );
                     zoneManager.ZoneController.SetSkyboxMaterial(fallbackMaterial, fallbackId);
                     selectedSkyboxMaterialId = fallbackId;
                 }

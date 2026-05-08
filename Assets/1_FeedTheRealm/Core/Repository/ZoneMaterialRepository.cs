@@ -8,12 +8,6 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Core.Repository
 {
-    public enum ZoneTextureType
-    {
-        Ground,
-        Skybox,
-    }
-
     public class ZoneMaterialsRepository : IInitializable
     {
         private Config config;
@@ -24,7 +18,7 @@ namespace FeedTheRealm.Core.Repository
         private Dictionary<string, TextureEntry> groundTextures = new();
         private Dictionary<string, TextureEntry> skyboxTextures = new();
 
-        private const string Seperator = "@";
+        private const string SEPARATOR = "@";
 
         public void Initialize() { }
 
@@ -86,11 +80,11 @@ namespace FeedTheRealm.Core.Repository
                 return;
 
             string originalName = Path.GetFileNameWithoutExtension(sourcePath)
-                .Replace(Seperator, "-");
+                .Replace(SEPARATOR, "-");
             if (originalName.Length > 100)
                 originalName = originalName[..100];
 
-            string sanitizedName = $"{id}{Seperator}{originalName}";
+            string sanitizedName = $"{id}{SEPARATOR}{originalName}";
             string fileName = $"{sanitizedName}{Path.GetExtension(sourcePath)}";
             string destPath = Path.Combine(config.MaterialsDirectory, fileName);
 
@@ -105,17 +99,20 @@ namespace FeedTheRealm.Core.Repository
             }
         }
 
-        public void DeleteMaterial(string name, ZoneTextureType type)
+        public void DeleteMaterial(string name)
         {
-            var dict = GetTextureDict(type);
+            // Delete the file once (check either dict since they share the same path)
             if (
-                dict.TryGetValue(name, out var entry)
+                groundTextures.TryGetValue(name, out var entry)
                 && entry.Path != null
                 && File.Exists(entry.Path)
             )
                 File.Delete(entry.Path);
-            dict.Remove(name);
-            GetMaterialCache(type).Remove(name);
+
+            groundTextures.Remove(name);
+            skyboxTextures.Remove(name);
+            groundMaterialsCache.Remove(name);
+            skyboxMaterialsCache.Remove(name);
         }
 
         public Material GetMaterial(string name, ZoneTextureType type)
@@ -150,7 +147,7 @@ namespace FeedTheRealm.Core.Repository
             var dict = GetTextureDict(type);
             if (dict.TryGetValue(name, out var _))
             {
-                string[] parts = name.Split(Seperator);
+                string[] parts = name.Split(SEPARATOR);
                 if (parts.Length > 1 && parts[0] != defaultId)
                     return parts[0];
             }

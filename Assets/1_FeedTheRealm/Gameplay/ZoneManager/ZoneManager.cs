@@ -14,7 +14,7 @@ using VContainer.Unity;
 namespace FeedTheRealm.Core.WorldEditor
 {
     /// <summary>
-    /// This manager is in charge of modifying the physical zone's atributes like the floor material
+    /// This manager is in charge of modifying the physical zone's attributes like the floor material
     /// and providing the current active material data for saving.
     /// </summary>
     public class ZoneManager : IInitializable, IPersistent<ZoneData>
