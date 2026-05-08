@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4803093572343354384}
   - component: {fileID: -6471009733461231852}
   m_Layer: 0
-  m_Name: DefaultModelsMenu
+  m_Name: DefaultContentMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

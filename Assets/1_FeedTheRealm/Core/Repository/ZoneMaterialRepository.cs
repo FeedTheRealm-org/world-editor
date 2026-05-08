@@ -35,11 +35,10 @@ namespace FeedTheRealm.Core.Repository
         {
             this.config = config;
             this.logger = logger;
-            Directory.CreateDirectory(config.ZoneGroundDirectory);
-            Directory.CreateDirectory(config.ZoneSkyboxDirectory);
+            Directory.CreateDirectory(config.MaterialsDirectory);
 
-            groundTextures = LoadTexturesFromDisk(config.ZoneGroundDirectory);
-            skyboxTextures = LoadTexturesFromDisk(config.ZoneSkyboxDirectory);
+            groundTextures = LoadTexturesFromDisk(config.MaterialsDirectory);
+            skyboxTextures = LoadTexturesFromDisk(config.MaterialsDirectory);
 
             // Register single defaults with "Default" key
             groundTextures[defaultId] = new TextureEntry(
@@ -75,30 +74,35 @@ namespace FeedTheRealm.Core.Repository
         public Dictionary<string, Texture2D> GetTextures(ZoneTextureType type) =>
             GetTextureDict(type).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Texture);
 
-        public void AddMaterial(string sourcePath, ZoneTextureType type)
+        public void AddMaterial(string sourcePath) =>
+            AddMaterialInternal(sourcePath, Guid.NewGuid().ToString());
+
+        public void AddDefaultMaterial(string sourcePath) =>
+            AddMaterialInternal(sourcePath, defaultId);
+
+        private void AddMaterialInternal(string sourcePath, string id)
         {
             if (!File.Exists(sourcePath))
                 return;
 
-            string directory =
-                type == ZoneTextureType.Ground
-                    ? config.ZoneGroundDirectory
-                    : config.ZoneSkyboxDirectory;
-
             string originalName = Path.GetFileNameWithoutExtension(sourcePath)
-                .Replace("{Seperator}", "-");
+                .Replace(Seperator, "-");
             if (originalName.Length > 100)
                 originalName = originalName[..100];
-            string id = Guid.NewGuid().ToString();
+
             string sanitizedName = $"{id}{Seperator}{originalName}";
             string fileName = $"{sanitizedName}{Path.GetExtension(sourcePath)}";
-            string destPath = Path.Combine(directory, fileName);
+            string destPath = Path.Combine(config.MaterialsDirectory, fileName);
 
             File.Copy(sourcePath, destPath, overwrite: true);
 
             var texture = LoadTextureFromDisk(sanitizedName, destPath);
             if (texture != null)
-                GetTextureDict(type)[sanitizedName] = new TextureEntry(destPath, texture);
+            {
+                var entry = new TextureEntry(destPath, texture);
+                groundTextures[sanitizedName] = entry;
+                skyboxTextures[sanitizedName] = entry;
+            }
         }
 
         public void DeleteMaterial(string name, ZoneTextureType type)
@@ -141,13 +145,14 @@ namespace FeedTheRealm.Core.Repository
             return material;
         }
 
-        public string GetMaterialId(string name, ZoneTextureType type)
+        public string GetPublishId(string name, ZoneTextureType type)
         {
             var dict = GetTextureDict(type);
             if (dict.TryGetValue(name, out var _))
             {
                 string[] parts = name.Split(Seperator);
-                return parts.Length > 1 ? parts[0] : null;
+                if (parts.Length > 1 && parts[0] != defaultId)
+                    return parts[0];
             }
             return null;
         }

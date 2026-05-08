@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   showLogs: 1
   loggerPrefix: 'API | '
-  loggerColor: {r: 0.7641889, g: 0.6722608, b: 0.9787684, a: 0}
-  showColor: 0
+  loggerColor: {r: 0.9893396, g: 1, b: 0.20297873, a: 0}
+  showColor: 1

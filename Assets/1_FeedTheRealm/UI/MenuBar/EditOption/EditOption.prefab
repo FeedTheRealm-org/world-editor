@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
-  label: Default Models
+  label: Default Content
   menuToOpen: {fileID: -6471009733461231852, guid: 9a84745387c6f4c87b3849ccf2421aaf, type: 3}
   menuOptions: []
 --- !u!114 &857912648616450720

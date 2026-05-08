@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fccb0dc5aee4972889eb166a7d55cc5, type: 3}
   m_Name: MaterialService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.MaterialService
-  logger: {fileID: 0}
-  apiConfig: {fileID: 0}
-  session: {fileID: 0}
+  logger: {fileID: 11400000, guid: a8f18f8cceb9fae50b3b864c5467f01f, type: 2}
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}

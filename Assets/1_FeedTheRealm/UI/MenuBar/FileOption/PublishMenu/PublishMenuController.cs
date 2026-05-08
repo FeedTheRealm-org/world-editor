@@ -1030,17 +1030,16 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 return;
             }
 
-            string id = zoneMaterialsRepository.GetMaterialId(materialKey, type);
+            string id = zoneMaterialsRepository.GetPublishId(materialKey, type);
             if (string.IsNullOrEmpty(id))
             {
                 logger.Log(
-                    $"[PublishMenu] No material ID found for '{materialKey}' ({type}), skipping.",
+                    $"[PublishMenu] No publish ID found for '{materialKey}' ({type}), skipping.",
                     this,
                     Logging.LogType.Warning
                 );
                 return;
             }
-
             string filePath = zoneMaterialsRepository.GetMaterialFilePath(materialKey, type);
             if (string.IsNullOrEmpty(filePath))
             {
