@@ -24,9 +24,12 @@ namespace FeedTheRealm.Core.Repository
         private Dictionary<string, TextureEntry> groundTextures = new();
         private Dictionary<string, TextureEntry> skyboxTextures = new();
 
+        private const string Seperator = "@";
+
         public void Initialize() { }
 
         public const string defaultId = "Default";
+        public string DefaultMaterialId => defaultId;
 
         public ZoneMaterialsRepository(Config config, Logging.Logger logger)
         {
@@ -60,7 +63,11 @@ namespace FeedTheRealm.Core.Repository
             return GetMaterial(id, type);
         }
 
-        public string DefaultMaterialId => defaultId;
+        public string GetMaterialFilePath(string name, ZoneTextureType type)
+        {
+            var dict = GetTextureDict(type);
+            return dict.TryGetValue(name, out var entry) ? entry.Path : null;
+        }
 
         public bool IsDefaultMaterial(string name, ZoneTextureType type) =>
             name == (type == ZoneTextureType.Ground ? defaultId : defaultId);
@@ -78,11 +85,12 @@ namespace FeedTheRealm.Core.Repository
                     ? config.ZoneGroundDirectory
                     : config.ZoneSkyboxDirectory;
 
-            string originalName = Path.GetFileNameWithoutExtension(sourcePath).Replace("@", "-");
+            string originalName = Path.GetFileNameWithoutExtension(sourcePath)
+                .Replace("{Seperator}", "-");
             if (originalName.Length > 100)
                 originalName = originalName[..100];
             string id = Guid.NewGuid().ToString();
-            string sanitizedName = $"{id}@{originalName}";
+            string sanitizedName = $"{id}{Seperator}{originalName}";
             string fileName = $"{sanitizedName}{Path.GetExtension(sourcePath)}";
             string destPath = Path.Combine(directory, fileName);
 
@@ -133,6 +141,17 @@ namespace FeedTheRealm.Core.Repository
             return material;
         }
 
+        public string GetMaterialId(string name, ZoneTextureType type)
+        {
+            var dict = GetTextureDict(type);
+            if (dict.TryGetValue(name, out var _))
+            {
+                string[] parts = name.Split(Seperator);
+                return parts.Length > 1 ? parts[0] : null;
+            }
+            return null;
+        }
+
         // ------ PRIVATE METHODS ------
 
         private Dictionary<string, TextureEntry> GetTextureDict(ZoneTextureType type) =>
@@ -140,24 +159,6 @@ namespace FeedTheRealm.Core.Repository
 
         private Dictionary<string, Material> GetMaterialCache(ZoneTextureType type) =>
             type == ZoneTextureType.Ground ? groundMaterialsCache : skyboxMaterialsCache;
-
-        private void RegisterDefaultMaterials(
-            List<Material> defaults,
-            Dictionary<string, TextureEntry> textureDict,
-            Dictionary<string, Material> materialCache
-        )
-        {
-            foreach (var material in defaults)
-            {
-                if (material == null)
-                    continue;
-                textureDict[material.name] = new TextureEntry(
-                    null,
-                    material.mainTexture as Texture2D
-                );
-                materialCache[material.name] = material;
-            }
-        }
 
         private Dictionary<string, TextureEntry> LoadTexturesFromDisk(string directory)
         {

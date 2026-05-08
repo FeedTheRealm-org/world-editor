@@ -15,7 +15,7 @@ using VContainer;
 namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class DefaultModelMenu : MenuController
+    public class DefaultContentMenu : MenuController
     {
         [Inject]
         private ModelsRepository modelsRepository;
@@ -31,6 +31,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
         [Inject]
         private Config config;
+
+        [Inject]
+        private ZoneMaterialsRepository zoneMaterialsRepository;
         private Button downloadButton;
         private Button closeButton;
         private Label statusLabel;
