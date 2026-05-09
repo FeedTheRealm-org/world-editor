@@ -17,8 +17,8 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
         public PlacingState(WorldEditorStateMachine worldEditor)
         {
             this.worldEditor = worldEditor;
-            this.placementLayerMask = worldEditor.Config.PlacementLayerMask;
-            this.worldObjectLayerMask = worldEditor.Config.WorldLayerMask;
+            this.placementLayerMask = worldEditor.Config.PlaceableLayerMask;
+            this.worldObjectLayerMask = worldEditor.Config.WorldObjectLayerMask;
         }
 
         public void Enter()

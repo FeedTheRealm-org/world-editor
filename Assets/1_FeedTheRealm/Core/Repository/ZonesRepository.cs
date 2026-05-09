@@ -41,6 +41,8 @@ namespace FeedTheRealm.Core.Repository
         {
             try
             {
+                if (string.IsNullOrEmpty(worldName))
+                    return null;
                 string path = GetZonePath(worldName, zoneId);
                 if (!File.Exists(path))
                     return null;

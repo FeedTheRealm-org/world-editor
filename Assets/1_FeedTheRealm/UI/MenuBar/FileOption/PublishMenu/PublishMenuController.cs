@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
@@ -49,6 +50,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [SerializeField]
         private Session.Session session;
 
+        [SerializeField]
+        private MaterialService materialService;
+
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
@@ -60,6 +64,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private ZoneMaterialsRepository zoneMaterialsRepository;
 
         private Button publishButton;
         private Button loginButton;
@@ -506,6 +513,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     continue;
 
                 await PublishModels(zoneData);
+                await PublishZoneMaterials(zoneData);
 
                 var (_, error, statusCode) = await zoneService.PublishZone(
                     currentWorldData.worldId,
@@ -945,6 +953,107 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 modelRequests.Add(new ModelRequest { id = id, filePath = modelPath });
                 queuedIds.Add(id);
             }
+        }
+
+        private async Task PublishZoneMaterials(ZoneData zoneData)
+        {
+            try
+            {
+                var ids = new List<string>();
+                var names = new List<string>();
+                var filePaths = new List<string>();
+
+                AddMaterial(
+                    zoneData.zoneAreaData?.zoneMaterialId,
+                    ZoneTextureType.Ground,
+                    ids,
+                    names,
+                    filePaths
+                );
+                AddMaterial(
+                    zoneData.zoneAreaData?.skyboxMaterialId,
+                    ZoneTextureType.Skybox,
+                    ids,
+                    names,
+                    filePaths
+                );
+
+                if (ids.Count == 0)
+                {
+                    logger.Log("[PublishMenu] No materials to upload.", this, Logging.LogType.Info);
+                    return;
+                }
+
+                var result =
+                    await materialService.UploadMaterialsAsync(
+                        currentWorldData.worldId,
+                        ids.ToArray(),
+                        names.ToArray(),
+                        filePaths.ToArray()
+                    ) ?? throw new Exception("Failed to upload zone materials.");
+
+                logger.Log(
+                    $"[PublishMenu] Successfully uploaded {result.Length} zone materials.",
+                    this,
+                    Logging.LogType.Info
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[PublishMenu] Error uploading materials: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception($"Error uploading materials: {ex.Message}");
+            }
+        }
+
+        private void AddMaterial(
+            string materialKey,
+            ZoneTextureType type,
+            List<string> ids,
+            List<string> names,
+            List<string> filePaths
+        )
+        {
+            if (
+                string.IsNullOrEmpty(materialKey)
+                || materialKey == ZoneMaterialsRepository.defaultId
+            )
+            {
+                logger.Log(
+                    $"[PublishMenu] Skipping default material for {type}.",
+                    this,
+                    Logging.LogType.Info
+                );
+                return;
+            }
+
+            string id = zoneMaterialsRepository.GetPublishId(materialKey, type);
+            if (string.IsNullOrEmpty(id))
+            {
+                logger.Log(
+                    $"[PublishMenu] No publish ID found for '{materialKey}' ({type}), skipping.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+            string filePath = zoneMaterialsRepository.GetMaterialFilePath(materialKey, type);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                logger.Log(
+                    $"[PublishMenu] File not found for material '{materialKey}', skipping.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            ids.Add(id);
+            names.Add(materialKey);
+            filePaths.Add(filePath);
         }
     }
 }

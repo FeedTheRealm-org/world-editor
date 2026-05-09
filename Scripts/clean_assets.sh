@@ -3,6 +3,7 @@
 # Clean downloaded model assets from StreamingAssets and persistent data
 
 STREAMING_ASSETS_MODELS="$(dirname "$0")/../Assets/StreamingAssets/Models"
+STREAMING_ASSETS_MATERIALS="$(dirname "$0")/../Assets/StreamingAssets/Materials"
 LINUX_PERSISTENT_DATA_MODELS="$HOME/.config/unity3d/AtusGames/World creator/Models"
 WINDOWS_PERSISTENT_DATA_MODELS="/mnt/c/Users/$USER/AppData/LocalLow/AtusGames/World creator/Models"
 
@@ -27,6 +28,14 @@ if [ -d "$STREAMING_ASSETS_MODELS" ]; then
     echo "  ✓ Removed: $STREAMING_ASSETS_MODELS"
 else
     echo "  - Not found, skipping: $STREAMING_ASSETS_MODELS"
+fi
+
+echo "Cleaning StreamingAssets materials..."
+if [ -d "$STREAMING_ASSETS_MATERIALS" ]; then
+    rm -rf "$STREAMING_ASSETS_MATERIALS"
+    echo "  ✓ Removed: $STREAMING_ASSETS_MATERIALS"
+else
+    echo "  - Not found, skipping: $STREAMING_ASSETS_MATERIALS"
 fi
 
 if [ "$USE_WINDOWS" = true ]; then

@@ -3,6 +3,7 @@ using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.Repository;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
@@ -53,6 +54,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         private ModelService modelService;
 
         [SerializeField]
+        private MaterialService materialService;
+
+        [SerializeField]
         private PlayerService playerService;
 
         [SerializeField]
@@ -73,6 +77,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             // Data persistence Manager
             builder.Register<DataPersistenceManager>(Lifetime.Singleton);
 
+            builder.Register<ZoneManager>(Lifetime.Singleton);
+
             // Repositories
             builder.Register<ModelsRepository>(Lifetime.Singleton);
             builder.Register<WorldsRepository>(Lifetime.Singleton);
@@ -81,6 +87,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder
                 .Register<PlayerInfoRepository>(Lifetime.Singleton)
                 .As<CharacterInfoRepository>();
+            builder.Register<ZoneMaterialsRepository>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -100,9 +107,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<ZoneLoader>(Lifetime.Scoped);
 
             // World Setup Services
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
             builder.Register<WorldUISetupService>(Lifetime.Scoped);
@@ -125,6 +130,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(playerService);
             builder.RegisterInstance(session);
             builder.RegisterInstance(modelService);
+            builder.RegisterInstance(materialService);
             builder.RegisterInstance(config);
             builder.RegisterInstance(logger);
         }

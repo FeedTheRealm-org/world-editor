@@ -10,9 +10,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
 
         public WorldSetupManager(
             Logging.Logger logger,
-            BaseplateSetupService baseplateSetupService,
             CameraSetupService cameraSetupService,
-            LightingSetupService lightingSetupService,
             PlayerSetupService playerSetupService,
             WorldEditorSetupService worldEditorSetupService,
             WorldUISetupService worldUISetupService,
@@ -22,9 +20,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             this.logger = logger;
             setupServices = new List<ISetup>
             {
-                baseplateSetupService,
                 cameraSetupService,
-                lightingSetupService,
                 playerSetupService,
                 worldEditorSetupService,
                 worldUISetupService,
