@@ -27,12 +27,15 @@
     flex-shrink: 0;
 }
 
-
-
-
-
 .unity-button:hover {
     color: rgb(255, 255, 255);
     font-size: 15px;
     -unity-text-align: middle-center;
+}
+
+.menu-bar-item-spacing {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 25px;
+    margin-right: 25px;
 }

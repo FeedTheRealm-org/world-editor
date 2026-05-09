@@ -48,6 +48,10 @@ namespace FeedTheRealm.UI.MenuBar
 
         [SerializeField]
         private GameObject aboutOptionController;
+
+        [SerializeField]
+        private GameObject loginOptionController;
+
         private VisualElement root;
         private MenuStack menuStack;
 
@@ -60,6 +64,7 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("Subscriptions", subscriptionsOptionController);
             BindButton("Help", helpOptionController);
             BindButton("About", aboutOptionController);
+            BindButton("Login", loginOptionController);
             logger.Log("MenuBarController initialized successfully.", this);
         }
 

@@ -23,6 +23,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         private Dictionary<string, StructureData> modelsData;
         private Dictionary<string, GameObject> structuresCache;
         private IObjectResolver resolver;
+        private GameObject errorModel;
 
         public StructureLibrary(
             GltfService gltfService,
@@ -39,6 +40,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             structurePrefab = prefabProvider.structurePrefab;
             structuresCache = new Dictionary<string, GameObject>();
             modelsData = modelsRepository.GetModelsData();
+            errorModel = prefabProvider.errorPrefab;
         }
 
         /// <summary>
@@ -59,7 +61,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                             $"Model data for {structureId} not found.",
                             Logging.LogType.Error
                         );
-                        return null;
+                        return Object.Instantiate(errorModel);
                     }
                     await CacheStructureFromDisk(modelData);
                     cachedStructure = structuresCache[structureId];

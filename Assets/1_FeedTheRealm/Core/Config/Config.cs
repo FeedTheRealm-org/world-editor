@@ -36,6 +36,13 @@ namespace FTR.Core.Common.Config
         [SerializeField]
         private string zoneFilePrefix = "zone_";
 
+        [Header("Layer Masks")]
+        [SerializeField]
+        private LayerMask placementLayerMask;
+
+        [SerializeField]
+        private LayerMask worldLayerMask;
+
         [Header("UI Configs")]
         public string defaultOpenChestId;
         public string defaultClosedChestId;
@@ -52,5 +59,7 @@ namespace FTR.Core.Common.Config
         public string WorldDataFilename => worldDataFileName;
         public string CreatablesFileName => creatablesFileName;
         public string ZoneFilePrefix => zoneFilePrefix;
+        public LayerMask PlacementLayerMask => placementLayerMask;
+        public LayerMask WorldLayerMask => worldLayerMask;
     }
 }
