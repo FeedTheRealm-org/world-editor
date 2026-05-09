@@ -169,8 +169,6 @@ Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__l
     border-top-right-radius: 15px;
 }
 
-
-
 #Menu > #TabView > #Colliders > #Buttons {
     min-height: 30px;
     height: auto;
@@ -200,4 +198,8 @@ Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__l
 }
 
 #Menu > #TabView > #Colliders > #Buttons > #CollidersToggle > .unity-toggle__input {
+}
+
+Slider {
+    color: rgb(255, 255, 255);
 }
