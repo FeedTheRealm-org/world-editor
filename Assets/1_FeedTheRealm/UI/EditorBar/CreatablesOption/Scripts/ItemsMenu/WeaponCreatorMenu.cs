@@ -31,10 +31,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private TextField nameInput;
         private TextField descriptionInput;
         private DropdownField weaponTypeInput;
+        private DropdownField subWeaponTypeInput;
         private IntegerField damageInput;
         private FloatField attackSpeedInput;
         private FloatField rangeInput;
         private IntegerField ammoInput;
+        private FloatField reloadSpeedInput;
         private Image spritePreview;
         private string currentSpritePath;
         private Button saveButton;
@@ -46,12 +48,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
             weaponTypeInput = root.Q<DropdownField>("WeaponTypeField");
-            weaponTypeInput.choices = Enum.GetNames(typeof(WeaponType)).ToList();
-            weaponTypeInput.value = WeaponType.Melee.ToString();
+            subWeaponTypeInput = root.Q<DropdownField>("SubWeaponTypeField");
             damageInput = root.Q<IntegerField>("DamageField");
             attackSpeedInput = root.Q<FloatField>("AttackSpeedField");
             rangeInput = root.Q<FloatField>("RangeField");
             ammoInput = root.Q<IntegerField>("AmmoField");
+            reloadSpeedInput = root.Q<FloatField>("ReloadSpeedField");
             spritePreview = root.Q<Image>("SpritePreview");
             saveButton = root.Q<Button>("SaveButton");
             closeButton = root.Q<Button>("Close");
@@ -60,6 +62,27 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             root.Q<Button>("Return").clicked += ReturnToList;
             closeButton.clicked += CloseMenu;
             saveButton.clicked += CreateNewObject;
+
+            SetupDefaults();
+        }
+
+        private void SetupDefaults()
+        {
+            weaponTypeInput.choices = Enum.GetNames(typeof(WeaponType)).ToList();
+            weaponTypeInput.value = WeaponType.Melee.ToString();
+
+            subWeaponTypeInput.choices = Enum.GetNames(typeof(ValidSubMeleeWeaponType)).ToList();
+            subWeaponTypeInput.value = SubWeaponType.HandHeld.ToString();
+
+            HandleChangeWeaponType(WeaponType.Melee);
+            weaponTypeInput.RegisterValueChangedCallback(evt =>
+                HandleChangeWeaponType(Enum.Parse<WeaponType>(evt.newValue))
+            );
+            subWeaponTypeInput.RegisterValueChangedCallback(evt =>
+            {
+                if (editBuffer != null)
+                    editBuffer.Working.subWeaponType = Enum.Parse<SubWeaponType>(evt.newValue);
+            });
         }
 
         public void SetupEditor(Weapon weapon)
@@ -85,6 +108,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             nameInput.value = dataToDisplay.name;
             descriptionInput.value = dataToDisplay.description;
             weaponTypeInput.value = dataToDisplay.weaponType.ToString();
+            subWeaponTypeInput.value = dataToDisplay.subWeaponType.ToString();
             damageInput.value = dataToDisplay.damage;
             attackSpeedInput.value = dataToDisplay.attackSpeed;
             rangeInput.value = dataToDisplay.range;
@@ -101,10 +125,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             descriptionInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.description = evt.newValue
             );
-            weaponTypeInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.weaponType = Enum.Parse<WeaponType>(evt.newValue)
-            );
-
             damageInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.damage = evt.newValue
             );
@@ -113,6 +133,47 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             );
             rangeInput.RegisterValueChangedCallback(evt => editBuffer.Working.range = evt.newValue);
             ammoInput.RegisterValueChangedCallback(evt => editBuffer.Working.ammo = evt.newValue);
+            reloadSpeedInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.reloadSpeed = evt.newValue
+            );
+        }
+
+        private void HandleChangeWeaponType(WeaponType newType)
+        {
+            if (editBuffer != null)
+                editBuffer.Working.weaponType = newType;
+            switch (newType)
+            {
+                case WeaponType.Melee:
+                    subWeaponTypeInput.choices = Enum.GetNames(typeof(ValidSubMeleeWeaponType))
+                        .ToList();
+                    subWeaponTypeInput.value = SubWeaponType.HandHeld.ToString();
+                    if (editBuffer != null)
+                        editBuffer.Working.subWeaponType = SubWeaponType.HandHeld;
+
+                    ammoInput.visible = false;
+                    ammoInput.value = 0;
+                    reloadSpeedInput.visible = false;
+                    reloadSpeedInput.value = 0f;
+                    if (editBuffer != null)
+                    {
+                        editBuffer.Working.ammo = 0;
+                        editBuffer.Working.reloadSpeed = 0f;
+                    }
+                    break;
+                case WeaponType.Ranged:
+                    subWeaponTypeInput.choices = Enum.GetNames(typeof(ValidSubRangedWeaponType))
+                        .ToList();
+                    subWeaponTypeInput.value = SubWeaponType.HandHeld.ToString();
+                    if (editBuffer != null)
+                        editBuffer.Working.subWeaponType = SubWeaponType.HandHeld;
+
+                    ammoInput.visible = true;
+                    reloadSpeedInput.visible = true;
+                    break;
+                default:
+                    throw new Exception($"Unhandled weapon type: {newType}");
+            }
         }
 
         private void LoadSprite()
@@ -169,6 +230,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 || attackSpeedInput.value < 0
                 || rangeInput.value < 0
                 || ammoInput.value < 0
+                || reloadSpeedInput.value < 0
             )
             {
                 ToastNotification.Show(
@@ -196,10 +258,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             var weaponData = new WeaponItemData(
                 itemData,
                 Enum.Parse<WeaponType>(weaponTypeInput.value),
+                Enum.Parse<SubWeaponType>(subWeaponTypeInput.value),
                 damageInput.value,
                 attackSpeedInput.value,
                 rangeInput.value,
-                ammoInput.value
+                ammoInput.value,
+                reloadSpeedInput.value
             );
 
             creatablesManager.Add(new Weapon(weaponData));
