@@ -258,20 +258,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             }
 
             var weapons = creatablesManager.GetAll<Weapon>();
-            if (!string.IsNullOrEmpty(currentWeaponId))
+            var selectedWeapon = !string.IsNullOrEmpty(currentWeaponId)
+                ? weapons.FirstOrDefault(w => w.data.id == currentWeaponId)
+                : null;
+            if (selectedWeapon == null && weapons.Any())
             {
-                var selected = weapons.FirstOrDefault(w => w.data.id == currentWeaponId);
-                weaponInput.value = selected?.data.name ?? string.Empty;
-                if (editBuffer != null)
-                    editBuffer.Working.weaponId = selected?.data.id;
+                selectedWeapon = weapons[0];
+                currentWeaponId = selectedWeapon.data.id;
             }
-            else if (weapons.Any())
-            {
-                weaponInput.value = weapons[0].data.name;
-                currentWeaponId = weapons[0].data.id;
-                if (editBuffer != null)
-                    editBuffer.Working.weaponId = currentWeaponId;
-            }
+
+            weaponInput.value = selectedWeapon?.data.name ?? string.Empty;
+            if (editBuffer != null && selectedWeapon != null)
+                editBuffer.Working.weaponId = selectedWeapon.data.id;
         }
 
         private void BindEditMode()
