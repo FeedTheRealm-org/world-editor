@@ -74,7 +74,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                     saveModelButton.SetEnabled(true);
                 },
                 onCancel: () => { },
-                extensionType: ".glb"
+                extensions: ".glb"
             );
         }
 

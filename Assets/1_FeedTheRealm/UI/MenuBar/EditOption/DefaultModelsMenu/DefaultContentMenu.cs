@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using API;
@@ -15,13 +16,19 @@ using VContainer;
 namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class DefaultModelMenu : MenuController
+    public class DefaultContentMenu : MenuController
     {
         [Inject]
         private ModelsRepository modelsRepository;
 
         [Inject]
+        private ZoneMaterialsRepository zoneMaterialsRepository;
+
+        [Inject]
         private ModelService modelService;
+
+        [Inject]
+        private MaterialService materialService;
 
         [Inject]
         private Session.Session session;
@@ -56,19 +63,24 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         private async void OnDownloadClicked()
         {
             downloadButton.SetEnabled(false);
-            statusLabel.text = "Fetching default models list...";
 
             try
             {
                 await DownloadDefaultModels();
+                await DownloadDefaultMaterials();
+                ToastNotification.Show(
+                    "Default content downloaded successfully!",
+                    "success",
+                    Color.green
+                );
             }
             catch (Exception ex)
             {
                 Debug.LogError(
-                    $"[DefaultModelMenu] Failed to download default models: {ex.Message}"
+                    $"[DefaultContentMenu] Failed to download default content: {ex.Message}"
                 );
                 ToastNotification.Show(
-                    $"Failed to download default models: {ex.Message}",
+                    $"Failed to download default content: {ex.Message}",
                     "error",
                     Color.red
                 );
@@ -82,6 +94,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
         private async Task DownloadDefaultModels()
         {
+            statusLabel.text = "Fetching default models...";
             var modelsInfo = await modelService.ListDefaultModels();
 
             int total = modelsInfo.Count;
@@ -94,12 +107,14 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                 string modelName = Path.GetFileNameWithoutExtension(modelInfo.url);
 
                 current++;
-                statusLabel.text = $"Downloading {current}/{total}: {fileName}";
+                statusLabel.text = $"Downloading model {current}/{total}: {fileName}";
 
                 string tempPath = await modelService.DownloadModel(modelInfo);
                 if (string.IsNullOrEmpty(tempPath))
                 {
-                    Debug.LogWarning($"[DefaultModelMenu] Skipping {fileName} — download failed.");
+                    Debug.LogWarning(
+                        $"[DefaultContentMenu] Skipping {fileName} — download failed."
+                    );
                     continue;
                 }
 
@@ -119,6 +134,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                         isDefault: true
                     );
                     modelsRepository.AddModel(structureData, tempPath);
+
                     if (
                         fileName.StartsWith(
                             ModelFilePrefixes.DefaultChestClosed,
@@ -143,12 +159,50 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
             refreshPlaceableLibraryEvent.Raise();
             statusLabel.text = $"Downloaded {total} models successfully.";
-            ToastNotification.Show(
-                "Default models downloaded successfully!",
-                "success",
-                Color.green
-            );
-            CloseMenu();
+        }
+
+        private async Task DownloadDefaultMaterials()
+        {
+            statusLabel.text = "Fetching default materials...";
+            MaterialResponse[] materials = await materialService.GetMaterialsListAsync();
+
+            if (materials == null || materials.Length == 0)
+            {
+                statusLabel.text = "No default materials found to download.";
+                return;
+            }
+
+            int total = materials.Length;
+            int current = 0;
+
+            foreach (var material in materials)
+            {
+                current++;
+                statusLabel.text = $"Downloading material {current}/{total}: {material.name}";
+
+                string tempPath = await materialService.DownloadMaterialAsync(
+                    material,
+                    material.name
+                );
+                if (string.IsNullOrEmpty(tempPath))
+                {
+                    Debug.LogWarning(
+                        $"[DefaultContentMenu] Skipping {material.name} — download failed."
+                    );
+                    continue;
+                }
+                try
+                {
+                    zoneMaterialsRepository.AddDefaultMaterial(tempPath);
+                }
+                finally
+                {
+                    if (File.Exists(tempPath))
+                        File.Delete(tempPath);
+                }
+            }
+
+            statusLabel.text = $"Downloaded {total} materials successfully.";
         }
     }
 }

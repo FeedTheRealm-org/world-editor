@@ -8,22 +8,19 @@ namespace Utils
     {
         private static readonly string persistentFilePath = Application.streamingAssetsPath;
 
-        /// <summary>
-        /// Shows a file browser dialog to select a file.
-        /// </summary>
         public static void ShowFilePickerDialog(
             FileBrowser.OnSuccess onSuccess,
             FileBrowser.OnCancel onCancel,
             string title = "Select Image",
             string loadButtonText = "Select",
-            string extensionType = ".png"
+            params string[] extensions
         )
         {
-            FileBrowser.SetFilters(
-                false,
-                new FileBrowser.Filter($"{extensionType} Images", extensionType)
-            );
-            FileBrowser.SetDefaultFilter(extensionType);
+            if (extensions == null || extensions.Length == 0)
+                extensions = new[] { ".png" };
+
+            FileBrowser.SetFilters(false, new FileBrowser.Filter("Image Files", extensions));
+            FileBrowser.SetDefaultFilter(extensions[0]);
             FileBrowser.ShowLoadDialog(
                 onSuccess: onSuccess,
                 onCancel: onCancel,

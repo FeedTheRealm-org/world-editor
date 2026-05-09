@@ -74,7 +74,8 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   spriteService: {fileID: 11400000, guid: c00c8d635be048806b011b2f8365dcea, type: 2}
   modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
+  assetsService: {fileID: 11400000, guid: cd0887d2ef13cf0deb9953395f896994, type: 2}
   zoneService: {fileID: 11400000, guid: 3b2018c4bc2ec889f8c145ecf26ee6e7, type: 2}
   subscriptionService: {fileID: 11400000, guid: cdcc8632b47d3404abc84626afb9c023, type: 2}
-  assetsService: {fileID: 11400000, guid: cd0887d2ef13cf0deb9953395f896994, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  materialService: {fileID: 11400000, guid: e751ed34f66de10e0989ef652228e679, type: 2}
