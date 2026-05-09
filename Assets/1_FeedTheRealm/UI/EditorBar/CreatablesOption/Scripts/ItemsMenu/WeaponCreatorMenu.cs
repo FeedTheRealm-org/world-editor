@@ -125,11 +125,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             descriptionInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.description = evt.newValue
             );
-            weaponTypeInput.RegisterValueChangedCallback(evt =>
-            {
-                HandleChangeWeaponType(Enum.Parse<WeaponType>(evt.newValue));
-            });
-
             damageInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.damage = evt.newValue
             );
