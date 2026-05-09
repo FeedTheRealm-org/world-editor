@@ -32,7 +32,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
-                session.APIToken,
+                session.AccessToken,
                 null,
                 "GetPricingInfo"
             );
@@ -80,7 +80,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
-                session.APIToken,
+                session.AccessToken,
                 null,
                 "GetSubscription"
             );
@@ -137,7 +137,7 @@ namespace API
             Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
                 url,
                 "POST",
-                session.APIToken,
+                session.AccessToken,
                 json,
                 "CreateCheckoutSession"
             );
@@ -192,7 +192,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "PUT",
-                session.APIToken,
+                session.AccessToken,
                 json,
                 "UpdateSlots"
             );
@@ -232,12 +232,12 @@ namespace API
         /// Removes a single zone from the subscription at end of the billing period.
         public async Task<(string error, long statusCode)> UnsubscribeZone(string zoneId)
         {
-            string url = $"{GetBaseUrl()}/{session.UserId}/zones/{zoneId}";
+            string url = $"{GetBaseUrl()}/{session.UserID}/zones/{zoneId}";
 
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "DELETE",
-                session.APIToken,
+                session.AccessToken,
                 null,
                 "UnsubscribeZone"
             );
@@ -267,7 +267,7 @@ namespace API
             }
 
             logger.Log(
-                $"[SubscriptionService] Zone {zoneId} unsubscribed for user {session.UserId}",
+                $"[SubscriptionService] Zone {zoneId} unsubscribed for user {session.UserID}",
                 this
             );
             return (null, statusCode);
@@ -283,7 +283,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "DELETE",
-                session.APIToken,
+                session.AccessToken,
                 null,
                 "CancelSubscription"
             );
@@ -313,7 +313,7 @@ namespace API
             }
 
             logger.Log(
-                $"[SubscriptionService] Subscription cancelled for user {session.UserId}",
+                $"[SubscriptionService] Subscription cancelled for user {session.UserID}",
                 this
             );
             return (null, statusCode);

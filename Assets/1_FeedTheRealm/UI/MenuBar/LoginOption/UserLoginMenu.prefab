@@ -70,3 +70,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu.UserLoginModelMenu
   AllowInputWhileOpen: 0
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
