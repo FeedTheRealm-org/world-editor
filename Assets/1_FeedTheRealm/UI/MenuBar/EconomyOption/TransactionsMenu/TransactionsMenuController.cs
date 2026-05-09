@@ -91,6 +91,8 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
 
         private async Task LoadBalanceAsync()
         {
+            await session.EnsureValidSession();
+
             var (isLogged, _) = await authService.IsLogged();
             if (!isLogged)
             {
@@ -104,9 +106,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
 
             try
             {
-                var (data, error, statusCode) = await paymentService.GetCreatorBalance(
-                    session.APIToken
-                );
+                var (data, error, statusCode) = await paymentService.GetCreatorBalance();
 
                 logger.Log(
                     $"[TransactionMenu] GetCreatorBalance response: data={data.balance}, error={error}, statusCode={statusCode}",

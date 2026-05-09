@@ -71,3 +71,5 @@ MonoBehaviour:
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}
+  showBackground: 0
+  backgroundPrefab: {fileID: 6544328675534064428, guid: 647ea82975137576baf68b9d805b6af2, type: 3}

@@ -171,6 +171,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         private async Task LoadSubscriptionAsync()
         {
+            await session.EnsureValidSession();
+
             var (isLogged, _) = await authService.IsLogged();
             if (!isLogged)
             {
@@ -551,12 +553,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             loadingLabel.AddToClassList("header-label");
             worldsList.Add(loadingLabel);
 
-            var (amount, worlds, error) = await worldService.GetWorldPage(
-                0,
-                100,
-                "",
-                session.APIToken
-            );
+            var (amount, worlds, error) = await worldService.GetWorldPage(0, 100, "");
 
             worldsList.Clear();
 
@@ -658,16 +655,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     foreach (var zone in zones)
                     {
                         var res = activating
-                            ? await zoneService.ActivateZone(
-                                world.id,
-                                zone.zone_id,
-                                session.APIToken
-                            )
-                            : await zoneService.DeactivateZone(
-                                world.id,
-                                zone.zone_id,
-                                session.APIToken
-                            );
+                            ? await zoneService.ActivateZone(world.id, zone.zone_id)
+                            : await zoneService.DeactivateZone(world.id, zone.zone_id);
 
                         if (!string.IsNullOrEmpty(res.error))
                             success = false;
@@ -744,16 +733,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             bool isActivating = toggleActiveBtn.text == "Activate";
 
                             var res = isActivating
-                                ? await zoneService.ActivateZone(
-                                    world.id,
-                                    capturedZone.zone_id,
-                                    session.APIToken
-                                )
-                                : await zoneService.DeactivateZone(
-                                    world.id,
-                                    capturedZone.zone_id,
-                                    session.APIToken
-                                );
+                                ? await zoneService.ActivateZone(world.id, capturedZone.zone_id)
+                                : await zoneService.DeactivateZone(world.id, capturedZone.zone_id);
 
                             if (string.IsNullOrEmpty(res.error))
                             {
@@ -794,10 +775,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             try
             {
-                var (error, statusCode) = await worldService.DeleteWorld(
-                    world.id,
-                    session.APIToken
-                );
+                var (error, statusCode) = await worldService.DeleteWorld(world.id);
 
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception($"{error} (status {statusCode})");

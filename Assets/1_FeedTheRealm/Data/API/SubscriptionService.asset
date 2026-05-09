@@ -15,3 +15,4 @@ MonoBehaviour:
   logger: {fileID: 11400000, guid: 803406d3a4025274cbb1f35439bf4099, type: 2}
   apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}

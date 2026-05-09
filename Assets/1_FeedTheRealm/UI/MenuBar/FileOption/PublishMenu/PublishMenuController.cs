@@ -286,86 +286,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             ValidateSprites(errors);
             await ValidateModels(errors);
-            await ValidateSubscription(errors);
 
             if (errors.Count > 0)
                 throw new Exception($"{string.Join("\n", errors)}");
-        }
-
-        private async Task ValidateSubscription(List<string> errors)
-        {
-            if (subscriptionService == null)
-            {
-                logger.Log(
-                    "[PublishMenu] Missing SubscriptionService.",
-                    this,
-                    Logging.LogType.Error
-                );
-                return;
-            }
-
-            var (data, error, statusCode) = await subscriptionService.GetSubscription();
-
-            if (!string.IsNullOrEmpty(error))
-            {
-                if (statusCode == 404)
-                {
-                    errors.Add("No active subscription found. Please subscribe to publish zones.");
-                }
-                else
-                {
-                    errors.Add($"Failed to verify subscription: {error}");
-                }
-                return;
-            }
-
-            if (
-                data == null
-                || string.Equals(data.status, "canceled", StringComparison.OrdinalIgnoreCase)
-            )
-            {
-                errors.Add("Subscription is canceled or inactive. Please renew to publish.");
-                return;
-            }
-
-            int freeZonesCount = data.slots - data.used_slots;
-            int newZonesToPublish = 0;
-
-            List<int> publishedZones = new List<int>();
-            if (!string.IsNullOrEmpty(currentWorldData?.worldId))
-            {
-                var (zones, zError, zStatusCode) = await zoneService.GetZonesList(
-                    currentWorldData.worldId,
-                    session.APIToken
-                );
-                if (string.IsNullOrEmpty(zError) && zones != null)
-                {
-                    publishedZones = zones;
-                }
-            }
-
-            var zonesToPublish = GetZonesToPublish();
-            foreach (var zoneId in zonesToPublish)
-            {
-                var zoneData = dataPersistenceManager.GetZoneData(
-                    worldSelector.selectedWorld,
-                    zoneId
-                );
-                if (zoneData == null)
-                    continue;
-
-                if (!publishedZones.Contains(zoneId))
-                {
-                    newZonesToPublish++;
-                }
-            }
-
-            if (newZonesToPublish > freeZonesCount)
-            {
-                errors.Add(
-                    $"You are trying to publish {newZonesToPublish} new zone(s), but only have {freeZonesCount} free zone(s) available."
-                );
-            }
         }
 
         private void ValidateSprites(List<string> errors)
@@ -402,10 +325,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (zoneData == null || zoneData.objectPlacementData.Count == 0)
                     continue;
 
-                var existingModels = await modelService.ListWorldModels(
-                    currentWorldData.worldId,
-                    session.APIToken
-                );
+                var existingModels = await modelService.ListWorldModels(currentWorldData.worldId);
 
                 var newModels = zoneData
                     .objectPlacementData.GroupBy(s => s.id)
@@ -437,10 +357,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             }
             else if (publishWorldDataToggle.value)
             {
-                var (_, error, statusCode) = await worldService.UpdateWorld(
-                    currentWorldData,
-                    session.APIToken
-                );
+                var (_, error, statusCode) = await worldService.UpdateWorld(currentWorldData);
 
                 if (!string.IsNullOrEmpty(error))
                 {
@@ -472,8 +389,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         )
         {
             var (publishedId, error, statusCode) = await worldService.PublishWorld(
-                currentWorldData,
-                session.APIToken
+                currentWorldData
             );
             if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
                 throw new Exception($"Failed to publish world data: {error} (status {statusCode})");
@@ -494,11 +410,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 logger.Log("No creatables data to publish.", this, Logging.LogType.Info);
                 return;
             }
-            await worldService.PublishCreatables(
-                creatablesData,
-                currentWorldData.worldId,
-                session.APIToken
-            );
+            await worldService.PublishCreatables(creatablesData, currentWorldData.worldId);
         }
 
         private async Task PublishZoneData()
@@ -517,8 +429,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
                 var (_, error, statusCode) = await zoneService.PublishZone(
                     currentWorldData.worldId,
-                    zoneData,
-                    session.APIToken
+                    zoneData
                 );
                 if (!string.IsNullOrEmpty(error))
                 {
@@ -541,11 +452,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             AssertSpriteFilesExist(spritesRequest);
             AssertAssetsServiceAvailable();
 
-            await spriteService.UploadSprites(
-                spritesRequest,
-                currentWorldData.worldId,
-                session.APIToken
-            );
+            await spriteService.UploadSprites(spritesRequest, currentWorldData.worldId);
 
             if (creatablesData?.cosmetics != null)
             {
@@ -886,10 +793,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async Task PublishModels(ZoneData zoneData)
         {
-            var existingModels = await modelService.ListWorldModels(
-                currentWorldData.worldId,
-                session.APIToken
-            );
+            var existingModels = await modelService.ListWorldModels(currentWorldData.worldId);
 
             var modelRequests = new List<ModelRequest>();
             var queuedIds = new HashSet<string>(existingModels.Keys);
@@ -917,11 +821,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 return;
             }
 
-            string error = await modelService.UploadModels(
-                modelRequests,
-                currentWorldData.worldId,
-                session.APIToken
-            );
+            string error = await modelService.UploadModels(modelRequests, currentWorldData.worldId);
 
             if (!string.IsNullOrEmpty(error))
                 throw new Exception($"Failed to upload models: {error}");
