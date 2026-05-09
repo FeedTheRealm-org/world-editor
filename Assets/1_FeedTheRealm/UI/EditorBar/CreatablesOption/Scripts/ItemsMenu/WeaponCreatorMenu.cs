@@ -230,6 +230,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 || attackSpeedInput.value < 0
                 || rangeInput.value < 0
                 || ammoInput.value < 0
+                || reloadSpeedInput.value < 0
             )
             {
                 ToastNotification.Show(
