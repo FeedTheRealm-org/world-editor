@@ -172,7 +172,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                     reloadSpeedInput.visible = true;
                     break;
                 default:
-                    throw new Exception($"Unhandled weapon type: {editBuffer.Working.weaponType}");
+                    throw new Exception($"Unhandled weapon type: {newType}");
             }
         }
 
