@@ -115,9 +115,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                 if (string.IsNullOrEmpty(tempPath))
                 {
                     Debug.LogWarning(
-                        $"[DefaultContentMenu] Skipping {fileName} — download failed."
+                        $"[DefaultContentMenu] {fileName} — download failed. Stopping model downloads."
                     );
-                    continue;
+                    return;
                 }
 
                 try
@@ -175,9 +175,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                 if (string.IsNullOrEmpty(tempPath))
                 {
                     Debug.LogWarning(
-                        $"[DefaultContentMenu] Skipping {material.name} — download failed."
+                        $"[DefaultContentMenu] {material.name} — download failed. Stopping material downloads."
                     );
-                    continue;
+                    return;
                 }
                 try
                 {
