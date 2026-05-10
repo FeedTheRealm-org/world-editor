@@ -41,11 +41,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             radiusSlider.RegisterValueChangedCallback(e =>
             {
-                target.data.Radius = e.newValue;
+                float diameter = e.newValue * 2f;
                 target.transform.localScale = new Vector3(
-                    e.newValue,
+                    diameter,
                     target.transform.localScale.y,
-                    e.newValue
+                    diameter
                 );
             });
 
@@ -70,7 +70,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private void PopulateFields()
         {
-            radiusSlider.SetValueWithoutNotify(target.data.Radius);
+            radiusSlider.SetValueWithoutNotify(target.transform.localScale.x / 2f);
             maxEnemiesField.SetValueWithoutNotify(target.data.MaxEnemies);
             spawnRateField.SetValueWithoutNotify((int)target.data.SpawnRate);
             resetAfterKillsField.SetValueWithoutNotify(target.data.ResetAfterKills);
