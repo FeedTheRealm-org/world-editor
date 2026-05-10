@@ -42,7 +42,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             gameObject.transform.rotation = Quaternion.Euler(data.rotation);
             gameObject.transform.localScale = data.size;
             FitColliderToMesh();
-            this.data = data;
         }
 
         private void FitColliderToMesh()

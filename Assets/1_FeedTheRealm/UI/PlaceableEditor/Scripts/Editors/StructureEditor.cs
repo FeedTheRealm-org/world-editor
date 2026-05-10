@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Enums;
 using FeedTheRealm.Core.WorldEditor;
@@ -40,6 +39,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
         [SerializeField]
         private GameObject slopeCollider;
 
+        private GameObject cubeColliderInstance;
+        private GameObject slopeColliderInstance;
+
         // UI Elements
         private Label titleLabel;
         private TabView tabView;
@@ -62,7 +64,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         // Collider visuals
         private GameObject ActiveColliderVisual =>
-            target.data.colliderType == ColliderType.Cube ? cubeCollider : slopeCollider;
+            target.data.colliderType == ColliderType.Cube
+                ? cubeColliderInstance
+                : slopeColliderInstance;
         private bool isColliderMode;
 
         // Gizmos
@@ -125,19 +129,14 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 }
                 else
                 {
-                    cubeCollider.SetActive(false);
-                    slopeCollider.SetActive(false);
+                    cubeColliderInstance?.SetActive(false);
+                    slopeColliderInstance?.SetActive(false);
                     ReinitializeGizmosForTarget();
                     ActivateGizmo(positionGizmo);
                 }
             };
 
             closeButton.clicked += CloseMenu;
-
-            foreach (var renderer in cubeCollider.GetComponentsInChildren<Renderer>())
-                renderer.enabled = true;
-            foreach (var renderer in slopeCollider.GetComponentsInChildren<Renderer>())
-                renderer.enabled = true;
         }
 
         public void Edit(GameObject placeable)
@@ -162,12 +161,14 @@ namespace FeedTheRealm.UI.PlaceableEditor
             colliderTypeDropdown.SetValueWithoutNotify(
                 target.data.colliderType == ColliderType.Cube ? "Cube" : "Slope"
             );
-            SyncColliderVisual();
 
             SetupShopControls();
             SetupGizmos();
             SetupColliderVisuals();
+            Debug.Log($"[StructureEditor] colliderType at edit time: {target.data.colliderType}");
+            SyncColliderVisual();
             SubscribeShortcuts();
+
             var boxCollider = target.GetComponent<BoxCollider>();
             var initialCenter =
                 target.data.colliderCenter != Vector3.zero
@@ -211,7 +212,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private void ActivateGizmo(BaseGizmo gizmo)
         {
-            // disable all gizmos first
             if (positionGizmo != null)
                 positionGizmo.gameObject.SetActive(false);
             if (scaleGizmo != null)
@@ -232,8 +232,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 Vector3 localPosition = target.transform.InverseTransformPoint(newPosition);
                 target.data.colliderCenter = localPosition;
                 colliderCenterField.SetValueWithoutNotify(localPosition);
-                cubeCollider.transform.localPosition = localPosition;
-                slopeCollider.transform.localPosition = localPosition;
+                cubeColliderInstance.transform.localPosition = localPosition;
+                slopeColliderInstance.transform.localPosition = localPosition;
             }
             else
             {
@@ -247,8 +247,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             {
                 target.data.colliderSize = newScale;
                 colliderSizeField.SetValueWithoutNotify(newScale);
-                slopeCollider.transform.localScale = newScale;
-                cubeCollider.transform.localScale = newScale;
+                slopeColliderInstance.transform.localScale = newScale;
+                cubeColliderInstance.transform.localScale = newScale;
             }
             else
             {
@@ -262,8 +262,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             {
                 target.data.colliderRotation = eulerAngles;
                 colliderRotationField.SetValueWithoutNotify(eulerAngles);
-                slopeCollider.transform.localRotation = Quaternion.Euler(eulerAngles);
-                cubeCollider.transform.localRotation = Quaternion.Euler(eulerAngles);
+                slopeColliderInstance.transform.localRotation = Quaternion.Euler(eulerAngles);
+                cubeColliderInstance.transform.localRotation = Quaternion.Euler(eulerAngles);
             }
             else
             {
@@ -292,10 +292,21 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 rotationGizmo.Initialize(target.transform, Camera.main);
         }
 
-        // ---- Cube Collider Visualization ----
+        // ---- Collider Visualization ----
 
         private void SetupColliderVisuals()
         {
+            if (cubeColliderInstance != null)
+            {
+                Destroy(cubeColliderInstance);
+                cubeColliderInstance = null;
+            }
+            if (slopeColliderInstance != null)
+            {
+                Destroy(slopeColliderInstance);
+                slopeColliderInstance = null;
+            }
+
             var boxCollider = target.GetComponent<BoxCollider>();
             var initialCenter =
                 target.data.colliderCenter != Vector3.zero
@@ -306,32 +317,41 @@ namespace FeedTheRealm.UI.PlaceableEditor
                     ? target.data.colliderSize
                     : boxCollider.size;
 
-            cubeCollider = Instantiate(cubeCollider, target.transform);
-            cubeCollider.transform.localPosition = initialCenter;
-            cubeCollider.transform.localRotation = Quaternion.identity;
-            cubeCollider.transform.localScale = initialSize;
-            cubeCollider.transform.localRotation = Quaternion.Euler(target.data.colliderRotation);
-            cubeCollider.SetActive(false);
+            cubeColliderInstance = Instantiate(cubeCollider, target.transform);
+            cubeColliderInstance.transform.localPosition = initialCenter;
+            cubeColliderInstance.transform.localRotation = Quaternion.Euler(
+                target.data.colliderRotation
+            );
+            cubeColliderInstance.transform.localScale = initialSize;
+            cubeColliderInstance.SetActive(false);
 
-            slopeCollider = Instantiate(slopeCollider, target.transform);
-            slopeCollider.transform.localPosition = initialCenter;
-            slopeCollider.transform.localRotation = Quaternion.identity;
-            slopeCollider.transform.localScale = initialSize;
-            slopeCollider.transform.localRotation = Quaternion.Euler(target.data.colliderRotation);
-            slopeCollider.SetActive(false);
+            slopeColliderInstance = Instantiate(slopeCollider, target.transform);
+            slopeColliderInstance.transform.localPosition = initialCenter;
+            slopeColliderInstance.transform.localRotation = Quaternion.Euler(
+                target.data.colliderRotation
+            );
+            slopeColliderInstance.transform.localScale = initialSize;
+            slopeColliderInstance.SetActive(false);
         }
 
         private void SyncColliderVisual()
         {
+            if (cubeColliderInstance == null || slopeColliderInstance == null)
+                return;
+
+            if (!isColliderMode)
+            {
+                cubeColliderInstance.SetActive(false);
+                slopeColliderInstance.SetActive(false);
+                return;
+            }
+
             bool isCube = target.data.colliderType == ColliderType.Cube;
-            cubeCollider.SetActive(isCube);
-            slopeCollider.SetActive(!isCube);
+            cubeColliderInstance.SetActive(isCube);
+            slopeColliderInstance.SetActive(!isCube);
         }
 
-        private void SetCubeColliderActive(bool active)
-        {
-            cubeCollider.SetActive(active);
-        }
+        private void SetCubeColliderActive(bool active) => cubeColliderInstance?.SetActive(active);
 
         // ---- Shortcuts ----
 
@@ -374,26 +394,27 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         private void OnHideShortcut() => ActivateGizmo(null);
 
-        // --- Collider Controls ----
+        // ---- Collider Controls ----
+
         private void OnColliderCenterChanged(ChangeEvent<Vector3> evt)
         {
             target.data.colliderCenter = evt.newValue;
-            cubeCollider.transform.localPosition = evt.newValue;
-            slopeCollider.transform.localPosition = evt.newValue;
+            cubeColliderInstance.transform.localPosition = evt.newValue;
+            slopeColliderInstance.transform.localPosition = evt.newValue;
         }
 
         private void OnColliderSizeChanged(ChangeEvent<Vector3> evt)
         {
             target.data.colliderSize = evt.newValue;
-            cubeCollider.transform.localScale = evt.newValue;
-            slopeCollider.transform.localScale = evt.newValue;
+            cubeColliderInstance.transform.localScale = evt.newValue;
+            slopeColliderInstance.transform.localScale = evt.newValue;
         }
 
         private void OnColliderRotationChanged(ChangeEvent<Vector3> evt)
         {
             target.data.colliderRotation = evt.newValue;
-            cubeCollider.transform.localRotation = Quaternion.Euler(evt.newValue);
-            slopeCollider.transform.localRotation = Quaternion.Euler(evt.newValue);
+            cubeColliderInstance.transform.localRotation = Quaternion.Euler(evt.newValue);
+            slopeColliderInstance.transform.localRotation = Quaternion.Euler(evt.newValue);
         }
 
         private void OnResetColliders()
@@ -407,12 +428,12 @@ namespace FeedTheRealm.UI.PlaceableEditor
             colliderSizeField.SetValueWithoutNotify(boxCollider.size);
             colliderRotationField.SetValueWithoutNotify(Vector3.zero);
 
-            cubeCollider.transform.localPosition = boxCollider.center;
-            cubeCollider.transform.localScale = boxCollider.size;
-            cubeCollider.transform.localRotation = Quaternion.identity;
-            slopeCollider.transform.localPosition = boxCollider.center;
-            slopeCollider.transform.localScale = boxCollider.size;
-            slopeCollider.transform.localRotation = Quaternion.identity;
+            cubeColliderInstance.transform.localPosition = boxCollider.center;
+            cubeColliderInstance.transform.localScale = boxCollider.size;
+            cubeColliderInstance.transform.localRotation = Quaternion.identity;
+            slopeColliderInstance.transform.localPosition = boxCollider.center;
+            slopeColliderInstance.transform.localScale = boxCollider.size;
+            slopeColliderInstance.transform.localRotation = Quaternion.identity;
         }
 
         private void OnColliderTypeChanged(ChangeEvent<string> evt)
@@ -520,9 +541,10 @@ namespace FeedTheRealm.UI.PlaceableEditor
             activeGizmo = null;
             focusedAxisField = null;
             focusedVectorField = null;
-            Destroy(cubeCollider);
-            Destroy(slopeCollider);
-            inputReader.ScrollEvent -= OnScroll;
+            Destroy(cubeColliderInstance);
+            Destroy(slopeColliderInstance);
+            cubeColliderInstance = null;
+            slopeColliderInstance = null;
             base.CloseMenu();
         }
 
