@@ -8,6 +8,7 @@ using FeedTheRealm.Core.Repository;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTR.Core.Enums;
+using FTR.Gameplay.DefaultContent;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -68,6 +69,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             {
                 await DownloadDefaultModels();
                 await DownloadDefaultMaterials();
+                statusLabel.text = "All default content downloaded successfully.";
                 ToastNotification.Show(
                     "Default content downloaded successfully!",
                     "success",
@@ -120,35 +122,21 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
 
                 try
                 {
-                    bool hasColliders = !fileName.StartsWith(
-                        ModelFilePrefixes.NoCollider,
-                        StringComparison.OrdinalIgnoreCase
-                    );
                     var structureData = new StructureData(
                         id: modelInfo.model_id,
-                        structureName: ModelFilePrefixes.StripPrefix(modelName),
+                        structureName: modelName,
                         size: Vector3.one,
                         rotation: Vector3.zero,
-                        fileName: ModelFilePrefixes.StripPrefix(fileName),
-                        hasColliders: hasColliders,
+                        fileName: fileName,
+                        hasColliders: true,
                         isDefault: true
                     );
-                    modelsRepository.AddModel(structureData, tempPath);
+                    DefaultContentHandler.ApplyPrefixConfig(fileName, structureData, config);
 
-                    if (
-                        fileName.StartsWith(
-                            ModelFilePrefixes.DefaultChestClosed,
-                            StringComparison.OrdinalIgnoreCase
-                        )
-                    )
-                        config.defaultClosedChestId = modelInfo.model_id;
-                    else if (
-                        fileName.StartsWith(
-                            ModelFilePrefixes.DefaultChestOpen,
-                            StringComparison.OrdinalIgnoreCase
-                        )
-                    )
-                        config.defaultOpenChestId = modelInfo.model_id;
+                    // Strip prefix after handler has read it
+                    structureData.structureName = DefaultContentHandler.StripPrefix(modelName);
+                    structureData.fileName = DefaultContentHandler.StripPrefix(fileName);
+                    modelsRepository.AddModel(structureData, tempPath);
                 }
                 finally
                 {
