@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: e0f6148e9702b5f8ab88476eb3dbcbaf, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 65aa1dc0aa6da574db09aadf6e629395, type: 3}
-  m_SortingOrder: 700
+  m_SortingOrder: 900
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FeedTheRealm_Shared::VerifyCodeController
   authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
-  session: {fileID: 11400000, guid: 3034b566380f26a168bbac5331f0f6b9, type: 2}
-  loginUI: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   logger: {fileID: 11400000, guid: a45deea484c7150f18de284bb4c311be, type: 2}
+  showBackground: 0
+  backgroundPrefab: {fileID: 6544328675534064428, guid: 647ea82975137576baf68b9d805b6af2, type: 3}

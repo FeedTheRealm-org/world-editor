@@ -68,4 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cc9fe58ed3242362ae9de550bdbc3c5, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NPCCreatorMenuController
+  AllowInputWhileOpen: 0
   npcsMenuPrefab: {fileID: 6958354529743035616, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
+  characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}
+  progressionItemTemplate: {fileID: 9197481963319205126, guid: e5f038e0f8885b70fac3c868ef2ade75, type: 3}
+  worldSelector: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}

@@ -35,6 +35,7 @@ namespace FeedTheRealm.UI.WorldEditor
                 worldUIObjectProvider.AggresiveNpcSpawnerEditObject;
             editorPrefabs[PlaceableObjectCategories.Portal] =
                 worldUIObjectProvider.PortalEditObject;
+            editorPrefabs[PlaceableObjectCategories.Chest] = worldUIObjectProvider.ChestEditObject;
 
             editPlaceableEvent.OnRaised += HandleObjectSelected;
         }

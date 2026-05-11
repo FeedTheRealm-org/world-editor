@@ -15,6 +15,8 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject loginMenuObject;
         public GameObject signUpMenuObject;
         public GameObject verifyCodeMenuObject;
+        public GameObject subscriptionMenuObject;
+        public GameObject transactionsMenuObject;
 
         [Header("Placeable Editor UI")]
         public GameObject placeableEditor;
@@ -22,5 +24,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject FriendlyNpcSpawnerEditObject;
         public GameObject AggresiveNpcSpawnerEditObject;
         public GameObject PortalEditObject;
+        public GameObject ChestEditObject;
     }
 }

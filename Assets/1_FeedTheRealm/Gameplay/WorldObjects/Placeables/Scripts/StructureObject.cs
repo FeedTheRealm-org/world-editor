@@ -11,7 +11,8 @@ namespace FeedTheRealm.Gameplay.WorldObjects
 
         public override void SaveData(ref ZoneData zoneData)
         {
-            BoxCollider collider = GetComponent<BoxCollider>();
+            var boxCollider = GetComponent<BoxCollider>();
+
             StructureData savedData = new()
             {
                 id = data.id,
@@ -19,12 +20,16 @@ namespace FeedTheRealm.Gameplay.WorldObjects
                 fileName = data.fileName,
                 isShop = data.isShop,
                 shopId = data.shopId,
-
+                hasColliders = data.hasColliders,
                 position = gameObject.transform.position,
                 rotation = gameObject.transform.rotation.eulerAngles,
                 size = gameObject.transform.localScale,
-                colliderSize = collider != null ? collider.size : Vector3.zero,
-                colliderCenter = collider != null ? collider.center : Vector3.zero,
+                colliderCenter =
+                    data.colliderCenter != Vector3.zero ? data.colliderCenter : boxCollider.center,
+                colliderSize =
+                    data.colliderSize != Vector3.zero ? data.colliderSize : boxCollider.size,
+                colliderRotation = data.colliderRotation,
+                colliderType = data.colliderType,
             };
             zoneData.objectPlacementData.Add(savedData);
         }
@@ -37,7 +42,6 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             gameObject.transform.rotation = Quaternion.Euler(data.rotation);
             gameObject.transform.localScale = data.size;
             FitColliderToMesh();
-            this.data = data;
         }
 
         private void FitColliderToMesh()
@@ -46,16 +50,19 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             if (renderers.Length == 0)
                 return;
 
-            // Merge all renderer bounds into one
             Bounds combined = renderers[0].bounds;
             foreach (var r in renderers)
                 combined.Encapsulate(r.bounds);
 
             BoxCollider collider = GetComponent<BoxCollider>();
-
-            // Convert world-space bounds to local space
             collider.center = transform.InverseTransformPoint(combined.center);
-            collider.size = transform.InverseTransformVector(combined.size);
+
+            Vector3 scale = transform.lossyScale;
+            collider.size = new Vector3(
+                combined.size.x / scale.x,
+                combined.size.y / scale.y,
+                combined.size.z / scale.z
+            );
         }
     }
 }

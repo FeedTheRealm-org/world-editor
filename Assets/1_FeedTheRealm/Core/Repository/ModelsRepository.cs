@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -10,12 +10,6 @@ using VContainer.Unity;
 
 namespace FeedTheRealm.Core.Repository
 {
-    [Serializable]
-    public class SerializedStructureData
-    {
-        public List<StructureData> structures = new();
-    }
-
     public class ModelsRepository : IInitializable
     {
         [Inject]
@@ -30,95 +24,179 @@ namespace FeedTheRealm.Core.Repository
         {
             this.config = config;
             this.logger = logger;
-            if (!File.Exists(config.ModelsDataFile))
-            {
-                GenerateDefaultFile();
-            }
+            Directory.CreateDirectory(config.ModelsDataDirectory);
+            ScanForNewModels();
         }
 
-        // IInitializable requiers this method, but we don't need to do anything on initialization for this repository
-        // We implement this interface just to ensure that the repository is created when registered.
         public void Initialize() { }
 
         public Dictionary<string, StructureData> GetModelsData()
         {
-            modelsData ??= LoadFromDisk().ToDictionary(model => model.id, model => model);
+            modelsData ??= LoadAllFromDisk();
             return modelsData;
         }
 
         public string GetModelFilepath(string modelId)
         {
-            modelsData.TryGetValue(modelId, out StructureData modelData);
+            GetModelsData().TryGetValue(modelId, out StructureData modelData);
             return Path.Combine(config.ModelsDirectory, modelData?.fileName ?? "");
         }
 
-        private void GenerateDefaultFile()
+        /// <summary>
+        /// Adds a new model to the repository and writes its metadata to disk.
+        /// Call this after copying the .glb file to the models directory.
+        /// </summary>
+        public void AddModel(StructureData model, string sourceFilePath)
         {
-            string dataFileDir = Path.GetDirectoryName(config.ModelsDataFile);
-            if (!string.IsNullOrEmpty(dataFileDir))
-                Directory.CreateDirectory(dataFileDir);
-
-            string modelsDir = config.ModelsDirectory;
-            if (!Directory.Exists(modelsDir))
+            if (!File.Exists(sourceFilePath))
             {
                 logger.Log(
-                    $"Models directory not found at '{modelsDir}'. Creating it — add your .glb files there.",
-                    Logging.LogType.Warning
+                    $"[ModelsRepository] Source file not found: {sourceFilePath}",
+                    Logging.LogType.Error
                 );
-                Directory.CreateDirectory(modelsDir);
-                WriteToFile(new List<StructureData>());
                 return;
             }
 
-            logger.Log($"Scanning models directory: {modelsDir}", Logging.LogType.Info);
+            string destPath = Path.Combine(config.ModelsDirectory, model.fileName);
+            File.Copy(sourceFilePath, destPath, overwrite: true);
+            logger.Log(
+                $"[ModelsRepository] Copied model file to '{destPath}'.",
+                Logging.LogType.Info
+            );
 
-            var models = Directory
-                .GetFiles(modelsDir, "*.glb", SearchOption.AllDirectories)
-                .Select(path => new StructureData(
+            WriteModelToDisk(model);
+
+            GetModelsData()[model.id] = model;
+
+            logger.Log(
+                $"[ModelsRepository] Added model '{model.structureName}' (id: {model.id}).",
+                Logging.LogType.Info
+            );
+        }
+
+        public void WriteModelToDisk(StructureData model)
+        {
+            try
+            {
+                string json = JsonUtility.ToJson(model, true);
+                File.WriteAllText(GetModelJsonPath(model.structureName), json);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[ModelsRepository] Failed to write '{model.structureName}': {ex.Message}",
+                    Logging.LogType.Error
+                );
+            }
+        }
+
+        public void DeleteModel(StructureData model)
+        {
+            DeleteModelFromDisk(model.structureName);
+
+            string glbPath = Path.Combine(config.ModelsDirectory, model.fileName);
+            if (File.Exists(glbPath))
+                File.Delete(glbPath);
+
+            modelsData?.Remove(model.id);
+            logger.Log(
+                $"[ModelsRepository] Deleted model '{model.structureName}' and its files.",
+                Logging.LogType.Info
+            );
+        }
+
+        // ------ PRIVATE METHODS ------
+
+        /// <summary>
+        /// Scans StreamingAssets/Models for any .glb files that don't yet
+        /// have a corresponding metadata .json in persistentDataPath/Models.
+        /// New models get a generated metadata file automatically.
+        /// </summary>
+        private void ScanForNewModels()
+        {
+            if (!Directory.Exists(config.ModelsDirectory))
+            {
+                logger.Log(
+                    $"Models directory not found at '{config.ModelsDirectory}'. Add your .glb files there.",
+                    Logging.LogType.Warning
+                );
+                Directory.CreateDirectory(config.ModelsDirectory);
+                return;
+            }
+
+            var glbFiles = Directory.GetFiles(
+                config.ModelsDirectory,
+                "*.glb",
+                SearchOption.AllDirectories
+            );
+            int generated = 0;
+
+            foreach (var glbPath in glbFiles)
+            {
+                string modelName = Path.GetFileNameWithoutExtension(glbPath);
+                string jsonPath = GetModelJsonPath(modelName);
+
+                if (File.Exists(jsonPath))
+                    continue;
+
+                var model = new StructureData(
                     id: Guid.NewGuid().ToString(),
-                    structureName: Path.GetFileNameWithoutExtension(path),
+                    structureName: modelName,
                     size: Vector3.one,
                     rotation: Vector3.zero,
-                    fileName: Path.GetFileName(path)
-                ))
-                .ToList();
-
-            if (models.Count == 0)
-                logger.Log("No .glb models found in models directory.", Logging.LogType.Warning);
-
-            WriteToFile(models);
-            logger.Log($"Generated models file with {models.Count} models.", Logging.LogType.Info);
-        }
-
-        private void WriteToFile(List<StructureData> models)
-        {
-            try
-            {
-                string json = JsonUtility.ToJson(
-                    new SerializedStructureData { structures = models },
-                    true
+                    fileName: Path.GetFileName(glbPath)
                 );
-                File.WriteAllText(config.ModelsDataFile, json);
+
+                WriteModelToDisk(model);
+                generated++;
             }
-            catch (Exception ex)
-            {
-                logger.Log($"Failed to write models file: {ex.Message}", Logging.LogType.Error);
-            }
+
+            if (generated > 0)
+                logger.Log(
+                    $"[ModelsRepository] Generated metadata for {generated} new models.",
+                    Logging.LogType.Info
+                );
         }
 
-        private List<StructureData> LoadFromDisk()
+        private Dictionary<string, StructureData> LoadAllFromDisk()
         {
-            try
+            var result = new Dictionary<string, StructureData>();
+
+            foreach (var jsonPath in Directory.GetFiles(config.ModelsDataDirectory, "*.json"))
             {
-                string json = File.ReadAllText(config.ModelsDataFile);
-                return JsonUtility.FromJson<SerializedStructureData>(json)?.structures
-                    ?? new List<StructureData>();
+                try
+                {
+                    string json = File.ReadAllText(jsonPath);
+                    var model = JsonUtility.FromJson<StructureData>(json);
+                    if (model != null && !string.IsNullOrEmpty(model.id))
+                        result[model.id] = model;
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(
+                        $"[ModelsRepository] Error loading '{jsonPath}': {ex.Message}",
+                        Logging.LogType.Error
+                    );
+                }
             }
-            catch (Exception ex)
-            {
-                logger.Log($"Error loading models data: {ex.Message}", Logging.LogType.Error);
-                return new List<StructureData>();
-            }
+
+            logger.Log($"[ModelsRepository] Loaded {result.Count} models.", Logging.LogType.Info);
+            return result;
         }
+
+        private void DeleteModelFromDisk(string modelName)
+        {
+            string jsonPath = GetModelJsonPath(modelName);
+            if (!File.Exists(jsonPath))
+                return;
+            File.Delete(jsonPath);
+            logger.Log(
+                $"[ModelsRepository] Deleted model metadata for '{modelName}'.",
+                Logging.LogType.Info
+            );
+        }
+
+        private string GetModelJsonPath(string modelName) =>
+            Path.Combine(config.ModelsDataDirectory, $"{modelName}.json");
     }
 }

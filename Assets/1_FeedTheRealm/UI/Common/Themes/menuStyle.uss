@@ -242,3 +242,40 @@
 #root > #MenuContainer > #Content > .unity-toggle-button-group > .unity-base-field__label {
     color: rgb(255, 255, 255);
 }
+
+VisualElement > .unity-vector3-field > .unity-vector3-field__input {
+    flex-direction: row;
+}
+
+VisualElement > .unity-vector3-field > .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
+    width: 20px;
+    max-width: 20px;
+    min-width: 20px;
+}
+
+VisualElement > .unity-vector3-field > .unity-vector3-field__input > #unity-y-input > .unity-base-field__label--with-dragger {
+    width: 20px;
+    max-width: 20px;
+    min-width: 20px;
+}
+
+VisualElement > .unity-vector3-field > .unity-vector3-field__input > #unity-z-input > .unity-base-field__label--with-dragger {
+    width: 20px;
+    max-width: 20px;
+    min-width: 20px;
+}
+
+VisualElement > .unity-vector3-field > .unity-vector3-field__label {
+    max-width: 110px;
+    min-width: 110px;
+    width: 110px;
+}
+
+VisualElement > VisualElement > #HasColliders > .unity-toggle__label {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+}
+
+#Root > #MenuContainer > #NPCEditor > #FormContainer > .npc-add-dialog-row > #DialogDropdown > .unity-popup-field__input > .unity-base-popup-field__text {
+}

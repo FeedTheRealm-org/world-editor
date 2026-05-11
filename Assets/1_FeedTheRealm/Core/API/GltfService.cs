@@ -23,15 +23,23 @@ namespace API
 
         [SerializeField]
         private Config config;
+
+        [SerializeField]
+        public GameObject errorPrefab;
         private const string FILE_PROTOCOL = "file://";
 
-        public async UniTask Load(GameObject parent, string modelFilepath)
+        public async UniTask Load(
+            GameObject parent,
+            string modelFilepath,
+            string LoadToObjectName = "Model"
+        )
         {
             if (string.IsNullOrEmpty(modelFilepath))
             {
                 CreateFallback(parent);
                 return;
             }
+            Transform modelContainer = parent.transform.Find(LoadToObjectName) ?? parent.transform;
             modelFilepath = $"{FILE_PROTOCOL}/{config.ModelsDirectory}/{modelFilepath}";
             try
             {
@@ -40,11 +48,11 @@ namespace API
                 if (!success)
                 {
                     Debug.LogWarning($"Failed to load: {modelFilepath}");
-                    CreateFallback(parent);
+                    CreateFallback(modelContainer.gameObject);
                     return;
                 }
-                await gltfImport.InstantiateMainSceneAsync(parent.transform);
-                Transform child = parent.transform.GetChild(0);
+                await gltfImport.InstantiateMainSceneAsync(modelContainer);
+                Transform child = modelContainer.GetChild(0);
                 child.localPosition = Vector3.zero;
                 child.localRotation = Quaternion.identity;
                 child.localScale = Vector3.one;
@@ -52,13 +60,14 @@ namespace API
             catch (Exception exception)
             {
                 Debug.LogWarning($"GLTF load exception for '{modelFilepath}': {exception.Message}");
-                CreateFallback(parent);
+                CreateFallback(modelContainer.gameObject);
             }
         }
 
         private void CreateFallback(GameObject parent)
         {
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            ToastNotification.Show($"Model could not be loaded", "error", Color.red);
+            var cube = Instantiate(errorPrefab, parent.transform.position, Quaternion.identity);
             cube.transform.SetParent(parent.transform);
         }
     }

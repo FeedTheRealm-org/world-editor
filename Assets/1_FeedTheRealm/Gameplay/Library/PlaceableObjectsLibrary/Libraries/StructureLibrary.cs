@@ -23,6 +23,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         private Dictionary<string, StructureData> modelsData;
         private Dictionary<string, GameObject> structuresCache;
         private IObjectResolver resolver;
+        private GameObject errorModel;
 
         public StructureLibrary(
             GltfService gltfService,
@@ -39,6 +40,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
             structurePrefab = prefabProvider.structurePrefab;
             structuresCache = new Dictionary<string, GameObject>();
             modelsData = modelsRepository.GetModelsData();
+            errorModel = prefabProvider.errorPrefab;
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         /// </summary>
         public async UniTask<GameObject> GetItem(string structureId)
         {
-            logger.Log($"GetItem called for {structureId}");
+            GameObject instance = null;
             try
             {
                 if (!structuresCache.TryGetValue(structureId, out var cachedStructure))
@@ -59,24 +61,25 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
                             $"Model data for {structureId} not found.",
                             Logging.LogType.Error
                         );
-                        return null;
+                        return Object.Instantiate(errorModel);
                     }
                     await CacheStructureFromDisk(modelData);
                     cachedStructure = structuresCache[structureId];
                 }
 
                 // Instantiate and load data onto the new instance
-                var instance = resolver.Instantiate(cachedStructure);
+                instance = resolver.Instantiate(cachedStructure);
                 var instanceModelData = modelsData.GetValueOrDefault(structureId);
                 instance.GetComponent<ILoadable<StructureData>>().Load(instanceModelData);
                 instance.SetActive(true);
 
-                logger.Log($"Successfully instantiated {structureId}");
                 return instance;
             }
             catch (System.Exception e)
             {
                 logger.Log($"GetItem failed for {structureId}: {e}", Logging.LogType.Error);
+                if (instance != null)
+                    Object.Destroy(instance);
                 return null;
             }
         }
@@ -100,10 +103,6 @@ namespace FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary
         public List<PlaceableOption> ListAvailableItems()
         {
             List<StructureData> models = modelsRepository.GetModelsData().Values.ToList();
-            logger.Log(
-                $"Listing {models.Count} structures from ModelsRepository.",
-                Logging.LogType.Info
-            );
             return models
                 .Select(model => new PlaceableOption
                 {

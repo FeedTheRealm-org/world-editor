@@ -1,11 +1,14 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/MenuBar/Themes/MenuBarStyles.uss?fileID=7433441132597879392&amp;guid=347ad0bb551b2105e8a27e59f2fd69d7&amp;type=3#MenuBarStyles"/>
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/ComponentStyles.uss?fileID=7433441132597879392&amp;guid=78cd8282557353f929016873bb4d2434&amp;type=3#ComponentStyles"/>
-    <ui:VisualElement name="MenuBarContainer" class="menu-bar">
-        <ui:Button text="File" name="File"/>
-        <ui:Button text="Edit" name="Edit"/>
-        <ui:Button text="Subscriptions" name="Subscriptions"/>
-        <ui:Button text="Help" name="Help"/>
-        <ui:Button text="About" name="About"/>
+    <ui:VisualElement name="MenuBarContainer" class="menu-bar" style="padding-left: 0%; padding-right: 2%;">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+            <ui:Button text="File" name="File" class="menu-bar-item-spacing"/>
+            <ui:Button text="Edit" name="Edit" class="menu-bar-item-spacing"/>
+            <ui:Button text="Subscriptions" name="Subscriptions" class="menu-bar-item-spacing"/>
+            <ui:Button text="Help" name="Help" class="menu-bar-item-spacing"/>
+            <ui:Button text="About" name="About"/>
+        </ui:VisualElement>
+        <ui:Button text="Login" name="Login" style="align-self: flex-end; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-left-radius: 14px; border-top-right-radius: 14px; border-bottom-right-radius: 14px; border-bottom-left-radius: 14px; width: 151px;"/>
     </ui:VisualElement>
 </ui:UXML>

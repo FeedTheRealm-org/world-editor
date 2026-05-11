@@ -56,8 +56,15 @@ namespace FeedTheRealm.Core.DataPersistence
         public void SaveZone(string worldName, int zoneId)
         {
             var zoneData = new ZoneData(worldName, zoneId);
-            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
-            logger.Log($"[DataPersistenceManager] Saving: {registeredPlaceables}");
+
+            logger.Log(
+                $"[DataPersistenceManager] Saving zone data for world: {worldName}, zone: {zoneId} | Registered placeables count: {registeredPlaceables.Count}"
+            );
+
+            registeredPlaceables.RemoveAll(obj =>
+                obj is UnityEngine.Object unityObj && unityObj == null
+            );
+
             foreach (var obj in registeredPlaceables)
                 obj.SaveData(ref zoneData);
 
@@ -73,10 +80,16 @@ namespace FeedTheRealm.Core.DataPersistence
             creatablesRepository.SaveCreatables(worldName, creatablesData);
         }
 
+        public void SaveCreatablesData(string worldName, CreatablesData creatablesData)
+        {
+            creatablesRepository.SaveCreatables(worldName, creatablesData);
+        }
+
         // ---- Registration Methods ----
 
         private void RegisterEntity(IPersistent<ZoneData> entity)
         {
+            logger.Log($"[DataPersistenceManager] Registering entity: {entity}");
             if (entity == null)
             {
                 logger.Log(
@@ -86,7 +99,6 @@ namespace FeedTheRealm.Core.DataPersistence
                 return;
             }
             registeredPlaceables.Add(entity);
-            logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
         }
 
         private void RegisterEntity(IPersistent<CreatablesData> entity)
@@ -100,7 +112,6 @@ namespace FeedTheRealm.Core.DataPersistence
                 return;
             }
             registeredCreatables.Add(entity);
-            logger.Log($"[Data Persistence Manager] Registered entity: {entity.GetType().Name}");
         }
 
         // ---- Get Methods ----
@@ -149,14 +160,13 @@ namespace FeedTheRealm.Core.DataPersistence
         /// </summary>
         public void ClearPlaceables()
         {
-            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Object == null);
-
             foreach (var obj in registeredPlaceables)
             {
-                var component = (UnityEngine.Component)obj;
-                UnityEngine.Object.Destroy(component.gameObject);
+                var component = obj as UnityEngine.Component;
+                if (component != null)
+                    UnityEngine.Object.Destroy(component.gameObject);
             }
-            registeredPlaceables.Clear();
+            registeredPlaceables.RemoveAll(obj => obj as UnityEngine.Component != null);
             logger.Log("[DataPersistenceManager] Registry cleared.");
         }
 
@@ -170,6 +180,12 @@ namespace FeedTheRealm.Core.DataPersistence
         public string GetModelFilepath(string modelId)
         {
             return modelsRepository.GetModelFilepath(modelId);
+        }
+
+        public string GetCurrentWorldId(string selectedWorld)
+        {
+            var worldData = GetWorldData(selectedWorld);
+            return worldData != null ? worldData.worldId : null;
         }
     }
 }

@@ -26,6 +26,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private GameObject itemsMenuPrefab;
 
         private ConsumableItemData editingData;
+        private EditBuffer<ConsumableItemData> editBuffer;
 
         private TextField nameInput;
         private TextField descriptionInput;
@@ -35,7 +36,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private FloatField cooldownInput;
         private IntegerField maxStackInput;
         private Image spritePreview;
-        private string pendingSpritePath;
+        private string currentSpritePath;
         private Button saveButton;
         private Button closeButton;
 
@@ -46,7 +47,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             descriptionInput = root.Q<TextField>("DescriptionField");
             effectTypeInput = root.Q<DropdownField>("EffectTypeField");
             effectTypeInput.choices = Enum.GetNames(typeof(EffectType)).ToList();
-            effectTypeInput.value = EffectType.None.ToString();
+            effectTypeInput.value = EffectType.Heal.ToString();
             valueInput = root.Q<IntegerField>("EffectValueField");
             durationInput = root.Q<FloatField>("EffectDurationField");
             cooldownInput = root.Q<FloatField>("EffectCooldownField");
@@ -64,38 +65,55 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         public void SetupEditor(ConsumableItem consumable)
         {
             editingData = consumable.data;
+            editBuffer = new EditBuffer<ConsumableItemData>(editingData);
+            currentSpritePath = editingData.spriteFilePath;
+
             PopulateFields();
             BindEditMode();
+
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Return to List";
-            saveButton.clicked += ReturnToList;
+            saveButton.text = "Save Consumable";
+            saveButton.clicked += SaveExistingObject;
         }
 
         private void PopulateFields()
         {
-            nameInput.value = editingData.name;
-            descriptionInput.value = editingData.description;
-            effectTypeInput.value = editingData.effectType.ToString();
-            valueInput.value = editingData.value;
-            durationInput.value = editingData.duration;
-            cooldownInput.value = editingData.cooldown;
-            maxStackInput.value = editingData.maxStack;
-            LoadExistingSprite(editingData.spriteFilePath);
+            var dataToDisplay = editBuffer != null ? editBuffer.Working : editingData;
+            if (dataToDisplay == null)
+                return;
+
+            nameInput.value = dataToDisplay.name;
+            descriptionInput.value = dataToDisplay.description;
+            effectTypeInput.value = dataToDisplay.effectType.ToString();
+            valueInput.value = dataToDisplay.value;
+            durationInput.value = dataToDisplay.duration;
+            cooldownInput.value = dataToDisplay.cooldown;
+            maxStackInput.value = dataToDisplay.maxStack;
+            LoadExistingSprite(dataToDisplay.spriteFilePath);
         }
 
         private void BindEditMode()
         {
-            nameInput.RegisterValueChangedCallback(evt => editingData.name = evt.newValue);
+            if (editBuffer == null)
+                return;
+
+            nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
             descriptionInput.RegisterValueChangedCallback(evt =>
-                editingData.description = evt.newValue
+                editBuffer.Working.description = evt.newValue
             );
             effectTypeInput.RegisterValueChangedCallback(evt =>
-                editingData.effectType = Enum.Parse<EffectType>(evt.newValue)
+                editBuffer.Working.effectType = Enum.Parse<EffectType>(evt.newValue)
             );
-            valueInput.RegisterValueChangedCallback(evt => editingData.value = evt.newValue);
-            durationInput.RegisterValueChangedCallback(evt => editingData.duration = evt.newValue);
-            cooldownInput.RegisterValueChangedCallback(evt => editingData.cooldown = evt.newValue);
-            maxStackInput.RegisterValueChangedCallback(evt => editingData.maxStack = evt.newValue);
+            valueInput.RegisterValueChangedCallback(evt => editBuffer.Working.value = evt.newValue);
+            durationInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.duration = evt.newValue
+            );
+            cooldownInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.cooldown = evt.newValue
+            );
+            maxStackInput.RegisterValueChangedCallback(evt =>
+                editBuffer.Working.maxStack = evt.newValue
+            );
         }
 
         private void LoadSprite()
@@ -114,9 +132,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                     if (sprite == null)
                         return;
                     spritePreview.sprite = sprite;
-                    pendingSpritePath = paths[0];
-                    if (editingData != null)
-                        editingData.spriteFilePath = pendingSpritePath;
+                    currentSpritePath = paths[0];
                 },
                 onCancel: () => Debug.Log("Sprite selection canceled.")
             );
@@ -135,13 +151,40 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 spritePreview.sprite = sprite;
         }
 
+        private bool ValidateFields()
+        {
+            if (string.IsNullOrEmpty(currentSpritePath))
+            {
+                ToastNotification.Show("Failed to save: sprite is required.", "error", Color.red);
+                return false;
+            }
+            if (string.IsNullOrEmpty(nameInput.value))
+            {
+                ToastNotification.Show("Failed to save: name is required.", "error", Color.red);
+                return false;
+            }
+            if (durationInput.value < 0 || cooldownInput.value < 0 || maxStackInput.value < 0)
+            {
+                ToastNotification.Show(
+                    "Failed to save: some stats cannot be negative.",
+                    "error",
+                    Color.red
+                );
+                return false;
+            }
+            return true;
+        }
+
         private void CreateNewObject()
         {
+            if (!ValidateFields())
+                return;
+
             var itemData = new ItemData(
                 Guid.NewGuid().ToString(),
                 nameInput.value,
                 descriptionInput.value ?? "",
-                pendingSpritePath
+                currentSpritePath
             );
 
             var consumableData = new ConsumableItemData(
@@ -154,7 +197,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             );
 
             creatablesManager.Add(new ConsumableItem(consumableData));
+            ToastNotification.Show("Consumable item created successfully!", "success", Color.green);
             ReturnToList();
+        }
+
+        private void SaveExistingObject()
+        {
+            if (!ValidateFields())
+                return;
+
+            if (editBuffer != null)
+            {
+                editBuffer.Working.spriteFilePath = currentSpritePath;
+                editBuffer.Commit();
+                ToastNotification.Show(
+                    "Consumable item saved successfully!",
+                    "success",
+                    Color.green
+                );
+                ReturnToList();
+            }
         }
 
         private void ReturnToList() => OpenMenu(itemsMenuPrefab);

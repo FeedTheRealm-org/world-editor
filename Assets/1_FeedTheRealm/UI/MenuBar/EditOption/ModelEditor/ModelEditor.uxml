@@ -1,0 +1,32 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="Root" style="height: 100%;">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="flex-shrink: 0; width: 80%; height: 570px; margin-top: 4%; margin-left: 13%;">
+            <ui:VisualElement name="Header" class="menu-tab" style="flex-grow: 1; background-color: rgb(0, 0, 0); height: 50px; max-height: 50px; min-height: 30px; flex-direction: row; align-items: stretch; justify-content: space-between; border-bottom-width: 0; border-left-width: 1px; border-top-width: 1px; border-right-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
+                <ui:Label text="Model Editor" name="Title" class="text title" style="font-size: 15px;"/>
+                <ui:Button text="Close" name="Close" class="close-button"/>
+            </ui:VisualElement>
+            <ui:TabView style="height: 100%;">
+                <ui:Tab label="Placeable Editor" name="PlaceableEditor" style="height: 450px; max-height: 100%;">
+                    <ui:VisualElement name="Body" style="flex-grow: 1; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px; justify-content: flex-start; height: 450px; max-height: 100%;">
+                        <ui:Label text="Select how your models start out when being placed!" style="color: rgba(255, 255, 255, 0.67); -unity-font-style: bold;"/>
+                        <ui:ListView fixed-item-height="30" virtualization-method="DynamicHeight" name="ModelsList" style="height: 100%;"/>
+                    </ui:VisualElement>
+                </ui:Tab>
+                <ui:Tab label="Misc Editor" name="MiscEditorTab" style="height: 450px; max-height: 100%;">
+                    <ui:VisualElement name="Body" style="flex-grow: 1; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; border-top-width: 0; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px; justify-content: flex-start; height: 450px; max-height: 100%;">
+                        <ui:Label text="Set your default chest model!" style="color: rgba(255, 255, 255, 0.67); -unity-font-style: bold; margin-bottom: 1%;"/>
+                        <ui:VisualElement style="flex-grow: 1; height: 35%; max-height: 35%; justify-content: space-around; min-height: 35%; width: 95%; align-self: center; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); padding-left: 2%;">
+                            <ui:DropdownField label="Default Close Chest Model" name="DefaultClosedChest" style="padding-top: 1%; padding-bottom: 1%; width: 60%; color: rgb(255, 255, 255);">
+                                <ui:Button text="Save Model" name="SaveClosedModel" style="background-color: rgb(41, 41, 41);"/>
+                            </ui:DropdownField>
+                            <ui:DropdownField label="Default Open Chest Model" name="DefaultOpenChest" style="padding-top: 1%; padding-bottom: 1%; color: rgb(255, 255, 255); width: 60%;">
+                                <ui:Button text="Save Model" name="SaveOpenedModel" style="background-color: rgb(41, 41, 41);"/>
+                            </ui:DropdownField>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Tab>
+            </ui:TabView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

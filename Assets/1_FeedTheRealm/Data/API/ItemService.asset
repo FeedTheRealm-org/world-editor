@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ItemService
   m_EditorClassIdentifier: FeedTheRealm_Shared::API.ItemService
   logger: {fileID: 11400000, guid: 54b9176f11acb744b94607e586ff012d, type: 2}
-  apiConfig: {fileID: 11400000, guid: f9488f2fa08dc47bb9149d1a79755ca2, type: 2}
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
+  session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}

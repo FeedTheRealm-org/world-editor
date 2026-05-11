@@ -68,4 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c328ac26c88ffb1c0b17183512280d14, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCreatorMenuController
+  AllowInputWhileOpen: 0
   aggresiveNpcMenuPrefab: {fileID: 7649707916942922576, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
+  characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}
+  worldSelector: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}

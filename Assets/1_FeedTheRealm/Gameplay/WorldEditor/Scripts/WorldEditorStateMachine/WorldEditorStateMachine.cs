@@ -3,6 +3,7 @@ using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorStates;
+using FTR.Core.Common.Config;
 using UnityEngine;
 using VContainer;
 
@@ -12,6 +13,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
     {
         [Inject]
         private Logging.Logger logger;
+
+        [Inject]
+        private Config config;
 
         [Inject]
         private ObjectSelectedEvent objectSelectedEvent;
@@ -29,6 +33,7 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         public Camera playerCamera;
         public PlaceableOption SelectedObject { get; private set; }
         public bool IsEditorEnabled { get; private set; } = true;
+        public Config Config => config;
         private IWorldEditorState currentState;
 
         // ------ States ------

@@ -3,6 +3,7 @@ using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels;
 using FeedTheRealm.Core.Repository;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
@@ -46,6 +47,21 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         [SerializeField]
         private GltfService gltfService;
 
+        [SerializeField]
+        private AssetsService assetsService;
+
+        [SerializeField]
+        private ModelService modelService;
+
+        [SerializeField]
+        private MaterialService materialService;
+
+        [SerializeField]
+        private PlayerService playerService;
+
+        [SerializeField]
+        private Session.Session session;
+
         [Header("Event Channels")]
         [SerializeField]
         private EventChannelRegistry eventChannelRegistry;
@@ -61,11 +77,17 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             // Data persistence Manager
             builder.Register<DataPersistenceManager>(Lifetime.Singleton);
 
+            builder.Register<ZoneManager>(Lifetime.Singleton);
+
             // Repositories
             builder.Register<ModelsRepository>(Lifetime.Singleton);
             builder.Register<WorldsRepository>(Lifetime.Singleton);
             builder.Register<CreatablesRepository>(Lifetime.Singleton);
             builder.Register<ZonesRepository>(Lifetime.Singleton);
+            builder
+                .Register<PlayerInfoRepository>(Lifetime.Singleton)
+                .As<CharacterInfoRepository>();
+            builder.Register<ZoneMaterialsRepository>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -79,14 +101,13 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<AggresiveNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<FriendlyNpcSpawnerLoader>(Lifetime.Scoped);
             builder.Register<PortalLoader>(Lifetime.Scoped);
+            builder.Register<ChestLoader>(Lifetime.Scoped);
 
             builder.Register<CreatablesLoader>(Lifetime.Scoped);
             builder.Register<ZoneLoader>(Lifetime.Scoped);
 
             // World Setup Services
-            builder.Register<BaseplateSetupService>(Lifetime.Scoped);
             builder.Register<CameraSetupService>(Lifetime.Scoped);
-            builder.Register<LightingSetupService>(Lifetime.Scoped);
             builder.Register<PlayerSetupService>(Lifetime.Scoped);
             builder.Register<WorldEditorSetupService>(Lifetime.Scoped);
             builder.Register<WorldUISetupService>(Lifetime.Scoped);
@@ -105,6 +126,11 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(playerConfig);
             builder.RegisterInstance(gltfService);
+            builder.RegisterInstance(assetsService);
+            builder.RegisterInstance(playerService);
+            builder.RegisterInstance(session);
+            builder.RegisterInstance(modelService);
+            builder.RegisterInstance(materialService);
             builder.RegisterInstance(config);
             builder.RegisterInstance(logger);
         }

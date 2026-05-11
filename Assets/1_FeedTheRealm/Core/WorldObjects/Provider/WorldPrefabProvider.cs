@@ -12,8 +12,7 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject worldEditorPrefab;
 
         [Header("World Settings")]
-        public GameObject worldPrefab;
-        public LayerMask worldLayerMask;
+        public GameObject zoneAreaPrefab;
 
         [Header("Placeable Objects")]
         public GameObject structurePrefab;
@@ -21,5 +20,9 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject friendlyNPCSpawnerPrefab;
         public GameObject playerSpawnpointPrefab;
         public GameObject portalPrefab;
+        public GameObject chestPrefab;
+
+        [Header("Error Handling")]
+        public GameObject errorPrefab;
     }
 }

@@ -14,8 +14,6 @@ namespace FeedTheRealm.Core.EventChannels
     [CreateAssetMenu(fileName = "EventChannelRegistry", menuName = "Events/EventChannelRegistry")]
     public class EventChannelRegistry : ScriptableObject
     {
-        public LoadWorldEvent loadWorldEvent;
-
         [Header("World Events")]
         public ObjectSelectedEvent objectSelectedEvent;
         public EnableEditorEvent enableEditorEvent;
@@ -27,6 +25,8 @@ namespace FeedTheRealm.Core.EventChannels
         public CategorySelectedEvent categorySelectedEvent;
         public EnableInputEvent enableInputEvent;
         public RefreshZonesEvent refreshZonesEvent;
+        public RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
+        public CloseAllEvent closeAllEvent;
 
         [Header("Tick Events")]
         public TickEvent tickEvent;
@@ -50,7 +50,8 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);
             builder.RegisterInstance(refreshZonesEvent);
-            builder.RegisterInstance(loadWorldEvent);
+            builder.RegisterInstance(refreshPlaceableLibraryEvent);
+            builder.RegisterInstance(closeAllEvent);
         }
     }
 }

@@ -37,8 +37,7 @@ namespace FeedTheRealm.UI.MenuBar
         {
             try
             {
-                worldSelector.selectedWorld = null;
-                worldSelector.selectedZoneId = 1;
+                worldSelector.ClearSelection();
 
                 if (SceneManager.GetActiveScene().name == editorScene.SceneName)
                 {

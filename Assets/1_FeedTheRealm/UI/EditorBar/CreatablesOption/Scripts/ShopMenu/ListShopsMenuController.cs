@@ -1,98 +1,64 @@
-//using FeedTheRealm.Core.WorldObjects.Shop;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class ListShopsMenuController : MenuController
+namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 {
-    [SerializeField]
-    private Logging.Logger logger;
-
-    [SerializeField]
-    private ShopManagerSO shopManager;
-
-    [SerializeField]
-    private GameObject shopEditorMenuPrefab;
-
-    [SerializeField]
-    private VisualTreeAsset itemListTemplate;
-
-    private Button closeButton;
-    private Button addShopButton;
-
-    [SerializeField]
-    private GameObject shopMenuControllerPrefab;
-
-    void OnEnable()
+    [RequireComponent(typeof(UIDocument))]
+    public class ListShopsMenuController : MenuController
     {
-        var root = GetComponent<UIDocument>().rootVisualElement;
+        [SerializeField]
+        private Logging.Logger logger;
 
-        closeButton = root.Q<Button>("Close");
-        addShopButton = root.Q<Button>("AddNPC");
+        [SerializeField]
+        private GameObject shopEditorMenuPrefab;
 
-        closeButton.clicked += ReturnToShopMenu;
-        addShopButton.clicked += AddShop;
+        [SerializeField]
+        private VisualTreeAsset itemListTemplate;
 
-        PopulateShopList();
-    }
+        private Button closeButton;
+        private Button addShopButton;
 
-    private void PopulateShopList()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        var shopList = root.Q<ListView>("ShopList");
-        shopList.Clear();
+        [SerializeField]
+        private GameObject shopMenuControllerPrefab;
 
-        // foreach (ShopObject shop in shopManager.GetShops())
-        // {
-        //     VisualElement entry = itemListTemplate.Instantiate();
+        void OnEnable()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
 
-        //     entry.Q<Label>("Header").text = shop.displayName;
+            closeButton = root.Q<Button>("Close");
+            addShopButton = root.Q<Button>("AddNPC");
 
-        //     var typeLabel = entry.Q<Label>("Type");
-        //     if (typeLabel != null)
-        //         typeLabel.text = "Shop";
+            closeButton.clicked += ReturnToShopMenu;
+            addShopButton.clicked += AddShop;
 
-        //     var editButton = entry.Q<Button>("Edit");
-        //     var deleteButton = entry.Q<Button>("Delete");
+            PopulateShopList();
+        }
 
-        //     editButton.clicked += () => OnEditShop(shop);
-        //     deleteButton.clicked += () => OnDeleteShop(shop, entry);
+        private void PopulateShopList()
+        {
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            var shopList = root.Q<ListView>("ShopList");
+            shopList.Clear();
+        }
 
-        //     shopList.hierarchy.Add(entry);
-        // }
-    }
+        private void AddShop()
+        {
+            logger.Log("Opening Create Shop Menu", this, Logging.LogType.Info);
+            OpenMenu(shopEditorMenuPrefab);
+        }
 
-    // private void OnEditShop(ShopObject shop)
-    // {
-    //     logger.Log("Editing shop: " + shop.displayName, this, Logging.LogType.Info);
-    //     ShopEditContext.SetShopToEdit(shop);
-    //     OpenMenu(shopEditorMenuPrefab);
-    // }
+        void OnDisable()
+        {
+            if (closeButton != null)
+                closeButton.clicked -= ReturnToShopMenu;
+            if (addShopButton != null)
+                addShopButton.clicked -= AddShop;
+        }
 
-    // private void OnDeleteShop(ShopObject shop, VisualElement entry)
-    // {
-    //     logger.Log("Deleting shop: " + shop.displayName, this, Logging.LogType.Info);
-    //     shopManager.DeleteShop(shop.id);
-    //     entry.RemoveFromHierarchy();
-    // }
-
-    private void AddShop()
-    {
-        logger.Log("Opening Create Shop Menu", this, Logging.LogType.Info);
-        OpenMenu(shopEditorMenuPrefab);
-    }
-
-    void OnDisable()
-    {
-        if (closeButton != null)
-            closeButton.clicked -= ReturnToShopMenu;
-        if (addShopButton != null)
-            addShopButton.clicked -= AddShop;
-    }
-
-    private void ReturnToShopMenu()
-    {
-        OpenMenu(shopMenuControllerPrefab);
+        private void ReturnToShopMenu()
+        {
+            OpenMenu(shopMenuControllerPrefab);
+        }
     }
 }

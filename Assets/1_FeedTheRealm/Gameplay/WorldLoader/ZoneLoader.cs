@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels;
+using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Core.WorldObjects;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
@@ -23,6 +26,8 @@ namespace FeedTheRealm.Gameplay.WorldLoader
         private readonly DataPersistenceManager dataPersistenceManager;
         private readonly Logging.Logger logger;
         private readonly List<IPlaceableLoader> zoneLoaders;
+        private readonly CloseAllEvent closeAllEvent;
+        private readonly ZoneManager zoneManager;
 
         public ZoneLoader(
             WorldSelector worldSelector,
@@ -32,12 +37,17 @@ namespace FeedTheRealm.Gameplay.WorldLoader
             StructureLoader structureLoader,
             AggresiveNpcSpawnerLoader aggresiveNpcSpawnerLoader,
             FriendlyNpcSpawnerLoader friendlyNpcSpawnerLoader,
-            PortalLoader portalLoader
+            ZoneManager zoneManager,
+            PortalLoader portalLoader,
+            ChestLoader chestLoader,
+            CloseAllEvent closeAllEvent
         )
         {
             this.worldSelector = worldSelector;
             this.dataPersistenceManager = dataPersistenceManager;
             this.logger = logger;
+            this.zoneManager = zoneManager;
+            this.closeAllEvent = closeAllEvent;
 
             zoneLoaders = new List<IPlaceableLoader>
             {
@@ -46,20 +56,23 @@ namespace FeedTheRealm.Gameplay.WorldLoader
                 aggresiveNpcSpawnerLoader,
                 friendlyNpcSpawnerLoader,
                 portalLoader,
+                chestLoader,
             };
         }
 
         public async UniTask Load()
         {
+            closeAllEvent.Raise(); // Ensure any open menus are closed before loading a new zone
             dataPersistenceManager.ClearPlaceables();
-
-            if (string.IsNullOrEmpty(worldSelector.selectedWorld))
-                return;
+            zoneManager.RegisterZone();
 
             ZoneData zoneData = dataPersistenceManager.GetZoneData(
                 worldSelector.selectedWorld,
                 worldSelector.selectedZoneId
             );
+
+            // we validate if zoneData is null here, do not move
+            zoneManager.LoadData(zoneData);
 
             if (zoneData == null)
             {

@@ -17,23 +17,33 @@ namespace FeedTheRealm.UI.Common
         [Inject]
         protected IObjectResolver resolver;
 
+        [Inject]
+        private CloseAllEvent closeAllEvent;
+
+        [SerializeField]
+        private bool AllowInputWhileOpen = false;
+
         void Awake()
         {
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised += OnInputEventRaised;
-            enableInputEvent?.Raise(false);
+
+            if (enableInputEvent != null && !AllowInputWhileOpen)
+                enableInputEvent.Raise(false);
+
             enableEditorEvent?.Raise(false);
+            closeAllEvent.OnRaised += CloseMenu;
         }
 
         void OnDestroy()
         {
-            if (enableInputEvent != null)
-                enableInputEvent.OnRaised -= OnInputEventRaised;
+            enableInputEvent.OnRaised -= OnInputEventRaised;
+            closeAllEvent.OnRaised -= CloseMenu;
         }
 
         private void OnInputEventRaised(bool isEnabled)
         {
-            if (isEnabled)
+            if (isEnabled && !AllowInputWhileOpen)
                 enableInputEvent?.Raise(false);
         }
 
@@ -43,13 +53,21 @@ namespace FeedTheRealm.UI.Common
                 enableInputEvent.OnRaised -= OnInputEventRaised;
             enableInputEvent?.Raise(true);
             enableEditorEvent?.Raise(true);
-            Destroy(gameObject);
+            if (this != null)
+            {
+                Destroy(gameObject);
+            }
         }
 
         public virtual void OpenMenu(GameObject menuPrefab)
         {
             resolver.Instantiate(menuPrefab);
             Destroy(gameObject);
+        }
+
+        public void EnableMovementToggle(bool enableMovement)
+        {
+            enableInputEvent.Raise(enableMovement);
         }
     }
 }

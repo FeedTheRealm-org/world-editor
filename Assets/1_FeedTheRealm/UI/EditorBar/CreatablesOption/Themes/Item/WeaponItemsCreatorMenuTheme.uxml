@@ -19,10 +19,12 @@
                     <ui:TextField placeholder-text="Item name" name="NameField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 40px; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
                     <ui:TextField placeholder-text="Object Description" name="DescriptionField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 25%; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0;"/>
                     <ui:DropdownField label="Weapon Type" name="WeaponTypeField" class="text"/>
-                    <ui:IntegerField label="Damage" value="0" name="DamageField" class="text unity-text-field__input" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
-                    <ui:FloatField label="Attack Speed" value="0" name="AttackSpeedField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
-                    <ui:FloatField label="Range" value="0" name="RangeField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
-                    <ui:IntegerField label="Ammo" value="0" name="AmmoField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:DropdownField label="Sub Weapon Type" name="SubWeaponTypeField" class="text"/>
+                    <ui:IntegerField label="Damage" value="10" name="DamageField" class="text unity-text-field__input" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:FloatField label="Attack Speed" value="10" name="AttackSpeedField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:FloatField label="Range" value="10" name="RangeField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:IntegerField label="Ammo Capacity" value="10" name="AmmoField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                    <ui:FloatField label="Reload Speed" value="10" name="ReloadSpeedField" class="text unity-text-field__input" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                     <ui:Button text="Save Item" name="SaveButton" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                 </ui:VisualElement>
             </ui:VisualElement>

@@ -5,7 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
+using FeedTheRealm.Gameplay.Creatables;
+using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
 using FTRShared.Runtime.Models;
@@ -36,10 +39,19 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private ModelService modelService;
 
         [SerializeField]
+        private AssetsService assetsService;
+
+        [SerializeField]
         private ZoneService zoneService;
 
         [SerializeField]
+        private SubscriptionService subscriptionService;
+
+        [SerializeField]
         private Session.Session session;
+
+        [SerializeField]
+        private MaterialService materialService;
 
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
@@ -49,6 +61,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         [Inject]
         private WorldUIObjectProvider worldUIObjectProvider;
+
+        [Inject]
+        private CreatablesManager creatablesManager;
+
+        [Inject]
+        private ZoneMaterialsRepository zoneMaterialsRepository;
 
         private Button publishButton;
         private Button loginButton;
@@ -247,6 +265,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 await PublishZoneData();
                 ToastNotification.Show("World published successfully!", "success", Color.green);
                 CloseMenu();
+                worldSelector.selectedWorldId = currentWorldData.worldId;
             }
             catch (Exception ex)
             {
@@ -269,9 +288,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             await ValidateModels(errors);
 
             if (errors.Count > 0)
-                throw new Exception(
-                    $"Cannot publish, fix the following issues first:\n\n{string.Join("\n", errors)}"
-                );
+                throw new Exception($"{string.Join("\n", errors)}");
         }
 
         private void ValidateSprites(List<string> errors)
@@ -308,10 +325,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 if (zoneData == null || zoneData.objectPlacementData.Count == 0)
                     continue;
 
-                var existingModels = await modelService.ListWorldModels(
-                    currentWorldData.worldId,
-                    session.APIToken
-                );
+                var existingModels = await modelService.ListWorldModels(currentWorldData.worldId);
 
                 var newModels = zoneData
                     .objectPlacementData.GroupBy(s => s.id)
@@ -339,35 +353,51 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             if (string.IsNullOrEmpty(currentWorldData.worldId))
             {
-                var (publishedId, error, statusCode) = await worldService.PublishWorld(
-                    currentWorldData,
-                    session.APIToken
-                );
-                if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
-                    throw new Exception(
-                        $"Failed to publish world data: {error} (status {statusCode})"
-                    );
-                currentWorldData.worldId = publishedId;
-                currentWorldData.published_at = DateTime.Now;
-                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                ToastNotification.Show(
-                    "World data published successfully!",
-                    "info",
-                    Color.aliceBlue
-                );
+                await PublishWorldAsNew();
             }
             else if (publishWorldDataToggle.value)
             {
-                var (updatedId, error, statusCode) = await worldService.UpdateWorld(
-                    currentWorldData,
-                    session.APIToken
-                );
+                var (_, error, statusCode) = await worldService.UpdateWorld(currentWorldData);
+
                 if (!string.IsNullOrEmpty(error))
+                {
+                    if (statusCode == 404)
+                    {
+                        logger.Log(
+                            "[PublishMenu] World ID not found on server, retrying publish as a new world.",
+                            this,
+                            Logging.LogType.Warning
+                        );
+
+                        await PublishWorldAsNew(
+                            "World data published successfully after fallback!"
+                        );
+                        return;
+                    }
+
                     throw new Exception(
                         $"Failed to update world data: {error} (status {statusCode})"
                     );
+                }
+
                 ToastNotification.Show("World data updated successfully!", "info", Color.aliceBlue);
             }
+        }
+
+        private async Task PublishWorldAsNew(
+            string successMessage = "World data published successfully!"
+        )
+        {
+            var (publishedId, error, statusCode) = await worldService.PublishWorld(
+                currentWorldData
+            );
+            if (string.IsNullOrEmpty(publishedId) || !string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to publish world data: {error} (status {statusCode})");
+
+            currentWorldData.worldId = publishedId;
+            currentWorldData.published_at = DateTime.Now;
+            dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+            ToastNotification.Show(successMessage, "info", Color.aliceBlue);
         }
 
         private async Task PublishCreatables()
@@ -380,53 +410,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 logger.Log("No creatables data to publish.", this, Logging.LogType.Info);
                 return;
             }
-            await worldService.PublishCreatables(
-                creatablesData,
-                currentWorldData.worldId,
-                session.APIToken
-            );
-        }
-
-        private async Task PublishSprites()
-        {
-            CreatablesData creatablesData = dataPersistenceManager.GetCreatables(
-                worldSelector.selectedWorld
-            );
-
-            var spritesRequest = new SpritesRequest();
-
-            List<ItemData> allItems = new List<ItemData>();
-            if (creatablesData != null)
-            {
-                allItems.AddRange(creatablesData.weaponItems);
-                allItems.AddRange(creatablesData.consumableItems);
-            }
-
-            foreach (var item in allItems)
-            {
-                if (!string.IsNullOrEmpty(item.spriteFilePath))
-                    spritesRequest.ids.Add(item.id);
-                // TODO: this should be abstracted, the publish controller should not know about weapon's sprite path structure
-                spritesRequest.spritePath.Add(
-                    Path.Combine(config.SpritesDirectory, item.spriteFilePath)
-                );
-            }
-
-            var missingSprites = spritesRequest
-                .spritePath.Where(path => !File.Exists(path))
-                .ToList();
-
-            if (missingSprites.Count > 0)
-            {
-                var missing = string.Join("\n", missingSprites);
-                throw new Exception($"Missing sprite files:\n{missing}");
-            }
-
-            await spriteService.UploadSprites(
-                spritesRequest,
-                currentWorldData.worldId,
-                session.APIToken
-            );
+            await worldService.PublishCreatables(creatablesData, currentWorldData.worldId);
         }
 
         private async Task PublishZoneData()
@@ -441,84 +425,535 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                     continue;
 
                 await PublishModels(zoneData);
+                await PublishZoneMaterials(zoneData);
 
                 var (_, error, statusCode) = await zoneService.PublishZone(
                     currentWorldData.worldId,
-                    zoneData,
-                    session.APIToken
+                    zoneData
                 );
                 if (!string.IsNullOrEmpty(error))
                 {
                     logger.Log(
-                        $"Failed to publish zone {zoneId}: {error} (status {statusCode})",
+                        $"Failed to publish zone {zoneId}: {error})",
                         this,
                         Logging.LogType.Error
                     );
                     ToastNotification.Show($"Failed to publish zone {zoneId}.", error, Color.red);
                     continue;
                 }
-                ToastNotification.Show(
-                    $"Zone {zoneId} published successfully!",
-                    "info",
-                    Color.aliceBlue
+            }
+        }
+
+        private async Task PublishSprites()
+        {
+            var creatablesData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+            var spritesRequest = BuildSpritesRequest(creatablesData);
+
+            AssertSpriteFilesExist(spritesRequest);
+            AssertAssetsServiceAvailable();
+
+            await spriteService.UploadSprites(spritesRequest, currentWorldData.worldId);
+
+            if (creatablesData?.cosmetics != null)
+            {
+                await PublishCosmetics(creatablesData);
+            }
+        }
+
+        private SpritesRequest BuildSpritesRequest(CreatablesData creatablesData)
+        {
+            var request = new SpritesRequest();
+            if (creatablesData == null)
+                return request;
+
+            var allItems = new List<ItemData>();
+            allItems.AddRange(creatablesData.weaponItems);
+            allItems.AddRange(creatablesData.consumableItems);
+
+            foreach (var item in allItems)
+            {
+                if (!string.IsNullOrEmpty(item.spriteFilePath))
+                {
+                    request.ids.Add(item.id);
+                    request.spritePath.Add(
+                        Path.Combine(config.SpritesDirectory, item.spriteFilePath)
+                    );
+                }
+            }
+
+            return request;
+        }
+
+        private void AssertSpriteFilesExist(SpritesRequest request)
+        {
+            var missingSprites = request.spritePath.Where(path => !File.Exists(path)).ToList();
+
+            if (missingSprites.Count > 0)
+            {
+                var missing = string.Join("\n", missingSprites);
+                throw new Exception($"Missing sprite files:\n{missing}");
+            }
+        }
+
+        private void AssertAssetsServiceAvailable()
+        {
+            if (assetsService == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: assetsService is unassigned in PublishMenuController.",
+                    this,
+                    Logging.LogType.Error
                 );
+                throw new Exception("AssetsService is missing.");
+            }
+        }
+
+        private async Task PublishCosmetics(CreatablesData creatablesData)
+        {
+            try
+            {
+                var categoryIds = await FetchCategoryLookupAsync();
+                var uploadCache = new Dictionary<string, string>();
+                bool anyChanges = false;
+
+                foreach (var cosmetic in creatablesData.cosmetics)
+                {
+                    cosmetic.OnAfterDeserialize();
+                    bool cosmeticChanged = await ProcessCosmeticAsync(
+                        cosmetic,
+                        categoryIds,
+                        uploadCache
+                    );
+                    anyChanges |= cosmeticChanged;
+                }
+
+                if (anyChanges)
+                {
+                    PersistCosmeticChanges(creatablesData);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"PublishCosmetics Error: {ex.Message}\n{ex.StackTrace}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw;
+            }
+        }
+
+        private async Task<Dictionary<string, string>> FetchCategoryLookupAsync()
+        {
+            var response = await assetsService.GetCategoriesAsync();
+
+            if (response?.category_list == null)
+            {
+                logger.Log(
+                    "PublishCosmetics: Failed to fetch categories from AssetsService.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    "Failed to fetch cosmetic categories from AssetsService. Cannot proceed with cosmetic publishing."
+                );
+            }
+
+            return response
+                .category_list.Where(c =>
+                    !string.IsNullOrEmpty(c.category_name) && !string.IsNullOrEmpty(c.category_id)
+                )
+                .ToDictionary(c => c.category_name, c => c.category_id);
+        }
+
+        private async Task<bool> ProcessCosmeticAsync(
+            CosmeticData cosmetic,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            bool changed = false;
+
+            foreach (var categoryName in cosmetic.categories.Keys.ToList())
+            {
+                if (categoryName == "EarringL")
+                    continue;
+
+                var entry = cosmetic.categories[categoryName];
+                bool entryChanged = await ProcessCategoryEntryAsync(
+                    cosmetic,
+                    categoryName,
+                    entry,
+                    categoryIds,
+                    uploadCache
+                );
+                changed |= entryChanged;
+            }
+
+            return changed;
+        }
+
+        private async Task<bool> ProcessCategoryEntryAsync(
+            CosmeticData cosmetic,
+            string categoryName,
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> categoryIds,
+            Dictionary<string, string> uploadCache
+        )
+        {
+            if (string.IsNullOrEmpty(entry.sprite_path))
+                return false;
+
+            string spritePath = entry.sprite_path;
+            string fullPath = Path.Combine(config.SpritesDirectory, spritePath);
+            if (!File.Exists(fullPath))
+            {
+                logger.Log(
+                    $"PublishCosmetics: Sprite file not found for category '{categoryName}': {fullPath}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Missing sprite file for cosmetic '{cosmetic.id}' category '{categoryName}': {fullPath}"
+                );
+            }
+
+            if (
+                !categoryIds.TryGetValue(categoryName, out string categoryId)
+                || string.IsNullOrEmpty(categoryId)
+            )
+            {
+                logger.Log(
+                    $"PublishCosmetics: Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Category '{categoryName}' not found on server for cosmetic '{cosmetic.id}'. Cannot publish cosmetic."
+                );
+            }
+
+            string existingSpriteId = ResolveExistingSpriteId(entry, uploadCache, fullPath);
+            var resp = await UploadOrLinkSpriteAsync(
+                categoryId,
+                categoryName,
+                fullPath,
+                existingSpriteId,
+                entry.price
+            );
+
+            if (resp == null || string.IsNullOrEmpty(resp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. Server returned null or empty sprite_id.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"Failed to upload/link sprite for cosmetic '{cosmetic.id}' category '{categoryName}'. AssetsService returned invalid response."
+                );
+            }
+
+            if (!uploadCache.ContainsKey(fullPath))
+                uploadCache[fullPath] = resp.sprite_id;
+
+            entry.url_id = resp.sprite_id;
+
+            string currentFileName = Path.GetFileNameWithoutExtension(spritePath);
+            if (currentFileName != resp.sprite_id)
+            {
+                string ext = Path.GetExtension(spritePath);
+                string newFileName = resp.sprite_id + ext;
+                string newFullPath = Path.Combine(config.SpritesDirectory, newFileName);
+
+                if (!File.Exists(newFullPath))
+                {
+                    File.Move(fullPath, newFullPath);
+                    logger.Log($"Renamed sprite file '{spritePath}' → '{newFileName}'", this);
+                }
+
+                foreach (var otherEntry in cosmetic.categories.Values)
+                {
+                    if (otherEntry.sprite_path == spritePath)
+                        otherEntry.sprite_path = newFileName;
+                }
+
+                if (!uploadCache.ContainsKey(newFullPath))
+                    uploadCache[newFullPath] = resp.sprite_id;
+                uploadCache.Remove(fullPath);
+            }
+
+            return true;
+        }
+
+        private static string ResolveExistingSpriteId(
+            CosmeticCategoryEntry entry,
+            Dictionary<string, string> uploadCache,
+            string fullPath
+        )
+        {
+            if (!string.IsNullOrEmpty(entry.url_id))
+                return entry.url_id;
+
+            return uploadCache.TryGetValue(fullPath, out var cachedId) ? cachedId : null;
+        }
+
+        private async Task<SpriteResponse> UploadOrLinkSpriteAsync(
+            string categoryId,
+            string categoryName,
+            string fullPath,
+            string existingSpriteId,
+            int price
+        )
+        {
+            if (!string.IsNullOrEmpty(existingSpriteId))
+            {
+                var (resp, statusCode) = await assetsService.LinkSpriteByIdAsync(
+                    categoryId,
+                    existingSpriteId,
+                    currentWorldData.worldId,
+                    price,
+                    fullPath
+                );
+
+                if (resp != null)
+                    return resp;
+
+                if (statusCode != 404)
+                {
+                    logger.Log(
+                        $"PublishCosmetics: LinkSpriteByIdAsync failed for category '{categoryName}' with status {statusCode}.",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    throw new Exception(
+                        $"AssetsService.LinkSpriteByIdAsync failed for category '{categoryName}' with HTTP status {statusCode}."
+                    );
+                }
+
+                logger.Log(
+                    $"PublishCosmetics: Sprite '{existingSpriteId}' not found on server (404), falling back to upload for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+
+            var uploadResp = await assetsService.UploadSpriteAsync(
+                categoryId,
+                fullPath,
+                currentWorldData.worldId,
+                price
+            );
+
+            if (uploadResp == null || string.IsNullOrEmpty(uploadResp.sprite_id))
+            {
+                logger.Log(
+                    $"PublishCosmetics: UploadSpriteAsync failed for category '{categoryName}'.",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception(
+                    $"AssetsService.UploadSpriteAsync failed for category '{categoryName}'. Server returned invalid response."
+                );
+            }
+
+            return uploadResp;
+        }
+
+        private void PersistCosmeticChanges(CreatablesData creatablesData)
+        {
+            dataPersistenceManager.SaveCreatablesData(worldSelector.selectedWorld, creatablesData);
+            SyncCosmeticsInMemory(creatablesData);
+        }
+
+        private void SyncCosmeticsInMemory(CreatablesData publishedData)
+        {
+            var inMemoryCosmetics = creatablesManager.GetAll<Cosmetic>();
+
+            foreach (var publishedCosmetic in publishedData.cosmetics)
+            {
+                var inMemory = inMemoryCosmetics.FirstOrDefault(c => c.Id == publishedCosmetic.id);
+                if (inMemory == null)
+                    continue;
+
+                inMemory.data.categories = new Dictionary<string, CosmeticCategoryEntry>(
+                    publishedCosmetic.categories.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => new CosmeticCategoryEntry(
+                            kvp.Value.sprite_path,
+                            kvp.Value.url_id,
+                            kvp.Value.price
+                        )
+                    )
+                );
+
+                inMemory.data.OnBeforeSerialize();
             }
         }
 
         private async Task PublishModels(ZoneData zoneData)
         {
-            if (zoneData.objectPlacementData.Count == 0)
+            var existingModels = await modelService.ListWorldModels(currentWorldData.worldId);
+
+            var modelRequests = new List<ModelRequest>();
+            var queuedIds = new HashSet<string>(existingModels.Keys);
+
+            CollectModelRequests(
+                zoneData.objectPlacementData.Where(s => !s.isDefault).Select(s => s.id),
+                queuedIds,
+                modelRequests
+            );
+
+            CollectModelRequests(
+                zoneData
+                    .chestPlacements.SelectMany(c =>
+                        new[] { c.closedChestModelData, c.opendedChestModelData }
+                    )
+                    .Where(m => m != null && !m.isDefault && !string.IsNullOrEmpty(m.modelId))
+                    .Select(m => m.modelId),
+                queuedIds,
+                modelRequests
+            );
+
+            if (modelRequests.Count == 0)
+            {
+                logger.Log("[WorldPublisher] No new models to upload.", this, Logging.LogType.Info);
+                return;
+            }
+
+            string error = await modelService.UploadModels(modelRequests, currentWorldData.worldId);
+
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception($"Failed to upload models: {error}");
+
+            logger.Log(
+                $"[WorldPublisher] Successfully uploaded {modelRequests.Count} new models for zone {zoneData.zoneId}.",
+                this,
+                Logging.LogType.Info
+            );
+        }
+
+        private void CollectModelRequests(
+            IEnumerable<string> modelIds,
+            HashSet<string> queuedIds,
+            List<ModelRequest> modelRequests
+        )
+        {
+            foreach (var id in modelIds.Distinct())
+            {
+                if (queuedIds.Contains(id))
+                    continue;
+
+                var modelPath = dataPersistenceManager.GetModelFilepath(id);
+                if (string.IsNullOrEmpty(modelPath))
+                    throw new Exception(
+                        $"Model file for '{id}' not found. Please ensure all model files are present before publishing."
+                    );
+
+                modelRequests.Add(new ModelRequest { id = id, filePath = modelPath });
+                queuedIds.Add(id);
+            }
+        }
+
+        private async Task PublishZoneMaterials(ZoneData zoneData)
+        {
+            try
+            {
+                var ids = new List<string>();
+                var names = new List<string>();
+                var filePaths = new List<string>();
+
+                AddMaterial(
+                    zoneData.zoneAreaData?.zoneMaterialId,
+                    ZoneTextureType.Ground,
+                    ids,
+                    names,
+                    filePaths
+                );
+                AddMaterial(
+                    zoneData.zoneAreaData?.skyboxMaterialId,
+                    ZoneTextureType.Skybox,
+                    ids,
+                    names,
+                    filePaths
+                );
+
+                if (ids.Count == 0)
+                {
+                    logger.Log("[PublishMenu] No materials to upload.", this, Logging.LogType.Info);
+                    return;
+                }
+
+                var result =
+                    await materialService.UploadMaterialsAsync(
+                        currentWorldData.worldId,
+                        ids.ToArray(),
+                        names.ToArray(),
+                        filePaths.ToArray()
+                    ) ?? throw new Exception("Failed to upload zone materials.");
+
+                logger.Log(
+                    $"[PublishMenu] Successfully uploaded {result.Length} zone materials.",
+                    this,
+                    Logging.LogType.Info
+                );
+            }
+            catch (Exception ex)
             {
                 logger.Log(
-                    "[WorldPublisher] No structures in zone, skipping model upload.",
+                    $"[PublishMenu] Error uploading materials: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new Exception($"Error uploading materials: {ex.Message}");
+            }
+        }
+
+        private void AddMaterial(
+            string materialKey,
+            ZoneTextureType type,
+            List<string> ids,
+            List<string> names,
+            List<string> filePaths
+        )
+        {
+            if (
+                string.IsNullOrEmpty(materialKey)
+                || materialKey == ZoneMaterialsRepository.defaultId
+            )
+            {
+                logger.Log(
+                    $"[PublishMenu] Skipping default material for {type}.",
                     this,
                     Logging.LogType.Info
                 );
                 return;
             }
 
-            var existingModels = await modelService.ListWorldModels(
-                currentWorldData.worldId,
-                session.APIToken
-            );
-
-            var newModels = zoneData
-                .objectPlacementData.GroupBy(s => s.id)
-                .Select(g => g.First())
-                .Where(s => !existingModels.ContainsKey(s.id))
-                .ToList();
-
-            if (newModels.Count == 0)
-                return;
-
-            List<ModelRequest> modelRequests = new();
-
-            // Validate all model files exist before attempting upload
-            foreach (var model in newModels)
+            string id = zoneMaterialsRepository.GetPublishId(materialKey, type);
+            if (string.IsNullOrEmpty(id))
             {
-                var modelPath = dataPersistenceManager.GetModelFilepath(model.id);
-                if (string.IsNullOrEmpty(modelPath))
-                {
-                    throw new Exception(
-                        $"Model file for '{model.id}' not found. Please ensure all model files are present before publishing."
-                    );
-                }
-                modelRequests.Add(new ModelRequest { id = model.id, filePath = modelPath });
+                logger.Log(
+                    $"[PublishMenu] No publish ID found for '{materialKey}' ({type}), skipping.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+            string filePath = zoneMaterialsRepository.GetMaterialFilePath(materialKey, type);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                logger.Log(
+                    $"[PublishMenu] File not found for material '{materialKey}', skipping.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
             }
 
-            string error = await modelService.UploadModels(
-                modelRequests,
-                currentWorldData.worldId,
-                session.APIToken
-            );
-            logger.Log(
-                $"[WorldPublisher] Successfully uploaded {newModels.Count} new models. for zone {zoneData.zoneId}",
-                this,
-                Logging.LogType.Info
-            );
-
-            if (!string.IsNullOrEmpty(error))
-                throw new Exception($"Failed to upload models: {error}");
+            ids.Add(id);
+            names.Add(materialKey);
+            filePaths.Add(filePath);
         }
     }
 }

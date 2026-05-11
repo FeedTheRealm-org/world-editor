@@ -1,3 +1,4 @@
+using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
 
 namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
@@ -7,23 +8,33 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
         private const float DefaultMaxDistance = 10000f;
 
         public static bool TryGetPlacementPoint(
-            WorldEditorStateMachine maker,
+            Camera camera,
+            InputReader inputReader,
             LayerMask layermask,
             out RaycastHit hit,
             float maxDistance = DefaultMaxDistance
         )
         {
-            Ray ray = maker.playerCamera.ScreenPointToRay(maker.inputReader.LastClickPosition);
+            Ray ray = camera.ScreenPointToRay(inputReader.LastClickPosition);
             return Physics.Raycast(ray, out hit, maxDistance, layermask);
         }
 
         public static GameObject GetGameObject(
-            WorldEditorStateMachine maker,
+            Camera camera,
+            InputReader inputReader,
             LayerMask layermask,
             float maxDistance = DefaultMaxDistance
         )
         {
-            if (TryGetPlacementPoint(maker, layermask, out RaycastHit hit, maxDistance))
+            if (
+                TryGetPlacementPoint(
+                    camera,
+                    inputReader,
+                    layermask,
+                    out RaycastHit hit,
+                    maxDistance
+                )
+            )
             {
                 return hit.collider.gameObject;
             }

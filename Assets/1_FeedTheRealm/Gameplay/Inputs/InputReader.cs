@@ -17,8 +17,15 @@ namespace FeedTheRealm.Gameplay.Inputs
         public event Action SecondaryInteractionEvent;
         public event Action<float> MoveVerticalEvent;
         public event Action RemoveEvent;
+        public event Action MoveShortcutEvent;
+        public event Action RotateShortcutEvent;
+        public event Action ScaleShortcutEvent;
+        public event Action HideShortcutEvent;
         public event Action<Vector2> ScrollEvent;
         public Vector2 LastClickPosition { get; private set; }
+        public event Action PrimaryInteractionReleasedEvent;
+        public event Action<Vector2> MousePositionEvent;
+        public Vector2 CurrentMousePosition { get; private set; }
 
         private MakerControls controls;
 
@@ -48,8 +55,8 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.Look.Enable();
                 controls.Player.MoveUp.Enable();
                 controls.Player.MoveDown.Enable();
-                controls.Player.PrimaryInteraction.Enable();
                 controls.Player.SecondaryInteraction.Enable();
+                controls.Player.PrimaryInteraction.Enable();
             }
             else
             {
@@ -57,8 +64,8 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.Look.Disable();
                 controls.Player.MoveUp.Disable();
                 controls.Player.MoveDown.Disable();
-                controls.Player.PrimaryInteraction.Disable();
                 controls.Player.SecondaryInteraction.Disable();
+                controls.Player.PrimaryInteraction.Disable();
             }
         }
 
@@ -115,10 +122,12 @@ namespace FeedTheRealm.Gameplay.Inputs
             if (context.performed)
             {
                 if (Mouse.current != null)
-                {
                     LastClickPosition = Mouse.current.position.ReadValue();
-                }
                 PrimaryInteractionEvent?.Invoke();
+            }
+            else if (context.canceled)
+            {
+                PrimaryInteractionReleasedEvent?.Invoke();
             }
         }
 
@@ -148,6 +157,43 @@ namespace FeedTheRealm.Gameplay.Inputs
             if (context.performed)
             {
                 ScrollEvent?.Invoke(context.ReadValue<Vector2>());
+            }
+        }
+
+        public void OnCursorPosition(InputAction.CallbackContext context)
+        {
+            CurrentMousePosition = context.ReadValue<Vector2>();
+        }
+
+        public void OnMoveSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                MoveShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnScaleSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ScaleShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnRotateSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                RotateShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnHideSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                HideShortcutEvent?.Invoke();
             }
         }
     }

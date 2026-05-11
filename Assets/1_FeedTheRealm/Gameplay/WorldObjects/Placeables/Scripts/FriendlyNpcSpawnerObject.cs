@@ -13,7 +13,7 @@ namespace FeedTheRealm.Gameplay.WorldObjects
         public override void SaveData(ref ZoneData worldData)
         {
             data.Position = gameObject.transform.position;
-            data.Radius = transform.localScale.x;
+            data.Radius = transform.localScale.x / 2f;
             worldData.npcSpawnAreas.Add(data);
         }
 
@@ -22,9 +22,9 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             this.data = data;
             gameObject.transform.position = data.Position;
             gameObject.transform.localScale = new Vector3(
-                data.Radius,
+                data.Radius * 2f,
                 transform.localScale.y,
-                data.Radius
+                data.Radius * 2f
             );
         }
     }

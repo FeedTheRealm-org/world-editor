@@ -4,6 +4,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .npc-dropdown-label {
     color: white;
     font-size: 14px;
@@ -11,6 +12,7 @@
     margin-bottom: 0;
     margin-top: 10px;
 }
+
 .npc-message-container {
     flex-direction: row;
     justify-content: space-between;
@@ -40,7 +42,7 @@
 }
 
 .npc-add-quest-button {
-    font-size: 10px;
+    font-size: 14px;
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 4px;
@@ -58,10 +60,151 @@
     border-radius: 3px;
 }
 
-.npc-remove-quest-button:hover {
-    background-color: rgba(230, 60, 60, 0.9);
+.npc-remove-quest-button:hover  { background-color: rgba(230, 60, 60, 0.9); }
+.npc-remove-quest-button:active { background-color: rgba(180, 40, 40, 0.9); }
+
+
+.npc-add-dialog-button {
+    font-size: 14px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: rgba(60, 120, 60, 0.85);
+    color: white;
+    border-radius: 3px;
 }
 
-.npc-remove-quest-button:active {
-    background-color: rgba(180, 40, 40, 0.9);
+.npc-add-dialog-button:hover  { background-color: rgba(70, 140, 70, 0.9); }
+.npc-add-dialog-button:active { background-color: rgba(45, 100, 45, 0.9); }
+
+
+.npc-progression-item {
+    background-color: rgba(40, 40, 40, 0.75);
+    border-radius: 5px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(255, 255, 255, 0.25);
+    border-right-color: rgba(255, 255, 255, 0.25);
+    border-top-color: rgba(255, 255, 255, 0.25);
+    border-bottom-color: rgba(255, 255, 255, 0.25);
+    margin-bottom: 6px;
+}
+
+
+.npc-progression-item__toggle-row {
+    flex-direction: row;
+    align-items: center;
+    padding-left: 8px;
+    padding-right: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.npc-progression-item__toggle-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.npc-progression-item__chevron {
+    color: rgb(180, 180, 180);
+    font-size: 10px;
+    margin-right: 6px;
+    width: 12px;
+    -unity-text-align: middle-center;
+}
+
+.npc-progression-item__title {
+    color: rgb(220, 220, 220);
+    font-size: 13px;
+    -unity-font-style: bold;
+    flex-grow: 1;
+}
+
+.npc-progression-item__actions {
+    flex-direction: row;
+    align-items: center;
+}
+
+.npc-progression-item__order-btn {
+    font-size: 11px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-color: rgba(80, 80, 80, 0.85);
+    color: white;
+    border-radius: 3px;
+}
+
+.npc-progression-item__order-btn:hover  { background-color: rgba(110, 110, 110, 0.9); }
+.npc-progression-item__order-btn:active { background-color: rgba(55, 55, 55, 0.9); }
+
+.npc-progression-item__remove-btn {
+    font-size: 12px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.npc-progression-item__content {
+    flex-direction: column;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 6px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.npc-progression-item__messages {
+    flex-direction: column;
+    margin-bottom: 4px;
+}
+
+.npc-progression-item__on-quest-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.npc-progression-item__on-quest-label {
+    color: rgb(180, 200, 255);
+    font-size: 11px;
+    margin-right: 8px;
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.npc-progression-item__on-quest-dropdown {
+    min-width: 150px;
+    flex-grow: 1;
+}
+
+.npc-progression-item__repeatable-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.npc-progression-item__repeatable-toggle {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.npc-progression-item__repeatable-toggle .unity-toggle__label {
+    color: rgb(200, 220, 200);
+    font-size: 12px;
+}
+
+.npc-progression-item__cooldown-dropdown {
+    min-width: 100px;
 }

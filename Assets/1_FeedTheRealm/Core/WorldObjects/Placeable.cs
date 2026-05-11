@@ -1,6 +1,7 @@
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Library;
+using FTR.Core.Common.Config;
 using FTR.Core.Loaders;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace FeedTheRealm.Core.WorldObjects
     {
         PlaceableObjectCategories Category { get; }
         void DeletePlaceable();
+        void RegisterPlaceable();
     }
 
     public abstract class Placeable<T>
@@ -25,15 +27,12 @@ namespace FeedTheRealm.Core.WorldObjects
             IPlaceable
     {
         [Inject]
+        protected Config config;
+
+        [Inject]
         protected ZoneDataRegistryEvent registryEvent;
 
         public T data;
-
-        private void Awake()
-        {
-            if (registryEvent != null)
-                registryEvent.Raise(this);
-        }
 
         public abstract PlaceableObjectCategories Category { get; }
         public abstract void SaveData(ref ZoneData zoneData);
@@ -48,6 +47,12 @@ namespace FeedTheRealm.Core.WorldObjects
         public virtual void DeletePlaceable()
         {
             Destroy(gameObject);
+        }
+
+        public void RegisterPlaceable()
+        {
+            if (registryEvent != null)
+                registryEvent.Raise(this);
         }
     }
 }

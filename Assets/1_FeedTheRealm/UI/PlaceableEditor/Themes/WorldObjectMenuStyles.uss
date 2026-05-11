@@ -52,7 +52,7 @@ IntegerField > .unity-base-text-field__input {
 Slider .unity-base-text-field__input {
     background-color: black;
     color: white;
-    text-align: middle-left;
+    -unity-text-align: middle-left;
     border-top-color: white;
     border-bottom-color: white;
     border-left-color: white;
@@ -85,113 +85,6 @@ Vector3Field {
     max-width: 100%;
 }
 
-Vector3Field > .unity-vector3-field__input {
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-y-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-z-input > .unity-base-field__label--with-dragger {
-    width: 0%;
-    min-width: 50px;
-    max-width: 50px;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 100%;
-    min-width: 0%;
-    max-width: 60%;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-y-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 25%;
-    min-width: 0%;
-    max-width: 60%;
-}
-
-Vector3Field > .unity-vector3-field__input > #unity-z-input > #unity-text-input {
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    -unity-font-style: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    flex-shrink: 0;
-    align-self: center;
-    -unity-text-align: upper-left;
-    white-space: normal;
-    text-overflow: ellipsis;
-    -unity-text-outline-width: 0;
-    -unity-text-outline-color: rgb(255, 255, 255);
-    width: 25%;
-    min-width: 0%;
-    max-width: 60%;
-}
-
 DropdownField > .unity-popup-field__input {
     background-color: rgb(0, 0, 0);
     color: rgb(255, 255, 255);
@@ -213,4 +106,100 @@ DropdownField > .unity-popup-field__input > .unity-base-popup-field__arrow {
     max-width: 66px;
     width: 66px;
     min-width: 66px;
+}
+
+Vector3Field > .unity-vector3-field__input {
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-y-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field > .unity-vector3-field__input > #unity-z-input > #unity-text-input {
+    width: 120px;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-y-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
+}
+
+Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__label--with-dragger {
+    width: 30px;
+    min-width: 0;
+}
+
+#Menu > .unity-tab > #unity-tab__header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.TabContent {
+    background-color: rgb(64, 64, 64);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    padding-top: 1%;
+    padding-right: 1%;
+    padding-bottom: 1%;
+    padding-left: 1%;
+    height: auto;
+    min-height: 160px;
+    justify-content: space-around;
+}
+
+#Menu > #TabView > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+#Menu > #TabView > #Colliders > #Buttons {
+    min-height: 30px;
+    height: auto;
+    flex-shrink: 0;
+}
+
+#Menu > #TabView > #Colliders > #Buttons > #ColliderType > .unity-popup-field__input {
+    width: 147px;
+}
+
+#Menu > #TabView > #Colliders > #Buttons > #ColliderType > .unity-popup-field__label {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+}
+
+#Menu > #TabView > #Colliders > #Buttons > #CollidersToggle > .unity-toggle__label {
+    margin-left: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 120px;
+    min-width: 130px;
+    -unity-text-align: middle-left;
+    max-width: 130px;
+    padding-left: 9px;
+}
+
+#Menu > #TabView > #Colliders > #Buttons > #CollidersToggle > .unity-toggle__input {
+}
+
+Slider {
+    color: rgb(255, 255, 255);
 }

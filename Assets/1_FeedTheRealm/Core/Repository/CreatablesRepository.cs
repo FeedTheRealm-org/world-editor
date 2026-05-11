@@ -24,6 +24,10 @@ namespace FeedTheRealm.Core.Repository
 
         public void SaveCreatables(string worldName, CreatablesData creatables)
         {
+            if (creatables?.cosmetics != null)
+                foreach (var cosmetic in creatables.cosmetics)
+                    cosmetic.OnBeforeSerialize();
+
             string path = GetCreatablesPath(worldName);
             if (FileSystemHandler.TryWriteJson(path, creatables, logger))
                 logger.Log($"Saved creatables to '{path}'");
@@ -42,7 +46,14 @@ namespace FeedTheRealm.Core.Repository
                     );
                     return null;
                 }
-                return FileSystemHandler.TryReadJson<CreatablesData>(path, logger);
+
+                var data = FileSystemHandler.TryReadJson<CreatablesData>(path, logger);
+
+                if (data?.cosmetics != null)
+                    foreach (var cosmetic in data.cosmetics)
+                        cosmetic.OnAfterDeserialize();
+
+                return data;
             }
             catch (Exception e)
             {
