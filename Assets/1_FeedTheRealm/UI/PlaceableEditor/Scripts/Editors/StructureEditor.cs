@@ -361,6 +361,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             inputReader.ScaleShortcutEvent += OnScaleShortcut;
             inputReader.RotateShortcutEvent += OnRotateShortcut;
             inputReader.HideShortcutEvent += OnHideShortcut;
+            inputReader.ColliderShortcutEvent += OnColliderShortcut;
         }
 
         private void UnsubscribeShortcuts()
@@ -369,6 +370,14 @@ namespace FeedTheRealm.UI.PlaceableEditor
             inputReader.ScaleShortcutEvent -= OnScaleShortcut;
             inputReader.RotateShortcutEvent -= OnRotateShortcut;
             inputReader.HideShortcutEvent -= OnHideShortcut;
+            inputReader.ColliderShortcutEvent -= OnColliderShortcut;
+        }
+
+        private void OnColliderShortcut()
+        {
+            var colliderTab = tabView.Q<Tab>("Colliders");
+            var transformTab = tabView.Q<Tab>("Transform");
+            tabView.activeTab = isColliderMode ? transformTab : colliderTab;
         }
 
         private void OnMoveShortcut()

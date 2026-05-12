@@ -208,6 +208,15 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ColliderSC"",
+                    ""type"": ""Button"",
+                    ""id"": ""daeb26cf-64cf-48b8-8fa2-b9717e17e471"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -494,6 +503,17 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""HideSC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16084366-2b5b-47e0-859c-db1972de6d3d"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ColliderSC"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1094,6 +1114,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player_ScaleSC = m_Player.FindAction("ScaleSC", throwIfNotFound: true);
         m_Player_RotateSC = m_Player.FindAction("RotateSC", throwIfNotFound: true);
         m_Player_HideSC = m_Player.FindAction("HideSC", throwIfNotFound: true);
+        m_Player_ColliderSC = m_Player.FindAction("ColliderSC", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1200,6 +1221,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ScaleSC;
     private readonly InputAction m_Player_RotateSC;
     private readonly InputAction m_Player_HideSC;
+    private readonly InputAction m_Player_ColliderSC;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1263,6 +1285,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/HideSC".
         /// </summary>
         public InputAction @HideSC => m_Wrapper.m_Player_HideSC;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ColliderSC".
+        /// </summary>
+        public InputAction @ColliderSC => m_Wrapper.m_Player_ColliderSC;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1328,6 +1354,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @HideSC.started += instance.OnHideSC;
             @HideSC.performed += instance.OnHideSC;
             @HideSC.canceled += instance.OnHideSC;
+            @ColliderSC.started += instance.OnColliderSC;
+            @ColliderSC.performed += instance.OnColliderSC;
+            @ColliderSC.canceled += instance.OnColliderSC;
         }
 
         /// <summary>
@@ -1378,6 +1407,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @HideSC.started -= instance.OnHideSC;
             @HideSC.performed -= instance.OnHideSC;
             @HideSC.canceled -= instance.OnHideSC;
+            @ColliderSC.started -= instance.OnColliderSC;
+            @ColliderSC.performed -= instance.OnColliderSC;
+            @ColliderSC.canceled -= instance.OnColliderSC;
         }
 
         /// <summary>
@@ -1769,6 +1801,13 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHideSC(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ColliderSC" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnColliderSC(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

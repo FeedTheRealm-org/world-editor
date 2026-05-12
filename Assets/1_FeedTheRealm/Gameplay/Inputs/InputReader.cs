@@ -21,6 +21,7 @@ namespace FeedTheRealm.Gameplay.Inputs
         public event Action RotateShortcutEvent;
         public event Action ScaleShortcutEvent;
         public event Action HideShortcutEvent;
+        public event Action ColliderShortcutEvent;
         public event Action<Vector2> ScrollEvent;
         public Vector2 LastClickPosition { get; private set; }
         public event Action PrimaryInteractionReleasedEvent;
@@ -194,6 +195,14 @@ namespace FeedTheRealm.Gameplay.Inputs
             if (context.performed)
             {
                 HideShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnColliderSC(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ColliderShortcutEvent?.Invoke();
             }
         }
     }
