@@ -494,7 +494,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             worldsList.Add(loadingLabel);
 
             int offset = currentPage * WorldsPerPage;
-            var (amount, worlds, error) = await worldService.GetWorldPage(offset, WorldsPerPage + 1, "", true);
+            var (amount, worlds, error) = await worldService.GetWorldPage(
+                offset,
+                WorldsPerPage + 1,
+                "",
+                true
+            );
 
             worldsList.Clear();
 
