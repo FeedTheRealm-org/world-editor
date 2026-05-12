@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.UIEvents
 {
-    [CreateAssetMenu(menuName = "Events/UI/RefreshZonesEvent")]
-    public class RefreshZonesEvent : EventChannelSO { }
+    [CreateAssetMenu(menuName = "Events/UI/UpdateLoginEvent")]
+    public class UpdateLoginEvent : EventChannelSO { }
 }

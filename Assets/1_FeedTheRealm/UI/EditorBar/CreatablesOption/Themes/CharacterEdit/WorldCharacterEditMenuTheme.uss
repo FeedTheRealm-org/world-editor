@@ -122,6 +122,48 @@
     min-height: 0;
 }
 
+.world-color-controls {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.45);
+    border-right-color: rgba(255, 255, 255, 0.45);
+    border-bottom-color: rgba(255, 255, 255, 0.45);
+    border-left-color: rgba(255, 255, 255, 0.45);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+}
+
+.world-color-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.world-color-label {
+    min-width: 52px;
+    -unity-text-align: middle-left;
+}
+
+.world-color-dropdown {
+    flex-grow: 1;
+}
+
+.world-color-slider {
+    flex-grow: 1;
+}
+
 .world-categories-scroll > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container,
 .world-categories-scroll > .unity-scroll-view__content-container,
 .world-items-scroll > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container,

@@ -94,7 +94,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
             entry.Q<Button>("Delete").clicked += () =>
             {
-                creatablesManager.Delete<ConsumableItem>(creatable.Id);
+                if (creatable is Weapon)
+                    creatablesManager.Delete<Weapon>(creatable.Id);
+                else if (creatable is ConsumableItem)
+                    creatablesManager.Delete<ConsumableItem>(creatable.Id);
                 entry.RemoveFromHierarchy();
             };
 

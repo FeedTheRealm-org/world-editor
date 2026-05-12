@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.UIEvents
 {
-    [CreateAssetMenu(menuName = "Events/Close All")]
+    [CreateAssetMenu(menuName = "Events/UI/Close All")]
     public class CloseAllEvent : EventChannelSO { }
 }

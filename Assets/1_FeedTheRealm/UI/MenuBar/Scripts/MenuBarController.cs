@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Gameplay.Inputs;
@@ -28,10 +25,20 @@ namespace FeedTheRealm.UI.MenuBar
         private InputReader inputReader;
 
         [Inject]
+        private UpdateLoginEvent updateLoginEvent;
+
+        [Inject]
         private Logging.Logger logger;
 
+        [Inject]
+        private Session.Session session;
+
+        [Header("UI References")]
         [SerializeField]
         private UIDocument menuBarUI;
+
+        [SerializeField]
+        private Sprite userIconSprite;
 
         [Header("Menu Options")]
         [SerializeField]
@@ -66,6 +73,15 @@ namespace FeedTheRealm.UI.MenuBar
             BindButton("About", aboutOptionController);
             BindButton("Login", loginOptionController);
             logger.Log("MenuBarController initialized successfully.", this);
+            UpdateLoginButton();
+
+            updateLoginEvent.OnRaised += UpdateLoginButton;
+        }
+
+        private void OnDestroy()
+        {
+            if (updateLoginEvent != null)
+                updateLoginEvent.OnRaised -= UpdateLoginButton;
         }
 
         private void BindButton(string buttonName, GameObject option)
@@ -117,6 +133,44 @@ namespace FeedTheRealm.UI.MenuBar
                     menuOption.Execute();
                 menuStack.Toggle(button, menuOption.MenuOptions);
             };
+        }
+
+        private void UpdateLoginButton()
+        {
+            logger.Log("Updating login button UI.", this);
+            Button loginButton = root.Q<Button>("Login");
+            if (loginButton == null)
+                return;
+            if (!string.IsNullOrEmpty(session?.Email))
+            {
+                loginButton.text = session.Email[0].ToString().ToUpper();
+                loginButton.style.backgroundImage = null;
+                loginButton.style.width = 32;
+                loginButton.style.height = 32;
+                loginButton.style.backgroundColor = new StyleColor(Color.black);
+                loginButton.style.borderTopLeftRadius = 16;
+                loginButton.style.borderTopRightRadius = 16;
+                loginButton.style.borderBottomLeftRadius = 16;
+                loginButton.style.borderBottomRightRadius = 16;
+                loginButton.style.unityTextAlign = TextAnchor.MiddleCenter;
+                loginButton.style.color = new StyleColor(Color.white);
+                loginButton.style.borderTopWidth = 0;
+                loginButton.style.borderBottomWidth = 0;
+                loginButton.style.borderLeftWidth = 0;
+                loginButton.style.borderRightWidth = 0;
+            }
+            else
+            {
+                loginButton.text = "";
+                loginButton.style.width = 32;
+                loginButton.style.height = 32;
+                loginButton.style.backgroundImage = new StyleBackground(userIconSprite);
+                loginButton.style.backgroundColor = StyleKeyword.None;
+                loginButton.style.borderTopWidth = 0;
+                loginButton.style.borderBottomWidth = 0;
+                loginButton.style.borderLeftWidth = 0;
+                loginButton.style.borderRightWidth = 0;
+            }
         }
     }
 }

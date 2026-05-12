@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.UIEvents
 {
-    [CreateAssetMenu(menuName = "Events/CategorySelectedEvent")]
+    [CreateAssetMenu(menuName = "Events/UI/CategorySelectedEvent")]
     public class CategorySelectedEvent : EventChannelSO<PlaceableObjectCategories> { }
 }
