@@ -553,7 +553,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             loadingLabel.AddToClassList("header-label");
             worldsList.Add(loadingLabel);
 
-            var (amount, worlds, error) = await worldService.GetWorldPage(0, 100, "");
+            var (amount, worlds, error) = await worldService.GetWorldPage(0, 100, "", true);
 
             worldsList.Clear();
 
