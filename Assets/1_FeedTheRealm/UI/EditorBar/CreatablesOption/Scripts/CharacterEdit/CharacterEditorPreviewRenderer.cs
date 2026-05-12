@@ -161,6 +161,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             {
                 character_name = safeSource.character_name ?? string.Empty,
                 character_bio = safeSource.character_bio ?? string.Empty,
+                skin_color =
+                    safeSource.skin_color
+                    ?? new CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    },
+                hair_color =
+                    safeSource.hair_color
+                    ?? new CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    },
+                eye_color =
+                    safeSource.eye_color
+                    ?? new CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    },
                 category_sprites =
                     safeSource.category_sprites != null
                         ? new Dictionary<string, string>(safeSource.category_sprites)

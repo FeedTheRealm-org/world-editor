@@ -60,6 +60,31 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             else
                 editBuffer.Working.category_sprites = new Dictionary<string, string>();
 
+            editBuffer.Working.skin_color =
+                npc.data.skin_color
+                ?? new API.CharacterColorHsv
+                {
+                    h = 0f,
+                    s = 0f,
+                    v = 100f,
+                };
+            editBuffer.Working.hair_color =
+                npc.data.hair_color
+                ?? new API.CharacterColorHsv
+                {
+                    h = 0f,
+                    s = 0f,
+                    v = 100f,
+                };
+            editBuffer.Working.eye_color =
+                npc.data.eye_color
+                ?? new API.CharacterColorHsv
+                {
+                    h = 0f,
+                    s = 0f,
+                    v = 100f,
+                };
+
             currentLootTableId = editBuffer.Working.lootTableId;
             currentWeaponId = editBuffer.Working.weaponId;
 
@@ -187,6 +212,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             );
             editBuffer = new EditBuffer<EnemyData>(newEnemy);
             editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            editBuffer.Working.skin_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
+            editBuffer.Working.hair_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
+            editBuffer.Working.eye_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
 
             PopulateFields();
             BindEditMode();
@@ -227,12 +270,36 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             SetCharacterEditorVisible(true);
         }
 
-        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        private void SaveCharacterInfo(API.CharacterInfoResponse characterInfo)
         {
-            if (editBuffer != null)
+            if (editBuffer != null && characterInfo != null)
             {
                 editBuffer.Working.category_sprites =
-                    categorySprites ?? new Dictionary<string, string>();
+                    characterInfo.category_sprites ?? new Dictionary<string, string>();
+                editBuffer.Working.skin_color =
+                    characterInfo.skin_color
+                    ?? new API.CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    };
+                editBuffer.Working.hair_color =
+                    characterInfo.hair_color
+                    ?? new API.CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    };
+                editBuffer.Working.eye_color =
+                    characterInfo.eye_color
+                    ?? new API.CharacterColorHsv
+                    {
+                        h = 0f,
+                        s = 0f,
+                        v = 100f,
+                    };
             }
             pendingPreviewRefresh = true;
         }
@@ -446,6 +513,33 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
                 character_bio =
                     (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
                     ?? string.Empty,
+                skin_color =
+                    editBuffer != null
+                        ? editBuffer.Working.skin_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
+                hair_color =
+                    editBuffer != null
+                        ? editBuffer.Working.hair_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
+                eye_color =
+                    editBuffer != null
+                        ? editBuffer.Working.eye_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
                 category_sprites = new Dictionary<string, string>(categorySprites),
             };
         }
