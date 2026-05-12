@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.UIEvents
 {
-    [CreateAssetMenu(menuName = "Events/RefreshPlaceableLibraryEvent")]
+    [CreateAssetMenu(menuName = "Events/UI/RefreshPlaceableLibraryEvent")]
     public class RefreshPlaceableLibraryEvent : EventChannelSO { }
 }

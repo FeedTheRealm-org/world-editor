@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace FeedTheRealm.Core.EventChannels.UIEvents
 {
-    [CreateAssetMenu(menuName = "Events/EnableInputEvent")]
+    [CreateAssetMenu(menuName = "Events/UI/EnableInputEvent")]
     public class EnableInputEvent : EventChannelSO<bool> { }
 }

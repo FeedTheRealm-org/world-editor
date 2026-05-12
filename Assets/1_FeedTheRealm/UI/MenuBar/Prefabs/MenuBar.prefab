@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.MenuBarController
   menuBarUI: {fileID: 5259271317908515787}
+  userIconSprite: {fileID: 21300000, guid: e5a7c5fa00b6d899f837cd8ab3ed6358, type: 3}
   fileOptionController: {fileID: 5332839163230174798, guid: 821d83f31a7472c8a91515b47888608d, type: 3}
   editOptionController: {fileID: 3182986232941324249, guid: fc6cc9066395e4fcd8346bebe2f893c0, type: 3}
   subscriptionsOptionController: {fileID: 4944770389112010324, guid: 37d9c2377a2352e439cb6b2b636801f8, type: 3}
