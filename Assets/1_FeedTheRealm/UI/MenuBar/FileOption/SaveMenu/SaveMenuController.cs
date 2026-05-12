@@ -152,7 +152,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.SaveMenu
 
         private string GetValidatedWorldName()
         {
-            string worldName = nameInput?.value?.Trim();
+            string worldName = nameInput?.value?.Trim().Replace(" ", "_");
             ValidateWorldName(worldName);
             return worldName;
         }
