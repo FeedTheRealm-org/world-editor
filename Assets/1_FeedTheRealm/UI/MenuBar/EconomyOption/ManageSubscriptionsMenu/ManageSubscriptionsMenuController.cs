@@ -615,7 +615,15 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 if (success)
                 {
                     SetActivateAllBtn(activateAllBtn, activating);
-                    zoneToggleButtons.ForEach(b => b.text = activating ? "Deactivate" : "Activate");
+                    zoneToggleButtons.ForEach(b =>
+                    {
+                        b.text = activating ? "Deactivate" : "Activate";
+                        b.style.backgroundColor = new StyleColor(
+                            activating
+                                ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                                : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                        );
+                    });
                     ToastNotification.Show(
                         $"World {world.name} zones {(activating ? "activated" : "deactivated")}.",
                         "success",
@@ -681,6 +689,11 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             var toggleBtn = zoneEntry.Q<Button>("ToggleActive");
             toggleBtn.text = zone.is_active ? "Deactivate" : "Activate";
+            toggleBtn.style.backgroundColor = new StyleColor(
+                zone.is_active
+                    ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                    : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+            );
 
             toggleBtn.clicked += async () =>
             {
@@ -695,6 +708,11 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 {
                     zone.is_active = activating;
                     toggleBtn.text = activating ? "Deactivate" : "Activate";
+                    toggleBtn.style.backgroundColor = new StyleColor(
+                        activating
+                            ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                            : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                    );
                     ToastNotification.Show(
                         $"Zone {zone.zone_id} {(activating ? "activated" : "deactivated")}.",
                         "success",
