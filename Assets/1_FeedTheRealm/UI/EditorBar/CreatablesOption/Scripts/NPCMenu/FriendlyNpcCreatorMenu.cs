@@ -146,6 +146,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             );
             editBuffer = new EditBuffer<NPCData>(newData);
             editBuffer.Working.category_sprites = new Dictionary<string, string>();
+            editBuffer.Working.skin_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
+            editBuffer.Working.hair_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
+            editBuffer.Working.eye_color = new API.CharacterColorHsv
+            {
+                h = 0f,
+                s = 0f,
+                v = 100f,
+            };
 
             RefreshProgressionUI();
 
@@ -162,6 +180,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editingData.category_sprites != null
                     ? new Dictionary<string, string>(editingData.category_sprites)
                     : new Dictionary<string, string>();
+            editBuffer.Working.skin_color = editingData.skin_color;
+            editBuffer.Working.hair_color = editingData.hair_color;
+            editBuffer.Working.eye_color = editingData.eye_color;
 
             dialogProgression =
                 editingData.dialogProgression != null
@@ -359,6 +380,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editBuffer.Original.category_sprites = new Dictionary<string, string>(
                     editBuffer.Working.category_sprites
                 );
+                editBuffer.Original.skin_color = editBuffer.Working.skin_color;
+                editBuffer.Original.hair_color = editBuffer.Working.hair_color;
+                editBuffer.Original.eye_color = editBuffer.Working.eye_color;
 
                 creatablesManager.Add(new FriendlyNpc(editBuffer.Original));
             }
@@ -388,6 +412,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editBuffer.Original.category_sprites = new Dictionary<string, string>(
                     editBuffer.Working.category_sprites
                 );
+                editBuffer.Original.skin_color = editBuffer.Working.skin_color;
+                editBuffer.Original.hair_color = editBuffer.Working.hair_color;
+                editBuffer.Original.eye_color = editBuffer.Working.eye_color;
             }
 
             ToastNotification.Show("Friendly NPC saved successfully!", "success", Color.green);
@@ -463,11 +490,41 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             SetCharacterEditorVisible(true);
         }
 
-        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        private void SaveCharacterInfo(API.CharacterInfoResponse characterInfo)
         {
             if (editBuffer != null)
+            {
                 editBuffer.Working.category_sprites =
-                    categorySprites ?? new Dictionary<string, string>();
+                    characterInfo?.category_sprites ?? new Dictionary<string, string>();
+                editBuffer.Working.skin_color =
+                    characterInfo != null
+                        ? characterInfo.skin_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        };
+                editBuffer.Working.hair_color =
+                    characterInfo != null
+                        ? characterInfo.hair_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        };
+                editBuffer.Working.eye_color =
+                    characterInfo != null
+                        ? characterInfo.eye_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        };
+            }
+
             pendingPreviewRefresh = true;
         }
 
@@ -477,6 +534,33 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 character_name = (editBuffer?.Working.name ?? nameInput?.value) ?? string.Empty,
                 character_bio =
                     (editBuffer?.Working.description ?? descriptionInput?.value) ?? string.Empty,
+                skin_color =
+                    editBuffer != null
+                        ? editBuffer.Working.skin_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
+                hair_color =
+                    editBuffer != null
+                        ? editBuffer.Working.hair_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
+                eye_color =
+                    editBuffer != null
+                        ? editBuffer.Working.eye_color
+                        : new API.CharacterColorHsv
+                        {
+                            h = 0f,
+                            s = 0f,
+                            v = 100f,
+                        },
                 category_sprites = new Dictionary<string, string>(
                     editBuffer?.Working.category_sprites ?? new Dictionary<string, string>()
                 ),

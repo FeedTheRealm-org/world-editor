@@ -272,10 +272,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
             SetCharacterEditorVisible(true);
         }
 
-        private void SaveCharacterInfo(Dictionary<string, string> categorySprites)
+        private void SaveCharacterInfo(API.CharacterInfoResponse characterInfo)
         {
             if (editBuffer == null)
                 return;
+
+            var categorySprites = characterInfo?.category_sprites;
 
             if (categorySprites == null)
             {
