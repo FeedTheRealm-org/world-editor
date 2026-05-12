@@ -91,8 +91,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             editBuffer = new EditBuffer<WeaponItemData>(editingData);
             currentSpritePath = editingData.spriteFilePath;
 
-            PopulateFields();
             BindEditMode();
+            PopulateFields();
+
+            HandleChangeWeaponType(editingData.weaponType);
 
             saveButton.clicked -= CreateNewObject;
             saveButton.text = "Save Weapon";
@@ -113,6 +115,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             attackSpeedInput.value = dataToDisplay.attackSpeed;
             rangeInput.value = dataToDisplay.range;
             ammoInput.value = dataToDisplay.ammo;
+            reloadSpeedInput.value = dataToDisplay.reloadSpeed;
             LoadExistingSprite(dataToDisplay.spriteFilePath);
         }
 
@@ -152,16 +155,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                         editBuffer.Working.subWeaponType = SubWeaponType.HandHeld;
 
                     ammoInput.visible = false;
-                    ammoInput.value = 0;
                     reloadSpeedInput.visible = false;
-                    reloadSpeedInput.value = 0f;
-                    if (editBuffer != null)
-                    {
-                        editBuffer.Working.ammo = 0;
-                        editBuffer.Working.reloadSpeed = 0f;
-                    }
                     break;
                 case WeaponType.Ranged:
+                    Debug.Log("Switched to Ranged: showing ammo and reload speed fields");
                     subWeaponTypeInput.choices = Enum.GetNames(typeof(ValidSubRangedWeaponType))
                         .ToList();
                     subWeaponTypeInput.value = SubWeaponType.HandHeld.ToString();
@@ -170,6 +167,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
                     ammoInput.visible = true;
                     reloadSpeedInput.visible = true;
+                    ammoInput.value = editBuffer != null ? editBuffer.Working.ammo : 0;
+                    reloadSpeedInput.value =
+                        editBuffer != null ? editBuffer.Working.reloadSpeed : 0f;
+                    Debug.Log(
+                        $"Ranged weapon selected: ammo and reload speed fields are now visible. Ammo value: {ammoInput.value}, Reload Speed value: {reloadSpeedInput.value}"
+                    );
                     break;
                 default:
                     throw new Exception($"Unhandled weapon type: {newType}");
