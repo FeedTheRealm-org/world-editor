@@ -14,9 +14,6 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/subscriptions";
 
         // ── GetPricingInfo ────────────────────────────────────────────────────
