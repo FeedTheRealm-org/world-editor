@@ -23,7 +23,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
         private WorldUIObjectProvider worldUIObjectProvider;
 
         [Inject]
-        private LoginEvent loginEvent;
+        private UpdateLoginEvent updateLoginEvent;
 
         private Button loginButton;
         private Button closeButton;
@@ -89,7 +89,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
                     authFlowManager.Destroy();
                     isAuthFlowActive = false;
                     RefreshSessionUI();
-                    loginEvent.Raise();
+                    updateLoginEvent.Raise();
                 };
                 authFlowManager.Initialize();
             }

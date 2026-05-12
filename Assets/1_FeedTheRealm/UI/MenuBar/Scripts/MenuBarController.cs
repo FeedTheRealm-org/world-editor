@@ -25,7 +25,7 @@ namespace FeedTheRealm.UI.MenuBar
         private InputReader inputReader;
 
         [Inject]
-        private LoginEvent loginEvent;
+        private UpdateLoginEvent updateLoginEvent;
 
         [Inject]
         private Logging.Logger logger;
@@ -75,13 +75,13 @@ namespace FeedTheRealm.UI.MenuBar
             logger.Log("MenuBarController initialized successfully.", this);
             UpdateLoginButton();
 
-            loginEvent.OnRaised += UpdateLoginButton;
+            updateLoginEvent.OnRaised += UpdateLoginButton;
         }
 
         private void OnDestroy()
         {
-            if (loginEvent != null)
-                loginEvent.OnRaised -= UpdateLoginButton;
+            if (updateLoginEvent != null)
+                updateLoginEvent.OnRaised -= UpdateLoginButton;
         }
 
         private void BindButton(string buttonName, GameObject option)
