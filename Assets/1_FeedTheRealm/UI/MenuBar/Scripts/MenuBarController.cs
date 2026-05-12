@@ -78,6 +78,12 @@ namespace FeedTheRealm.UI.MenuBar
             loginEvent.OnRaised += UpdateLoginButton;
         }
 
+        private void OnDestroy()
+        {
+            if (loginEvent != null)
+                loginEvent.OnRaised -= UpdateLoginButton;
+        }
+
         private void BindButton(string buttonName, GameObject option)
         {
             Button button = root.Q<Button>(buttonName);
