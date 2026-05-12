@@ -52,15 +52,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
                 ? FullScreenMode.FullScreenWindow
                 : FullScreenMode.Windowed;
 
-            if (!newValue)
-            {
-                // Going windowed — restore native resolution
-                Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, mode);
-            }
-            else
-            {
+            Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, mode);
+            if (newValue)
                 Screen.fullScreenMode = mode;
-            }
         }
     }
 }
