@@ -259,9 +259,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
                 publishButton.SetEnabled(false);
                 await ValidateBeforePublish();
+                await PublishSprites();
+                var cData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+                if (cData != null)
+                    SyncShopCosmeticIds(cData);
                 await PublishWorldData();
                 await PublishCreatables();
-                await PublishSprites();
                 await PublishZoneData();
                 ToastNotification.Show("World published successfully!", "success", Color.green);
                 CloseMenu();
@@ -788,6 +791,59 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
 
                 inMemory.data.OnBeforeSerialize();
+            }
+        }
+
+        private void SyncShopCosmeticIds(CreatablesData creatablesData)
+        {
+            bool modified = false;
+            foreach (var shop in creatablesData.shops)
+            {
+                foreach (var product in shop.products)
+                {
+                    if (product.IsCosmetic)
+                    {
+                        var cosmetic = creatablesData.cosmetics.Find(c =>
+                        {
+                            c.OnAfterDeserialize();
+                            return c.id == product.productId
+                                || (
+                                    c.categories != null
+                                    && c.categories.Values.Any(v => v.url_id == product.productId)
+                                );
+                        });
+
+                        if (cosmetic != null)
+                        {
+                            if (
+                                cosmetic.categories != null
+                                && cosmetic.categories.TryGetValue(
+                                    product.categoryName,
+                                    out var catEntry
+                                )
+                            )
+                            {
+                                if (
+                                    !string.IsNullOrEmpty(catEntry.url_id)
+                                    && product.productId != catEntry.url_id
+                                )
+                                {
+                                    product.productId = catEntry.url_id;
+                                    modified = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (modified)
+            {
+                foreach (var c in creatablesData.cosmetics)
+                    c.OnBeforeSerialize();
+                dataPersistenceManager.SaveCreatablesData(
+                    worldSelector.selectedWorld,
+                    creatablesData
+                );
             }
         }
 
