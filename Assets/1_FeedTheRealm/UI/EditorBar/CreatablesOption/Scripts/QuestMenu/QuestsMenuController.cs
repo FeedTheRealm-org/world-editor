@@ -72,21 +72,49 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
         private void OnEditQuest(Quest quest)
         {
-            logger.Log("Editing quest: " + quest.data.title, this, Logging.LogType.Info);
             editingQuest = quest;
             OpenMenu(createQuestMenuPrefab);
         }
 
         private void OnDeleteQuest(Quest quest, VisualElement entry)
         {
-            logger.Log("Deleting quest: " + quest.data.title, this, Logging.LogType.Info);
+            var npcs = creatablesManager.GetAll<FriendlyNpc>();
+            bool isInUse = false;
+            foreach (var npc in npcs)
+            {
+                if (
+                    System.Linq.Enumerable.Any(
+                        npc.data.dialogProgression,
+                        p =>
+                            p.questAssignments != null
+                            && System.Linq.Enumerable.Any(
+                                p.questAssignments,
+                                qa => qa.questId == quest.data.id
+                            )
+                    )
+                )
+                {
+                    isInUse = true;
+                    break;
+                }
+            }
+
+            if (isInUse)
+            {
+                ToastNotification.Show(
+                    "Cannot delete quest: It is currently assigned by an NPC.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             creatablesManager.Delete<Quest>(quest.data.id);
             entry.RemoveFromHierarchy();
         }
 
         private void AddQuest()
         {
-            logger.Log("Opening Create Quest Menu", this, Logging.LogType.Info);
             editingQuest = null;
             OpenMenu(createQuestMenuPrefab);
         }

@@ -1,5 +1,6 @@
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -69,21 +70,29 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnEditNPC(FriendlyNpc npc)
         {
-            logger.Log("Editing NPC: " + npc.data.name, this, Logging.LogType.Info);
             editingNpc = npc;
             OpenMenu(createNPCMenuPrefab);
         }
 
         private void OnDeleteNPC(FriendlyNpc npc, VisualElement entry)
         {
-            logger.Log("Deleting NPC: " + npc.data.name, this, Logging.LogType.Info);
+            var spawners = FindObjectsByType<FriendlyNpcSpawnerObject>(
+                FindObjectsInactive.Exclude,
+                FindObjectsSortMode.None
+            );
+            foreach (var spawner in spawners)
+            {
+                if (spawner.data != null && spawner.data.NpcId == npc.data.id)
+                {
+                    spawner.data.NpcId = string.Empty;
+                }
+            }
             creatablesManager.Delete<FriendlyNpc>(npc.data.id);
             entry.RemoveFromHierarchy();
         }
 
         private void AddNPC()
         {
-            logger.Log("Opening Create NPC Menu", this, Logging.LogType.Info);
             editingNpc = null;
             OpenMenu(createNPCMenuPrefab);
         }

@@ -100,6 +100,34 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         void OnDeleteDialog(Dialog dialog, VisualElement dialogEntry)
         {
+            var npcs = creatablesManager.GetAll<FriendlyNpc>();
+            bool isInUse = false;
+            foreach (var npc in npcs)
+            {
+                if (
+                    System.Linq.Enumerable.Any(
+                        npc.data.dialogProgression,
+                        p =>
+                            p.dialogId == dialog.data.id
+                            || p.onQuestAcceptedDialogId == dialog.data.id
+                    )
+                )
+                {
+                    isInUse = true;
+                    break;
+                }
+            }
+
+            if (isInUse)
+            {
+                ToastNotification.Show(
+                    "Cannot delete dialog: It is currently used by an NPC.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             logger.Log("Deleting dialog: " + dialog.data.name, this, Logging.LogType.Info);
             creatablesManager.Delete<Dialog>(dialog.data.id);
             dialogEntry.RemoveFromHierarchy();
