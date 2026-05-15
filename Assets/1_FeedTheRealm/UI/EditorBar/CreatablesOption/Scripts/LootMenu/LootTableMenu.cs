@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -23,6 +24,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addLootTableButton;
@@ -94,9 +98,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             // Handle Delete Logic
             entry.Q<Button>("Delete").clicked += () =>
             {
-                creatablesManager.Delete<LootTable>(creatable.Id);
-                entry.RemoveFromHierarchy();
-                logger.Log($"[LootTableMenu] Deleted {displayName}");
+                var confirmDialog = Instantiate(prefabProvider.confirmDialog);
+                var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+                dialogController.Show(
+                    title: "Delete Loot Table",
+                    question: $"Are you sure you want to delete the loot table '{displayName}'? This cannot be undone.",
+                    onConfirm: () =>
+                    {
+                        creatablesManager.Delete<LootTable>(creatable.Id);
+                        entry.RemoveFromHierarchy();
+                        logger.Log($"[LootTableMenu] Deleted {displayName}");
+                    },
+                    onCancel: () => { }
+                );
             };
 
             list.hierarchy.Add(entry);

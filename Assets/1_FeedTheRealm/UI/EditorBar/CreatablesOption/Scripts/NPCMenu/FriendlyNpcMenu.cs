@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
@@ -23,6 +24,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addNPCButton;
@@ -76,19 +80,29 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnDeleteNPC(FriendlyNpc npc, VisualElement entry)
         {
-            var spawners = FindObjectsByType<FriendlyNpcSpawnerObject>(
-                FindObjectsInactive.Exclude,
-                FindObjectsSortMode.None
-            );
-            foreach (var spawner in spawners)
-            {
-                if (spawner.data != null && spawner.data.NpcId == npc.data.id)
+            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
+            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            dialogController.Show(
+                title: "Delete NPC",
+                question: $"Are you sure you want to delete the NPC '{npc.data.name}'? This cannot be undone.",
+                onConfirm: () =>
                 {
-                    spawner.data.NpcId = string.Empty;
-                }
-            }
-            creatablesManager.Delete<FriendlyNpc>(npc.data.id);
-            entry.RemoveFromHierarchy();
+                    var spawners = FindObjectsByType<FriendlyNpcSpawnerObject>(
+                        FindObjectsInactive.Exclude,
+                        FindObjectsSortMode.None
+                    );
+                    foreach (var spawner in spawners)
+                    {
+                        if (spawner.data != null && spawner.data.NpcId == npc.data.id)
+                        {
+                            spawner.data.NpcId = string.Empty;
+                        }
+                    }
+                    creatablesManager.Delete<FriendlyNpc>(npc.data.id);
+                    entry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         private void AddNPC()

@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -22,6 +23,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addShopButton;
@@ -75,8 +79,18 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         private void OnDeleteShop(Shop shop, VisualElement entry)
         {
-            creatablesManager.Delete<Shop>(shop.data.id);
-            entry.RemoveFromHierarchy();
+            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
+            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            dialogController.Show(
+                title: "Delete Shop",
+                question: $"Are you sure you want to delete the shop '{shop.data.shopName}'? This cannot be undone.",
+                onConfirm: () =>
+                {
+                    creatablesManager.Delete<Shop>(shop.data.id);
+                    entry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         private void AddShop()

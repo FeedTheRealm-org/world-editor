@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
@@ -21,6 +22,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -74,20 +78,30 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         void OnDeleteEnemy(AggresiveNpc enemy, VisualElement enemyListEntry)
         {
-            var spawners = FindObjectsByType<AggresiveNpcSpawnerObject>(
-                FindObjectsInactive.Exclude,
-                FindObjectsSortMode.None
-            );
-            foreach (var spawner in spawners)
-            {
-                if (spawner.data != null && spawner.data.EnemyId == enemy.data.id)
+            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
+            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            dialogController.Show(
+                title: "Delete Enemy",
+                question: $"Are you sure you want to delete the enemy '{enemy.data.name}'? This cannot be undone.",
+                onConfirm: () =>
                 {
-                    spawner.data.EnemyId = string.Empty;
-                }
-            }
+                    var spawners = FindObjectsByType<AggresiveNpcSpawnerObject>(
+                        FindObjectsInactive.Exclude,
+                        FindObjectsSortMode.None
+                    );
+                    foreach (var spawner in spawners)
+                    {
+                        if (spawner.data != null && spawner.data.EnemyId == enemy.data.id)
+                        {
+                            spawner.data.EnemyId = string.Empty;
+                        }
+                    }
 
-            creatablesManager.Delete<AggresiveNpc>(enemy.data.id);
-            enemyListEntry.RemoveFromHierarchy();
+                    creatablesManager.Delete<AggresiveNpc>(enemy.data.id);
+                    enemyListEntry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         void OnDisable()

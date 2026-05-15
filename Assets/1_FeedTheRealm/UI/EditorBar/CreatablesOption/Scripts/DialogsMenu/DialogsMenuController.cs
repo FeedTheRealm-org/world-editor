@@ -1,4 +1,5 @@
 using System.Linq;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -26,6 +27,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addDialogButton;
@@ -128,9 +132,19 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 return;
             }
 
-            logger.Log("Deleting dialog: " + dialog.data.name, this, Logging.LogType.Info);
-            creatablesManager.Delete<Dialog>(dialog.data.id);
-            dialogEntry.RemoveFromHierarchy();
+            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
+            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+
+            dialogController.Show(
+                title: "Delete Dialog",
+                question: "Are you sure you want to delete this dialog? This cannot be undone.",
+                onConfirm: () =>
+                {
+                    creatablesManager.Delete<Dialog>(dialog.data.id);
+                    dialogEntry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         public override void OpenMenu(GameObject menuPrefab)
