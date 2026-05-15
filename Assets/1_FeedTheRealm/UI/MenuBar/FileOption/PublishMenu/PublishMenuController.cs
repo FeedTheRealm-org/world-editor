@@ -259,9 +259,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
                 publishButton.SetEnabled(false);
                 await ValidateBeforePublish();
+                await PublishSprites();
+                var cData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
+                if (cData != null)
+                    SyncShopCosmeticIds(cData);
                 await PublishWorldData();
                 await PublishCreatables();
-                await PublishSprites();
                 await PublishZoneData();
                 ToastNotification.Show("World published successfully!", "success", Color.green);
                 CloseMenu();
@@ -788,6 +791,76 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
 
                 inMemory.data.OnBeforeSerialize();
+            }
+        }
+
+        private void SyncShopCosmeticIds(CreatablesData creatablesData)
+        {
+            foreach (var cosmetic in creatablesData.cosmetics)
+                cosmetic.OnAfterDeserialize();
+
+            var cosmeticById = creatablesData
+                .cosmetics.Where(c => !string.IsNullOrEmpty(c.id))
+                .ToDictionary(c => c.id);
+
+            var cosmeticByCategoryUrlId =
+                new Dictionary<string, (CosmeticData cosmetic, string categoryName)>();
+            foreach (var cosmetic in creatablesData.cosmetics)
+            {
+                if (cosmetic.categories == null)
+                    continue;
+                foreach (var (categoryName, entry) in cosmetic.categories)
+                {
+                    if (!string.IsNullOrEmpty(entry.url_id))
+                        cosmeticByCategoryUrlId.TryAdd(entry.url_id, (cosmetic, categoryName));
+                }
+            }
+
+            bool modified = false;
+            foreach (var shop in creatablesData.shops)
+            {
+                foreach (var product in shop.products)
+                {
+                    if (!product.IsCosmetic)
+                        continue;
+
+                    CosmeticData cosmetic = null;
+                    string resolvedCategoryName = product.categoryName;
+
+                    if (cosmeticById.TryGetValue(product.productId, out var byId))
+                    {
+                        cosmetic = byId;
+                    }
+                    else if (cosmeticByCategoryUrlId.TryGetValue(product.productId, out var byUrl))
+                    {
+                        cosmetic = byUrl.cosmetic;
+                    }
+
+                    if (cosmetic?.categories == null)
+                        continue;
+
+                    if (!cosmetic.categories.TryGetValue(resolvedCategoryName, out var catEntry))
+                        continue;
+
+                    if (
+                        !string.IsNullOrEmpty(catEntry.url_id)
+                        && product.productId != catEntry.url_id
+                    )
+                    {
+                        product.productId = catEntry.url_id;
+                        modified = true;
+                    }
+                }
+            }
+
+            if (modified)
+            {
+                foreach (var c in creatablesData.cosmetics)
+                    c.OnBeforeSerialize();
+                dataPersistenceManager.SaveCreatablesData(
+                    worldSelector.selectedWorld,
+                    creatablesData
+                );
             }
         }
 
