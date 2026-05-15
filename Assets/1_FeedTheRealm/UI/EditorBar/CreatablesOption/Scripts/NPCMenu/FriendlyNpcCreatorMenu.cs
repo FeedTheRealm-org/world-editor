@@ -265,6 +265,16 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 return;
             }
 
+            if (dialog.data.messages == null || dialog.data.messages.Count == 0)
+            {
+                ToastNotification.Show(
+                    "The selected dialog has no messages and cannot be added.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             dialogProgression.Add(new NPCDialogData(dialog.Id));
             RefreshProgressionUI();
             OnProgressionChanged();
@@ -490,7 +500,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             SetCharacterEditorVisible(true);
         }
 
-        private void SaveCharacterInfo(API.CharacterInfoResponse characterInfo)
+        private void SaveCharacterInfo(CharacterInfoResponse characterInfo)
         {
             if (editBuffer != null)
             {
@@ -508,7 +518,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editBuffer.Working.hair_color =
                     characterInfo != null
                         ? characterInfo.hair_color
-                        : new API.CharacterColorHsv
+                        : new CharacterColorHsv
                         {
                             h = 0f,
                             s = 0f,
@@ -517,7 +527,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 editBuffer.Working.eye_color =
                     characterInfo != null
                         ? characterInfo.eye_color
-                        : new API.CharacterColorHsv
+                        : new CharacterColorHsv
                         {
                             h = 0f,
                             s = 0f,
@@ -537,7 +547,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 skin_color =
                     editBuffer != null
                         ? editBuffer.Working.skin_color
-                        : new API.CharacterColorHsv
+                        : new CharacterColorHsv
                         {
                             h = 0f,
                             s = 0f,
@@ -546,7 +556,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 hair_color =
                     editBuffer != null
                         ? editBuffer.Working.hair_color
-                        : new API.CharacterColorHsv
+                        : new CharacterColorHsv
                         {
                             h = 0f,
                             s = 0f,
@@ -555,7 +565,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 eye_color =
                     editBuffer != null
                         ? editBuffer.Working.eye_color
-                        : new API.CharacterColorHsv
+                        : new CharacterColorHsv
                         {
                             h = 0f,
                             s = 0f,

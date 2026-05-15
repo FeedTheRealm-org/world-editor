@@ -4,6 +4,7 @@ using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FTRShared.Runtime.Models;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
@@ -65,6 +66,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 var selected = creatablesManager
                     .GetAll<Dialog>()
                     .FirstOrDefault(d => d.data.name == evt.newValue);
+
+                if (
+                    selected != null
+                    && (selected.data.messages == null || selected.data.messages.Count == 0)
+                )
+                {
+                    ToastNotification.Show(
+                        "Cannot assign this dialog because it has no messages.",
+                        "error",
+                        Color.red
+                    );
+                    dropdown.SetValueWithoutNotify("None");
+                    onValueChanged?.Invoke("");
+                    return;
+                }
+
                 onValueChanged?.Invoke(selected?.Id ?? "");
             });
 

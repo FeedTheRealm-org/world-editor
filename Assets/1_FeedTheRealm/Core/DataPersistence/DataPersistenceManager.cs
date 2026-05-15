@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.Repository;
 using FTRShared.Runtime.Models;
@@ -65,8 +66,28 @@ namespace FeedTheRealm.Core.DataPersistence
                 obj is UnityEngine.Object unityObj && unityObj == null
             );
 
+            // If shop is deleted, here the placeable set as shop will be
+            // updated to not be a shop anymore.
+            registeredCreatables.RemoveAll(obj => obj == null);
+            var currentCreatables = new CreatablesData();
+            foreach (var obj in registeredCreatables)
+                obj.SaveData(ref currentCreatables);
+
             foreach (var obj in registeredPlaceables)
                 obj.SaveData(ref zoneData);
+
+            var validShopIds = new HashSet<string>(
+                currentCreatables?.shops?.Select(s => s.id) ?? Enumerable.Empty<string>()
+            );
+
+            foreach (var structure in zoneData.objectPlacementData)
+            {
+                if (structure.isShop && !validShopIds.Contains(structure.shopId))
+                {
+                    structure.isShop = false;
+                    structure.shopId = string.Empty;
+                }
+            }
 
             zonesRepository.SaveZoneData(worldName, zoneData);
         }
