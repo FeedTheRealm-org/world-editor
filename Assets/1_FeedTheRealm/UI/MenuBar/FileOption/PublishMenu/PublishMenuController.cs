@@ -796,46 +796,63 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private void SyncShopCosmeticIds(CreatablesData creatablesData)
         {
+            foreach (var cosmetic in creatablesData.cosmetics)
+                cosmetic.OnAfterDeserialize();
+
+            var cosmeticById = creatablesData
+                .cosmetics.Where(c => !string.IsNullOrEmpty(c.id))
+                .ToDictionary(c => c.id);
+
+            var cosmeticByCategoryUrlId =
+                new Dictionary<string, (CosmeticData cosmetic, string categoryName)>();
+            foreach (var cosmetic in creatablesData.cosmetics)
+            {
+                if (cosmetic.categories == null)
+                    continue;
+                foreach (var (categoryName, entry) in cosmetic.categories)
+                {
+                    if (!string.IsNullOrEmpty(entry.url_id))
+                        cosmeticByCategoryUrlId.TryAdd(entry.url_id, (cosmetic, categoryName));
+                }
+            }
+
             bool modified = false;
             foreach (var shop in creatablesData.shops)
             {
                 foreach (var product in shop.products)
                 {
-                    if (product.IsCosmetic)
-                    {
-                        var cosmetic = creatablesData.cosmetics.Find(c =>
-                        {
-                            c.OnAfterDeserialize();
-                            return c.id == product.productId
-                                || (
-                                    c.categories != null
-                                    && c.categories.Values.Any(v => v.url_id == product.productId)
-                                );
-                        });
+                    if (!product.IsCosmetic)
+                        continue;
 
-                        if (cosmetic != null)
-                        {
-                            if (
-                                cosmetic.categories != null
-                                && cosmetic.categories.TryGetValue(
-                                    product.categoryName,
-                                    out var catEntry
-                                )
-                            )
-                            {
-                                if (
-                                    !string.IsNullOrEmpty(catEntry.url_id)
-                                    && product.productId != catEntry.url_id
-                                )
-                                {
-                                    product.productId = catEntry.url_id;
-                                    modified = true;
-                                }
-                            }
-                        }
+                    CosmeticData cosmetic = null;
+                    string resolvedCategoryName = product.categoryName;
+
+                    if (cosmeticById.TryGetValue(product.productId, out var byId))
+                    {
+                        cosmetic = byId;
+                    }
+                    else if (cosmeticByCategoryUrlId.TryGetValue(product.productId, out var byUrl))
+                    {
+                        cosmetic = byUrl.cosmetic;
+                    }
+
+                    if (cosmetic?.categories == null)
+                        continue;
+
+                    if (!cosmetic.categories.TryGetValue(resolvedCategoryName, out var catEntry))
+                        continue;
+
+                    if (
+                        !string.IsNullOrEmpty(catEntry.url_id)
+                        && product.productId != catEntry.url_id
+                    )
+                    {
+                        product.productId = catEntry.url_id;
+                        modified = true;
                     }
                 }
             }
+
             if (modified)
             {
                 foreach (var c in creatablesData.cosmetics)
