@@ -69,14 +69,12 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         private void OnEditShop(Shop shop)
         {
-            logger.Log("Editing shop: " + shop.data.shopName, this, Logging.LogType.Info);
             editingShop = shop;
             OpenMenu(shopCreatorMenuPrefab);
         }
 
         private void OnDeleteShop(Shop shop, VisualElement entry)
         {
-            logger.Log("Deleting shop: " + shop.data.shopName, this, Logging.LogType.Info);
             creatablesManager.Delete<Shop>(shop.data.id);
             entry.RemoveFromHierarchy();
         }

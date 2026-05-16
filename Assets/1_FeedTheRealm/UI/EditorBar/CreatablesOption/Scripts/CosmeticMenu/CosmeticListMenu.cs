@@ -74,6 +74,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         void OnDeleteCosmetic(Cosmetic cosmetic, VisualElement cosmeticListEntry)
         {
             logger.Log("Deleting cosmetic: " + cosmetic.data.name, this, Logging.LogType.Info);
+
+            foreach (var shop in creatablesManager.GetAll<Shop>())
+            {
+                shop.data.products.RemoveAll(p =>
+                    p.IsCosmetic
+                    && (
+                        p.productId == cosmetic.data.id
+                        || (
+                            cosmetic.data.categories != null
+                            && System.Linq.Enumerable.Any(
+                                cosmetic.data.categories.Values,
+                                v => !string.IsNullOrEmpty(v.url_id) && v.url_id == p.productId
+                            )
+                        )
+                    )
+                );
+            }
+
             creatablesManager.Delete<Cosmetic>(cosmetic.data.id);
             cosmeticListEntry.RemoveFromHierarchy();
         }

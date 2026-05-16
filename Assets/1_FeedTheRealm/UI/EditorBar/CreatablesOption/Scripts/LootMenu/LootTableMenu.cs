@@ -1,6 +1,7 @@
 using FeedTheRealm.Core.WorldObjects;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
+using FeedTheRealm.Gameplay.WorldObjects;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -94,6 +95,26 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             // Handle Delete Logic
             entry.Q<Button>("Delete").clicked += () =>
             {
+                var chests = FindObjectsByType<ChestObject>(
+                    FindObjectsInactive.Exclude,
+                    FindObjectsSortMode.None
+                );
+                foreach (var chest in chests)
+                {
+                    if (chest.data != null && chest.data.lootTableId == creatable.data.id)
+                    {
+                        chest.data.lootTableId = string.Empty;
+                    }
+                }
+
+                foreach (var enemy in creatablesManager.GetAll<AggresiveNpc>())
+                {
+                    enemy.data.lootTableId =
+                        enemy.data.lootTableId == creatable.data.id
+                            ? string.Empty
+                            : enemy.data.lootTableId;
+                }
+
                 creatablesManager.Delete<LootTable>(creatable.Id);
                 entry.RemoveFromHierarchy();
                 logger.Log($"[LootTableMenu] Deleted {displayName}");

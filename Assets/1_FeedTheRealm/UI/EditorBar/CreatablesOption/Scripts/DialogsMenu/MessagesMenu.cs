@@ -24,6 +24,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
 
+        [Inject]
+        private CreatablesManager creatablesManager;
+
         private VisualElement root;
         private Button closeButton;
         private Button createMessageButton;
@@ -113,6 +116,37 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         private void OnDeleteMessage(MessageData message, VisualElement entry)
         {
+            var npcs = creatablesManager.GetAll<FriendlyNpc>();
+            bool isInUse = false;
+            foreach (var npc in npcs)
+            {
+                if (
+                    System.Linq.Enumerable.Any(
+                        npc.data.dialogProgression,
+                        p =>
+                            p.questAssignments != null
+                            && System.Linq.Enumerable.Any(
+                                p.questAssignments,
+                                qa => qa.messageId == message.id
+                            )
+                    )
+                )
+                {
+                    isInUse = true;
+                    break;
+                }
+            }
+
+            if (isInUse)
+            {
+                ToastNotification.Show(
+                    "Cannot delete message: It has an active quest assignment in an NPC.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
             logger.Log("Deleting message", this, Logging.LogType.Info);
             currentDialog.data.messages.Remove(message);
             entry.RemoveFromHierarchy();

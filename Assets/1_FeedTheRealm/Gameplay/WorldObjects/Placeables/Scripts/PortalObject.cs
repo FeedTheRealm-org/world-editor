@@ -48,6 +48,13 @@ namespace FeedTheRealm.Gameplay.WorldObjects
             // When deleting a portal, we also need to delete the corresponding creatable portal,
             // since it won't be used anymore and we want to keep the creatables manager clean.
             creatablesManager.Delete<Portal>(data.id);
+            foreach (var portal in creatablesManager.GetAll<Portal>())
+            {
+                if (portal.data.targetPortalId == data.id)
+                {
+                    portal.data.targetPortalId = null;
+                }
+            }
             base.DeletePlaceable();
         }
 
