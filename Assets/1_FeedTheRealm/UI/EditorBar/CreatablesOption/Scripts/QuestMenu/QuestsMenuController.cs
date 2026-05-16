@@ -1,5 +1,6 @@
 using System;
 using Enums;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -25,6 +26,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addQuestButton;
@@ -109,8 +113,18 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 return;
             }
 
-            creatablesManager.Delete<Quest>(quest.data.id);
-            entry.RemoveFromHierarchy();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                title: "Delete Quest",
+                question: $"Are you sure you want to delete the quest '{quest.data.title}'? This cannot be undone.",
+                onConfirm: () =>
+                {
+                    creatablesManager.Delete<Quest>(quest.data.id);
+                    entry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         private void AddQuest()

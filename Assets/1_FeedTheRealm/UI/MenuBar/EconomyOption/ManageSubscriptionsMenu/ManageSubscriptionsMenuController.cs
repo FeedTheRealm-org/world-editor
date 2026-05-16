@@ -43,6 +43,9 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private WorldUIObjectProvider worldUIObjectProvider;
 
         [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
+
+        [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
         // ── UI refs ───────────────────────────────────────────────────────────
@@ -294,37 +297,48 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             }
         }
 
-        private async void OnUpdateSlotsClicked()
+        private void OnUpdateSlotsClicked()
         {
-            updateSlotsButton.SetEnabled(false);
-            slotFeedbackLabel.text = "Updating...";
+            ConfirmAction(
+                "Update Slots",
+                $"Are you sure you want to update your slot count to {pendingSlotCount}? This change cannot be undone.",
+                async () =>
+                {
+                    updateSlotsButton.SetEnabled(false);
+                    slotFeedbackLabel.text = "Updating...";
 
-            try
-            {
-                var (_, error, statusCode) = await subscriptionService.UpdateSlots(
-                    pendingSlotCount
-                );
-                if (!string.IsNullOrEmpty(error))
-                    throw new Exception(error);
+                    try
+                    {
+                        var (_, error, statusCode) = await subscriptionService.UpdateSlots(
+                            pendingSlotCount
+                        );
+                        if (!string.IsNullOrEmpty(error))
+                            throw new Exception(error);
 
-                await LoadSubscriptionAsync();
+                        await LoadSubscriptionAsync();
 
-                currentSubscription.slots = pendingSlotCount;
-                RefreshBillingSummary();
-                RefreshSlotControls();
-                slotFeedbackLabel.text = "Updated successfully.";
-                ToastNotification.Show("Slots updated!", "success", Color.green);
-            }
-            catch (Exception ex)
-            {
-                pendingSlotCount = currentSubscription.slots;
-                RefreshSlotControls();
-                slotFeedbackLabel.text = "Update failed. Try again.";
-                ToastNotification.Show($"Failed to update slots: {ex.Message}", "error", Color.red);
-            }
+                        currentSubscription.slots = pendingSlotCount;
+                        RefreshBillingSummary();
+                        RefreshSlotControls();
+                        slotFeedbackLabel.text = "Updated successfully.";
+                        ToastNotification.Show("Slots updated!", "success", Color.green);
+                    }
+                    catch (Exception ex)
+                    {
+                        pendingSlotCount = currentSubscription.slots;
+                        RefreshSlotControls();
+                        slotFeedbackLabel.text = "Update failed. Try again.";
+                        ToastNotification.Show(
+                            $"Failed to update slots: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                    }
+                }
+            );
         }
 
-        private async void OnCancelSubscriptionClicked()
+        private void OnCancelSubscriptionClicked()
         {
             if (currentSubscription?.used_slots > 0)
             {
@@ -336,35 +350,42 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 return;
             }
 
-            cancelSubscriptionButton?.SetEnabled(false);
+            ConfirmAction(
+                "Cancel Subscription",
+                "Are you sure you want to cancel your subscription? This will remove access to your allocated worlds.",
+                async () =>
+                {
+                    cancelSubscriptionButton?.SetEnabled(false);
 
-            try
-            {
-                var (error, statusCode) = await subscriptionService.CancelSubscription();
-                if (!string.IsNullOrEmpty(error))
-                    throw new Exception($"{error} (status {statusCode})");
+                    try
+                    {
+                        var (error, statusCode) = await subscriptionService.CancelSubscription();
+                        if (!string.IsNullOrEmpty(error))
+                            throw new Exception($"{error} (status {statusCode})");
 
-                ToastNotification.Show(
-                    "Subscription cancelled successfully.",
-                    "success",
-                    Color.green
-                );
-                await LoadSubscriptionAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.Log(
-                    $"[SubscriptionMenu] Cancel error: {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
-                ToastNotification.Show(
-                    $"Failed to cancel subscription: {ex.Message}",
-                    "error",
-                    Color.red
-                );
-                cancelSubscriptionButton?.SetEnabled(true);
-            }
+                        ToastNotification.Show(
+                            "Subscription cancelled successfully.",
+                            "success",
+                            Color.green
+                        );
+                        await LoadSubscriptionAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(
+                            $"[SubscriptionMenu] Cancel error: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        ToastNotification.Show(
+                            $"Failed to cancel subscription: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                        cancelSubscriptionButton?.SetEnabled(true);
+                    }
+                }
+            );
         }
 
         // ── Checkout ──────────────────────────────────────────────────────────
@@ -597,58 +618,66 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             bool anyActive = activeZoneCount > 0;
             SetActivateAllBtn(activateAllBtn, anyActive);
 
-            activateAllBtn.clicked += async () =>
+            activateAllBtn.clicked += () =>
             {
-                activateAllBtn.SetEnabled(false);
-                zoneToggleButtons.ForEach(b => b.SetEnabled(false));
-
                 bool activating = activateAllBtn.text == "Activate All";
-                bool success = true;
-
-                foreach (var zone in zones)
-                {
-                    var res = activating
-                        ? await zoneService.ActivateZone(world.id, zone.zone_id)
-                        : await zoneService.DeactivateZone(world.id, zone.zone_id);
-
-                    if (!string.IsNullOrEmpty(res.error))
-                        success = false;
-                    else
-                        zone.is_active = activating;
-                }
-
-                if (success)
-                {
-                    SetActivateAllBtn(activateAllBtn, activating);
-                    zoneToggleButtons.ForEach(b =>
+                ConfirmAction(
+                    activating ? "Activate World Zones" : "Deactivate World Zones",
+                    activating
+                        ? $"Are you sure you want to activate all zones in '{world.name}'?"
+                        : $"Are you sure you want to deactivate all zones in '{world.name}'?",
+                    async () =>
                     {
-                        b.text = activating ? "Deactivate" : "Activate";
-                        b.style.backgroundColor = new StyleColor(
-                            activating
-                                ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
-                                : new Color(0.2f, 0.6f, 0.2f, 0.3f)
-                        );
-                    });
-                    ToastNotification.Show(
-                        $"World {world.name} zones {(activating ? "activated" : "deactivated")}.",
-                        "success",
-                        Color.green
-                    );
-                    _ = LoadSubscriptionAsync();
-                }
-                else
-                {
-                    ToastNotification.Show(
-                        $"Some zones in {world.name} failed.",
-                        "error",
-                        Color.red
-                    );
-                }
+                        activateAllBtn.SetEnabled(false);
+                        zoneToggleButtons.ForEach(b => b.SetEnabled(false));
 
-                activateAllBtn.SetEnabled(true);
-                zoneToggleButtons.ForEach(b => b.SetEnabled(true));
+                        bool success = true;
+
+                        foreach (var zone in zones)
+                        {
+                            var res = activating
+                                ? await zoneService.ActivateZone(world.id, zone.zone_id)
+                                : await zoneService.DeactivateZone(world.id, zone.zone_id);
+
+                            if (!string.IsNullOrEmpty(res.error))
+                                success = false;
+                            else
+                                zone.is_active = activating;
+                        }
+
+                        if (success)
+                        {
+                            SetActivateAllBtn(activateAllBtn, activating);
+                            zoneToggleButtons.ForEach(b =>
+                            {
+                                b.text = activating ? "Deactivate" : "Activate";
+                                b.style.backgroundColor = new StyleColor(
+                                    activating
+                                        ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                                        : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                                );
+                            });
+                            ToastNotification.Show(
+                                $"World {world.name} zones {(activating ? "activated" : "deactivated")}",
+                                "success",
+                                Color.green
+                            );
+                            _ = LoadSubscriptionAsync();
+                        }
+                        else
+                        {
+                            ToastNotification.Show(
+                                $"Some zones in {world.name} failed.",
+                                "error",
+                                Color.red
+                            );
+                        }
+
+                        activateAllBtn.SetEnabled(true);
+                        zoneToggleButtons.ForEach(b => b.SetEnabled(true));
+                    }
+                );
             };
-
             // Delete
             var deleteBtn = worldEntry.Q<Button>("Unsubscribe");
             deleteBtn.text = "Delete World";
@@ -700,43 +729,51 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                     : new Color(0.2f, 0.6f, 0.2f, 0.3f)
             );
 
-            toggleBtn.clicked += async () =>
+            toggleBtn.clicked += () =>
             {
-                toggleBtn.SetEnabled(false);
                 bool activating = toggleBtn.text == "Activate";
+                ConfirmAction(
+                    activating ? "Activate Zone" : "Deactivate Zone",
+                    activating
+                        ? $"Are you sure you want to activate zone {zone.zone_id} in '{world.name}'?"
+                        : $"Are you sure you want to deactivate zone {zone.zone_id} in '{world.name}'?",
+                    async () =>
+                    {
+                        toggleBtn.SetEnabled(false);
 
-                var res = activating
-                    ? await zoneService.ActivateZone(world.id, zone.zone_id)
-                    : await zoneService.DeactivateZone(world.id, zone.zone_id);
+                        var res = activating
+                            ? await zoneService.ActivateZone(world.id, zone.zone_id)
+                            : await zoneService.DeactivateZone(world.id, zone.zone_id);
 
-                if (string.IsNullOrEmpty(res.error))
-                {
-                    zone.is_active = activating;
-                    toggleBtn.text = activating ? "Deactivate" : "Activate";
-                    toggleBtn.style.backgroundColor = new StyleColor(
-                        activating
-                            ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
-                            : new Color(0.2f, 0.6f, 0.2f, 0.3f)
-                    );
-                    ToastNotification.Show(
-                        $"Zone {zone.zone_id} {(activating ? "activated" : "deactivated")}.",
-                        "success",
-                        Color.green
-                    );
-                    _ = LoadSubscriptionAsync();
-                }
-                else
-                {
-                    ToastNotification.Show(
-                        $"Failed to {(activating ? "activate" : "deactivate")} zone {zone.zone_id}: {res.error}",
-                        "error",
-                        Color.red
-                    );
-                }
+                        if (string.IsNullOrEmpty(res.error))
+                        {
+                            zone.is_active = activating;
+                            toggleBtn.text = activating ? "Deactivate" : "Activate";
+                            toggleBtn.style.backgroundColor = new StyleColor(
+                                activating
+                                    ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
+                                    : new Color(0.2f, 0.6f, 0.2f, 0.3f)
+                            );
+                            ToastNotification.Show(
+                                $"Zone {zone.zone_id} {(activating ? "activated" : "deactivated")}",
+                                "success",
+                                Color.green
+                            );
+                            _ = LoadSubscriptionAsync();
+                        }
+                        else
+                        {
+                            ToastNotification.Show(
+                                $"Failed to {(activating ? "activate" : "deactivate")} zone {zone.zone_id}: {res.error}",
+                                "error",
+                                Color.red
+                            );
+                        }
 
-                toggleBtn.SetEnabled(true);
+                        toggleBtn.SetEnabled(true);
+                    }
+                );
             };
-
             zoneEntry.Q<Button>("Unsubscribe").style.display = DisplayStyle.None;
             return zoneEntry;
         }
@@ -751,39 +788,54 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         // ── Delete world ──────────────────────────────────────────────────────
 
-        private async void OnDeleteWorldClicked(WorldMetadata world, VisualElement entry)
+        private void OnDeleteWorldClicked(WorldMetadata world, VisualElement entry)
         {
             var button = entry.Q<Button>("Unsubscribe");
-            button.SetEnabled(false);
-
-            try
-            {
-                var (error, statusCode) = await worldService.DeleteWorld(world.id);
-                if (!string.IsNullOrEmpty(error))
-                    throw new Exception($"{error} (status {statusCode})");
-
-                entry.parent.RemoveFromHierarchy();
-                ToastNotification.Show($"World '{world.name}' deleted.", "info", Color.aliceBlue);
-
-                var localWorldData = dataPersistenceManager?.GetWorldData(world.name);
-                if (localWorldData?.worldId == world.id)
+            ConfirmAction(
+                "Delete World",
+                $"Are you sure you want to permanently delete '{world.name}'? This will remove it from your subscription.",
+                async () =>
                 {
-                    localWorldData.worldId = "";
-                    dataPersistenceManager.SaveWorldMetadata(localWorldData);
-                }
+                    button.SetEnabled(false);
 
-                _ = LoadSubscriptionAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.Log(
-                    $"[SubscriptionMenu] Delete world error: {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
-                ToastNotification.Show($"Failed to delete world: {ex.Message}", "error", Color.red);
-                button.SetEnabled(true);
-            }
+                    try
+                    {
+                        var (error, statusCode) = await worldService.DeleteWorld(world.id);
+                        if (!string.IsNullOrEmpty(error))
+                            throw new Exception($"{error} (status {statusCode})");
+
+                        entry.parent.RemoveFromHierarchy();
+                        ToastNotification.Show(
+                            $"World '{world.name}' deleted.",
+                            "info",
+                            Color.aliceBlue
+                        );
+
+                        var localWorldData = dataPersistenceManager?.GetWorldData(world.name);
+                        if (localWorldData?.worldId == world.id)
+                        {
+                            localWorldData.worldId = "";
+                            dataPersistenceManager.SaveWorldMetadata(localWorldData);
+                        }
+
+                        _ = LoadSubscriptionAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(
+                            $"[SubscriptionMenu] Delete world error: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        ToastNotification.Show(
+                            $"Failed to delete world: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                        button.SetEnabled(true);
+                    }
+                }
+            );
         }
 
         // ── Auth ──────────────────────────────────────────────────────────────
@@ -841,6 +893,18 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             subscriptionPanel.style.display = DisplayStyle.None;
             loadingPanel.style.display = DisplayStyle.None;
             panel.style.display = DisplayStyle.Flex;
+        }
+
+        private void ConfirmAction(string title, string question, Func<Task> onConfirm)
+        {
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                question: question,
+                onConfirm: () => _ = onConfirm(),
+                onCancel: () => { },
+                title: title
+            );
         }
 
         public override void OpenMenu(GameObject menuPrefab)

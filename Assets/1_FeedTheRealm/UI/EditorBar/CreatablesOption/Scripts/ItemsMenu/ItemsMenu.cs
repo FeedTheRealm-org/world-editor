@@ -1,4 +1,5 @@
 using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -26,6 +27,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addConsumableButton;
@@ -94,21 +98,33 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
             entry.Q<Button>("Delete").clicked += () =>
             {
-                foreach (var lootTable in creatablesManager.GetAll<LootTable>())
-                {
-                    lootTable.data.lootItems.RemoveAll(i => i.id == creatable.Id);
-                }
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
 
-                foreach (var shop in creatablesManager.GetAll<Shop>())
-                {
-                    shop.data.products.RemoveAll(p => p.productId == creatable.Id && !p.IsCosmetic);
-                }
+                dialogController.Show(
+                    title: "Delete Item",
+                    question: "Are you sure you want to delete this item? This cannot be undone.",
+                    onConfirm: () =>
+                    {
+                        foreach (var lootTable in creatablesManager.GetAll<LootTable>())
+                        {
+                            lootTable.data.lootItems.RemoveAll(i => i.id == creatable.Id);
+                        }
 
-                if (creatable is Weapon)
-                    creatablesManager.Delete<Weapon>(creatable.Id);
-                else if (creatable is ConsumableItem)
-                    creatablesManager.Delete<ConsumableItem>(creatable.Id);
-                entry.RemoveFromHierarchy();
+                        foreach (var shop in creatablesManager.GetAll<Shop>())
+                        {
+                            shop.data.products.RemoveAll(p =>
+                                p.productId == creatable.Id && !p.IsCosmetic
+                            );
+                        }
+                        if (creatable is Weapon)
+                            creatablesManager.Delete<Weapon>(creatable.Id);
+                        else if (creatable is ConsumableItem)
+                            creatablesManager.Delete<ConsumableItem>(creatable.Id);
+                        entry.RemoveFromHierarchy();
+                    },
+                    onCancel: () => { }
+                );
             };
 
             list.hierarchy.Add(entry);

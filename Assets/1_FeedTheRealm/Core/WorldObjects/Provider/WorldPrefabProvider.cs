@@ -24,5 +24,8 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
 
         [Header("Error Handling")]
         public GameObject errorPrefab;
+
+        [Header("Dialog Popups")]
+        public GameObject confirmPopup;
     }
 }

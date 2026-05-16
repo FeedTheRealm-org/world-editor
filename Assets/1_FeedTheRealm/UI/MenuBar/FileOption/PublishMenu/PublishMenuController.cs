@@ -68,6 +68,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [Inject]
         private ZoneMaterialsRepository zoneMaterialsRepository;
 
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
+
         private Button publishButton;
         private Button loginButton;
         private Button closeButton;
@@ -249,36 +252,60 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private async void OnPublishClicked()
         {
-            try
-            {
-                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                dataPersistenceManager.SaveZone(
-                    currentWorldData.worldName,
-                    worldSelector.selectedZoneId
-                );
-                dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
-                publishButton.SetEnabled(false);
-                await ValidateBeforePublish();
-                await PublishSprites();
-                var cData = dataPersistenceManager.GetCreatables(worldSelector.selectedWorld);
-                if (cData != null)
-                    SyncShopCosmeticIds(cData);
-                await PublishWorldData();
-                await PublishCreatables();
-                await PublishZoneData();
-                ToastNotification.Show("World published successfully!", "success", Color.green);
-                CloseMenu();
-                worldSelector.selectedWorldId = currentWorldData.worldId;
-            }
-            catch (Exception ex)
-            {
-                logger.Log($"[PublishMenu] Error: {ex.Message}", this, Logging.LogType.Error);
-                ToastNotification.Show($"Error publishing: {ex.Message}", "error", Color.red);
-            }
-            finally
-            {
-                publishButton.SetEnabled(true);
-            }
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                title: "Publish World",
+                question: "This action can take a few minutes. Are you sure you want to publish now?",
+                onConfirm: async () =>
+                {
+                    try
+                    {
+                        dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                        dataPersistenceManager.SaveZone(
+                            currentWorldData.worldName,
+                            worldSelector.selectedZoneId
+                        );
+                        dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
+                        publishButton.SetEnabled(false);
+                        await ValidateBeforePublish();
+                        await PublishSprites();
+                        var cData = dataPersistenceManager.GetCreatables(
+                            worldSelector.selectedWorld
+                        );
+                        if (cData != null)
+                            SyncShopCosmeticIds(cData);
+                        await PublishWorldData();
+                        await PublishCreatables();
+                        await PublishZoneData();
+                        ToastNotification.Show(
+                            "World published successfully!",
+                            "success",
+                            Color.green
+                        );
+                        CloseMenu();
+                        worldSelector.selectedWorldId = currentWorldData.worldId;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(
+                            $"[PublishMenu] Error: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        ToastNotification.Show(
+                            $"Error publishing: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                    }
+                    finally
+                    {
+                        publishButton.SetEnabled(true);
+                    }
+                },
+                onCancel: () => { }
+            );
         }
 
         // ---- Validation Functions ----

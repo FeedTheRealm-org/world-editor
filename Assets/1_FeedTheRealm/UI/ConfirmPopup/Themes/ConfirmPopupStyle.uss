@@ -1,0 +1,87 @@
+/* dialog Card  */
+.dialog-container {
+    width: 420px;
+    background-color: rgb(51, 51, 51);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 20px;
+    padding-right: 24px;
+    padding-bottom: 20px;
+    padding-left: 24px;
+    align-self: center;
+}
+
+/* answer area */
+.dialog-body {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+/* answer text */
+.dialog-question {
+    font-size: 18px;
+    color: rgb(220, 220, 220);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+/* button row */
+.dialog-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 8px;
+}
+
+/* Base for each button */
+.dialog-btn {
+    min-width: 90px;
+    height: 36px;
+    font-size: 15px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-top: 4px;
+    padding-right: 16px;
+    padding-bottom: 4px;
+    padding-left: 16px;
+    margin-left: 8px;
+    -unity-text-align: middle-center;
+    justify-content: center;
+    align-self: center;
+}
+
+/* Cancel */
+.dialog-btn--cancel {
+    background-color: rgb(62, 62, 62);
+    color: rgb(255, 255, 255);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(148, 148, 148);
+    border-right-color: rgb(148, 148, 148);
+    border-top-color: rgb(148, 148, 148);
+    border-bottom-color: rgb(148, 148, 148);
+}
+
+.dialog-btn--cancel:hover {
+    background-color: rgb(80, 80, 80);
+}
+
+/* Confirm */
+.dialog-btn--confirm {
+    background-color: rgb(50, 100, 200);
+    color: rgb(255, 255, 255);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.dialog-btn--confirm:hover {
+    background-color: rgb(70, 120, 230);
+}

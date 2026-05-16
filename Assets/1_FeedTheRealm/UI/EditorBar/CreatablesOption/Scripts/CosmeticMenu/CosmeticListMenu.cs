@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.UI.Common;
@@ -20,6 +21,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -73,27 +77,43 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
         void OnDeleteCosmetic(Cosmetic cosmetic, VisualElement cosmeticListEntry)
         {
-            logger.Log("Deleting cosmetic: " + cosmetic.data.name, this, Logging.LogType.Info);
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                title: "Delete Cosmetic",
+                question: $"Are you sure you want to delete the cosmetic '{cosmetic.data.name}'? This cannot be undone.",
+                onConfirm: () =>
+                {
+                    logger.Log(
+                        "Deleting cosmetic: " + cosmetic.data.name,
+                        this,
+                        Logging.LogType.Info
+                    );
 
-            foreach (var shop in creatablesManager.GetAll<Shop>())
-            {
-                shop.data.products.RemoveAll(p =>
-                    p.IsCosmetic
-                    && (
-                        p.productId == cosmetic.data.id
-                        || (
-                            cosmetic.data.categories != null
-                            && System.Linq.Enumerable.Any(
-                                cosmetic.data.categories.Values,
-                                v => !string.IsNullOrEmpty(v.url_id) && v.url_id == p.productId
+                    foreach (var shop in creatablesManager.GetAll<Shop>())
+                    {
+                        shop.data.products.RemoveAll(p =>
+                            p.IsCosmetic
+                            && (
+                                p.productId == cosmetic.data.id
+                                || (
+                                    cosmetic.data.categories != null
+                                    && System.Linq.Enumerable.Any(
+                                        cosmetic.data.categories.Values,
+                                        v =>
+                                            !string.IsNullOrEmpty(v.url_id)
+                                            && v.url_id == p.productId
+                                    )
+                                )
                             )
-                        )
-                    )
-                );
-            }
+                        );
+                    }
 
-            creatablesManager.Delete<Cosmetic>(cosmetic.data.id);
-            cosmeticListEntry.RemoveFromHierarchy();
+                    creatablesManager.Delete<Cosmetic>(cosmetic.data.id);
+                    cosmeticListEntry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         void OnDisable()

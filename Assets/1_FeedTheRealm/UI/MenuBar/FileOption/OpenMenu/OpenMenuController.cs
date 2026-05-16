@@ -3,9 +3,9 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.UI.Common;
-using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -33,6 +33,10 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 
         [Inject]
         private RefreshZonesEvent refreshZonesEvent;
+
+        [Inject]
+        private WorldPrefabProvider prefabProvider;
+
         private Button closeButton;
         private ListView worldsListView;
         private VisualElement root;
@@ -80,6 +84,28 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
         }
 
         private async UniTask OnLoadWorldClicked(string worldName)
+        {
+            if (
+                !string.IsNullOrEmpty(worldSelector.selectedWorld)
+                && worldSelector.selectedWorld != worldName
+            )
+            {
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+                dialogController.Show(
+                    title: "Open World",
+                    question: "Are you sure you want to open another world? Any unsaved changes in your current world will be lost.",
+                    onConfirm: async () => await ExecuteLoadWorld(worldName),
+                    onCancel: () => { }
+                );
+            }
+            else
+            {
+                await ExecuteLoadWorld(worldName);
+            }
+        }
+
+        private async UniTask ExecuteLoadWorld(string worldName)
         {
             worldSelector.selectedWorld = worldName;
             worldSelector.selectedZoneId =
