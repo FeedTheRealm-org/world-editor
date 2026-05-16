@@ -1,6 +1,7 @@
 using FeedTheRealm.Core.EventChannels.Ticks;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace FeedTheRealm.Gameplay.Entrypoint
@@ -34,6 +35,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint
 
         public async void Start()
         {
+            Application.runInBackground = true;
             worldSetup.ExecuteSetup();
             await creatablesLoader.Load();
             await zoneLoader.Load();
