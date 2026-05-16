@@ -99,8 +99,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             // Handle Delete Logic
             entry.Q<Button>("Delete").clicked += () =>
             {
-                var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-                var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
                 dialogController.Show(
                     title: "Delete Loot Table",
                     question: $"Are you sure you want to delete the loot table '{displayName}'? This cannot be undone.",

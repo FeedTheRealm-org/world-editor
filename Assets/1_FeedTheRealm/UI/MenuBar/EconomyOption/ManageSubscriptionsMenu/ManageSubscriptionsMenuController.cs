@@ -897,8 +897,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
         private void ConfirmAction(string title, string question, Func<Task> onConfirm)
         {
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
             dialogController.Show(
                 question: question,
                 onConfirm: () => _ = onConfirm(),

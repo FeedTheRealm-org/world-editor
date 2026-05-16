@@ -113,8 +113,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 return;
             }
 
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
             dialogController.Show(
                 title: "Delete Quest",
                 question: $"Are you sure you want to delete the quest '{quest.data.title}'? This cannot be undone.",

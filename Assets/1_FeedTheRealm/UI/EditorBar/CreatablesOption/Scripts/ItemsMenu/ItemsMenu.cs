@@ -108,8 +108,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                     shop.data.products.RemoveAll(p => p.productId == creatable.Id && !p.IsCosmetic);
                 }
 
-                var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-                var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
 
                 dialogController.Show(
                     title: "Delete Item",

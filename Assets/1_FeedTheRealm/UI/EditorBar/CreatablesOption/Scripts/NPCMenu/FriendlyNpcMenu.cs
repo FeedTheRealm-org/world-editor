@@ -80,8 +80,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
         private void OnDeleteNPC(FriendlyNpc npc, VisualElement entry)
         {
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
             dialogController.Show(
                 title: "Delete NPC",
                 question: $"Are you sure you want to delete the NPC '{npc.data.name}'? This cannot be undone.",

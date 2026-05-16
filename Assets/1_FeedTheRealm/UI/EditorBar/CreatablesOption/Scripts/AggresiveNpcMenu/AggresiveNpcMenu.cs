@@ -78,8 +78,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
 
         void OnDeleteEnemy(AggresiveNpc enemy, VisualElement enemyListEntry)
         {
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
             dialogController.Show(
                 title: "Delete Enemy",
                 question: $"Are you sure you want to delete the enemy '{enemy.data.name}'? This cannot be undone.",

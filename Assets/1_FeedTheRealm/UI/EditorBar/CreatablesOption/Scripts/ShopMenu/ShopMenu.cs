@@ -79,8 +79,8 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         private void OnDeleteShop(Shop shop, VisualElement entry)
         {
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
             dialogController.Show(
                 title: "Delete Shop",
                 question: $"Are you sure you want to delete the shop '{shop.data.shopName}'? This cannot be undone.",

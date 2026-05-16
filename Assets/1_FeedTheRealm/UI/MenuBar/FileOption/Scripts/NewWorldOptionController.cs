@@ -1,7 +1,8 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.UI.Common;
 using UnityEngine;
@@ -33,7 +34,39 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private RefreshZonesEvent refreshZonesEvent;
 
+        [Inject]
+        private WorldPrefabProvider prefabProvider;
+
         public override async void Execute()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(worldSelector.selectedWorld))
+                {
+                    var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                    var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+                    dialogController.Show(
+                        title: "New World",
+                        question: "Are you sure you want to create a new world? Any unsaved changes in your current world will be lost.",
+                        onConfirm: async () => await ExecuteNewWorld(),
+                        onCancel: () => { }
+                    );
+                }
+                else
+                {
+                    await ExecuteNewWorld();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(
+                    $"[NewWorldOptionController] Error executing: {ex.Message}",
+                    Logging.LogType.Error
+                );
+            }
+        }
+
+        private async Task ExecuteNewWorld()
         {
             try
             {
@@ -51,7 +84,7 @@ namespace FeedTheRealm.UI.MenuBar
             catch (Exception ex)
             {
                 logger.Log(
-                    $"[NewWorldOptionController] Error executing: {ex.Message}",
+                    $"[NewWorldOptionController] Error executing New World: {ex.Message}",
                     Logging.LogType.Error
                 );
             }

@@ -132,8 +132,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 return;
             }
 
-            var confirmDialog = Instantiate(prefabProvider.confirmDialog);
-            var dialogController = confirmDialog.GetComponent<ConfirmDialogController>();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
 
             dialogController.Show(
                 title: "Delete Dialog",
