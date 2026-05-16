@@ -28,7 +28,6 @@ namespace FeedTheRealm.UI.MainMenu
 
         private void Awake()
         {
-            Application.runInBackground = true;
             ui = GetComponent<UIDocument>().rootVisualElement;
         }
 
