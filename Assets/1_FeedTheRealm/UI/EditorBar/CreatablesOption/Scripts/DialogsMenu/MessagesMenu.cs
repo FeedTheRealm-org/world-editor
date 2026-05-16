@@ -147,7 +147,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 return;
             }
 
-            logger.Log("Deleting message", this, Logging.LogType.Info);
             currentDialog.data.messages.Remove(message);
             entry.RemoveFromHierarchy();
         }

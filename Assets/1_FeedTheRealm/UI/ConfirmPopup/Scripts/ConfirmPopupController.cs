@@ -12,7 +12,7 @@ namespace FeedTheRealm.UI.Common
     ///         question:  "¿Are you sure to...?",
     ///         onConfirm: () => func(),
     ///         onCancel:  () => { /* optional */ },
-    ///         title:     "Tittle"           // optional
+    ///         title:     "Title"           // optional
     ///     );
     /// </code>
     /// </summary>

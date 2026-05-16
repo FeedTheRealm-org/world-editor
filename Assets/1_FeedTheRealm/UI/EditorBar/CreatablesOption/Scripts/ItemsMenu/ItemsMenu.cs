@@ -98,24 +98,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
             entry.Q<Button>("Delete").clicked += () =>
             {
-                foreach (var lootTable in creatablesManager.GetAll<LootTable>())
-                {
-                    lootTable.data.lootItems.RemoveAll(i => i.id == creatable.Id);
-                }
-
-                foreach (var shop in creatablesManager.GetAll<Shop>())
-                {
-                    shop.data.products.RemoveAll(p => p.productId == creatable.Id && !p.IsCosmetic);
-                }
-
                 var confirmPopup = Instantiate(prefabProvider.confirmPopup);
                 var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
 
                 dialogController.Show(
                     title: "Delete Item",
-                    question: "Are you sure you want to delete this Item? This cannot be undone.",
+                    question: "Are you sure you want to delete this item? This cannot be undone.",
                     onConfirm: () =>
                     {
+                        foreach (var lootTable in creatablesManager.GetAll<LootTable>())
+                        {
+                            lootTable.data.lootItems.RemoveAll(i => i.id == creatable.Id);
+                        }
+
+                        foreach (var shop in creatablesManager.GetAll<Shop>())
+                        {
+                            shop.data.products.RemoveAll(p =>
+                                p.productId == creatable.Id && !p.IsCosmetic
+                            );
+                        }
                         if (creatable is Weapon)
                             creatablesManager.Delete<Weapon>(creatable.Id);
                         else if (creatable is ConsumableItem)
