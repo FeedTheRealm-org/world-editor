@@ -190,11 +190,11 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 bool noSub =
                     !string.IsNullOrEmpty(error) && IsMissingSubscription(statusCode, error);
-                bool cancelled =
+                bool isActive =
                     data != null
-                    && string.Equals(data.status, "canceled", StringComparison.OrdinalIgnoreCase);
+                    && string.Equals(data.status, "active", StringComparison.OrdinalIgnoreCase);
 
-                if (noSub || data == null || cancelled)
+                if (noSub || data == null || !isActive)
                 {
                     RefreshCreateSubscriptionPanel();
                     ShowPanel(createSubscriptionPanel);
