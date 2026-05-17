@@ -26,6 +26,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
         private UpdateLoginEvent updateLoginEvent;
 
         private Button loginButton;
+        private Button signOutButton;
         private Button closeButton;
         private Label notLoggedInLabel;
         private VisualElement loggedInContent;
@@ -37,12 +38,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             loginButton = root.Q<Button>("Login");
+            signOutButton = root.Q<Button>("SignOut");
             closeButton = root.Q<Button>("Close");
             notLoggedInLabel = root.Q<Label>("NotLoggedIn");
             loggedInContent = root.Q<VisualElement>("LoggedInContent");
             usernameLabel = root.Q<Label>("Username");
 
             loginButton.clicked += OnLoginClicked;
+            signOutButton.clicked += OnSignOutClicked;
             closeButton.clicked += CloseMenu;
 
             RefreshSessionUI();
@@ -51,6 +54,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
         void OnDisable()
         {
             loginButton.clicked -= OnLoginClicked;
+            signOutButton.clicked -= OnSignOutClicked;
             closeButton.clicked -= CloseMenu;
         }
 
@@ -60,10 +64,18 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
 
             notLoggedInLabel.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
             loggedInContent.style.display = isLoggedIn ? DisplayStyle.Flex : DisplayStyle.None;
-            loginButton.text = isLoggedIn ? "Change Account" : "Login";
+            loginButton.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
+            signOutButton.style.display = isLoggedIn ? DisplayStyle.Flex : DisplayStyle.None;
 
             if (isLoggedIn)
                 usernameLabel.text = session.Email;
+        }
+
+        private void OnSignOutClicked()
+        {
+            session.ClearSession();
+            updateLoginEvent.Raise();
+            RefreshSessionUI();
         }
 
         private async void OnLoginClicked()
