@@ -71,9 +71,14 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 );
             //objectResolver.Instantiate(subscriptionMenuObject).name = "SubscriptionMenu";
 
-            authFlowManager.OnAuthComplete += () =>
+            authFlowManager.OnAuthComplete += (message) =>
             {
+                ToastNotification.Show(message, "success", Color.green);
                 updateLoginEvent.Raise();
+            };
+            authFlowManager.OnPasswordResetComplete += (message) =>
+            {
+                ToastNotification.Show(message, "success", Color.green);
             };
         }
     }

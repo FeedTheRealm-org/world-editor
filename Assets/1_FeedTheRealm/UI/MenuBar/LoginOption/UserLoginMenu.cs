@@ -44,6 +44,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
             usernameLabel = root.Q<Label>("Username");
 
             loginButton.clicked += authFlowManager.ShowAuthMenu;
+            authFlowManager.OnAuthCancelled += CloseMenu;
             signOutButton.clicked += OnSignOutClicked;
             closeButton.clicked += CloseMenu;
             updateLoginEvent.OnRaised += RefreshSessionUI;
@@ -56,6 +57,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
             signOutButton.clicked -= OnSignOutClicked;
             closeButton.clicked -= CloseMenu;
             updateLoginEvent.OnRaised -= RefreshSessionUI;
+            authFlowManager.OnAuthCancelled -= CloseMenu;
         }
 
         private void RefreshSessionUI()

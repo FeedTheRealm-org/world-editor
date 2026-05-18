@@ -43,9 +43,14 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 );
             objectResolver.Instantiate(mainMenuGameObject).name = "MainMenu";
 
-            authFlowManager.OnAuthComplete += () =>
+            authFlowManager.OnAuthComplete += (message) =>
             {
+                ToastNotification.Show(message, "success", Color.green);
                 updateLoginEvent.Raise();
+            };
+            authFlowManager.OnPasswordResetComplete += (message) =>
+            {
+                ToastNotification.Show(message, "success", Color.green);
             };
         }
     }
