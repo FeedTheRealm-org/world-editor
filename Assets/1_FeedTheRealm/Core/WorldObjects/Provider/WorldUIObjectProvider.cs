@@ -12,9 +12,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject editorBarGameObject;
         public GameObject placeableDisplayObject;
         public GameObject editorSettingsMenuObject;
-        public GameObject loginMenuObject;
-        public GameObject signUpMenuObject;
-        public GameObject verifyCodeMenuObject;
         public GameObject subscriptionMenuObject;
         public GameObject transactionsMenuObject;
 

@@ -12,6 +12,7 @@ using FeedTheRealm.Gameplay.Player;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
 using FTR.Core.Common.Config;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -61,6 +62,10 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
 
         [SerializeField]
         private Session.Session session;
+
+        [Header("Auth")]
+        [SerializeField]
+        private AuthFlowManager AuthFlowManager;
 
         [Header("Event Channels")]
         [SerializeField]
@@ -113,7 +118,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.Register<WorldUISetupService>(Lifetime.Scoped);
             builder.Register<PlaceableEditorSetupService>(Lifetime.Scoped);
 
+            // Managers
             builder.Register<WorldSetupManager>(Lifetime.Scoped);
+            builder.RegisterComponentInNewPrefab(AuthFlowManager, Lifetime.Singleton);
 
             builder.RegisterEntryPoint<WorldEditorEntrypoint>();
         }

@@ -457,6 +457,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8549549993993383568, guid: ebd38d792b625d1578ee1ffdb56c695e, type: 3}
+      propertyPath: AuthFlowManager
+      value: 
+      objectReference: {fileID: 7798777532646108241, guid: bee3944f6aaa8f0f39979e4395c8ffc8, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
