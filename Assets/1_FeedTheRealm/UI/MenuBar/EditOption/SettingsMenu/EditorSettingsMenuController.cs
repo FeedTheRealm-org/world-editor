@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 

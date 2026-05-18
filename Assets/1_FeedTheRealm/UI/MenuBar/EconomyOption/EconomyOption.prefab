@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Economy
   menuToOpen: {fileID: 0}
   menuOptions:

@@ -67,6 +67,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d89f9409bf63980eb2a73617a52f3fa, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FeedTheRealm_Shared::FeedTheRealm.UI.Common.ConfirmDialogController
+  m_EditorClassIdentifier: FeedTheRealm_Shared::FTR.UI.ConfirmDialogController
   defaultConfirmText: Confirm
   defaultCancelText: Cancel

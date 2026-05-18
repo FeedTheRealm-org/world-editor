@@ -4,7 +4,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.Common
+namespace FTR.UI
 {
     public class MenuController : MonoBehaviour
     {

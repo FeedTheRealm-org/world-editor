@@ -4,7 +4,7 @@ using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.WorldLoader;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
