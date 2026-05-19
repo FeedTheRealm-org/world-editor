@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Creatable
   menuToOpen: {fileID: 0}
   menuOptions:
@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Dialogs
   menuToOpen: {fileID: 6581744661053460631, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}
   menuOptions: []
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Enemies
   menuToOpen: {fileID: 7721069613254937411, guid: 02a78acf07fc6f63cb1036985dee9543, type: 3}
   menuOptions: []
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Items
   menuToOpen: {fileID: -3587784106667264666, guid: 0428ffadd9b08ef419f66bf9809cc60c, type: 3}
   menuOptions: []
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Loot
   menuToOpen: {fileID: -550665515334386564, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
   menuOptions: []
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Shop
   menuToOpen: {fileID: 6748489813826923316, guid: cfe15a1ae987b9ae9ac0c6bfc24ef983, type: 3}
   menuOptions: []
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: NPC
   menuToOpen: {fileID: -1537716657621255143, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
   menuOptions: []
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Quest
   menuToOpen: {fileID: 6002012647832702426, guid: 36f2a1fea5a9d123f8ca85e5760a80a0, type: 3}
   menuOptions: []
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Cosmetic
   menuToOpen: {fileID: 2314951719984803139, guid: d77b9c31f1380fc5f86667cafa38a56e, type: 3}
   menuOptions: []

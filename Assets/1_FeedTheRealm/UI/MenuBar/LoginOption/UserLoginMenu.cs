@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;

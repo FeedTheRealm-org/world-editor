@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
     <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/NPC/NPCCreatorMenuTheme.uss?fileID=7433441132597879392&amp;guid=26efa24db767408929acc37f620c50ff&amp;type=3#NPCCreatorMenuTheme"/>
     <ui:VisualElement name="ProgressionItemRoot" class="npc-progression-item">
         <ui:VisualElement name="ItemToggleRow" class="npc-progression-item__toggle-row">

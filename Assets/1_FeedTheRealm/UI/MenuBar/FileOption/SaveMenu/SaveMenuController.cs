@@ -1,6 +1,6 @@
 using System;
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
