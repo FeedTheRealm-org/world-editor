@@ -34,7 +34,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private WorldSelector worldSelector;
 
         private TextField nameInput;
-        private TextField descriptionInput;
         private IntegerField healthPointsInput;
         private DropdownField weaponInput;
         private DropdownField lootTableInput;
@@ -172,7 +171,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void InitializeFields(VisualElement root)
         {
             nameInput = root.Q<TextField>("NameField");
-            descriptionInput = root.Q<TextField>("DescriptionField");
             healthPointsInput = root.Q<IntegerField>("HealthPoints");
             weaponInput = root.Q<DropdownField>("WeaponField");
             lootTableInput = root.Q<DropdownField>("LootTableField");
@@ -309,7 +307,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (editBuffer != null)
             {
                 nameInput.value = editBuffer.Working.name;
-                descriptionInput.value = editBuffer.Working.description;
                 healthPointsInput.value = editBuffer.Working.healthPoints;
             }
 
@@ -344,9 +341,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             if (editBuffer == null)
                 return;
             nameInput.RegisterValueChangedCallback(evt => editBuffer.Working.name = evt.newValue);
-            descriptionInput.RegisterValueChangedCallback(evt =>
-                editBuffer.Working.description = evt.newValue
-            );
             healthPointsInput.RegisterValueChangedCallback(evt =>
                 editBuffer.Working.healthPoints = evt.newValue
             );
@@ -509,9 +503,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
             {
                 character_name =
                     (editBuffer != null ? editBuffer.Working.name : nameInput?.value)
-                    ?? string.Empty,
-                character_bio =
-                    (editBuffer != null ? editBuffer.Working.description : descriptionInput?.value)
                     ?? string.Empty,
                 skin_color =
                     editBuffer != null
