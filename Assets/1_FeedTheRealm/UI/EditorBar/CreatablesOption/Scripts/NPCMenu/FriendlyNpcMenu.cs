@@ -53,7 +53,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private void PopulateNPCsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var npcsList = root.Q<ListView>("NPCList");
+            var npcsList = root.Q<ScrollView>("NPCList");
             npcsList.Clear();
 
             foreach (FriendlyNpc npc in creatablesManager.GetAll<FriendlyNpc>())

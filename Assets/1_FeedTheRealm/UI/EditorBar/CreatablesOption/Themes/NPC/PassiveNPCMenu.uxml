@@ -9,7 +9,7 @@
                     <ui:Button text="Close" name="Close" class="button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:ListView name="NPCList" class="list"/>
+            <ui:ScrollView name="NPCList" class="list"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

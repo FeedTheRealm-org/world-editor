@@ -143,7 +143,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private void ReturnToList()
         {
             var menuInstance = resolver.Instantiate(messagesMenuPrefab);
-            menuInstance.GetComponent<MessagesMenu>()?.SetDialog(currentDialog);
+            menuInstance.GetComponent<DialogCreatorMenu>().SetupEditor(currentDialog);
             Destroy(gameObject);
         }
     }

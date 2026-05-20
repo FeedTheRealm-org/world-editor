@@ -68,5 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e22616383a7804e86eeb0dd565419e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MessagesCreatorMenuController
+  AllowInputWhileOpen: 0
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  messagesMenuPrefab: {fileID: 2802280877163831150, guid: 9f89f9a7175ffdd4787b12a56d5d2737, type: 3}
+  messagesMenuPrefab: {fileID: 2802280877163831150, guid: 75b5a558444ffdb44bda91b0a8209698, type: 3}

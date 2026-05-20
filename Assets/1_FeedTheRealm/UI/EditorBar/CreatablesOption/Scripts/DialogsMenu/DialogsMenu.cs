@@ -1,4 +1,3 @@
-using System.Linq;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
@@ -18,9 +17,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         [SerializeField]
         private GameObject createDialogMenuPrefab;
-
-        [SerializeField]
-        private GameObject messagesMenuPrefab;
 
         [SerializeField]
         private VisualTreeAsset itemListTemplate;
@@ -56,56 +52,44 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private void PopulateDialogsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var dialogsList = root.Q<ListView>("DialogsList");
+            var dialogsList = root.Q<ScrollView>("DialogsList");
             dialogsList.Clear();
 
             foreach (Dialog dialog in creatablesManager.GetAll<Dialog>())
             {
-                VisualElement dialogEntry = itemListTemplate.Instantiate();
-                dialogEntry.Q<Label>("Header").text = dialog.data.name;
+                VisualElement entry = itemListTemplate.Instantiate();
+                entry.Q<Label>("Header").text = dialog.data.name;
+                entry.Q<Label>("Amount").text = dialog.data.messages.Count.ToString();
 
-                var typeLabel = dialogEntry.Q<Label>("Type");
+                var typeLabel = entry.Q<Label>("Type");
                 if (typeLabel != null)
                     typeLabel.text = "Dialog";
 
-                dialogEntry.Q<Button>("Edit").clicked += () => OnEditDialog(dialog);
-                dialogEntry.Q<Button>("EditMessages").clicked += () => OnEditMessages(dialog);
-                dialogEntry.Q<Button>("Delete").clicked += () =>
-                    OnDeleteDialog(dialog, dialogEntry);
+                entry.Q<Button>("Edit").clicked += () => OpenEditor(dialog);
+                entry.Q<Button>("Delete").clicked += () => OnDeleteDialog(dialog, entry);
 
-                dialogsList.hierarchy.Add(dialogEntry);
+                dialogsList.Add(entry);
             }
         }
 
         private void AddDialog()
         {
-            logger.Log("Opening Create Dialog Menu", this, Logging.LogType.Info);
             editingDialog = null;
             OpenMenu(createDialogMenuPrefab);
         }
 
-        void OnEditDialog(Dialog dialog)
+        private void OpenEditor(Dialog dialog)
         {
-            logger.Log("Editing dialog: " + dialog.data.name, this, Logging.LogType.Info);
+            logger.Log($"Opening editor for: {dialog.data.name}", this, Logging.LogType.Info);
             editingDialog = dialog;
             OpenMenu(createDialogMenuPrefab);
         }
 
-        void OnEditMessages(Dialog dialog)
-        {
-            logger.Log(
-                "Opening messages for dialog: " + dialog.data.name,
-                this,
-                Logging.LogType.Info
-            );
-            editingDialog = dialog;
-            OpenMenu(messagesMenuPrefab);
-        }
-
-        void OnDeleteDialog(Dialog dialog, VisualElement dialogEntry)
+        private void OnDeleteDialog(Dialog dialog, VisualElement entry)
         {
             var npcs = creatablesManager.GetAll<FriendlyNpc>();
-            bool isInUse = false;
+            bool inUse = false;
+
             foreach (var npc in npcs)
             {
                 if (
@@ -117,12 +101,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                     )
                 )
                 {
-                    isInUse = true;
+                    inUse = true;
                     break;
                 }
             }
 
-            if (isInUse)
+            if (inUse)
             {
                 ToastNotification.Show(
                     "Cannot delete dialog: It is currently used by an NPC.",
@@ -141,7 +125,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 onConfirm: () =>
                 {
                     creatablesManager.Delete<Dialog>(dialog.data.id);
-                    dialogEntry.RemoveFromHierarchy();
+                    entry.RemoveFromHierarchy();
                 },
                 onCancel: () => { }
             );
@@ -149,17 +133,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
 
         public override void OpenMenu(GameObject menuPrefab)
         {
-            var menuInstance = resolver.Instantiate(menuPrefab);
-
+            var instance = resolver.Instantiate(menuPrefab);
             if (editingDialog != null)
-            {
-                if (menuPrefab == createDialogMenuPrefab)
-                    menuInstance.GetComponent<DialogCreatorMenu>().SetupEditor(editingDialog);
-
-                if (menuPrefab == messagesMenuPrefab)
-                    menuInstance.GetComponent<MessagesMenu>().SetDialog(editingDialog);
-            }
-
+                instance.GetComponent<DialogCreatorMenu>().SetupEditor(editingDialog);
             Destroy(gameObject);
         }
     }
