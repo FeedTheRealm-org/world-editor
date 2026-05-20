@@ -25,9 +25,12 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
         private Session.Session session;
 
         [Inject]
-        private FeedTheRealm.Core.WorldObjects.Provider.WorldUIObjectProvider worldUIObjectProvider;
-        private bool isAuthFlowActive;
+        private Core.WorldObjects.Provider.WorldUIObjectProvider worldUIObjectProvider;
 
+        [Inject]
+        private AuthFlowManager authFlowManager;
+
+        // UI Elements
         private VisualElement notLoggedInPanel;
         private VisualElement balancePanel;
         private VisualElement loadingPanel;
@@ -72,7 +75,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
         private void RegisterCallbacks()
         {
             closeButton.clicked += CloseMenu;
-            loginButton.clicked += OnLoginClicked;
+            loginButton.clicked += authFlowManager.ShowAuthMenu;
             refreshButton.clicked += OnRefreshClicked;
 
             if (withdrawButton != null)
@@ -82,7 +85,7 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
         private void UnregisterCallbacks()
         {
             closeButton.clicked -= CloseMenu;
-            loginButton.clicked -= OnLoginClicked;
+            loginButton.clicked -= authFlowManager.ShowAuthMenu;
             refreshButton.clicked -= OnRefreshClicked;
 
             if (withdrawButton != null)
@@ -167,45 +170,6 @@ namespace FeedTheRealm.UI.MenuBar.TransactionsMenu
                 }
             }
         }
-
-        private void OnLoginClicked()
-        {
-            if (isAuthFlowActive || IsAuthMenuOpen())
-                return;
-
-            isAuthFlowActive = true;
-            try
-            {
-                var loginObj = resolver.Instantiate(worldUIObjectProvider.loginMenuObject);
-                var signUpObj = resolver.Instantiate(worldUIObjectProvider.signUpMenuObject);
-                var verifyCodeObj = resolver.Instantiate(
-                    worldUIObjectProvider.verifyCodeMenuObject
-                );
-
-                loginObj.name = "LoginMenu";
-                signUpObj.name = "SignUpMenu";
-                verifyCodeObj.name = "VerifyCodeMenu";
-
-                var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-                authFlow.OnAuthComplete += async () =>
-                {
-                    authFlow.Destroy();
-                    isAuthFlowActive = false;
-                    await LoadBalanceAsync();
-                };
-                authFlow.Initialize();
-            }
-            catch
-            {
-                isAuthFlowActive = false;
-                throw;
-            }
-        }
-
-        private static bool IsAuthMenuOpen() =>
-            GameObject.Find("LoginMenu") != null
-            || GameObject.Find("SignUpMenu") != null
-            || GameObject.Find("VerifyCodeMenu") != null;
 
         private void ShowPanel(VisualElement panel)
         {

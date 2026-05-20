@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API;
 using FeedTheRealm.Core.DataPersistence;
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FTR.UI;
 using FTRShared.UI.AuthMenu;
@@ -48,6 +49,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
+        [Inject]
+        private AuthFlowManager authFlowManager;
+
+        [Inject]
+        private UpdateLoginEvent updateLoginEvent;
+
         // ── UI refs ───────────────────────────────────────────────────────────
         private ZoneStatusBadgeController zoneStatusBadge;
         private VisualElement notLoggedInPanel,
@@ -81,9 +88,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private int pendingSlotCount;
         private int pendingCreateSlotCount = MinSlots;
         private int currentPage;
-        private bool isAuthFlowActive;
         private SubscriptionsCallbackServer callbackServer;
-        private int totalWorldCount;
 
         private const int MinSlots = 1;
         private const int MaxSlots = 50;
@@ -98,6 +103,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             BindElements(root);
             RegisterCallbacks();
             await LoadSubscriptionAsync();
+            updateLoginEvent.OnRaised += async () => await LoadSubscriptionAsync();
         }
 
         private void OnDisable() => UnregisterCallbacks();
@@ -139,7 +145,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private void RegisterCallbacks()
         {
             closeButton.clicked += CloseMenu;
-            loginButton.clicked += OnLoginClicked;
+            loginButton.clicked += authFlowManager.ShowAuthMenu;
             createSubscriptionButton.clicked += OnCreateSubscriptionClicked;
             decreaseSlotsButton.clicked += OnDecreaseSlots;
             increaseSlotsButton.clicked += OnIncreaseSlots;
@@ -155,7 +161,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private void UnregisterCallbacks()
         {
             closeButton.clicked -= CloseMenu;
-            loginButton.clicked -= OnLoginClicked;
+            loginButton.clicked -= authFlowManager.ShowAuthMenu;
             createSubscriptionButton.clicked -= OnCreateSubscriptionClicked;
             decreaseSlotsButton.clicked -= OnDecreaseSlots;
             increaseSlotsButton.clicked -= OnIncreaseSlots;
@@ -838,48 +844,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             );
         }
 
-        // ── Auth ──────────────────────────────────────────────────────────────
-
-        private void OnLoginClicked()
-        {
-            if (isAuthFlowActive || IsAuthMenuOpen())
-                return;
-            isAuthFlowActive = true;
-
-            try
-            {
-                var loginObj = resolver.Instantiate(worldUIObjectProvider.loginMenuObject);
-                var signUpObj = resolver.Instantiate(worldUIObjectProvider.signUpMenuObject);
-                var verifyCodeObj = resolver.Instantiate(
-                    worldUIObjectProvider.verifyCodeMenuObject
-                );
-
-                loginObj.name = "LoginMenu";
-                signUpObj.name = "SignUpMenu";
-                verifyCodeObj.name = "VerifyCodeMenu";
-
-                var authFlow = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-                authFlow.OnAuthComplete += async () =>
-                {
-                    authFlow.Destroy();
-                    isAuthFlowActive = false;
-                    await LoadSubscriptionAsync();
-                };
-                authFlow.Initialize();
-            }
-            catch
-            {
-                isAuthFlowActive = false;
-                throw;
-            }
-        }
-
         // ── Helpers ───────────────────────────────────────────────────────────
-
-        private static bool IsAuthMenuOpen() =>
-            GameObject.Find("LoginMenu") != null
-            || GameObject.Find("SignUpMenu") != null
-            || GameObject.Find("VerifyCodeMenu") != null;
 
         private static bool IsMissingSubscription(long statusCode, string error) =>
             statusCode == 404

@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Core.WorldSetup;
@@ -13,13 +14,13 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
     {
         private readonly GameObject mainMenuGameObject;
         private readonly IObjectResolver objectResolver;
-        private readonly GameObject loginMenuObject;
-        private readonly GameObject signUpMenuObject;
-        private readonly GameObject verifyCodeMenuObject;
-        private AuthFlowManager authFlowManager;
+        private readonly AuthFlowManager authFlowManager;
+        private readonly UpdateLoginEvent updateLoginEvent;
 
         public MainMenuUISetupService(
             MainMenuUIObjectProvider mainMenuUIObjectProvider,
+            UpdateLoginEvent updateLoginEvent,
+            AuthFlowManager authFlowManager,
             IObjectResolver objectResolver
         )
         {
@@ -29,10 +30,9 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 return;
             }
             mainMenuGameObject = mainMenuUIObjectProvider.mainMenuGameObject;
-            loginMenuObject = mainMenuUIObjectProvider.loginMenuObject;
-            signUpMenuObject = mainMenuUIObjectProvider.signUpMenuObject;
-            verifyCodeMenuObject = mainMenuUIObjectProvider.verifyCodeMenuObject;
             this.objectResolver = objectResolver;
+            this.updateLoginEvent = updateLoginEvent;
+            this.authFlowManager = authFlowManager;
         }
 
         public void Setup()
@@ -43,35 +43,15 @@ namespace FeedTheRealm.Gameplay.MainMenuSetup.Services
                 );
             objectResolver.Instantiate(mainMenuGameObject).name = "MainMenu";
 
-            if (loginMenuObject == null)
-                throw new System.Exception(
-                    "LoginMenu GameObject not set in mainMenuUIObjectProvider!"
-                );
-
-            GameObject loginMenu = objectResolver.Instantiate(loginMenuObject);
-            var loginObj = loginMenu;
-            loginObj.name = "LoginMenu";
-            var signUpObj = objectResolver.Instantiate(signUpMenuObject);
-            signUpObj.name = "SignUpMenu";
-            var verifyCodeObj = objectResolver.Instantiate(verifyCodeMenuObject);
-            verifyCodeObj.name = "VerifyCodeMenu";
-
-            authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-            authFlowManager.OnAuthComplete += () =>
+            authFlowManager.OnAuthComplete += (message) =>
             {
-                authFlowManager.Destroy();
+                ToastNotification.Show(message, "success", Color.green);
+                updateLoginEvent.Raise();
             };
-            authFlowManager.Initialize();
-
-            if (signUpMenuObject == null)
-                throw new System.Exception(
-                    "SignUpMenu GameObject not set in mainMenuUIObjectProvider!"
-                );
-
-            if (verifyCodeMenuObject == null)
-                throw new System.Exception(
-                    "VerifyCodeMenu GameObject not set in mainMenuUIObjectProvider!"
-                );
+            authFlowManager.OnPasswordResetComplete += (message) =>
+            {
+                ToastNotification.Show(message, "success", Color.green);
+            };
         }
     }
 }
