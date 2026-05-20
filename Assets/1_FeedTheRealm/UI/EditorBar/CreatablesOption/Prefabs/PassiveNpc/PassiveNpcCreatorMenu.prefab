@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6958354529743035616
+--- !u!1 &5294252709646653800
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8645083876712052876}
-  - component: {fileID: 2039463302539938084}
-  - component: {fileID: -1537716657621255143}
+  - component: {fileID: 2300863427403397707}
+  - component: {fileID: 5607344674935022222}
+  - component: {fileID: 294546856733896949}
   m_Layer: 0
-  m_Name: FriendlyNpcMenu
+  m_Name: PassiveNpcCreatorMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8645083876712052876
+--- !u!4 &2300863427403397707
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958354529743035616}
+  m_GameObject: {fileID: 5294252709646653800}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,22 +33,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2039463302539938084
+--- !u!114 &5607344674935022222
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958354529743035616}
+  m_GameObject: {fileID: 5294252709646653800}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e2fb800773fa2488a85ba56cde30c748, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 579e8481fc3e4cdca9a7db96990d7c4e, type: 3}
-  m_SortingOrder: 3
+  sourceAsset: {fileID: 9197481963319205126, guid: c7605d91743745470bf8d230d71456b7, type: 3}
+  m_SortingOrder: 2
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -56,21 +56,20 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &-1537716657621255143
+--- !u!114 &294546856733896949
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958354529743035616}
+  m_GameObject: {fileID: 5294252709646653800}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 720683a00f0a13c8598fe1edbf558ff7, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cc9fe58ed3242362ae9de550bdbc3c5, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::NPCsMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
-  logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  createNPCMenuPrefab: {fileID: 5294252709646653800, guid: 28532f7343efa545ba1c29d155553fb6, type: 3}
-  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
-  itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::NPCCreatorMenuController
+  AllowInputWhileOpen: 0
+  npcsMenuPrefab: {fileID: 6958354529743035616, guid: 34e857f60edbb26b58d8738505523c9b, type: 3}
+  characterEditorPrefab: {fileID: 3115639558442495421, guid: 6b451e1b46534806e9405a7ddb7ce2c1, type: 3}
+  progressionItemTemplate: {fileID: 9197481963319205126, guid: e5f038e0f8885b70fac3c868ef2ade75, type: 3}
+  worldSelector: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}

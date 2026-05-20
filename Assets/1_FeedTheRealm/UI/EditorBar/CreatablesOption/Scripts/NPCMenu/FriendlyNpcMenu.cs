@@ -58,8 +58,10 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             foreach (FriendlyNpc npc in creatablesManager.GetAll<FriendlyNpc>())
             {
+                var amountOfDialogs = npc.data.dialogProgression.Count;
                 var entry = itemListTemplate.Instantiate();
                 entry.Q<Label>("Header").text = npc.data.name;
+                entry.Q<Label>("DialogsAmount").text = amountOfDialogs.ToString();
 
                 var typeLabel = entry.Q<Label>("Type");
                 if (typeLabel != null)

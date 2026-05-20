@@ -1,0 +1,16 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <ui:VisualElement name="EnemyEntry" class="wc-card" style="margin-top: 8px; margin-right: 0; width: 95%;">
+        <ui:VisualElement name="CardTop" class="wc-card__top">
+            <ui:Label text="Npc Name" name="Header" class="wc-card__name"/>
+            <ui:Button text="" name="Edit" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); height: 12px; width: 11px; margin-right: 25px;"/>
+            <ui:Button text="" name="Delete" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); height: 12px; width: 11px;"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Divider" class="wc-card__divider"/>
+        <ui:VisualElement name="CardStats" class="wc-card__stats">
+            <ui:Image name="Dialogs" source="project://database/Assets/1_FeedTheRealm/UI/Icons/TextBubble.svg?fileID=7388822144124034973&amp;guid=7603cfe48f815ee91a1d9e16417318e4&amp;type=3#TextBubble" class="wc-card__icon"/>
+            <ui:Label text="Dialogs:" class="wc-card__stat" style="width: 45px;"/>
+            <ui:Label text="0" name="DialogsAmount" class="wc-card__stat"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

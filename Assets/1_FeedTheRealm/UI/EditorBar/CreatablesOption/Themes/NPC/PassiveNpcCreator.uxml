@@ -1,0 +1,39 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 60%; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;">
+            <ui:VisualElement name="Panel" class="wc-panel">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:VisualElement name="TitleGroup" style="flex-direction: row; align-items: flex-end;">
+                        <ui:Label text="NPC" class="wc-header-label"/>
+                        <ui:Label text=" (Non playable characters)" style="font-size: 15px; color: rgb(15, 197, 229); margin-bottom: 4px; margin-left: 6px;"/>
+                    </ui:VisualElement>
+                    <ui:Button text="Return To Menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="NPCEditor" class="wc-body">
+                    <ui:VisualElement name="NPCPreviewContainer" class="wc-preview-col">
+                        <ui:VisualElement name="SpriteFrame" class="wc-sprite-frame">
+                            <ui:Image name="SpritePreview" class="wc-sprite-image"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Edit Character" name="EditCharacter" class="wc-edit-sprite-btn"/>
+                        <ui:Button text="Save NPC" name="SaveButton" class="wc-primary-btn" style="margin-top: 16px; align-self: stretch;"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+                        <ui:VisualElement class="wc-field-group">
+                            <ui:Label text="Name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="Passive Npc" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="npc-add-dialog-row" style="flex-direction: row; align-items: center; margin-bottom: 10px;">
+                            <ui:Label text="Dialog" name="DialogDropdownLabel" class="wc-field-label" style="margin-right: 12px; margin-bottom: 0; -unity-text-align: middle-left;"/>
+                            <ui:DropdownField name="DialogDropdown" class="wc-dropdown" style="flex-grow: 1; margin-right: 10px;"/>
+                            <ui:Button text="Add Dialog" name="AddDialogButton" class="wc-back-btn"/>
+                        </ui:VisualElement>
+                        <ui:Label text="Dialog Progression" name="ProgressionLabel" class="wc-field-label" style="margin-top: 2px; margin-bottom: 4px; display: none;"/>
+                        <ui:ScrollView name="ProgressionScrollView" style="flex-grow: 1; min-height: 180px; border-width: 1px; border-color: rgba(255, 210, 80, 0.4); border-radius: 8px; padding: 5px; margin-bottom: 10px; display: none;"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
