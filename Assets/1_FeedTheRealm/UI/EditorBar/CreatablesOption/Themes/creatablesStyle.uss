@@ -71,14 +71,12 @@
     background-color: rgba(0, 0, 0, 0);
     border-color: rgb(15, 197, 229);
     border-width: 1.5px;
-    border-radius: 20px;
+    border-radius: 16px;
     color: rgb(15, 197, 229);
-    font-size: 15px;
-    padding: 6px 18px 6px 18px;
+    font-size: 12px;
+    padding: 4px 18px 4px 18px;
     cursor: link;
     align-self: center;
-    padding-left: 25px;
-    padding-right: 25px;
 }
 
 .wc-back-btn:hover {
@@ -144,13 +142,13 @@
 }
 
 .wc-field-group {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 .wc-field-label {
-    font-size: 14px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     -unity-font-style: normal;
 }
 
@@ -178,6 +176,7 @@
     font-size: 14px;
     padding: 0 18px 0 18px;
     height: 42px;
+    overflow: visible;
 }
 
 .wc-dropdown .unity-base-popup-field__arrow {
@@ -211,11 +210,11 @@
     background-color: rgba(0, 0, 0, 0);
     border-color: rgb(255, 210, 80);
     border-width: 1.5px;
-    border-radius: 22px;
+    border-radius: 16px;
     color: rgb(255, 210, 80);
-    font-size: 15px;
+    font-size: 12px;
     -unity-font-style: normal;
-    padding: 10px 44px 10px 44px;
+    padding: 6px 36px 6px 36px;
     cursor: link;
     letter-spacing: 1px;
 }
@@ -256,17 +255,18 @@
     border-width: 0;
     padding: 0;
     margin: 0;
+    overflow: visible;
 }
 
 .wc-text-field .unity-base-field__input {
     background-color: rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
     border-width: 1px;
-    border-radius: 22px;
+    border-radius: 16px;
     color: rgb(255, 255, 255);
-    font-size: 14px;
-    padding: 10px 18px 10px 18px;
-    height: 42px;
+    font-size: 12px;
+    padding: 6px 14px 6px 14px;
+    height: 32px;
 }
 
 .wc-text-field:focus .unity-base-field__input,
@@ -291,11 +291,11 @@
     background-color: rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
     border-width: 1px;
-    border-radius: 22px;
+    border-radius: 16px;
     color: rgb(255, 255, 255);
-    font-size: 14px;
-    padding: 0 18px 0 18px;
-    height: 42px;
+    font-size: 12px;
+    padding: 0 14px 0 14px;
+    height: 32px;
 }
 
 .wc-dropdown:hover .unity-base-field__input,
@@ -405,17 +405,18 @@
     padding: 0;
     margin: 0;
     padding-bottom: 10px;
+    overflow: visible;
 }
 
 .wc-description-field .unity-base-field__input {
     background-color: rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
     border-width: 1px;
-    border-radius: 14px;
+    border-radius: 10px;
     color: rgb(255, 255, 255);
-    font-size: 14px;
-    padding: 14px 18px 14px 18px;
-    min-height: 120px;
+    font-size: 12px;
+    padding: 10px 14px 10px 14px;
+    min-height: 90px;
     white-space: normal;
     -unity-text-align: upper-left;
 }

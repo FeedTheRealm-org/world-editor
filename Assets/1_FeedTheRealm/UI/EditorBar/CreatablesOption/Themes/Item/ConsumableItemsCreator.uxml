@@ -1,8 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
-        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 70%; min-width: 540px; max-width: 1000px; height: 778px; min-height: 420px; max-height: 820px;">
-            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+            <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 60%; min-width: 500px; max-width: 860px; height: 70%; min-height: 380px; max-height: 700px;">            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
                 <ui:Button text="✕" name="Close" class="wc-close-btn"/>
                 <ui:VisualElement name="Header" class="wc-header">
                     <ui:Label text="Items | consumables" name="Title" class="wc-header-label"/>
@@ -22,8 +21,7 @@
                         </ui:VisualElement>
                         <ui:VisualElement name="DescriptionGroup" class="wc-field-group">
                             <ui:Label text="description" class="wc-field-label"/>
-                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 110px;"/>
-                        </ui:VisualElement>
+                        <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 70px;"/>                        </ui:VisualElement>
                         <ui:VisualElement name="EffectRow" class="wc-row">
                             <ui:VisualElement name="EffectTypeGroup" class="wc-field-group">
                                 <ui:Label text="effect type" class="wc-field-label"/>

@@ -191,7 +191,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             saveButton.clicked -= CreateNewObject;
             saveButton.clicked -= SaveExistingNpc;
-            saveButton.text = "Save NPC";
+            saveButton.text = "Save";
             saveButton.clicked += SaveExistingNpc;
         }
 

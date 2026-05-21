@@ -1,38 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns:ui="UnityEngine.UIElements"
-         xmlns:uie="UnityEditor.UIElements"
-         noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
-         editor-extension-mode="False">
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
 
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/Shop/ShopProductItem.uss?fileID=7433441132597879392&amp;guid=6d60350b0f6d4f3818333bbd136a415f&amp;type=3#ShopProductItem"/>
+    <ui:VisualElement name="ProductItem" class="wc-card" style="flex-direction: row; align-items: center; margin-bottom: 8px;">
 
-    <ui:VisualElement name="ProductItem" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.5); flex-direction: row; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; height: 100%; min-height: 100%; max-height: 100%; width: 100%; color: rgb(0, 0, 0);">
-
-        <ui:VisualElement name="PreviewContainer" class="shop-preview-container">
-            <ui:Image name="Preview" style="width: 100%; height: 100%;"/>
+        <!-- Preview -->
+        <ui:VisualElement name="PreviewContainer" class="wc-sprite-frame" style="width: 72px; height: 72px; min-width: 72px; min-height: 72px; max-width: 72px; max-height: 72px; margin-right: 14px; flex-shrink: 0;">
+            <ui:Image name="Preview" class="wc-sprite-image"/>
         </ui:VisualElement>
 
-        <ui:VisualElement name="Details" style="flex-grow: 1; width: 100%; background-color: rgba(0, 0, 28, 0); padding-left: 1%; align-items: stretch; justify-content: space-between; height: 90px;">
+        <!-- Details -->
+        <ui:VisualElement name="Details" style="flex-grow: 1; flex-direction: column; justify-content: center;">
 
-            <ui:VisualElement name="NameRow" style="flex-direction: row; align-items: center; flex-grow: 0;">
-                <ui:Label text="Product Name" name="ProductName" style="-unity-font-style: bold; font-size: 15px; color: rgb(255, 255, 255); -unity-text-align: middle-left; flex-grow: 1;"/>
-                <ui:Button text="✏" name="EditName" style="width: 50px; height: 50px; font-size: 30px; background-color: rgba(255, 255, 255, 0.12); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; color: rgb(255, 255, 255); margin-left: 6px; padding-left: 0; padding-right: 0;"/>
+            <ui:VisualElement name="NameRow" style="flex-direction: row; align-items: center; margin-bottom: 8px;">
+                <ui:Label text="Product Name" name="ProductName" class="wc-card__name" style="flex-grow: 1;"/>
+                <ui:Button text="✏" name="EditName" class="wc-card__action-btn" style="color: rgb(15, 197, 229); font-size: 13px;"/>
             </ui:VisualElement>
 
-            <ui:VisualElement name="NameEditRow" style="flex-direction: row; align-items: center; flex-grow: 0; display: none;">
-                <ui:TextField name="ProductNameInput" style="flex-grow: 1; font-size: 14px; color: rgb(255, 255, 255); background-color: rgba(255, 255, 255, 0.08);"/>
-                <ui:Button text="✓" name="ConfirmName" style="width: 28px; height: 24px; font-size: 14px; background-color: rgba(60, 160, 60, 0.7); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; color: rgb(255, 255, 255); margin-left: 6px; padding-left: 0; padding-right: 0;"/>
+            <ui:VisualElement name="NameEditRow" style="flex-direction: row; align-items: center; margin-bottom: 8px; display: none;">
+                <ui:TextField name="ProductNameInput" class="wc-text-field" style="flex-grow: 1;"/>
+                <ui:Button text="✓" name="ConfirmName" class="wc-card__action-btn" style="color: rgb(80, 200, 80); font-size: 14px; margin-left: 8px;"/>
             </ui:VisualElement>
 
-            <ui:VisualElement style="flex-grow: 1; flex-direction: row; margin-bottom: 5px; margin-top: 0; align-items: center;">
-                <ui:IntegerField label="Price" value="0" name="ProductPrice" max-length="999999" style="background-color: rgba(0, 0, 0, 0); font-size: 20px; color: rgb(255, 255, 255); width: 464px; -unity-text-align: middle-center; align-items: center; margin-bottom: 5px; margin-top: 5px;"/>
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label text="price" class="wc-field-label" style="margin-bottom: 0; margin-right: 10px; flex-shrink: 0;"/>
+                <ui:IntegerField value="0" name="ProductPrice" class="wc-text-field" style="width: 140px;"/>
             </ui:VisualElement>
 
         </ui:VisualElement>
 
-        <ui:Button text="Delete" name="Delete" style="white-space: pre; align-self: center; min-height: 90%; max-height: 90%; background-color: rgb(40, 5, 5); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; color: rgb(255, 255, 255);"/>
+        <!-- Delete -->
+        <ui:Button text="✕" name="Delete" class="wc-card__action-btn" style="color: rgb(255, 80, 80); font-size: 16px; margin-left: 14px; flex-shrink: 0;"/>
 
     </ui:VisualElement>
 </ui:UXML>
