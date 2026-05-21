@@ -222,13 +222,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
                         publishButton.SetEnabled(false);
                         await ValidateBeforePublish();
+                        await PublishWorldData();
                         await PublishSprites();
                         var cData = dataPersistenceManager.GetCreatables(
                             worldSelector.selectedWorld
                         );
                         if (cData != null)
                             SyncShopCosmeticIds(cData);
-                        await PublishWorldData();
                         await PublishCreatables();
                         await PublishZoneData();
                         ToastNotification.Show(
