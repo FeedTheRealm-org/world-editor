@@ -68,7 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6f139cdcdadf0c3981958c45a57de56, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ItemsMenuController
+  AllowInputWhileOpen: 0
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
+  itemListTemplate: {fileID: 9197481963319205126, guid: b70b98c0773db9255a3bdcdbc601df81, type: 3}
   consumableCreatorMenuPrefab: {fileID: 902821296252507059, guid: 775de7162628e17459f2ea67fb2f204c, type: 3}
   weaponCreatorMenuPrefab: {fileID: 7824535126564437059, guid: b3f50d4c3625e42499f810faf55d0061, type: 3}

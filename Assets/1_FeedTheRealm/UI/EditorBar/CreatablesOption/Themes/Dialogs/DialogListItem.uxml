@@ -6,6 +6,7 @@
             <ui:Button text="" name="Edit" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); height: 12px; width: 11px; margin-right: 25px;"/>
             <ui:Button text="" name="Delete" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); height: 12px; width: 11px;"/>
         </ui:VisualElement>
+                <ui:VisualElement name="Divider" class="wc-card__divider"/>
         <ui:VisualElement name="CardStats" class="wc-card__stats">
             <ui:Image name="MessageIcon" source="project://database/Assets/1_FeedTheRealm/UI/Icons/TextBubble.svg?fileID=7388822144124034973&amp;guid=7603cfe48f815ee91a1d9e16417318e4&amp;type=3#TextBubble" class="wc-card__icon"/>
             <ui:Label text="Messages:" name="Messages" class="wc-card__stat"/>

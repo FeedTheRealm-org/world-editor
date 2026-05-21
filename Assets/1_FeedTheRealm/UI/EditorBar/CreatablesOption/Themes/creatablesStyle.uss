@@ -419,3 +419,27 @@
     white-space: normal;
     -unity-text-align: upper-left;
 }
+
+.wc-row .wc-field-group {
+    flex-basis: 0;
+}
+
+.wc-row .wc-field-group:first-child {
+    margin-right: 24px;
+}
+
+.wc-row--3 {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.wc-row--3 .wc-field-group {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    margin-right: 24px;
+}
+
+.wc-row--3 .wc-field-group:last-child {
+    margin-right: 0;
+}

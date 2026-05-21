@@ -1,0 +1,21 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <ui:VisualElement name="Entry" class="wc-card" style="margin-top: 8px; margin-right: 0; width: 95%;">
+        <ui:VisualElement name="CardTop" class="wc-card__top">
+            <ui:Label text="Name" name="Header" class="wc-card__name"/>
+            <ui:Button text="" name="Edit" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); height: 12px; width: 11px; margin-right: 25px;"/>
+            <ui:Button text="" name="Delete" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); height: 12px; width: 11px;"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Divider" class="wc-card__divider"/>
+        <ui:VisualElement name="CardStats" class="wc-card__stats">
+            <ui:VisualElement name="ConsumableStats" enabled="true" style="flex-grow: 1; flex-direction: row; align-self: center; justify-content: flex-start; align-items: center; width: 1%; display: flex;">
+                <ui:Image name="MessageIcon" source="project://database/Assets/1_FeedTheRealm/UI/Icons/Potion.svg?fileID=7388822144124034973&amp;guid=fa78fbc2433160ce88d34699573ed99b&amp;type=3#Potion" class="wc-card__icon"/>
+                <ui:Label text="Consumable" name="Messages" class="wc-card__stat" style="-unity-font-style: normal;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="WeaponStats" style="flex-grow: 1; flex-direction: row; align-self: center; justify-content: flex-start; align-items: center;">
+                <ui:Image name="MessageIcon" source="project://database/Assets/1_FeedTheRealm/UI/Icons/Sword.svg?fileID=7388822144124034973&amp;guid=6198fc968a8ac85bca94ebd05258e6b5&amp;type=3#Sword" class="wc-card__icon"/>
+                <ui:Label text="Weapon" name="Messages" class="wc-card__stat"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

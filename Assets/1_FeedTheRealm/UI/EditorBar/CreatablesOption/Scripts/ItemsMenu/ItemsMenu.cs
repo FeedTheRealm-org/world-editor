@@ -59,7 +59,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private void PopulateList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var list = root.Q<ListView>("ItemsList");
+            var list = root.Q<ScrollView>("ItemsList");
             list.Clear();
 
             foreach (var consumable in creatablesManager.GetAll<ConsumableItem>())
@@ -76,7 +76,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         }
 
         private void AddListEntry(
-            ListView list,
+            ScrollView list,
             Creatable creatable,
             string displayName,
             string type,
@@ -86,9 +86,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             var entry = itemListTemplate.Instantiate();
             entry.Q<Label>("Header").text = displayName;
 
-            var typeLabel = entry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = type;
+            var consumableStats = entry.Q<VisualElement>("ConsumableStats");
+            var weaponStats = entry.Q<VisualElement>("WeaponStats");
+
+            consumableStats.style.display =
+                type == "Consumable" ? DisplayStyle.Flex : DisplayStyle.None;
+            weaponStats.style.display = type == "Weapon" ? DisplayStyle.Flex : DisplayStyle.None;
 
             entry.Q<Button>("Edit").clicked += () =>
             {
@@ -127,7 +130,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                 );
             };
 
-            list.hierarchy.Add(entry);
+            list.Add(entry);
         }
 
         private void OpenCreatorMenu(GameObject prefab)
