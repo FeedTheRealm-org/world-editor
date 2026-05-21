@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using API;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;

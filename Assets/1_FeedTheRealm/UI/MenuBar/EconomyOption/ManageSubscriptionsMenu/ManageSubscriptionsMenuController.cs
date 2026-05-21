@@ -5,7 +5,7 @@ using API;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using FTRShared.UI.AuthMenu;
 using FTRShared.UI.ZoneStatusBadge;
 using UnityEngine;

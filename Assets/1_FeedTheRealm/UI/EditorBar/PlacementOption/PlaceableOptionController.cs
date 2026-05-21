@@ -1,6 +1,6 @@
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.Library;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 
 namespace FeedTheRealm.UI.EditorBar.PlacementOption

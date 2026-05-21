@@ -9,8 +9,8 @@ using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
@@ -222,13 +222,13 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                         dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
                         publishButton.SetEnabled(false);
                         await ValidateBeforePublish();
+                        await PublishWorldData();
                         await PublishSprites();
                         var cData = dataPersistenceManager.GetCreatables(
                             worldSelector.selectedWorld
                         );
                         if (cData != null)
                             SyncShopCosmeticIds(cData);
-                        await PublishWorldData();
                         await PublishCreatables();
                         await PublishZoneData();
                         ToastNotification.Show(

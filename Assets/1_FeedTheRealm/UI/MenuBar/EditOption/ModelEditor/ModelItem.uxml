@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
     <ui:VisualElement style="flex-grow: 1; background-color: rgb(95, 95, 95); flex-direction: row; align-items: center; justify-content: space-between; margin-left: 0; padding-left: 2%; padding-right: 2%; color: rgb(255, 255, 255); margin-top: 2px; margin-bottom: 2px;">
         <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
             <ui:Label text="ModelName" name="ModelName" style="width: 168px; height: 100%; -unity-text-align: middle-left; border-right-width: 1px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);"/>

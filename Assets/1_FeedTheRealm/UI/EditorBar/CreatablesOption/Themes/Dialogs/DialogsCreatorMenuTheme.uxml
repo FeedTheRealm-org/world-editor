@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
+    <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
+        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="max-height: 55%; height: 540px;">
+            <ui:VisualElement name="Header" class="header" style="display: flex;">
+                <ui:Label text="Dialog creator" class="header-label"/>
+                <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
+                    <ui:Button text="Return To Menu" name="Return" class="button"/>
+                    <ui:Button text="Close" name="Close" class="button"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="DialogCreator" style="flex-direction: row; align-items: flex-start; gap: 20px; padding-left: 3%; padding-right: 3%; flex-grow: 1; align-self: stretch; height: 540%;">
+                <ui:VisualElement name="FormContainer" style="flex: 1; flex-direction: column; height: 368px; max-height: 100%; min-height: 50%;">
+                    <ui:TextField placeholder-text="Dialog name" name="NameField" password="false" picking-mode="Position" class="unity-text-field__input" style="align-self: stretch; height: 40px; font-size: 14px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; color: rgb(255, 255, 255);"/>
+                    <ui:Button text="Save Dialog" name="SaveButton" style="padding: 10px 30px; width: 15%; align-self: flex-end; margin-top: 2%; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

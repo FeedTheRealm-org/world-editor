@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FeedTheRealm.UI.Common
+namespace FTR.UI
 {
     /// <summary>
     /// Helps separate the UI visualization values from the actual data in memory.

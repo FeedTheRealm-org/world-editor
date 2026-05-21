@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Placement
   menuToOpen: {fileID: 0}
   menuOptions:

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.Common.Components
+namespace FTR.UI.Components
 {
     /// <summary>
     /// Manages a stack of dropdown menus for the UI. Allows opening submenus on hover and ensures only one menu is open at a time.

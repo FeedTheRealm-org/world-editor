@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle" />
+    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle" />
     <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CharacterEdit/WorldCharacterEditMenuTheme.uss?fileID=7433441132597879392&amp;guid=5d780734bf2647109496c559640ded69&amp;type=3#WorldCharacterEditMenuTheme" />
     <ui:VisualElement name="Body" class="world-character-edit-overlay">
         <ui:VisualElement name="CharacterEditContainer" class="menu world-character-edit-container">

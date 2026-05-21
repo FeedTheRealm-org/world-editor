@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: File
   menuToOpen: {fileID: 0}
   menuOptions:
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Open
   menuToOpen: {fileID: -8249784665970812618, guid: dfdefcf7273786779abf4d38891d92a2, type: 3}
   menuOptions: []
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Save
   menuToOpen: {fileID: 3715907354677866441, guid: f255f265d26d4df5b94410809a754385, type: 3}
   menuOptions: []
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Publish
   menuToOpen: {fileID: 1546281547035943485, guid: 09b0043563fea245394cfd803bd23670, type: 3}
   menuOptions: []
