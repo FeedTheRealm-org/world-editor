@@ -72,7 +72,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             BindEditMode();
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Save Consumable";
+            saveButton.text = "Save";
             saveButton.clicked += SaveExistingObject;
         }
 

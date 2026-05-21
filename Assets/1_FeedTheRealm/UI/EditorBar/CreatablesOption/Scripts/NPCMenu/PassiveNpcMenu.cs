@@ -70,7 +70,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 entry.Q<Button>("Edit").clicked += () => OnEditNPC(npc);
                 entry.Q<Button>("Delete").clicked += () => OnDeleteNPC(npc, entry);
 
-                npcsList.hierarchy.Add(entry);
+                npcsList.Add(entry);
             }
         }
 

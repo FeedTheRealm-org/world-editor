@@ -40,7 +40,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private NPCDialogProgressionItemBuilder progressionItemBuilder;
 
         private TextField nameInput;
-        private TextField descriptionInput;
         private DropdownField dialogDropdown;
         private Button addDialogButton;
         private ScrollView progressionScrollView;
@@ -72,7 +71,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             nameInput = root.Q<TextField>("NameField");
-            descriptionInput = root.Q<TextField>("DescriptionField");
             dialogDropdown = root.Q<DropdownField>("DialogDropdown");
             addDialogButton = root.Q<Button>("AddDialogButton");
             progressionScrollView = root.Q<ScrollView>("ProgressionScrollView");
@@ -202,7 +200,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             if (editBuffer != null)
             {
                 nameInput.value = editBuffer.Working.name;
-                descriptionInput.value = editBuffer.Working.description;
             }
             RefreshProgressionUI();
         }
@@ -449,7 +446,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 addDialogButton.clicked += AddProgressionEntry;
 
             nameInput.RegisterValueChangedCallback(OnNameChanged);
-            descriptionInput.RegisterValueChangedCallback(OnDescriptionChanged);
         }
 
         private void UnregisterCallbacks()
@@ -471,19 +467,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             }
 
             nameInput?.UnregisterValueChangedCallback(OnNameChanged);
-            descriptionInput?.UnregisterValueChangedCallback(OnDescriptionChanged);
         }
 
         private void OnNameChanged(ChangeEvent<string> evt)
         {
             if (editBuffer != null)
                 editBuffer.Working.name = evt.newValue;
-        }
-
-        private void OnDescriptionChanged(ChangeEvent<string> evt)
-        {
-            if (editBuffer != null)
-                editBuffer.Working.description = evt.newValue;
         }
 
         private void OpenCharacterEditor()
@@ -542,8 +531,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
             new CharacterInfoResponse
             {
                 character_name = (editBuffer?.Working.name ?? nameInput?.value) ?? string.Empty,
-                character_bio =
-                    (editBuffer?.Working.description ?? descriptionInput?.value) ?? string.Empty,
                 skin_color =
                     editBuffer != null
                         ? editBuffer.Working.skin_color

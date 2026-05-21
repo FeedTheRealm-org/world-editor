@@ -1,0 +1,19 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 60%; min-width: 420px; max-width: 860px; height: 65%; min-height: 320px; max-height: 720px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:VisualElement name="TitleGroup" style="flex-direction: row; align-items: flex-end;">
+                        <ui:Label text="NPC" class="wc-header-label"/>
+                        <ui:Label text=" (Non playable characters)" style="font-size: 15px; color: rgb(15, 197, 229); margin-bottom: 4px; margin-left: 6px;"/>
+                    </ui:VisualElement>
+                    <ui:Button text="new" name="AddNPC" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:ScrollView name="NPCList" class="wc-grid-list" style="flex-grow: 1;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
