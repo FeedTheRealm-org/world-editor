@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API;
 using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -237,25 +238,26 @@ public partial class CharacterEditController
     /// </summary>
     private async Task updateCharacterInfo()
     {
-        var characterInfo = await playerService.PatchCharacterInfoAsync(characterInfoRequest);
+        API.ApiResponse<API.CharacterInfoResponse> characterInfo =
+            await playerService.PatchCharacterInfoAsync(characterInfoRequest);
         if (characterInfo != null)
         {
             logger.Log("Character info successfully updated", this);
 
-            if (characterInfo.category_sprites != null)
+            if (characterInfo.data.category_sprites != null)
             {
                 characterInfoRequest.category_sprites = new Dictionary<string, string>(
-                    characterInfo.category_sprites
+                    characterInfo.data.category_sprites
                 );
             }
 
-            applyCharacterColorsFromResponse(characterInfo);
+            applyCharacterColorsFromResponse(characterInfo.data);
             CaptureInitialSpriteSnapshot();
 
             if (session != null)
             {
                 session.IsFirstLogin = false;
-                session.CharacterName = characterInfo.character_name;
+                session.CharacterName = characterInfo.data.character_name;
             }
             _saveButton.text = "Saved";
             ShowToastSuccess("Character updated successfully.");
