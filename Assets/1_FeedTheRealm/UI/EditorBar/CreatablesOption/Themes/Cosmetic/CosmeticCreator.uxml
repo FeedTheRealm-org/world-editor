@@ -1,0 +1,53 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 65%; min-width: 500px; max-width: 920px; height: 65%; min-height: 360px; max-height: 720px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Cosmetic" name="Title" class="wc-header-label"/>
+                    <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="CosmeticEditor" class="wc-body">
+
+                    <!-- Left: sprite preview -->
+                    <ui:VisualElement name="CosmeticPreviewContainer" class="wc-preview-col">
+                        <ui:VisualElement name="SpriteFrame" class="wc-sprite-frame">
+                            <ui:Image name="SpritePreview" class="wc-sprite-image"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Load Sprite" name="LoadSprite" class="wc-edit-sprite-btn"/>
+                    </ui:VisualElement>
+
+                    <!-- Right: fields -->
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+
+                        <ui:VisualElement name="NameGroup" class="wc-field-group">
+                            <ui:Label text="name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="DescriptionGroup" class="wc-field-group">
+                            <ui:Label text="description" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 80px;"/>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="CategoryGroup" class="wc-field-group">
+                            <ui:Label text="part" class="wc-field-label"/>
+                            <ui:DropdownField name="CategoryField" class="wc-dropdown"/>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="wc-footer">
+                            <ui:Button text="create" name="SaveButton" class="wc-primary-btn"/>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

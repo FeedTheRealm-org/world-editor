@@ -46,13 +46,14 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
         private void PopulateItemsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var cosmeticsList = root.Q<ListView>("CosmeticsList");
+            var cosmeticsList = root.Q<ScrollView>("CosmeticsList");
             cosmeticsList.Clear();
 
             foreach (Cosmetic cosmetic in creatablesManager.GetAll<Cosmetic>())
             {
                 VisualElement cosmeticEntry = itemListTemplate.Instantiate();
                 var headerLabel = cosmeticEntry.Q<Label>("Header");
+
                 headerLabel.text = cosmetic.data.name;
                 var editButton = cosmeticEntry.Q<Button>("Edit");
                 var deleteButton = cosmeticEntry.Q<Button>("Delete");
@@ -64,7 +65,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 editButton.clicked += () => OnEdit(cosmetic);
                 deleteButton.clicked += () => OnDeleteCosmetic(cosmetic, cosmeticEntry);
 
-                cosmeticsList.hierarchy.Add(cosmeticEntry);
+                cosmeticsList.Add(cosmeticEntry);
             }
         }
 
