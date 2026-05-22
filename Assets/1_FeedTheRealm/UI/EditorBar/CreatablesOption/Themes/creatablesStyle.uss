@@ -441,9 +441,7 @@
     margin-right: 24px;
 }
 
-.wc-row--3 .wc-field-group:last-child {
-    margin-right: 0;
-}
+
 
 .wc-slider .unity-slider-int__input #unity-text-input,
 .wc-slider .unity-slider-float__input #unity-text-input {
