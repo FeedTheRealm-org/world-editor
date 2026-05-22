@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FTR.Core.Common.Config;
 using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Utils;
 using VContainer;
-using LootEntryData = FTRShared.Runtime.Models.LootTableData.LootEntryData;
+using static FTRShared.Runtime.Models.LootTableData;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 {
@@ -21,11 +18,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         [Inject]
         private CreatablesManager creatablesManager;
 
-        [Inject]
-        private Config config;
-
         [SerializeField]
         private GameObject lootMenuPrefab;
+
+        [SerializeField]
+        private VisualTreeAsset lootItemTemplate;
 
         private LootTableData editingData;
         private List<LootEntryData> localEntries = new();
@@ -36,7 +33,6 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         private FloatField minGoldInput;
         private FloatField maxGoldInput;
         private ScrollView entriesScrollView;
-        private Image spritePreview;
         private Button saveButton;
 
         void OnEnable()
@@ -49,15 +45,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             minGoldInput = root.Q<FloatField>("MinGoldDropAmount");
             maxGoldInput = root.Q<FloatField>("MaxGoldDropAmount");
             entriesScrollView = root.Q<ScrollView>("ItemsScrollView");
-            spritePreview = root.Q<Image>("SpritePreview");
             saveButton = root.Q<Button>("SaveButton");
 
             root.Q<Button>("AddItemButton").clicked += AddEntryToTable;
             root.Q<Button>("Return").clicked += ReturnToList;
             root.Q<Button>("Close").clicked += CloseMenu;
             saveButton.clicked += CreateNewObject;
-
-            itemDropdown.RegisterValueChangedCallback(evt => UpdateSpritePreview(evt.newValue));
 
             PopulateItemDropdown();
         }
@@ -71,6 +64,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             BindEditMode();
 
             saveButton.clicked -= CreateNewObject;
+            saveButton.text = "save";
             saveButton.clicked += ReturnToList;
         }
 
@@ -100,25 +94,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             itemDropdown.userData = allItems;
 
             if (itemDropdown.choices.Count > 0)
-            {
                 itemDropdown.value = itemDropdown.choices[0];
-                UpdateSpritePreview(itemDropdown.value);
-            }
-        }
-
-        private void UpdateSpritePreview(string itemName)
-        {
-            var allItems = itemDropdown.userData as List<ItemData>;
-            var item = allItems?.FirstOrDefault(i => i.name == itemName);
-
-            if (item == null || string.IsNullOrEmpty(item.spriteFilePath))
-            {
-                spritePreview.sprite = null;
-                return;
-            }
-
-            string fullPath = Path.Combine(config.SpritesDirectory, item.spriteFilePath);
-            spritePreview.sprite = CustomFileBrowser.LoadSpriteFromDisk(fullPath);
         }
 
         private void AddEntryToTable()
@@ -141,41 +117,24 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         private void RefreshEntriesList()
         {
             entriesScrollView.Clear();
-            foreach (var entry in localEntries)
+
+            foreach (var entry in localEntries.ToList())
             {
-                // Create a simple row container
-                var row = new VisualElement();
-                row.style.flexDirection = FlexDirection.Row;
-                row.style.justifyContent = Justify.SpaceBetween;
-                row.style.alignItems = Align.Center;
-                row.style.paddingBottom = 5;
-                row.style.paddingTop = 5;
-                row.style.borderBottomWidth = 1;
-                row.style.borderBottomColor = Color.gray;
+                var capturedEntry = entry;
+                var ve = lootItemTemplate.Instantiate();
 
-                // Item Name and Probability Label
-                var label = new Label($"{GetItemNameById(entry.id)} ({entry.dropProbability}%)");
-                label.style.color = Color.white;
-                label.style.fontSize = 14;
+                ve.Q<Label>("ItemName").text = GetItemNameById(capturedEntry.id);
+                ve.Q<Label>("ProbabilityLabel").text = $"{capturedEntry.dropProbability}%";
 
-                // Small "x" Remove Button
-                var removeBtn = new Button(() =>
+                ve.Q<Button>("DeleteButton").clicked += () =>
                 {
-                    localEntries.Remove(entry);
+                    localEntries.Remove(capturedEntry);
                     if (editingData != null)
                         editingData.lootItems = new List<LootEntryData>(localEntries);
                     RefreshEntriesList();
-                });
+                };
 
-                // Style the 'x' button to be small and simple
-                removeBtn.style.width = 25;
-                removeBtn.style.height = 25;
-                removeBtn.style.backgroundColor = new Color(0.8f, 0.2f, 0.2f, 0.6f);
-                removeBtn.style.color = Color.white;
-
-                row.Add(label);
-                row.Add(removeBtn);
-                entriesScrollView.Add(row);
+                entriesScrollView.Add(ve);
             }
         }
 
@@ -187,11 +146,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             return list;
         }
 
-        private string GetItemNameById(string id)
-        {
-            var item = GetAllAvailableItems().FirstOrDefault(i => i.id == id);
-            return item?.name ?? "Unknown Item";
-        }
+        private string GetItemNameById(string id) =>
+            GetAllAvailableItems().FirstOrDefault(i => i.id == id)?.name ?? "Unknown Item";
 
         private void CreateNewObject()
         {

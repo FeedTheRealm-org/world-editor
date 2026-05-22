@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <ui:Image/>
+    <ui:VisualElement name="LootItem" class="wc-card" style="flex-direction: row; align-items: center; margin-bottom: 6px; padding: 8px 12px;">
+        <ui:Label text="Item Name" name="ItemName" class="wc-card__name" style="flex-grow: 1;"/>
+        <ui:Label text="50%" name="ProbabilityLabel" class="wc-back-btn" style="font-size: 11px; padding: 3px 10px; margin-right: 10px; cursor: default;"/>
+        <ui:Button text="" name="DeleteButton" class="wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); width: 13px; height: 13px; color: rgb(255, 80, 80);"/>
+    </ui:VisualElement>
+</ui:UXML>

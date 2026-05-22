@@ -58,7 +58,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         private void PopulateList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var list = root.Q<ListView>("LootTablesList");
+            var list = root.Q<ScrollView>("LootTablesList");
             list.Clear();
 
             // Retrieve all LootTable creatables from the manager
@@ -75,7 +75,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         }
 
         private void AddListEntry(
-            ListView list,
+            ScrollView list,
             LootTable creatable,
             string displayName,
             string type,
@@ -85,9 +85,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             var entry = itemListTemplate.Instantiate();
             entry.Q<Label>("Header").text = displayName;
 
-            var typeLabel = entry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = type;
+            var itemsAmountLabel = entry.Q<Label>("LootLabel");
+            itemsAmountLabel.text = creatable.data.lootItems.Count.ToString();
 
             // Handle Edit Logic
             entry.Q<Button>("Edit").clicked += () =>
@@ -133,7 +132,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
                 );
             };
 
-            list.hierarchy.Add(entry);
+            list.Add(entry);
         }
 
         private void OpenCreatorMenu(GameObject prefab)

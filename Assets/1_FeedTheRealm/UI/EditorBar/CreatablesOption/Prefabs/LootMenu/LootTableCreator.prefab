@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -1876609580579234535}
   - component: {fileID: 2469234260077659270}
   m_Layer: 0
-  m_Name: LootTableCreatorMenu
+  m_Name: LootTableCreator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e2fb800773fa2488a85ba56cde30c748, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 22f7df2467a4bb2b0bb727d730b455bc, type: 3}
   m_SortingOrder: 0
@@ -68,5 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfce9fcb88ec781808a5322c7f4e8551, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::LootTableCreatorMenuController
+  AllowInputWhileOpen: 0
   lootMenuPrefab: {fileID: 5504098448738519503, guid: 7e0b79557861dd42fb49d5f6dcbccaa4, type: 3}
-  lootEntryTemplate: {fileID: 0}
+  lootItemTemplate: {fileID: 9197481963319205126, guid: e768b6b416251046e9764cd838ade1d4, type: 3}
