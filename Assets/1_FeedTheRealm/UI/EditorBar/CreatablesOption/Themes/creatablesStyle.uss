@@ -195,9 +195,6 @@
     flex-shrink: 1;
 }
 
-.wc-row .wc-field-group:first-child {
-    margin-right: 20px;
-}
 
 .wc-footer {
     flex-direction: row;
@@ -425,9 +422,6 @@
     flex-basis: 0;
 }
 
-.wc-row .wc-field-group:first-child {
-    margin-right: 24px;
-}
 
 .wc-row--3 {
     flex-direction: row;

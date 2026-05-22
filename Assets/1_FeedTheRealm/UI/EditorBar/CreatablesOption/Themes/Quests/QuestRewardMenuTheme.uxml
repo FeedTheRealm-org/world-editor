@@ -1,31 +1,55 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement name="Root" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.3); flex-direction: column; justify-content: center; align-items: center;">
-        <ui:VisualElement name="MenuContainer" class="menu-container menu" style="max-height: 55%; height: 560px;">
-            <ui:VisualElement name="Header" class="header" style="display: flex; margin-bottom: 3%;">
-                <ui:Label text="Quest Rewards" class="header-label"/>
-                <ui:VisualElement name="ButtonsGroup" style="flex-grow: 1; flex-direction: row; justify-content: center; align-self: center; align-items: center; width: 10%; min-width: 10%; max-width: 20%;">
-                    <ui:Button text="Return To Quest" name="Return" class="button"/>
-                    <ui:Button text="Close" name="Close" class="button"/>
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 55%; min-width: 420px; max-width: 760px; height: 68%; min-height: 380px; max-height: 740px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Quest Rewards" name="Title" class="wc-header-label"/>
+                    <ui:Button text="back to quest" name="Return" class="wc-back-btn"/>
                 </ui:VisualElement>
-            </ui:VisualElement>
-            <ui:VisualElement name="RewardEditor" style="flex-direction: column; gap: 14px; padding-left: 3%; padding-right: 3%; flex-grow: 1; align-self: stretch; height: 100%;">
-                <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; width: 100%;">
-                    <ui:DropdownField label="Reward Type" name="RewardTypeDropdown" class="text unity-text-field__input" style="flex-grow: 1; margin-right: 10px; color: rgb(255, 255, 255);"/>
-                    <ui:Button text="Add Reward" name="AddRewardButton" class="button" style="padding: 10px 24px; width: 180px;"/>
+
+                <ui:VisualElement name="RewardEditor" style="flex-grow: 1; flex-direction: column; margin-top: 18px;">
+
+                    <!-- Add reward row -->
+                    <ui:VisualElement name="AddRewardRow" class="wc-row" style="align-items: flex-end; margin-bottom: 14px;">
+                        <ui:VisualElement name="RewardTypeGroup" class="wc-field-group" style="margin-bottom: 0;">
+                            <ui:Label text="reward type" class="wc-field-label"/>
+                            <ui:DropdownField name="RewardTypeDropdown" class="wc-dropdown"/>
+                        </ui:VisualElement>
+                        <ui:Button text="add reward" name="AddRewardButton" class="wc-back-btn" style="align-self: flex-end; flex-shrink: 0;"/>
+                    </ui:VisualElement>
+
+                    <!-- Gold -->
+                    <ui:VisualElement name="GoldRow" class="wc-field-group">
+                        <ui:Label text="gold amount" class="wc-field-label"/>
+                        <ui:IntegerField value="100" name="GoldAmountField" class="wc-text-field"/>
+                    </ui:VisualElement>
+
+                    <!-- Item -->
+                    <ui:VisualElement name="ItemRow" class="wc-field-group" style="display: none;">
+                        <ui:Label text="reward item" class="wc-field-label"/>
+                        <ui:DropdownField name="ItemRewardDropdown" class="wc-dropdown"/>
+                    </ui:VisualElement>
+
+                    <!-- Loot table -->
+                    <ui:VisualElement name="LootTableRow" class="wc-field-group" style="display: none;">
+                        <ui:Label text="loot table" class="wc-field-label"/>
+                        <ui:DropdownField name="LootTableRewardDropdown" class="wc-dropdown"/>
+                    </ui:VisualElement>
+
+                    <ui:Label text="rewards added" class="wc-field-label" style="margin-bottom: 8px;"/>
+                    <ui:ScrollView name="RewardsScrollView" class="wc-grid-list" style="flex-grow: 1; margin-top: 0; border-color: rgba(255, 210, 80, 0.3); border-width: 1px; border-radius: 10px; padding: 6px;"/>
+
+                    <ui:VisualElement class="wc-footer" style="margin-top: 12px;">
+                        <ui:Button text="done" name="ReturnToQuestEditor" class="wc-primary-btn"/>
+                    </ui:VisualElement>
+
                 </ui:VisualElement>
-                <ui:VisualElement name="GoldRow" style="flex-direction: row; align-items: center; gap: 10px; display: flex;">
-                    <ui:IntegerField label="Gold Amount" name="GoldAmountField" value="100" class="text unity-text-field__input" style="width: 240px; color: rgb(255, 255, 255);"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="ItemRow" style="flex-direction: row; align-items: center; gap: 10px; display: none;">
-                    <ui:DropdownField label="Reward Item" name="ItemRewardDropdown" class="text unity-text-field__input" style="color: rgb(255, 255, 255); width: 100%;"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="LootTableRow" style="flex-direction: row; align-items: center; gap: 10px; display: none;">
-                    <ui:DropdownField label="Loot Table" name="LootTableRewardDropdown" class="text unity-text-field__input" style="color: rgb(255, 255, 255); width: 100%;"/>
-                </ui:VisualElement>
-                <ui:Label text="Rewards Added" class="text" style="font-size: 16px; color: rgb(255, 255, 255); margin-top: 8px;"/>
-                <ui:ScrollView name="RewardsScrollView" style="flex-grow: 1; width: 100%; max-height: 260px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-left-color: rgb(255, 255, 255); padding: 10px;"/>
-                <ui:Button text="Return to Quest Editor" name="ReturnToQuestEditor" class="button" style="padding: 10px 30px; width: 220px; align-self: flex-end; margin-top: 8px;"/>
+
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

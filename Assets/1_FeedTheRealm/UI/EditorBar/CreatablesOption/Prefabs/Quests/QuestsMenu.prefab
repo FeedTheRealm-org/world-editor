@@ -68,9 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb90a644573de49ba43402932155162, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::QuestsMenuController
-  inputReader: {fileID: 11400000, guid: fd164bc36bb13df95916dee0024ead33, type: 2}
-  worldEditorStateMachine: {fileID: 0}
+  AllowInputWhileOpen: 0
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   createQuestMenuPrefab: {fileID: 2090262387362720312, guid: c23c8a1df70c7ec2498b50e0aa0e3e86, type: 3}
-  creatorObjectLibrary: {fileID: 11400000, guid: 354fe7601c7579001b82a31a146a6c44, type: 2}
-  itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
+  itemListTemplate: {fileID: 9197481963319205126, guid: 05df79bbfde88a62788bccfbfc059a96, type: 3}

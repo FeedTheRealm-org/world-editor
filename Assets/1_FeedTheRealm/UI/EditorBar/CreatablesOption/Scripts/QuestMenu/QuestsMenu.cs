@@ -55,7 +55,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         private void PopulateQuestsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var questsList = root.Q<ListView>("QuestsList");
+            var questsList = root.Q<ScrollView>("QuestsList");
             questsList.Clear();
 
             foreach (Quest quest in creatablesManager.GetAll<Quest>())
@@ -70,7 +70,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
                 entry.Q<Button>("Edit").clicked += () => OnEditQuest(quest);
                 entry.Q<Button>("Delete").clicked += () => OnDeleteQuest(quest, entry);
 
-                questsList.hierarchy.Add(entry);
+                questsList.Add(entry);
             }
         }
 
