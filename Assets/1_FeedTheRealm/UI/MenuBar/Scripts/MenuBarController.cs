@@ -37,9 +37,6 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private UIDocument menuBarUI;
 
-        [SerializeField]
-        private Sprite userIconSprite;
-
         [Header("Menu Options")]
         [SerializeField]
         private GameObject fileOptionController;
@@ -59,12 +56,18 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private GameObject loginOptionController;
 
+        // UI Elements
         private VisualElement root;
+        private Image defaultUserIcon;
         private MenuStack menuStack;
+        private Button loginButton;
 
         void Awake()
         {
             root = menuBarUI.rootVisualElement;
+            defaultUserIcon = root.Q<Image>("DefaultUserIcon");
+            loginButton = root.Q<Button>("Login");
+
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
             BindButton("File", fileOptionController);
             BindButton("Edit", editOptionController);
@@ -137,40 +140,13 @@ namespace FeedTheRealm.UI.MenuBar
 
         private void UpdateLoginButton()
         {
-            logger.Log("Updating login button UI.", this);
-            Button loginButton = root.Q<Button>("Login");
-            if (loginButton == null)
-                return;
-            if (!string.IsNullOrEmpty(session?.Email))
-            {
-                loginButton.text = session.Email[0].ToString().ToUpper();
-                loginButton.style.backgroundImage = null;
-                loginButton.style.width = 32;
-                loginButton.style.height = 32;
-                loginButton.style.backgroundColor = new StyleColor(Color.black);
-                loginButton.style.borderTopLeftRadius = 16;
-                loginButton.style.borderTopRightRadius = 16;
-                loginButton.style.borderBottomLeftRadius = 16;
-                loginButton.style.borderBottomRightRadius = 16;
-                loginButton.style.unityTextAlign = TextAnchor.MiddleCenter;
-                loginButton.style.color = new StyleColor(Color.white);
-                loginButton.style.borderTopWidth = 0;
-                loginButton.style.borderBottomWidth = 0;
-                loginButton.style.borderLeftWidth = 0;
-                loginButton.style.borderRightWidth = 0;
-            }
-            else
-            {
-                loginButton.text = "";
-                loginButton.style.width = 32;
-                loginButton.style.height = 32;
-                loginButton.style.backgroundImage = new StyleBackground(userIconSprite);
-                loginButton.style.backgroundColor = StyleKeyword.None;
-                loginButton.style.borderTopWidth = 0;
-                loginButton.style.borderBottomWidth = 0;
-                loginButton.style.borderLeftWidth = 0;
-                loginButton.style.borderRightWidth = 0;
-            }
+            bool isLoggedIn = !string.IsNullOrEmpty(session?.Email);
+
+            // Toggle default icon visibility
+            defaultUserIcon.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
+
+            // Show first initial if logged in
+            loginButton.text = isLoggedIn ? session.Email[0].ToString().ToUpper() : "";
         }
     }
 }

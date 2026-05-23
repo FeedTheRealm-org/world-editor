@@ -49,7 +49,6 @@ namespace FeedTheRealm.UI.MenuBar
         {
             root = menuBarUI.rootVisualElement;
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
-            BindButton("Placement", PlacementOption);
             BindButton("Creatables", CreatablesOption);
         }
 
@@ -60,7 +59,7 @@ namespace FeedTheRealm.UI.MenuBar
             if (button == null)
             {
                 logger.Log(
-                    $"Button '{buttonName}' not found in MenuBar UI.",
+                    $"Button '{buttonName}' not found in EditorBar UI.",
                     this,
                     Logging.LogType.Error
                 );

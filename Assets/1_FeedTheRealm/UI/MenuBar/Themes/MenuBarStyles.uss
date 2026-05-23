@@ -8,9 +8,10 @@
     border-top-color: rgba(0, 0, 0, 0);
     border-bottom-color: rgba(0, 0, 0, 0);
     -unity-font-style: normal;
-    font-size: 15px;
+    font-size: 20px;
     -unity-text-align: middle-center;
     width: 10%;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .menu-bar {
@@ -21,7 +22,7 @@
     width: auto;
     min-width: auto;
     max-width: none;
-    background-color: rgb(32, 34, 37);
+    background-color: rgba(32, 34, 37, 0.57);
     color: rgb(210, 214, 220);
     flex-direction: row;
     flex-shrink: 0;
@@ -29,8 +30,6 @@
 
 .unity-button:hover {
     color: rgb(255, 255, 255);
-    font-size: 15px;
-    -unity-text-align: middle-center;
 }
 
 .menu-bar-item-spacing {
