@@ -1,13 +1,17 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement style="flex-grow: 1; background-color: rgb(95, 95, 95); flex-direction: row; align-items: center; justify-content: space-between; margin-left: 0; padding-left: 2%; padding-right: 2%; color: rgb(255, 255, 255); margin-top: 2px; margin-bottom: 2px;">
-        <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-            <ui:Label text="ModelName" name="ModelName" style="width: 168px; height: 100%; -unity-text-align: middle-left; border-right-width: 1px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);"/>
-            <ui:Toggle label="Has Colliders?" name="HasColliders" style="height: 100%; -unity-text-align: middle-left; border-right-width: 1px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-right: 29px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);"/>
-            <ui:Vector3Field label="Default Scale" value="0,0,0" name="DefaultScale" style="flex-direction: row; align-items: center; justify-content: space-around; align-self: stretch; -unity-text-align: middle-left; color: rgb(255, 255, 255);"/>
-            <ui:Vector3Field label="Default Rotation" name="DefaultRotation" style="align-items: center; -unity-text-align: middle-left; color: rgb(255, 255, 255);"/>
-            <ui:Button text="Save Changes" name="Save" style="-unity-text-outline-color: rgb(0, 0, 0); color: rgb(255, 255, 255); background-color: rgb(0, 3, 91); border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); align-self: center; align-items: flex-end; font-size: 15px; width: 124px;"/>
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
+    <ui:VisualElement class="menu-model-item" style="width: 100%; background-color: rgba(0, 0, 0, 0); padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px;">
+        <ui:Label text="ModelName" name="ModelName" class="menu-model-item__name" style="font-size: 15px;"/>
+        <ui:Toggle name="HasColliders" label="Has Colliders?" class="menu-toggle menu-toggle--compact" style="flex-shrink: 0; margin-right: 12px;"/>
+        <ui:VisualElement class="menu-model-item__vec3-group">
+            <ui:Label text="scale" class="menu-model-item__vec3-label"/>
+            <ui:Vector3Field name="DefaultScale" class="menu-vector3"/>
         </ui:VisualElement>
-        <ui:Button text="Delete" name="DeleteModel" style="-unity-text-outline-color: rgb(0, 0, 0); color: rgb(255, 255, 255); background-color: rgb(138, 0, 0); border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); align-self: center; align-items: flex-end; font-size: 15px;"/>
+        <ui:VisualElement class="menu-model-item__vec3-group">
+            <ui:Label text="rotation" class="menu-model-item__vec3-label"/>
+            <ui:Vector3Field name="DefaultRotation" class="menu-vector3"/>
+        </ui:VisualElement>
+        <ui:Button text="save" name="Save" class="menu-secondary-btn" style="flex-shrink: 0; padding-left: 14px; padding-right: 14px; margin-right: 8px; width: 94px;"/>
+        <ui:Button text="✕" name="DeleteModel" class="menu-model-item__delete-btn" style="background-color: rgb(93, 19, 19); margin-top: 0; margin-bottom: 0; height: 30px; width: 30px; margin-left: 0; margin-right: 7px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;"/>
     </ui:VisualElement>
 </ui:UXML>

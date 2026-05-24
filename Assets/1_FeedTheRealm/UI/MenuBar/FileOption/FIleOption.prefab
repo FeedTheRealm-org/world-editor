@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3960537262604584644}
   - component: {fileID: 4280272149493422627}
   - component: {fileID: 2189585811838010758}
-  - component: {fileID: -1102919887559925370}
   - component: {fileID: 6787800069250610893}
   - component: {fileID: 5380644617069169629}
   - component: {fileID: 8694256316958786525}
@@ -57,7 +56,6 @@ MonoBehaviour:
   - {fileID: 5380644617069169629}
   - {fileID: 8694256316958786525}
   - {fileID: 3375673452148934806}
-  - {fileID: -1102919887559925370}
   - {fileID: 6787800069250610893}
 --- !u!114 &2189585811838010758
 MonoBehaviour:
@@ -77,24 +75,6 @@ MonoBehaviour:
   editorScene:
     sceneName: WorldEditor
     sceneAsset: {fileID: 102900000, guid: 862161c47919c6ffaabee20b285b3853, type: 3}
---- !u!114 &-1102919887559925370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5332839163230174798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 996ab045b448aeb5982785d7c4432be5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.ExitToMenuOptionController
-  label: Exit to Menu
-  menuToOpen: {fileID: 0}
-  menuOptions: []
-  mainMenuScene:
-    sceneName: MainMenu
-    sceneAsset: {fileID: 102900000, guid: 8d9172bc35a5d9ac6ba6f13e3a84d856, type: 3}
 --- !u!114 &6787800069250610893
 MonoBehaviour:
   m_ObjectHideFlags: 0

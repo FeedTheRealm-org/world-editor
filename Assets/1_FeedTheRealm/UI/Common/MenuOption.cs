@@ -18,6 +18,8 @@ namespace FTR.UI
         [SerializeField]
         private MenuController menuToOpen;
 
+        private MenuController activeMenuInstance;
+
         [Header("Dropdown Menu Options")]
         [Tooltip(
             "List of submenu options to display in a dropdown when this menu option is clicked. Can be left empty if no dropdown menu is desired."
@@ -35,13 +37,13 @@ namespace FTR.UI
 
         public virtual async void Execute()
         {
-            if (menuToOpen != null)
+            if (menuToOpen != null && activeMenuInstance == null)
             {
                 Transform parent = FindFirstObjectByType<Canvas>()?.transform;
                 if (parent != null)
-                    objectResolver.Instantiate(menuToOpen, parent);
+                    activeMenuInstance = objectResolver.Instantiate(menuToOpen, parent);
                 else
-                    objectResolver.Instantiate(menuToOpen);
+                    activeMenuInstance = objectResolver.Instantiate(menuToOpen);
             }
         }
     }

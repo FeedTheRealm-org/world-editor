@@ -32,7 +32,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         [SerializeField]
         private VisualTreeAsset modelItemTemplate;
 
-        private ListView modelsList;
+        private ScrollView modelsList;
         private Button closeButton;
         private DropdownField defaultClosedChestDropdown;
         private DropdownField defaultOpenChestDropdown;
@@ -46,7 +46,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             closeButton = root.Q<Button>("Close");
-            modelsList = root.Q<ListView>("ModelsList");
+            modelsList = root.Q<ScrollView>("ModelsList");
             defaultClosedChestDropdown = root.Q<DropdownField>("DefaultClosedChest");
             defaultOpenChestDropdown = root.Q<DropdownField>("DefaultOpenChest");
             saveClosedModelButton = root.Q<Button>("SaveClosedModel");
@@ -110,70 +110,53 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         {
             models = modelsRepository.GetModelsData().Values.ToList();
 
-            modelsList.makeItem = () =>
+            modelsList.Clear();
+
+            foreach (var model in models)
             {
+                var capturedModel = model;
                 var entry = modelItemTemplate.Instantiate();
-                entry.userData = new System.Action[2];
-                return entry;
-            };
 
-            modelsList.bindItem = (entry, index) =>
-            {
-                var model = models[index];
-                var callbacks = (System.Action[])entry.userData;
-
-                entry.Q<Label>("ModelName").text = model.structureName;
+                entry.Q<Label>("ModelName").text = capturedModel.structureName;
 
                 var hasColliders = entry.Q<Toggle>("HasColliders");
-                hasColliders.SetValueWithoutNotify(model.hasColliders);
-
                 var defaultScale = entry.Q<Vector3Field>("DefaultScale");
-                defaultScale.SetValueWithoutNotify(model.size);
-
                 var defaultRotation = entry.Q<Vector3Field>("DefaultRotation");
-                defaultRotation.SetValueWithoutNotify(model.rotation);
-
                 var saveButton = entry.Q<Button>("Save");
                 var deleteButton = entry.Q<Button>("DeleteModel");
 
-                if (callbacks[0] != null)
-                    saveButton.clicked -= callbacks[0];
-                if (callbacks[1] != null)
-                    deleteButton.clicked -= callbacks[1];
+                hasColliders.SetValueWithoutNotify(capturedModel.hasColliders);
+                defaultScale.SetValueWithoutNotify(capturedModel.size);
+                defaultRotation.SetValueWithoutNotify(capturedModel.rotation);
 
-                callbacks[0] = () =>
+                saveButton.clicked += () =>
                 {
-                    model.hasColliders = hasColliders.value;
-                    model.size = defaultScale.value;
-                    model.rotation = defaultRotation.value;
-                    modelsRepository.WriteModelToDisk(model);
+                    capturedModel.hasColliders = hasColliders.value;
+                    capturedModel.size = defaultScale.value;
+                    capturedModel.rotation = defaultRotation.value;
+                    modelsRepository.WriteModelToDisk(capturedModel);
                     ToastNotification.Show(
-                        $"'{model.structureName}' saved.",
+                        $"'{capturedModel.structureName}' saved.",
                         "success",
                         Color.green
                     );
                 };
 
-                callbacks[1] = () =>
+                deleteButton.clicked += () =>
                 {
-                    modelsRepository.DeleteModel(model);
-                    models.Remove(model);
-                    modelsList.RefreshItems();
+                    modelsRepository.DeleteModel(capturedModel);
+                    models.Remove(capturedModel);
+                    entry.RemoveFromHierarchy();
                     refreshPlaceableLibraryEvent.Raise();
                     ToastNotification.Show(
-                        $"'{model.structureName}' deleted.",
+                        $"'{capturedModel.structureName}' deleted.",
                         "success",
                         Color.green
                     );
                 };
 
-                saveButton.clicked += callbacks[0];
-                deleteButton.clicked += callbacks[1];
-            };
-
-            modelsList.itemsSource = models;
-            modelsList.selectionType = SelectionType.None;
-            modelsList.RefreshItems();
+                modelsList.Add(entry);
+            }
         }
     }
 }

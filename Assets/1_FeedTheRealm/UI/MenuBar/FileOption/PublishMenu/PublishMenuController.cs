@@ -73,7 +73,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private Button publishButton;
         private Button closeButton;
-        private Label worldNameLabel;
         private Toggle publishCreatablesToggle;
         private Toggle publishWorldDataToggle;
         private VisualElement zoneGroup;
@@ -89,22 +88,29 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             publishButton = root.Q<Button>("Publish");
             closeButton = root.Q<Button>("Close");
-            worldNameLabel = root.Q<Label>("WorldName");
             publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
             publishWorldDataToggle = root.Q<Toggle>("PublishWorldData");
             zoneGroup = root.Q<VisualElement>("ZoneGroup");
 
             currentWorldData = dataPersistenceManager.GetWorldData(worldSelector.selectedWorld);
-            worldNameLabel.text = currentWorldData?.worldName ?? "No world loaded";
 
-            bool isFirstPublish = string.IsNullOrEmpty(currentWorldData?.worldId);
-            publishWorldDataToggle.value = true;
-            publishWorldDataToggle.SetEnabled(!isFirstPublish);
-            publishCreatablesToggle.value = true;
+            if (currentWorldData == null)
+            {
+                publishButton.SetEnabled(false);
+                publishCreatablesToggle.SetEnabled(false);
+                publishWorldDataToggle.SetEnabled(false);
+                zoneGroup.SetEnabled(false);
+            }
+            else
+            {
+                bool isFirstPublish = string.IsNullOrEmpty(currentWorldData.worldId);
+                publishWorldDataToggle.value = true;
+                publishWorldDataToggle.SetEnabled(!isFirstPublish);
+                publishCreatablesToggle.value = true;
+                publishButton.clicked += OnPublishClicked;
+                PopulateZoneGroup();
+            }
 
-            PopulateZoneGroup();
-
-            publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
         }
 

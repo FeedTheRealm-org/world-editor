@@ -38,7 +38,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
         private WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
-        private ListView worldsListView;
+        private ScrollView worldsListView;
         private VisualElement root;
         private List<string> loadedWorlds;
 
@@ -47,35 +47,31 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             var uiDocument = GetComponent<UIDocument>();
             root = uiDocument.rootVisualElement;
             closeButton = root.Q<Button>("Close");
-            worldsListView = root.Q<ListView>("WorldsList");
-
-            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            worldsListView = root.Q<ScrollView>("WorldsList");
 
             closeButton.clicked += CloseMenu;
 
-            // Configure ListView
-            worldsListView.makeItem = () =>
+            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            PopulateWorldsList();
+        }
+
+        private void PopulateWorldsList()
+        {
+            worldsListView.Clear();
+
+            foreach (var world in loadedWorlds)
             {
+                var capturedWorld = world;
                 var button = new Button();
-                button.AddToClassList("open-world-button");
-                return button;
-            };
+                button.text = PrettifyName(capturedWorld);
+                button.AddToClassList("menu-world-option-button");
+                button.style.marginBottom = 8;
+                button.style.alignSelf = Align.Stretch;
 
-            worldsListView.bindItem = (element, index) =>
-            {
-                var button = element as Button;
-                button.text = PrettifyName(loadedWorlds[index]);
+                button.clicked += async () => await OnLoadWorldClicked(capturedWorld);
 
-                button.clicked -= () => { };
-                button.clicked += async () =>
-                {
-                    await OnLoadWorldClicked(loadedWorlds[index]);
-                };
-            };
-
-            worldsListView.itemsSource = loadedWorlds;
-            worldsListView.selectionType = SelectionType.None;
-            worldsListView.reorderable = false;
+                worldsListView.Add(button);
+            }
         }
 
         private void OnDisable()
