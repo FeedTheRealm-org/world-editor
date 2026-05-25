@@ -114,18 +114,23 @@ Vector3Field > .unity-vector3-field__input {
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
+    color: rgb(255, 255, 255);
 }
 
 Vector3Field > .unity-vector3-field__input > #unity-x-input > #unity-text-input {
     width: 120px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0);
 }
 
 Vector3Field > .unity-vector3-field__input > #unity-y-input > #unity-text-input {
     width: 120px;
+    background-color: rgb(0, 0, 0);
 }
 
 Vector3Field > .unity-vector3-field__input > #unity-z-input > #unity-text-input {
     width: 120px;
+    background-color: rgb(0, 0, 0);
 }
 
 Vector3Field .unity-vector3-field__input > #unity-x-input > .unity-base-field__label--with-dragger {
@@ -202,4 +207,7 @@ Vector3Field .unity-vector3-field__input > #unity-z-input > .unity-base-field__l
 
 Slider {
     color: rgb(255, 255, 255);
+}
+
+.unity-float-field {
 }
