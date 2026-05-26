@@ -861,3 +861,54 @@
     min-width: 110px;
     max-width: 10px;
 }
+
+.menu-stat-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-color: rgba(15, 197, 229, 0.2);
+    border-width: 1px;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.menu-stat-card__label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    -unity-font-style: normal;
+}
+
+.menu-stat-card__value {
+    font-size: 17px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+}
+
+.menu-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 8px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.1);
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.menu-danger-btn {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.6);
+    border-width: 1.5px;
+    border-radius: 16px;
+    color: rgb(255, 100, 100);
+    font-size: 12px;
+    padding: 4px 14px;
+    cursor: link;
+}
+
+.menu-danger-btn:hover {
+    background-color: rgba(220, 53, 69, 0.35);
+}
