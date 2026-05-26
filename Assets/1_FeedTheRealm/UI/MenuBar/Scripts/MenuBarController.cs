@@ -33,6 +33,9 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private Session.Session session;
 
+        [Inject]
+        private EnableEditorEvent editorEvent;
+
         [Header("UI References")]
         [SerializeField]
         private UIDocument menuBarUI;
@@ -67,6 +70,8 @@ namespace FeedTheRealm.UI.MenuBar
             root = menuBarUI.rootVisualElement;
             defaultUserIcon = root.Q<Image>("DefaultUserIcon");
             loginButton = root.Q<Button>("Login");
+
+            editorEvent.OnRaised += ToggleLoginButton;
 
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
             BindButton("File", fileOptionController);
@@ -136,6 +141,11 @@ namespace FeedTheRealm.UI.MenuBar
                     menuOption.Execute();
                 menuStack.Toggle(button, menuOption.MenuOptions);
             };
+        }
+
+        private void ToggleLoginButton(bool enabled)
+        {
+            loginButton.SetEnabled(enabled);
         }
 
         private void UpdateLoginButton()

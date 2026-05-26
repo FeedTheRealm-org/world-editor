@@ -1,17 +1,36 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
-    <Style src="project://database/Assets/1_FTR.UI/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement name="root" style="flex-grow: 1; align-items: center; justify-content: center;">
-        <ui:VisualElement name="Menu" class="menuContainer" style="margin-top: 0%; margin-right: 0%; margin-bottom: 0%; margin-left: 0%; width: 788px;">
-            <ui:Label text="Edit your portal!" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255);"/>
-            <ui:TextField label="Portal Name" placeholder-text="" name="PortalName" style="color: rgb(255, 255, 255); -unity-text-align: middle-center;"/>
-            <ui:VisualElement name="DestinationContainer" style="flex-grow: 1; flex-direction: row; width: 100%; min-width: 100%; max-width: 100%;">
-                <ui:DropdownField label="Select your destination" name="PortalDestination" class="formText dropdownFullWidth white-dropdown" style="margin-top: 20px; margin-right: 0; margin-bottom: 5px; margin-left: 0; -unity-text-align: middle-center; width: 513px;"/>
-                <ui:DropdownField label="Zone&#10;" name="Zone" class="formText dropdownFullWidth white-dropdown" style="margin-top: 20px; margin-right: 0; margin-bottom: 5px; margin-left: 0; -unity-text-align: middle-center; width: 30%;"/>
-            </ui:VisualElement>
-            <ui:Slider label="Portal Radius" value="3" high-value="5" low-value="3" fill="true" name="PortalRadius" show-input-field="true" direction="Horizontal" inverted="false" class="formText" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-text-align: middle-center;"/>
-            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; align-self: flex-end; align-items: auto;">
-                <ui:Button text="Close" name="Close" enable-rich-text="true" class="closeButton"/>
+
+    <ui:VisualElement name="Root" class="wo-root">
+        <ui:VisualElement name="Menu" class="wo-container">
+            <ui:VisualElement name="Panel" class="wo-panel">
+
+                <ui:Button text="✕" name="Close" class="wo-close-btn"/>
+
+                <ui:Label text="Portal Editor" name="Header" class="wo-title"/>
+
+                <ui:VisualElement class="wo-field-group">
+                    <ui:Label text="portal name" class="wo-field-label"/>
+                    <ui:TextField placeholder-text="" name="PortalName" class="wo-input"/>
+                </ui:VisualElement>
+
+                <!-- Destination + Zone row -->
+                <ui:VisualElement name="DestinationContainer" class="wo-row">
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
+                        <ui:Label text="destination" class="wo-field-label"/>
+                        <ui:DropdownField name="PortalDestination" class="wo-dropdown"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 0; flex-basis: 120px;">
+                        <ui:Label text="zone" class="wo-field-label"/>
+                        <ui:DropdownField name="Zone" class="wo-dropdown"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="wo-field-group">
+                    <ui:Label text="portal radius" class="wo-field-label"/>
+                    <ui:Slider name="PortalRadius" value="3" high-value="5" low-value="3" show-input-field="true" class="wo-slider"/>
+                </ui:VisualElement>
+
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

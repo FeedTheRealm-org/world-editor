@@ -50,7 +50,6 @@ namespace FTR.UI.Components
         // -------------------- Private Methods --------------------
         private void ToggleMenuStack(bool enabled)
         {
-            Debug.Log($"Setting menu interaction lock to {(enabled ? "unlocked" : "locked")}.");
             this.enabled = enabled;
             if (!enabled)
                 CloseAll();

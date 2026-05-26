@@ -1,38 +1,55 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
-    <ui:VisualElement name="Menu" style="width: 791px; background-color: rgba(0, 0, 0, 0.3); padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; align-self: flex-end; align-content: flex-start; justify-content: space-around; bottom: 379px; right: 40px; top: 12%; height: 60%;">
-        <ui:Label text="Your Structure Name Here" name="StructureName" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255); margin-bottom: 1%;"/>
-        <ui:VisualElement name="Shortcuts" style="flex-grow: 1; flex-direction: row; color: rgb(183, 183, 183); -unity-font-style: bold; font-size: 15px; border-top-left-radius: 18px; border-top-right-radius: 18px; border-bottom-right-radius: 18px; border-bottom-left-radius: 18px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(148, 148, 148); border-right-color: rgb(148, 148, 148); border-top-color: rgb(148, 148, 148); border-bottom-color: rgb(148, 148, 148); -unity-text-align: upper-left; padding-left: 16px; background-color: rgba(0, 0, 0, 0.5); margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; align-self: flex-start; justify-content: space-between; align-items: center; padding-right: 16px; max-height: 10%; min-height: 10%; height: 10px; width: 573px;">
-            <ui:Label text="Shortcuts:"/>
-            <ui:Label text="[M] move" style="-unity-font-style: normal;"/>
-            <ui:Label text="[N] scale" style="-unity-font-style: normal;"/>
-            <ui:Label text="[R] rotate" style="-unity-font-style: normal;"/>
-            <ui:Label text="[H] hide" style="-unity-font-style: normal;"/>
-            <ui:Label text="[C] colliders" enable-rich-text="false" style="-unity-font-style: normal;"/>
-        </ui:VisualElement>
-        <ui:TabView name="TabView" reorderable="true" tabindex="0">
-            <ui:Tab name="Transform" label="Transform" tabindex="0" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 972px;"/>
-                <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input"/>
-                <ui:Vector3Field label="Scale" value="0,0,0" name="Scale" class="unity-vector3-field__input" style="flex-direction: row;"/>
-            </ui:Tab>
-            <ui:Tab name="Colliders" label="Colliders" tabindex="1" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Center" name="ColliderCenter" value="0,0,0" class="unity-vector3-field__input" style="width: 972px;"/>
-                <ui:Vector3Field label="Size" value="0,0,0" name="ColliderSize" class="unity-vector3-field__input" style="flex-direction: row;"/>
-                <ui:Vector3Field label="Rotation" value="0,0,0" name="ColliderRotation" class="unity-vector3-field__input" style="flex-direction: row;"/>
-                <ui:VisualElement name="Buttons" style="flex-grow: 1; justify-content: space-between; flex-direction: row; width: 95%;">
-                    <ui:Toggle label="Enable Colliders" name="CollidersToggle" style="-unity-font-style: normal; color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); padding-left: 0%; padding-right: 0%; padding-top: 0%; padding-bottom: 0%; width: 175px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
-                    <ui:DropdownField label="Collider Type" name="ColliderType" style="align-self: center; color: rgb(255, 255, 255); padding-right: 70px;"/>
-                    <ui:Button text="Reset Colliders" name="ResetColliders" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; justify-content: center; align-self: center; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
+    <ui:VisualElement name="Root" class="wo-root">
+        <ui:VisualElement name="Menu" class="wo-container" style="width: 40%; max-width: 40%;">
+            <ui:VisualElement name="Panel" class="wo-panel">
+                <ui:Button text="✕" name="Close" class="wo-close-btn"/>
+                <ui:Label text="placeable_object" name="StructureName" class="wo-title"/>
+                <ui:VisualElement name="Shortcuts" class="wo-shortcuts" style="width: 405px;">
+                    <ui:Label text="Shortcuts: [M] move  [N] scale  [R] rotate  [C] colliders  [H] hide" class="wo-shortcut-label"/>
                 </ui:VisualElement>
-            </ui:Tab>
-        </ui:TabView>
-        <ui:VisualElement name="Shop" style="flex-grow: 1; flex-direction: row; align-items: auto; justify-content: space-between; align-self: stretch; max-width: 100%; min-width: 50%; height: 10px; max-height: 10%; flex-wrap: nowrap; align-content: stretch;">
-            <ui:Toggle label="Set as Shop" name="ShopToggle" style="-unity-font-style: bold; color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); align-self: center; justify-content: center; align-items: center; padding-left: 1%; padding-right: 1%; padding-top: 1%; padding-bottom: 1%; -unity-text-align: middle-center;"/>
-        </ui:VisualElement>
-        <ui:DropdownField label="Select Shop" name="ShopDropdown" class="formText dropdownFullWidth white-dropdown" style="display: none; margin-top: 5px; margin-right: 0; margin-bottom: 5px; margin-left: 0;"/>
-        <ui:VisualElement name="Footer" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-between; align-self: flex-end; align-items: center; width: 100%; height: 0; max-height: 10%; min-height: initial;">
-            <ui:Button text="Close" name="Close" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: space-evenly; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%; white-space: normal;"/>
+                <ui:TabView name="TabView" class="wo-tabview">
+                    <ui:Tab name="Transform" label="Transform" class="wo-tab-content">
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Position" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Position" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Rotation" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Scale" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Scale" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                    </ui:Tab>
+                    <ui:Tab name="Colliders" label="Colliders" class="wo-tab-content">
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Center" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ColliderCenter" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Size" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ColliderSize" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ColliderRotation" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Buttons" style="flex-direction: row; align-items: center; margin-top: 10px; justify-content: space-between;">
+                            <ui:Toggle label="Enable Colliders" name="CollidersToggle" class="wo-toggle"/>
+                            <ui:DropdownField label="Collider Type" name="ColliderType" class="wo-dropdown" style="flex-grow: 1; margin-left: 14px; margin-right: 14px; color: rgb(15, 197, 229);"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Reset Colliders" name="ResetColliders" class="wo-btn" style="flex-shrink: 0; align-self: flex-start; margin-top: 25px;"/>
+                    </ui:Tab>
+                </ui:TabView>
+                <ui:VisualElement name="Footer" class="wo-footer">
+                    <ui:VisualElement name="Shop" class="wo-shop-row">
+                        <ui:Toggle label="Set as Shop" name="ShopToggle" class="wo-toggle" style="margin-right: 16px; flex-shrink: 0;"/>
+                        <ui:DropdownField label="" name="ShopDropdown" class="wo-dropdown" style="flex-grow: 1; display: none;"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -17,9 +17,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
     public class StructureEditor : MenuController, IEditable
     {
         [Inject]
-        private InputReader inputReader;
-
-        [Inject]
         private CreatablesManager creatablesManager;
 
         [Header("Scroll Sensitivity")]

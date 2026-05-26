@@ -22,10 +22,10 @@
     width: auto;
     min-width: auto;
     max-width: none;
-    background-color: rgba(32, 34, 37, 0.57);
     color: rgb(210, 214, 220);
     flex-direction: row;
     flex-shrink: 0;
+    background-color: rgba(24, 57, 66, 0.5);
 }
 
 .unity-button:hover {

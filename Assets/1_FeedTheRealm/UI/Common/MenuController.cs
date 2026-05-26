@@ -1,5 +1,6 @@
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -18,6 +19,9 @@ namespace FTR.UI
         protected IObjectResolver resolver;
 
         [Inject]
+        protected InputReader inputReader;
+
+        [Inject]
         private CloseAllEvent closeAllEvent;
 
         [SerializeField]
@@ -33,12 +37,14 @@ namespace FTR.UI
 
             enableEditorEvent?.Raise(false);
             closeAllEvent.OnRaised += CloseMenu;
+            inputReader.CloseMenuEvent += CloseMenu;
         }
 
         void OnDestroy()
         {
             enableInputEvent.OnRaised -= OnInputEventRaised;
             closeAllEvent.OnRaised -= CloseMenu;
+            inputReader.CloseMenuEvent -= CloseMenu;
         }
 
         private void OnInputEventRaised(bool isEnabled)

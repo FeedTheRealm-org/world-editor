@@ -1,0 +1,47 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
+
+    <ui:VisualElement name="Root" class="wo-root">
+        <ui:VisualElement name="Menu" class="wo-container">
+            <ui:VisualElement name="Panel" class="wo-panel">
+
+                <ui:Button text="✕" name="Close" class="wo-close-btn"/>
+
+                <ui:Label text="Spawner Editor" name="Header" class="wo-title"/>
+
+                <ui:VisualElement class="wo-field-group">
+                    <ui:Label text="what to spawn" class="wo-field-label"/>
+                    <ui:DropdownField name="EnemyDropdown" class="wo-dropdown"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="wo-field-group">
+                    <ui:Label text="spawn radius" class="wo-field-label"/>
+                    <ui:Slider name="SpawnerRadius" value="1.5" high-value="25" low-value="1.5" show-input-field="true" class="wo-slider"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="wo-row">
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
+                        <ui:Label text="max enemies" class="wo-field-label"/>
+                        <ui:IntegerField value="3" name="MaxEnemies" class="wo-input"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0;">
+                        <ui:Label text="spawn rate (seconds)" class="wo-field-label"/>
+                        <ui:IntegerField value="2" name="SpawnRate" class="wo-input"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="wo-row">
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
+                        <ui:Label text="reset after kills" class="wo-field-label"/>
+                        <ui:IntegerField value="6" name="ResetAfterKills" class="wo-input"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0;">
+                        <ui:Label text="reset delay (seconds)" class="wo-field-label"/>
+                        <ui:IntegerField value="10" name="ResetDelay" class="wo-input"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
