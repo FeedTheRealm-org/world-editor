@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
 
     <ui:VisualElement name="Root" class="menu-root">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 55%; min-width: 480px; max-width: 820px; height: auto; min-height: 240px;">
+        <ui:VisualElement name="Container" class="container" style="width: 55%; min-width: 480px; max-width: 820px; height: auto; min-height: 240px;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1;">
 
                 <ui:Button text="✕" name="Close" class="menu-close-btn"/>

@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="Root" class="menu-root">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 60%; height: auto; min-height: 200px;">
+        <ui:VisualElement name="Container" class="container" style="width: 60%; height: auto; min-height: 200px;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1;">
                 <ui:VisualElement name="TitleBar" style="flex-direction: row; align-items: center; margin-bottom: 14px;">
                     <ui:Label text="Creator Balance" class="menu-header-label" style="flex-grow: 1; font-size: 20px;"/>

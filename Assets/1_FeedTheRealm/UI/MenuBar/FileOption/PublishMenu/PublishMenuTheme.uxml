@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="root" class="menu-root">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 50%; min-width: 460px; max-width: 780px; height: 60%; min-height: 50%; max-height: 60%;">
+        <ui:VisualElement name="Container" class="container" style="width: 50%; min-width: 460px; max-width: 780px; height: 60%; min-height: 50%; max-height: 60%;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;">
                 <ui:Button text="✕" name="Close" class="menu-close-btn"/>
                 <ui:VisualElement name="Header" class="menu-header">

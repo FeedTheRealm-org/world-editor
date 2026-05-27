@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="Root" class="menu-root" style="align-self: center; justify-content: space-between; align-items: stretch;">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 20%; min-width: 260px; max-width: 420px; height: 55%; min-height: 300px; max-height: 680px; translate: 50px 60px; background-color: rgba(26, 40, 44, 0.99); -unity-slice-type: sliced;">
+        <ui:VisualElement name="Container" class="container" style="width: 20%; min-width: 260px; max-width: 420px; height: 55%; min-height: 300px; max-height: 680px; translate: 50px 60px; background-color: rgba(26, 40, 44, 0.99); -unity-slice-type: sliced;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; margin: -4px; border-width: 0; background-color: rgba(26, 40, 44, 0);">
                 <ui:Button text="✕" name="Close" class="menu-close-btn" style="margin-top: 12px;"/>
                 <ui:VisualElement name="Header" class="menu-header" style="border-bottom-width: 0;">

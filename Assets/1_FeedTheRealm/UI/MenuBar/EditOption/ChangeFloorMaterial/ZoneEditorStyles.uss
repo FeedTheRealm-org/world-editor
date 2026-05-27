@@ -6,7 +6,7 @@
   background-color: rgba(0, 0, 0, 0.45);
 }
 
-.menu-container {
+.container {
   width: 480px;
   background-color: rgb(40, 40, 40);
   border-radius: 10px;

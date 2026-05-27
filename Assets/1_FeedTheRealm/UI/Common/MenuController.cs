@@ -2,6 +2,7 @@ using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
+using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
@@ -27,8 +28,23 @@ namespace FTR.UI
         [SerializeField]
         private bool AllowInputWhileOpen = false;
 
+        private VisualElement root;
+        private VisualElement container;
+
         void Awake()
         {
+            root = GetComponent<UIDocument>().rootVisualElement;
+            container = root.Q<VisualElement>("Container");
+
+            container?.AddToClassList("container--hidden");
+
+            root.schedule.Execute(() =>
+                {
+                    container?.RemoveFromClassList("container--hidden");
+                    container?.AddToClassList("container--visible");
+                })
+                .ExecuteLater(16);
+
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised += OnInputEventRaised;
 
@@ -55,14 +71,17 @@ namespace FTR.UI
 
         public virtual void CloseMenu()
         {
+            container?.RemoveFromClassList("container--visible");
+            container?.AddToClassList("container--hidden");
+
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised -= OnInputEventRaised;
+
             enableInputEvent?.Raise(true);
             enableEditorEvent?.Raise(true);
-            if (this != null)
-            {
-                Destroy(gameObject);
-            }
+
+            // only one destroy, after animation completes
+            root.schedule.Execute(() => Destroy(gameObject)).ExecuteLater(200);
         }
 
         public virtual void OpenMenu(GameObject menuPrefab)

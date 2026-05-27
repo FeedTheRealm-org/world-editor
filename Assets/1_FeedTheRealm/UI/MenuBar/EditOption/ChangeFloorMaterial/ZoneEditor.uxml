@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/MenuBar/EditOption/ChangeFloorMaterial/ZoneEditorStyles.uss?fileID=7433441132597879392&amp;guid=074b17f320e9bf94eafa2d1e295d3388&amp;type=3#ZoneEditorStyles"/>
     <ui:VisualElement name="Overlay" class="overlay" style="top: 5px; bottom: -1px; right: 0; left: 4px; background-color: rgba(0, 0, 0, 0);">
-        <ui:VisualElement name="ChangeMaterialMenu" class="menu-container" style="justify-content: flex-start; width: 50%; background-color: rgba(40, 40, 40, 0.5);">
+        <ui:VisualElement name="ChangeMaterialMenu" class="container" style="justify-content: flex-start; width: 50%; background-color: rgba(40, 40, 40, 0.5);">
             <ui:VisualElement class="menu-header" style="margin-bottom: 0; padding-bottom: 15px; padding-top: 15px;">
                 <ui:Label text="Zone Editor" class="menu-title" style="height: 29px; width: 176px; font-size: 20px;"/>
                 <ui:Button name="Close" text="✕" class="close-button"/>

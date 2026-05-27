@@ -7,13 +7,26 @@
     background-color: rgba(0, 0, 0, 0);
 }
 
-.wc-container {
+.container {
     background-color: rgba(26, 40, 44, 0.85);
     align-items: stretch;
     justify-content: center;
     border-radius: 18px;
     flex-grow: 0;
     flex-shrink: 0;
+    transition-property: opacity, translate;
+    transition-duration: 0.2s, 0.2s;
+    transition-timing-function: ease-out, ease-out;
+}
+
+.container--hidden {
+    opacity: 0;
+    translate: 0 12px;
+}
+
+.container--visible {
+    opacity: 1;
+    translate: 0 0;
 }
 
 .wc-panel {

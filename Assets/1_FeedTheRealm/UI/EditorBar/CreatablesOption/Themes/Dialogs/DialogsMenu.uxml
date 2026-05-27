@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
     <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
-        <ui:VisualElement name="MenuContainer" class="wc-container" style="width: 60%; min-width: 420px; max-width: 860px; height: 65%; min-height: 320px; max-height: 720px;">
+        <ui:VisualElement name="Container" class="container" style="width: 60%; min-width: 420px; max-width: 860px; height: 65%; min-height: 320px; max-height: 720px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
                 <ui:Button text="✕" name="Close" class="wc-close-btn"/>
                 <ui:VisualElement name="Header" class="wc-header">
