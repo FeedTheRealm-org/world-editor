@@ -332,7 +332,6 @@
 .menu-grid-list {
     flex-grow: 1;
     background-color: rgba(0, 0, 0, 0);
-    border-width: 0;
     margin-top: 18px;
 }
 
@@ -340,6 +339,7 @@
     padding: 0;
     margin: 0;
 }
+
 
 .menu-card {
     width: 100%;
@@ -577,13 +577,6 @@
     border-color: var(--teal);
 }
 
-.menu-grid-list {
-    flex-grow: 1;
-    background-color: rgba(0, 0, 0, 0);
-    border-width: 0;
-    margin-top: 0;
-}
-
 .menu-footer {
     flex-direction: row;
     justify-content: flex-end;
@@ -630,22 +623,19 @@
 
 .menu-world-option-button {
     background-color: rgba(0, 0, 0, 0);
-    border-width: 0;
-    border-bottom-width: 1px;
-    border-top-color: rgb(15, 197, 229);
-    border-bottom-color: rgb(15, 197, 229);
     color: rgb(255, 255, 255);
-    font-size: 20px;
-    -unity-text-align: middle-left;
-    padding: 0;
-    margin: 0;
+    font-size: 15px;
+    -unity-text-align: start;
     padding: 6px;
+    margin: 6px;
     cursor: link;
     width: 100%;
+    border-radius: 7px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    -unity-text-align: middle-center;
+    border-width: 0;
+    border-radius: 0;
 }
 
 .menu-world-option-button:hover {

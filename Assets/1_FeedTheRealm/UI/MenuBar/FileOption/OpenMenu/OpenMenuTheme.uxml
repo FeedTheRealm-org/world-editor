@@ -5,7 +5,7 @@
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; margin: -4px; border-width: 0; background-color: rgba(26, 40, 44, 0);">
                 <ui:Button text="✕" name="Close" class="menu-close-btn" style="margin-top: 12px;"/>
                 <ui:VisualElement name="Header" class="menu-header" style="border-bottom-width: 0;">
-                    <ui:Label text="Open World" name="Title" class="menu-header-label" style="color: rgb(255, 255, 255); font-size: 25px;"/>
+                    <ui:Label text="Open World" name="Title" class="menu-header-label" style="color: rgb(255, 255, 255); font-size: 20px;"/>
                 </ui:VisualElement>
                 <ui:ScrollView name="WorldsList" horizontal-scroller-visibility="Hidden" class="menu-grid-list" style="flex-grow: 1; border-color: rgb(15, 197, 229); border-width: 1px; border-radius: 10px; background-color: rgba(0, 0, 0, 0.3); overflow: hidden;"/>
             </ui:VisualElement>

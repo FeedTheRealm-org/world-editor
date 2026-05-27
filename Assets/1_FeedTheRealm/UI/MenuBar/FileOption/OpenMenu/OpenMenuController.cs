@@ -65,7 +65,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
                 var button = new Button();
                 button.text = PrettifyName(capturedWorld);
                 button.AddToClassList("menu-world-option-button");
-                button.style.marginBottom = 8;
                 button.style.alignSelf = Align.Stretch;
 
                 button.clicked += async () => await OnLoadWorldClicked(capturedWorld);
