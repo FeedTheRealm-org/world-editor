@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="root" class="menu-root">
-        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 50%; min-width: 460px; max-width: 780px; height: auto; min-height: 360px;">
+        <ui:VisualElement name="MenuContainer" class="menu-container" style="width: 50%; min-width: 460px; max-width: 780px; height: 60%; min-height: 50%; max-height: 60%;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1;">
                 <ui:Button text="✕" name="Close" class="menu-close-btn"/>
                 <ui:VisualElement name="Header" class="menu-header">
@@ -10,7 +10,7 @@
                 <ui:VisualElement name="Content" style="flex-grow: 1; flex-direction: row; margin-top: 18px;">
                     <ui:VisualElement name="ZoneSection" style="flex-direction: column; flex-grow: 1; margin-right: 20px;">
                         <ui:Button text="Publish All zones" name="PublishAllZones" class="menu-secondary-btn" style="margin-bottom: 10px; align-self: stretch; font-size: 20px;"/>
-                        <ui:ScrollView name="ZoneGroup" class="menu-grid-list" style="flex-grow: 1;"/>
+                        <ui:ScrollView name="ZoneGroup" style="height: 100%; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;"/>
                     </ui:VisualElement>
                     <ui:VisualElement name="OptionsSection" style="flex-direction: column; justify-content: space-between; min-width: 200px;">
                         <ui:VisualElement name="Toggles" style="flex-direction: column;">

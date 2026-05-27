@@ -79,3 +79,4 @@ MonoBehaviour:
   subscriptionService: {fileID: 11400000, guid: cdcc8632b47d3404abc84626afb9c023, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   materialService: {fileID: 11400000, guid: e751ed34f66de10e0989ef652228e679, type: 2}
+  zoneItemTemplate: {fileID: 9197481963319205126, guid: 89535408ea923509faf0754a0b1da6d2, type: 3}

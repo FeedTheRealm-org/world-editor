@@ -235,6 +235,10 @@
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
     border-bottom-left-radius: 18px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
 }
 
 .menu-secondary-btn:hover {
@@ -911,4 +915,29 @@
 
 .menu-danger-btn:hover {
     background-color: rgba(220, 53, 69, 0.35);
+}
+
+.menu-zone-item {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgba(15, 197, 229, 0.4);
+    border-width: 1px;
+    border-radius: 16px;
+    color: rgb(15, 197, 229);
+    font-size: 13px;
+    padding: 6px 14px;
+    margin-bottom: 6px;
+    cursor: link;
+    align-self: stretch;
+    -unity-text-align: middle-center;
+}
+
+.menu-zone-item:hover {
+    background-color: rgba(15, 197, 229, 0.1);
+    border-color: rgb(15, 197, 229);
+}
+
+.menu-zone-item--active {
+    background-color: rgba(15, 197, 229, 0.2);
+    border-color: rgb(15, 197, 229);
+    color: rgb(255, 255, 255);
 }

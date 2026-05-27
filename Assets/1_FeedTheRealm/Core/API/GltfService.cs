@@ -40,7 +40,7 @@ namespace API
                 return;
             }
             Transform modelContainer = parent.transform.Find(LoadToObjectName) ?? parent.transform;
-            modelFilepath = $"{FILE_PROTOCOL}/{config.ModelsDirectory}/{modelFilepath}";
+            modelFilepath = $"{FILE_PROTOCOL}{config.ModelsDirectory}/{modelFilepath}";
             try
             {
                 var gltfImport = new GltfImport();
