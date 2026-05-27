@@ -339,3 +339,42 @@
     width: 12px;
     height: 12px;
 }
+
+.pill {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 999px;
+    border-width: 2px;
+    border-color: rgb(15, 197, 229);
+    background-color: rgba(220, 80, 90, 0.5);
+    min-width: 250px;
+    height: 40px;
+    width: 288px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+    border-bottom-left-radius: 24px;
+    font-size: 25px;
+    -unity-font-style: normal;
+}
+
+.pill--hidden {
+    display: none;
+}
+
+.pill--placing {
+    background-color: rgba(50, 130, 220, 0.92);
+}
+
+.pill--removing {
+    background-color: rgba(220, 80, 90, 0.92);
+}
+
+.pill__label {
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}

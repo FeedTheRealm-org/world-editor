@@ -17,12 +17,13 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
 
         public void Enter()
         {
-            Debug.Log("ENTER: Removing Mode");
+            worldEditor.editorStateChangedEvent.Raise(EditorStates.Removing);
+            worldEditor.Log("Removing mode");
         }
 
         public void Exit()
         {
-            Debug.Log("EXIT: Removing Mode");
+            worldEditor.editorStateChangedEvent.Raise(EditorStates.None);
         }
 
         public void Tick() { }

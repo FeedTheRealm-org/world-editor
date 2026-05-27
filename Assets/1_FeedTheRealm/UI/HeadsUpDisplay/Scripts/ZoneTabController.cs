@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
 
-namespace FeedTheRealm.UI.EditorBar
+namespace FeedTheRealm.UI.HeadsUpDisplay
 {
     public class ZoneTabController : MonoBehaviour
     {

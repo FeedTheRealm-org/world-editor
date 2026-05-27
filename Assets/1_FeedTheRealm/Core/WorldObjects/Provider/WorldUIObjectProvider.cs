@@ -8,8 +8,10 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
     )]
     public class WorldUIObjectProvider : ScriptableObject
     {
+        [Header("HUD Elements")]
         public GameObject menuBarGameObject;
         public GameObject editorBarGameObject;
+        public GameObject editorStateDisplayObject;
         public GameObject placeableDisplayObject;
         public GameObject editorSettingsMenuObject;
         public GameObject subscriptionMenuObject;

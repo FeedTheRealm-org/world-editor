@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.Core::UISceneProvider
   menuBarGameObject: {fileID: 3578506303314259915, guid: 5a60e4d9332f2971194a272fb9d727c0, type: 3}
   editorBarGameObject: {fileID: 274167244099775154, guid: 50b1820f7e5a84da3a3770617e130217, type: 3}
+  editorStateDisplayObject: {fileID: 3970288328171986338, guid: 0df2442287e8496eebae54faeadc57a1, type: 3}
   placeableDisplayObject: {fileID: 4078320561103496463, guid: cfb5d465ede5e5951a2e403fad83f5ca, type: 3}
   editorSettingsMenuObject: {fileID: 3092455468846421062, guid: 94f969e5809956a63bcd99343969cdb4, type: 3}
-  loginMenuObject: {fileID: 4901664015586715330, guid: 3fb7c6ef19f96ec7fa9df02eab5ed008, type: 3}
-  signUpMenuObject: {fileID: 848887175973073914, guid: 1e2d825cb262687419c0efcc44611bb3, type: 3}
-  verifyCodeMenuObject: {fileID: 2433370806483395245, guid: 31b72ddf89815b04c93f0d8a12ccb054, type: 3}
   subscriptionMenuObject: {fileID: 3606013114006336474, guid: 1bc7e96ac7818884fa353d91470a7ca9, type: 3}
+  transactionsMenuObject: {fileID: 0}
   placeableEditor: {fileID: 8057090252808628878, guid: 95da3940fbc8dd2ec8209befdfa43fd9, type: 3}
   structureEditObject: {fileID: 327539696238860596, guid: fa75a38db21056d5a81c4576774cbb5c, type: 3}
   FriendlyNpcSpawnerEditObject: {fileID: 4105760430034162826, guid: 875f74cbddabe4f2d8dff1719d8dac60, type: 3}

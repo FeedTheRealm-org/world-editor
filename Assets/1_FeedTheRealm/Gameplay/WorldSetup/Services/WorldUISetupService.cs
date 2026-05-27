@@ -14,8 +14,8 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         private readonly GameObject menuBarGameObject;
         private readonly GameObject editorBarGameObject;
         private readonly GameObject placeableDisplayObject;
-        private readonly GameObject editorSettingsMenuObject;
-        private readonly GameObject subscriptionMenuObject;
+        private readonly GameObject editorStateDisplayObject;
+
         private readonly AuthFlowManager authFlowManager;
         private readonly UpdateLoginEvent updateLoginEvent;
         private readonly IObjectResolver objectResolver;
@@ -35,8 +35,7 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             menuBarGameObject = WorldUIObjectProvider.menuBarGameObject;
             editorBarGameObject = WorldUIObjectProvider.editorBarGameObject;
             placeableDisplayObject = WorldUIObjectProvider.placeableDisplayObject;
-            editorSettingsMenuObject = WorldUIObjectProvider.editorSettingsMenuObject;
-            subscriptionMenuObject = WorldUIObjectProvider.subscriptionMenuObject;
+            editorStateDisplayObject = WorldUIObjectProvider.editorStateDisplayObject;
             this.updateLoginEvent = updateLoginEvent;
             this.authFlowManager = authFlowManager;
             this.objectResolver = objectResolver;
@@ -60,16 +59,13 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 );
             objectResolver.Instantiate(placeableDisplayObject).name = "PlaceableDisplay";
 
-            if (editorSettingsMenuObject == null)
+            if (editorStateDisplayObject == null)
+            {
                 throw new System.Exception(
-                    "EditorSettingsMenu GameObject not set in WorldUIObjectProvider!"
+                    "EditorStateDisplay GameObject not set in WorldUIObjectProvider!"
                 );
-
-            if (subscriptionMenuObject == null)
-                throw new System.Exception(
-                    "SubscriptionMenu GameObject not set in WorldUIObjectProvider!"
-                );
-            //objectResolver.Instantiate(subscriptionMenuObject).name = "SubscriptionMenu";
+            }
+            objectResolver.Instantiate(editorStateDisplayObject).name = "EditorStateDisplay";
 
             authFlowManager.OnAuthComplete += (message) =>
             {

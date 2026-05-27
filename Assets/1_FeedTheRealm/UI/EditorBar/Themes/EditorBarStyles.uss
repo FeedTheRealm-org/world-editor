@@ -15,8 +15,6 @@
     -unity-text-generator: standard;
 }
 
-
-
 .dropdown {
     flex-direction: column;
     background-color: rgb(20, 20, 22);
@@ -75,11 +73,12 @@
 
 .editor-zone .unity-base-field__label {
     color: rgb(255, 255, 255);
-    font-size: 15px;
+    font-size: 20px;
     margin-right: 4px;
     min-width: 0;
     padding: 0;
     padding-left: 10px;
+    width: auto;
 }
 
 .editor-zone .unity-base-field__input,
