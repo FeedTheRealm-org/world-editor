@@ -26,6 +26,10 @@
     margin-right: 25px;
     margin-bottom: 25px;
     margin-left: 25px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
 }
 
 .menu-close-btn {
