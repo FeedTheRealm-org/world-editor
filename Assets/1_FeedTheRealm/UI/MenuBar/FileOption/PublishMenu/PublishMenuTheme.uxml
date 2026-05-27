@@ -9,7 +9,6 @@
                 </ui:VisualElement>
                 <ui:VisualElement name="Content" style="flex-grow: 1; flex-direction: row; margin-top: 18px;">
                     <ui:VisualElement name="ZoneSection" style="flex-direction: column; flex-grow: 1; margin-right: 20px;">
-                        <ui:Button text="Publish All zones" name="PublishAllZones" class="menu-secondary-btn" style="margin-bottom: 10px; align-self: stretch; font-size: 20px;"/>
                         <ui:ScrollView name="ZoneGroup" style="height: 100%; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;"/>
                     </ui:VisualElement>
                     <ui:VisualElement name="OptionsSection" style="flex-direction: column; justify-content: space-between; min-width: 200px;">

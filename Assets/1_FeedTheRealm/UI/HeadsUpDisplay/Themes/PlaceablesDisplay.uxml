@@ -5,7 +5,7 @@
             <ui:Image name="SearchIcon" source="project://database/Assets/1_FeedTheRealm/UI/Icons/Search.svg?fileID=7388822144124034973&amp;guid=7df25ffb9e3ab33a2a32c56365392167&amp;type=3#Search" class="hud-sidebar__search-icon"/>
             <ui:TextField placeholder-text="Search" name="SearchField" class="hud-sidebar__search" style="flex-grow: 1;"/>
         </ui:VisualElement>
-        <ui:DropdownField name="CategoryDropdown" class="hud-sidebar__category" style="align-items: stretch; align-self: stretch; align-content: flex-start; padding-right: 6px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);"/>
+        <ui:DropdownField name="CategoryDropdown" class="hud-sidebar__category" style="align-items: stretch; align-self: stretch; align-content: flex-start; padding-right: 6px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); margin-left: 2px;"/>
         <ui:ScrollView name="LibraryBar" class="hud-sidebar__list" style="border-top-width: 1px; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;"/>
     </ui:VisualElement>
 </ui:UXML>
