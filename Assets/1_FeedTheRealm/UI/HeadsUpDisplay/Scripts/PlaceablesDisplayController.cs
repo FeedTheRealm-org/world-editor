@@ -70,6 +70,7 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
                     currentCategory = cat;
                     LoadObjectsForCategory(cat);
                 }
+                searchField.value = string.Empty;
             });
 
             // Search field
