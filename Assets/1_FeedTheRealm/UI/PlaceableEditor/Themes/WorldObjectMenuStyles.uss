@@ -414,3 +414,9 @@
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
 }
+
+#Root > #Menu > #Panel > #TabView > #Colliders > #Buttons > #ColliderType > .unity-popup-field__label {
+    width: 95px;
+    max-width: 95px;
+    min-width: 95px;
+}

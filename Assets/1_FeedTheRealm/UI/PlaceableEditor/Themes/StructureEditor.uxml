@@ -4,7 +4,7 @@
         <ui:VisualElement name="Menu" class="wo-container" style="width: 600px; max-width: 600px;">
             <ui:VisualElement name="Panel" class="wo-panel">
                 <ui:Button text="✕" name="Close" class="wo-close-btn"/>
-                <ui:Label text="placeable_object" name="StructureName" class="wo-title"/>
+                <ui:Label text="placeable_object" name="StructureName" class="wo-title" style="width: 95%;"/>
                 <ui:VisualElement name="Shortcuts" class="wo-shortcuts" style="width: 100%;">
                     <ui:Label text="Shortcuts: [M] move  [N] scale  [R] rotate  [C] colliders  [H] hide" class="wo-shortcut-label" style="font-size: 15px;"/>
                 </ui:VisualElement>
@@ -36,7 +36,7 @@
                             <ui:Label text="Rotation" class="wo-vec3-label"/>
                             <ui:Vector3Field name="ColliderRotation" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
-                        <ui:VisualElement name="Buttons" style="flex-direction: row; align-items: center; margin-top: 10px; justify-content: space-between;">
+                        <ui:VisualElement name="Buttons" style="flex-direction: row; align-items: center; margin-top: 10px; justify-content: space-between; width: 100%;">
                             <ui:Toggle label="Enable Colliders" name="CollidersToggle" class="wo-toggle"/>
                             <ui:DropdownField label="Collider Type" name="ColliderType" class="wo-dropdown" style="flex-grow: 1; margin-left: 14px; margin-right: 14px; color: rgb(15, 197, 229);"/>
                         </ui:VisualElement>
