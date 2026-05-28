@@ -48,6 +48,7 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
         void Start()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
+            var sidebar = root.Q<VisualElement>("root");
 
             libraryBar = root.Q<ScrollView>("LibraryBar");
             searchField = root.Q<TextField>("SearchField");
@@ -94,6 +95,8 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
 
             searchField.RegisterCallback<FocusInEvent>(_ => inputReader.ToggleInput(false));
             searchField.RegisterCallback<FocusOutEvent>(_ => inputReader.ToggleInput(true));
+            sidebar.RegisterCallback<PointerEnterEvent>(_ => inputReader.ToggleInput(false));
+            sidebar.RegisterCallback<PointerLeaveEvent>(_ => inputReader.ToggleInput(true));
 
             // Events
             refreshPlaceableLibraryEvent.OnRaised += OnRefresh;
@@ -132,9 +135,6 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
 
                 label.text = option.displayName;
                 button.clicked += () => objectSelectedEvent.Raise(option);
-                button.RegisterCallback<MouseEnterEvent>(_ => enableInputEvent.Raise(false));
-                button.RegisterCallback<MouseLeaveEvent>(_ => enableInputEvent.Raise(true));
-
                 libraryBar.Add(entry);
             }
         }

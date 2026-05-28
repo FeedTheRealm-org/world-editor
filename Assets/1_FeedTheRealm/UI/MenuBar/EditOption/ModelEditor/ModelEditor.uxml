@@ -1,17 +1,22 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="Root" class="menu-root">
-        <ui:VisualElement name="Container" class="container" style="width: 70%; min-width: 560px; max-width: 1000px; height: 65%; min-height: 400px; max-height: 740px;">
+        <ui:VisualElement name="Container" class="container" style="width: 1200px; min-width: 560px; max-width: 1200px; height: 65%; min-height: 400px; max-height: 740px;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; min-height: 0; overflow: hidden; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229);">
                 <ui:Button text="✕" name="Close" class="menu-close-btn"/>
                 <ui:VisualElement name="Header" class="menu-header">
                     <ui:Label text="Model Editor" name="Title" class="menu-header-label"/>
                 </ui:VisualElement>
-                <ui:TabView style="flex-grow: 1; min-height: 0; margin-top: 14px; width: 100%;">
-                    <ui:Tab label="Placeable Editor" name="PlaceableEditor" style="flex-grow: 1; min-height: 0;">
-                        <ui:VisualElement style="flex-grow: 1; flex-direction: column; min-height: 0;">
-                            <ui:Label text="Select how your models start out when being placed!" class="menu-field-label" style="margin-bottom: 12px; flex-shrink: 0;"/>
-                            <ui:ScrollView name="ModelsList" class="menu-grid-list" style="flex-grow: 1; min-height: 0; margin-top: 0; margin-right: 0; margin-left: 0; margin-bottom: 0; border-width: 1px; border-color: rgb(15, 197, 229); width: 100%;"/>
+                <ui:TabView style="flex-grow: 1; min-height: 0; margin-top: 14px; width: 100%; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;">
+                    <ui:Tab label="Structure Editor" name="PlaceableEditor" style="flex-grow: 1; min-height: 0;">
+                        <ui:VisualElement style="flex-grow: 1; flex-direction: column; min-height: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;">
+                            <ui:Label text="Select how your models start out when being placed!" class="menu-field-label" style="margin-bottom: 12px; flex-shrink: 0; margin-left: 12px; padding-top: 0; margin-top: 12px; margin-right: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;"/>
+                                <ui:VisualElement class="menu-search-row" style="margin-bottom: 10px; flex-shrink: 0;">
+                                    <ui:Image name="SearchIcon" source="project://database/Assets/1_FeedTheRealm/UI/Icons/Search.svg?fileID=7388822144124034973&amp;guid=7df25ffb9e3ab33a2a32c56365392167&amp;type=3#Search" class="menu-search-icon"/>
+                                    <ui:TextField placeholder-text="Search models..." name="ModelsSearch" class="menu-search-field" style="flex-grow: 1;"/>
+                                    <ui:Button text="✕" name="ModelSearchClear" class="menu-search-clear"/>
+                                </ui:VisualElement>
+                            <ui:ScrollView name="ModelsList" class="menu-grid-list" style="flex-grow: 1; margin: 0; border-width: 1px; border-color: rgb(15, 197, 229); margin-right: 10px; margin-left: 10px; height: 1000px;"/>
                         </ui:VisualElement>
                     </ui:Tab>
                     <ui:Tab label="Misc Editor" name="MiscEditorTab" style="flex-grow: 1; min-height: 0;">
