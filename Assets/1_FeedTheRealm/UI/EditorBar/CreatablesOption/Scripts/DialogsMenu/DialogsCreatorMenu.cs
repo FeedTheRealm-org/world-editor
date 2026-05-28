@@ -134,12 +134,48 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
                 entry.Q<Button>("Edit").clicked += () => OpenMessageEditor(capturedMessage);
                 entry.Q<Button>("Delete").clicked += () =>
                 {
-                    currentDialog.data.messages.Remove(capturedMessage);
-                    entry.RemoveFromHierarchy();
+                    OnDeleteMessage(capturedMessage, entry);
                 };
 
                 messagesList.Add(entry);
             }
+        }
+
+        private void OnDeleteMessage(MessageData message, VisualElement entry)
+        {
+            var npcs = creatablesManager.GetAll<FriendlyNpc>();
+            bool isInUse = false;
+            foreach (var npc in npcs)
+            {
+                if (
+                    System.Linq.Enumerable.Any(
+                        npc.data.dialogProgression,
+                        p =>
+                            p.questAssignments != null
+                            && System.Linq.Enumerable.Any(
+                                p.questAssignments,
+                                qa => qa.messageId == message.id
+                            )
+                    )
+                )
+                {
+                    isInUse = true;
+                    break;
+                }
+            }
+
+            if (isInUse)
+            {
+                ToastNotification.Show(
+                    "Cannot delete message: It has an active quest assignment in an NPC.",
+                    "error",
+                    Color.red
+                );
+                return;
+            }
+
+            currentDialog.data.messages.Remove(message);
+            entry.RemoveFromHierarchy();
         }
 
         // ── Navigation ────────────────────────────────────────────────────────

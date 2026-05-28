@@ -1,5 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
         <ui:VisualElement name="Container" class="container" style="width: 65%; min-width: 480px; max-width: 920px; height: 70%; min-height: 380px; max-height: 760px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
@@ -13,7 +13,7 @@
                         <ui:Label text="name" class="wc-field-label"/>
                         <ui:TextField placeholder-text="" name="NameField" class="wc-text-field"/>
                     </ui:VisualElement>
-                    <ui:Button text="add new message" name="CreateMessage" class="wc-back-btn" style="align-self: flex-end; margin-bottom: 0; flex-shrink: 0;"/>
+                    <ui:Button text="add new message" name="CreateMessage" class="wc-back-btn" style="align-self: flex-end; margin-bottom: 0; flex-shrink: 0; translate: 0 -11px;"/>
                 </ui:VisualElement>
                 <ui:ScrollView name="MessagesList" class="wc-grid-list" style="flex-grow: 1; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255);"/>
                 <ui:Button text="save dialog" name="SaveButton" class="wc-back-btn" style="align-self: flex-end; margin-bottom: 0; flex-shrink: 0; color: rgb(255, 210, 80); border-left-color: rgb(255, 210, 80); border-right-color: rgb(255, 210, 80); border-top-color: rgb(255, 210, 80); border-bottom-color: rgb(255, 210, 80); margin-top: 10px;"/>

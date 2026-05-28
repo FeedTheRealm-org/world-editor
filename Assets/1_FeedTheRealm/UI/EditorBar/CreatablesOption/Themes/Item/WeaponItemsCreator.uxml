@@ -1,11 +1,11 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
         <ui:VisualElement name="Container" class="container" style="width: 70%; min-width: 540px; max-width: 1000px; height: 78%; min-height: 420px; max-height: 820px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
                 <ui:Button text="✕" name="Close" class="wc-close-btn"/>
                 <ui:VisualElement name="Header" class="wc-header">
-                    <ui:Label text="Items | weapons" name="Title" class="wc-header-label"/>
+                    <ui:Label text="Items | weapons" name="Title" class="wc-header-label" style="-unity-font-style: normal;"/>
                     <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="ItemEditor" class="wc-body" style="margin-top: 22px;">
@@ -22,7 +22,7 @@
                         </ui:VisualElement>
                         <ui:VisualElement name="DescriptionGroup" class="wc-field-group">
                             <ui:Label text="description" class="wc-field-label"/>
-                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 90px;"/>
+                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 100px; height: 100px; max-height: 100px;"/>
                         </ui:VisualElement>
                         <ui:VisualElement name="TypeRow" class="wc-row">
                             <ui:VisualElement name="WeaponTypeGroup" class="wc-field-group">
