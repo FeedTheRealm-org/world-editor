@@ -25,7 +25,7 @@
     color: rgb(210, 214, 220);
     flex-direction: row;
     flex-shrink: 0;
-    background-color: rgba(24, 57, 66, 0.5);
+    background-color: rgba(24, 57, 66, 0.9);
 }
 
 .unity-button:hover {

@@ -25,3 +25,4 @@ MonoBehaviour:
   AggresiveNpcSpawnerEditObject: {fileID: 4306287891462671948, guid: 466722acd38bf7b26a345e9f265024b9, type: 3}
   PortalEditObject: {fileID: 327539696238860596, guid: f49d01631cb398522b13963938617abd, type: 3}
   ChestEditObject: {fileID: 327539696238860596, guid: 74245d0fa981ac2b9ba5bd99c10827aa, type: 3}
+  PlayerSpawnerEditObject: {fileID: 327539696238860596, guid: 6d3ac9fe553e2507285e41d9d640b273, type: 3}

@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: FTR.Core::FTR.Core.Common.Config.Config
   modelsDataDirectory: Models
   spritesDirectory: Sprites
-  zoneGroundDirectory: Ground
-  zoneSkyboxDirectory: Skybox
+  materialsDirectory: Materials
   modelsDirectory: Models
   worldsDirectory: Worlds
   worldsFileExtension: .world
@@ -28,7 +27,7 @@ MonoBehaviour:
   worldObjectLayerMask:
     serializedVersion: 2
     m_Bits: 2048
-  defaultOpenChestId: bbc147da-338a-4cb5-be5e-2eceb47bbe84
-  defaultClosedChestId: 32500ab4-3c6f-4b01-8cb1-c2814d6bf54b
-  defaultGroundMaterial: {fileID: 2100000, guid: f9a94780aa94b7c4985400ab0bedcdbb, type: 2}
+  defaultOpenChestId: 
+  defaultClosedChestId: 
+  defaultGroundMaterial: {fileID: 2100000, guid: e082ce1c142d4b206a46125f2eddfc0d, type: 2}
   defaultSkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}

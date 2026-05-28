@@ -162,7 +162,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
             SetupShopControls();
             SetupGizmos();
             SetupColliderVisuals();
-            Debug.Log($"[StructureEditor] colliderType at edit time: {target.data.colliderType}");
             SyncColliderVisual();
             SubscribeShortcuts();
 
@@ -528,30 +527,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         public override void CloseMenu()
         {
-            inputReader.ScrollEvent -= OnScroll;
+            base.CloseMenu();
             UnsubscribeShortcuts();
-
-            if (positionGizmo != null)
-            {
-                positionGizmo.OnPositionChanged -= OnGizmoMoved;
-                positionGizmo.gameObject.SetActive(false);
-            }
-
-            if (scaleGizmo != null)
-            {
-                scaleGizmo.OnScaleChanged -= OnGizmoScaled;
-                scaleGizmo.gameObject.SetActive(false);
-            }
-
             SetCubeColliderActive(false);
-            activeGizmo = null;
-            focusedAxisField = null;
-            focusedVectorField = null;
             Destroy(cubeColliderInstance);
             Destroy(slopeColliderInstance);
-            cubeColliderInstance = null;
-            slopeColliderInstance = null;
-            base.CloseMenu();
         }
 
         // ---- Scroll ----

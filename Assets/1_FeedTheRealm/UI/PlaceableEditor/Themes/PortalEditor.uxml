@@ -14,6 +14,11 @@
                     <ui:TextField placeholder-text="" name="PortalName" class="wo-input"/>
                 </ui:VisualElement>
 
+                    <ui:VisualElement class="wo-vec3-row">
+                    <ui:Label text="Position" class="wo-vec3-label"/>
+                <ui:Vector3Field name="Position" value="0,0,0" class="wo-vec3-field"/>
+                </ui:VisualElement>
+
                 <!-- Destination + Zone row -->
                 <ui:VisualElement name="DestinationContainer" class="wo-row">
                     <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">

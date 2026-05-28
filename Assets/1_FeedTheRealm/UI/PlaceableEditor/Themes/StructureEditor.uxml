@@ -1,12 +1,12 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
     <ui:VisualElement name="Root" class="wo-root">
-        <ui:VisualElement name="Menu" class="wo-container" style="width: 40%; max-width: 40%;">
+        <ui:VisualElement name="Menu" class="wo-container" style="width: 600px; max-width: 600px;">
             <ui:VisualElement name="Panel" class="wo-panel">
                 <ui:Button text="✕" name="Close" class="wo-close-btn"/>
                 <ui:Label text="placeable_object" name="StructureName" class="wo-title"/>
-                <ui:VisualElement name="Shortcuts" class="wo-shortcuts" style="width: 405px;">
-                    <ui:Label text="Shortcuts: [M] move  [N] scale  [R] rotate  [C] colliders  [H] hide" class="wo-shortcut-label"/>
+                <ui:VisualElement name="Shortcuts" class="wo-shortcuts" style="width: 100%;">
+                    <ui:Label text="Shortcuts: [M] move  [N] scale  [R] rotate  [C] colliders  [H] hide" class="wo-shortcut-label" style="font-size: 15px;"/>
                 </ui:VisualElement>
                 <ui:TabView name="TabView" class="wo-tabview">
                     <ui:Tab name="Transform" label="Transform" class="wo-tab-content">

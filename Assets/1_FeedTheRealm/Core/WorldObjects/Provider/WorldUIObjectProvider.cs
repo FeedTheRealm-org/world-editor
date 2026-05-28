@@ -24,5 +24,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject AggresiveNpcSpawnerEditObject;
         public GameObject PortalEditObject;
         public GameObject ChestEditObject;
+        public GameObject PlayerSpawnerEditObject;
     }
 }

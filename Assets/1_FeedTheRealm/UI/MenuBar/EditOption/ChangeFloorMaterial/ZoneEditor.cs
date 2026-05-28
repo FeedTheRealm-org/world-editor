@@ -23,6 +23,9 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
         [Inject]
         private Config config;
 
+        [SerializeField]
+        private Color selectedColor = new(0.2f, 0.6f, 0.2f);
+
         private Button closeButton;
         private Button addTextureButton;
         private Button resetGranularityButton;
@@ -186,7 +189,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                     ? selectedGroundMaterialId
                     : selectedSkyboxMaterialId;
             if (materialName == selectedId)
-                container.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
+                container.style.backgroundColor = selectedColor;
 
             return container;
         }
@@ -211,7 +214,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
             var grid = type == ZoneTextureType.Ground ? groundMaterialsGrid : skyboxMaterialsGrid;
             foreach (var child in grid.Children())
                 child.style.backgroundColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f));
-            container.style.backgroundColor = new StyleColor(new Color(0.2f, 0.6f, 0.2f));
+            container.style.backgroundColor = selectedColor;
 
             if (type == ZoneTextureType.Ground)
             {

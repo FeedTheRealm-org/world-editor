@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.MenuBar.EditorBarController
   menuBarUI: {fileID: 875738810445274930}
-  PlacementOption: {fileID: 1020976986542930152, guid: a6cc5a598cab5593bbfc43afc8d328a5, type: 3}
+  PlacementOption: {fileID: 0}
   CreatablesOption: {fileID: 4733705910565161396, guid: 9eae8d8b0ec4797ebb934189ff43b1fa, type: 3}
 --- !u!114 &8853152386999969490
 MonoBehaviour:

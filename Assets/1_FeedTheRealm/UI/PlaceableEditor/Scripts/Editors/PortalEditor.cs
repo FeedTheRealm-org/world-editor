@@ -29,10 +29,12 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private DropdownField zoneDropdown;
         private Slider radiusSlider;
         private Button closeButton;
+        private Vector3Field positionField;
 
         private PortalObject target;
         private Portal targetPortal;
         private List<Portal> allPortals;
+        private PositionGizmo positionGizmo;
 
         void OnEnable()
         {
@@ -43,6 +45,9 @@ namespace FeedTheRealm.UI.PlaceableEditor
             zoneDropdown = root.Q<DropdownField>("Zone");
             radiusSlider = root.Q<Slider>("PortalRadius");
             closeButton = root.Q<Button>("Close");
+            positionField = root.Q<Vector3Field>("Position");
+
+            positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
 
             closeButton.clicked += CloseMenu;
         }
@@ -53,7 +58,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             if (target == null)
             {
                 Debug.LogError($"PortalEditor: {placeable.name} has no PortalObject component.");
-                Destroy(gameObject);
+                CloseMenu();
                 return;
             }
 
@@ -64,18 +69,20 @@ namespace FeedTheRealm.UI.PlaceableEditor
             if (targetPortal == null)
             {
                 Debug.LogError($"PortalEditor: No Portal creatable found for id {target.data.id}");
-                Destroy(gameObject);
+                CloseMenu();
                 return;
             }
 
             PopulateFields();
             BindEvents();
+            SetupGizmo();
         }
 
         private void PopulateFields()
         {
             portalNameField.SetValueWithoutNotify(targetPortal.data.name);
             radiusSlider.SetValueWithoutNotify(target.data.radius);
+            positionField.SetValueWithoutNotify(target.transform.position);
 
             PopulateZoneDropdown();
             PopulateDestinationDropdown();
@@ -154,6 +161,28 @@ namespace FeedTheRealm.UI.PlaceableEditor
                 if (selected != null)
                     targetPortal.data.targetPortalId = selected.Id;
             });
+        }
+
+        private void SetupGizmo()
+        {
+            positionGizmo = GetComponentInChildren<PositionGizmo>(includeInactive: true);
+            if (positionGizmo == null)
+                return;
+
+            positionGizmo.Initialize(target.transform, Camera.main);
+            positionGizmo.OnPositionChanged += OnGizmoMoved;
+            positionGizmo.gameObject.SetActive(true);
+        }
+
+        private void OnGizmoMoved(Vector3 newPosition)
+        {
+            positionField.SetValueWithoutNotify(newPosition);
+        }
+
+        public override void CloseMenu()
+        {
+            base.CloseMenu();
+            positionGizmo.OnPositionChanged -= OnGizmoMoved;
         }
     }
 }

@@ -15,18 +15,12 @@ namespace FeedTheRealm.UI.MenuBar
     public class EditorBarController : MonoBehaviour
     {
         [Inject]
-        private InputReader inputReader;
-
-        [Inject]
         private Logging.Logger logger;
 
         [SerializeField]
         private UIDocument menuBarUI;
 
         [Header("Menu Options")]
-        [SerializeField]
-        private GameObject PlacementOption;
-
         [SerializeField]
         private GameObject CreatablesOption;
 

@@ -101,6 +101,12 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
             zoneStatusBadge = GetComponent<ZoneStatusBadgeController>();
             BindElements(root);
+
+            // Fix ScrollView clipping
+            worldsList.style.overflow = Overflow.Visible;
+            worldsList.contentContainer.style.overflow = Overflow.Visible;
+            worldsList.verticalScroller.style.display = DisplayStyle.Flex;
+
             RegisterCallbacks();
             await LoadSubscriptionAsync();
             updateLoginEvent.OnRaised += async () => await LoadSubscriptionAsync();
@@ -588,8 +594,15 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             int activeZoneCount = zones.FindAll(z => z.is_active).Count;
 
             var wrapper = new VisualElement();
+
+            wrapper.style.marginBottom = 4;
+
             var worldEntry = worldItemTemplate.Instantiate();
             worldEntry.style.backgroundColor = new StyleColor(new Color(0.1f, 0.1f, 0.1f, 0.5f));
+
+            worldEntry.style.height = StyleKeyword.Auto;
+            worldEntry.style.overflow = Overflow.Visible;
+            worldEntry.style.flexShrink = 0;
 
             worldEntry.Q<Label>("Header").text = world.name;
             worldEntry.Q<Label>("ZoneName").text = $"{activeZoneCount}/{zoneCount} active zone(s)";
@@ -602,8 +615,13 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             // Dropdown
             bool isExpanded = false;
             var dropdownBtn = worldEntry.Q<Button>("DropdownBtn");
-            var zoneContainer = new VisualElement { style = { display = DisplayStyle.None } };
+            var zoneContainer = new VisualElement();
+            zoneContainer.style.display = DisplayStyle.None;
+            zoneContainer.style.flexShrink = 0;
+            zoneContainer.style.overflow = Overflow.Visible;
+            zoneContainer.style.paddingBottom = 4;
             dropdownBtn.text = "▶";
+            dropdownBtn.style.color = Color.white;
 
             if (zoneCount > 0)
             {
@@ -623,7 +641,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             var activateAllBtn = worldEntry.Q<Button>("ToggleActive");
             bool anyActive = activeZoneCount > 0;
             SetActivateAllBtn(activateAllBtn, anyActive);
-
+            activateAllBtn.style.color = Color.white;
             activateAllBtn.clicked += () =>
             {
                 bool activating = activateAllBtn.text == "Activate All";
@@ -657,6 +675,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             zoneToggleButtons.ForEach(b =>
                             {
                                 b.text = activating ? "Deactivate" : "Activate";
+                                b.style.color = Color.white;
                                 b.style.backgroundColor = new StyleColor(
                                     activating
                                         ? new Color(0.8f, 0.2f, 0.2f, 0.3f)
@@ -687,6 +706,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             // Delete
             var deleteBtn = worldEntry.Q<Button>("Unsubscribe");
             deleteBtn.text = "Delete World";
+            deleteBtn.style.color = Color.white;
             deleteBtn.style.backgroundColor = new StyleColor(new Color(0.8f, 0.2f, 0.2f, 0.3f));
             deleteBtn.clicked += () => OnDeleteWorldClicked(world, worldEntry);
 
@@ -729,6 +749,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
             var toggleBtn = zoneEntry.Q<Button>("ToggleActive");
             toggleBtn.text = zone.is_active ? "Deactivate" : "Activate";
+            toggleBtn.style.color = Color.white;
             toggleBtn.style.backgroundColor = new StyleColor(
                 zone.is_active
                     ? new Color(0.8f, 0.2f, 0.2f, 0.3f)

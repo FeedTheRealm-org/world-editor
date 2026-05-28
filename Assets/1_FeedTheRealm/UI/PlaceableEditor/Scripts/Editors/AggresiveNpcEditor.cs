@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using System.Linq;
 using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
 using FTR.UI;
-using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -17,6 +15,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
     {
         [Inject]
         private CreatablesManager creatablesManager;
+
         private Slider radiusSlider;
         private IntegerField maxEnemiesField;
         private IntegerField spawnRateField;
@@ -24,8 +23,10 @@ namespace FeedTheRealm.UI.PlaceableEditor
         private IntegerField resetDelayField;
         private DropdownField enemyDropdown;
         private Button closeButton;
+        private Vector3Field positionField;
 
         private AggresiveNpcSpawnerObject target;
+        private PositionGizmo positionGizmo;
 
         void OnEnable()
         {
@@ -38,6 +39,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             resetDelayField = root.Q<IntegerField>("ResetDelay");
             enemyDropdown = root.Q<DropdownField>("EnemyDropdown");
             closeButton = root.Q<Button>("Close");
+            positionField = root.Q<Vector3Field>("Position");
 
             radiusSlider.RegisterValueChangedCallback(e =>
             {
@@ -65,6 +67,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
                     target.data.EnemyId = selected.Id;
             });
 
+            positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
+
             closeButton.clicked += CloseMenu;
         }
 
@@ -75,6 +79,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
             spawnRateField.SetValueWithoutNotify((int)target.data.SpawnRate);
             resetAfterKillsField.SetValueWithoutNotify(target.data.ResetAfterKills);
             resetDelayField.SetValueWithoutNotify((int)target.data.ResetDelay);
+            positionField.SetValueWithoutNotify(target.transform.position);
 
             var enemies = creatablesManager.GetAll<AggresiveNpc>();
             enemyDropdown.choices = enemies.Select(e => e.data.name).ToList();
@@ -100,6 +105,29 @@ namespace FeedTheRealm.UI.PlaceableEditor
             }
 
             PopulateFields();
+            SetupGizmo();
+        }
+
+        private void SetupGizmo()
+        {
+            positionGizmo = GetComponentInChildren<PositionGizmo>(includeInactive: true);
+            if (positionGizmo == null)
+                return;
+
+            positionGizmo.Initialize(target.transform, Camera.main);
+            positionGizmo.OnPositionChanged += OnGizmoMoved;
+            positionGizmo.gameObject.SetActive(true);
+        }
+
+        private void OnGizmoMoved(Vector3 newPosition)
+        {
+            positionField.SetValueWithoutNotify(newPosition);
+        }
+
+        public override void CloseMenu()
+        {
+            base.CloseMenu();
+            positionGizmo.OnPositionChanged -= OnGizmoMoved;
         }
     }
 }
