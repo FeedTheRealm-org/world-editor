@@ -37,19 +37,19 @@
                     </ui:ScrollView>
                     <ui:VisualElement name="ColorControls" class="world-color-controls">
                         <ui:VisualElement class="world-color-row">
-                            <ui:Label text="Target" class="text world-color-label"/>
+                            <ui:Label text="Target" class="text world-color-label" style="color: rgb(255, 255, 255);"/>
                             <ui:DropdownField name="ColorTargetDropdown" class="world-color-dropdown"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="world-color-row">
-                            <ui:Label text="H" class="text world-color-label"/>
+                            <ui:Label text="H" class="text world-color-label" style="color: rgb(255, 255, 255);"/>
                             <ui:Slider name="HueSlider" low-value="0" high-value="360" value="0" show-input-field="true" class="world-color-slider"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="world-color-row">
-                            <ui:Label text="S" class="text world-color-label"/>
+                            <ui:Label text="S" class="text world-color-label" style="color: rgb(255, 255, 255);"/>
                             <ui:Slider name="SaturationSlider" low-value="0" high-value="100" value="0" show-input-field="true" class="world-color-slider"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="world-color-row">
-                            <ui:Label text="V" class="text world-color-label"/>
+                            <ui:Label text="V" class="text world-color-label" style="color: rgb(255, 255, 255);"/>
                             <ui:Slider name="ValueSlider" low-value="0" high-value="100" value="100" show-input-field="true" class="world-color-slider"/>
                         </ui:VisualElement>
                     </ui:VisualElement>

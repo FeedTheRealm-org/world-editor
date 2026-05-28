@@ -34,7 +34,7 @@
                                 <ui:DropdownField name="SubWeaponTypeField" class="wc-dropdown"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:VisualElement name="CombatRow" class="wc-row--3">
+                        <ui:VisualElement name="CombatRow" class="wc-row--3" style="margin-bottom: 0;">
                             <ui:VisualElement name="DamageGroup" class="wc-field-group">
                                 <ui:Label text="damage" class="wc-field-label"/>
                                 <ui:IntegerField value="10" name="DamageField" class="wc-text-field"/>
@@ -48,6 +48,7 @@
                                 <ui:FloatField value="10" name="RangeField" class="wc-text-field"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
+                        <ui:Label text="The higher the attack speed, the higher the time between hits (in seconds)." style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; color: rgba(255, 255, 255, 0.5);"/>
                         <ui:VisualElement name="RangedFieldsContainer" class="wc-row">
                             <ui:VisualElement name="AmmoGroup" class="wc-field-group">
                                 <ui:Label text="ammo capacity" class="wc-field-label"/>

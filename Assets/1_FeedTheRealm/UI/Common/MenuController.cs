@@ -81,7 +81,7 @@ namespace FTR.UI
             enableEditorEvent?.Raise(true);
 
             // only one destroy, after animation completes
-            root.schedule.Execute(() => Destroy(gameObject)).ExecuteLater(200);
+            root?.schedule.Execute(() => Destroy(gameObject)).ExecuteLater(200);
         }
 
         public virtual void OpenMenu(GameObject menuPrefab)
