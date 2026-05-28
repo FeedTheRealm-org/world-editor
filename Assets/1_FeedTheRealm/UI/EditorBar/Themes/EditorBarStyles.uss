@@ -105,6 +105,11 @@
     border-top-color: rgb(15, 197, 229);
     border-bottom-color: rgb(15, 197, 229);
     border-left-width: 1px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 24px;
 }
 
 .editor-zone:hover .unity-base-field__input,
@@ -116,4 +121,18 @@
     -unity-background-image-tint-color: rgb(15, 197, 229);
     width: 8px;
     height: 7px;
+    margin-left: 0px;
+    margin-right: 0px;
+    align-self: center;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
+
+.editor-zone .unity-base-popup-field__text {
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    align-self: center;
+    margin-right: 0;
+}
+

@@ -25,6 +25,7 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
             radiusSlider = root.Q<Slider>("SpawnerRadius");
             positionField = root.Q<Vector3Field>("Position");
+            closeButton = root.Q<Button>("Close");
 
             radiusSlider.RegisterValueChangedCallback(e =>
             {

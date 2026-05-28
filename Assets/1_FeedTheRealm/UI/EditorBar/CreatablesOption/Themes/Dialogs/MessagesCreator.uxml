@@ -1,5 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3CreatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
         <ui:VisualElement name="Container" class="container" style="width: 55%; min-width: 400px; max-width: 720px; height: 55%; min-height: 300px; max-height: 560px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
