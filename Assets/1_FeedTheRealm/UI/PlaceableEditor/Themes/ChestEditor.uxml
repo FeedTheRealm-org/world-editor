@@ -1,19 +1,14 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
-
     <ui:VisualElement name="Root" class="wo-root">
-        <ui:VisualElement name="Menu" class="wo-container" style="width: 520px; min-width: 480px; max-width: 600px;">
+        <ui:VisualElement name="Menu" class="wo-container" style="width: 700px; min-width: 480px; max-width: 700px;">
             <ui:VisualElement name="Panel" class="wo-panel">
-
                 <ui:Button text="✕" name="Close" class="wo-close-btn"/>
-
                 <ui:Label text="Chest Editor" name="Header" class="wo-title"/>
-
                 <ui:VisualElement class="wo-field-group">
                     <ui:Label text="chest name" class="wo-field-label"/>
                     <ui:TextField placeholder-text="new_chest" name="ChestName" class="wo-input"/>
                 </ui:VisualElement>
-
                 <ui:VisualElement class="wo-row">
                     <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
                         <ui:Label text="chest loot" class="wo-field-label"/>
@@ -24,7 +19,6 @@
                         <ui:DropdownField name="ClosedModelSelector" class="wo-dropdown"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement class="wo-row">
                     <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
                         <ui:Label text="opened model" class="wo-field-label"/>
@@ -35,10 +29,7 @@
                         <ui:SliderInt name="ResetCooldown" value="2" high-value="100" show-input-field="true" class="wo-slider"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
-                <!-- Tab view -->
                 <ui:TabView name="TabView" class="wo-tabview">
-
                     <ui:Tab name="Chest" label="Chest Transform" class="wo-tab-content">
                         <ui:VisualElement class="wo-vec3-row">
                             <ui:Label text="Position" class="wo-vec3-label"/>
@@ -53,7 +44,6 @@
                             <ui:Vector3Field name="Scale" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                     </ui:Tab>
-
                     <ui:Tab name="ClosedChest" label="Closed Chest" class="wo-tab-content">
                         <ui:VisualElement class="wo-vec3-row">
                             <ui:Label text="Position" class="wo-vec3-label"/>
@@ -68,7 +58,6 @@
                             <ui:Vector3Field name="ClosedScale" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                     </ui:Tab>
-
                     <ui:Tab name="OpenedChest" label="Opened Chest" class="wo-tab-content">
                         <ui:VisualElement class="wo-vec3-row">
                             <ui:Label text="Position" class="wo-vec3-label"/>
@@ -83,13 +72,10 @@
                             <ui:Vector3Field name="OpenedScale" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                     </ui:Tab>
-
                 </ui:TabView>
-
                 <ui:VisualElement class="wo-footer">
                     <ui:Button text="Reset Transform" name="ResetTransform" class="wo-btn"/>
                 </ui:VisualElement>
-
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
