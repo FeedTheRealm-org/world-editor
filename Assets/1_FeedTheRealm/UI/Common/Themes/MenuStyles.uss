@@ -346,6 +346,7 @@
     flex-grow: 1;
     background-color: rgba(0, 0, 0, 0);
     margin-top: 18px;
+    width: 100%;
 }
 
 .menu-grid-list > .unity-scroll-view__content-container {
@@ -832,6 +833,7 @@
     border-width: 0;
     border-bottom-width: 2px;
     border-bottom-color: rgba(0, 0, 0, 0);
+    font-size: 14px;
 }
 
 #Root > #Container > #Panel > .unity-tab-view > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header:hover {
@@ -846,13 +848,14 @@
 
 #Root > #Container > #Panel > .unity-tab-view > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header > .unity-text-element {
     color: rgb(15, 197, 229);
-    font-size: 13px;
+    font-size: 12px;
 }
 
 #Root > #Container > #Panel > .unity-tab-view > .unity-tab-view__content-viewport > #unity-tab-view__header-container {
     background-color: rgba(0, 0, 0, 0);
     border-bottom-width: 1px;
     border-bottom-color: rgba(255, 255, 255, 0.15);
+    font-size: 24px;
 }
 
 #Root > #Container > #Panel > .unity-tab-view > .unity-tab-view__content-viewport > #unity-tab-view__header-container > #unity-tab__header > #unity-tab__header-underline {
@@ -955,6 +958,7 @@
     border-top-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
+    font-size: 11px;
 }
 
 .menu-search-row {
@@ -987,6 +991,7 @@
     padding: 0;
     margin: 0;
     flex-grow: 1;
+    font-size: 12px;
 }
 
 .menu-search-field .unity-base-field__input {
@@ -1014,4 +1019,11 @@
 
 .menu-search-clear:hover {
     color: rgb(255, 80, 80);
+}
+
+.menu-model-item > #HasColliders > .unity-toggle__label {
+    font-size: 12px;
+    width: 85px;
+    max-width: 85px;
+    min-width: 85px;
 }
