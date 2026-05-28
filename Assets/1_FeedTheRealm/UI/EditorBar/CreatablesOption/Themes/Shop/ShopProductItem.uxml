@@ -1,35 +1,23 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
-
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="ProductItem" class="wc-card" style="flex-direction: row; align-items: center; margin-bottom: 8px;">
-
-        <!-- Preview -->
         <ui:VisualElement name="PreviewContainer" class="wc-sprite-frame" style="width: 72px; height: 72px; min-width: 72px; min-height: 72px; max-width: 72px; max-height: 72px; margin-right: 14px; flex-shrink: 0;">
             <ui:Image name="Preview" class="wc-sprite-image"/>
         </ui:VisualElement>
-
-        <!-- Details -->
         <ui:VisualElement name="Details" style="flex-grow: 1; flex-direction: column; justify-content: center;">
-
             <ui:VisualElement name="NameRow" style="flex-direction: row; align-items: center; margin-bottom: 8px;">
                 <ui:Label text="Product Name" name="ProductName" class="wc-card__name" style="flex-grow: 1;"/>
-                <ui:Button text="✏" name="EditName" class="wc-card__action-btn" style="color: rgb(15, 197, 229); font-size: 13px;"/>
             </ui:VisualElement>
-
             <ui:VisualElement name="NameEditRow" style="flex-direction: row; align-items: center; margin-bottom: 8px; display: none;">
                 <ui:TextField name="ProductNameInput" class="wc-text-field" style="flex-grow: 1;"/>
                 <ui:Button text="✓" name="ConfirmName" class="wc-card__action-btn" style="color: rgb(80, 200, 80); font-size: 14px; margin-left: 8px;"/>
             </ui:VisualElement>
-
             <ui:VisualElement style="flex-direction: row; align-items: center;">
                 <ui:Label text="price" class="wc-field-label" style="margin-bottom: 0; margin-right: 10px; flex-shrink: 0;"/>
                 <ui:IntegerField value="0" name="ProductPrice" class="wc-text-field" style="width: 140px;"/>
             </ui:VisualElement>
-
         </ui:VisualElement>
-
-        <!-- Delete -->
-        <ui:Button text="✕" name="Delete" class="wc-card__action-btn" style="color: rgb(255, 80, 80); font-size: 16px; margin-left: 14px; flex-shrink: 0;"/>
-
+        <ui:Button text="" name="EditName" class="wc-card__action-btn" style="color: rgb(15, 197, 229); font-size: 13px; background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); min-width: 30px; min-height: 30px; margin-right: 100px;"/>
+        <ui:Button text="" name="Delete" class="wc-card__action-btn" style="color: rgb(255, 80, 80); font-size: 16px; margin-left: 14px; flex-shrink: 0; min-width: 28px; min-height: 30px; max-width: 28px; max-height: 30px; background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); height: 30px; width: 28px;"/>
     </ui:VisualElement>
 </ui:UXML>

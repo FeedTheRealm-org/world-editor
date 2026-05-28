@@ -1,5 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="root" class="wc-root">
         <ui:VisualElement name="Menu" class="container" style="width: 65%; min-width: 500px; max-width: 900px; height: 72%; min-height: 420px; max-height: 780px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
@@ -31,7 +31,7 @@
                         <ui:Button text="add item" name="AddItem" class="wc-back-btn" style="align-self: flex-end;"/>
                     </ui:VisualElement>
                     <ui:Label name="NoShopLabel" text="You have to create a new shop to add items" style="display: none; flex-grow: 1; font-size: 18px; color: rgba(255, 255, 255, 0.6); -unity-text-align: middle-center; white-space: normal;"/>
-                    <ui:ScrollView name="ItemContainer" class="wc-grid-list" style="flex-grow: 1;"/>
+                    <ui:ScrollView name="ItemContainer" class="wc-grid-list" style="flex-grow: 1; max-height: 270px; min-height: 270px; height: 270px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="TabCosmeticContent" style="flex-grow: 1; flex-direction: column; margin-top: 10px; display: none;">
                     <ui:VisualElement name="CosmeticAddRow" style="flex-direction: row; align-items: flex-end; margin-bottom: 8px;">

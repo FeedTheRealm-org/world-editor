@@ -6,8 +6,8 @@ namespace FeedTheRealm.Core.Library
     /// </summary>
     public static class PlaceableOptions
     {
-        public const string AggresiveNPC = "Aggresive NPC";
-        public const string FriendlyNPC = "Friendly NPC";
+        public const string AggresiveNPC = "Enemy";
+        public const string FriendlyNPC = "Passive NPC";
         public const string PlayerSpawnpoint = "Player Spawnpoint";
         public const string Portal = "Portal";
         public const string Chest = "Chest";

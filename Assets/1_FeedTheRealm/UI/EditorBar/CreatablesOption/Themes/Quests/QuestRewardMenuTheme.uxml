@@ -1,20 +1,14 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/creatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#creatablesStyle"/>
-
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="Root" class="wc-root">
         <ui:VisualElement name="Container" class="container" style="width: 55%; min-width: 420px; max-width: 760px; height: 68%; min-height: 380px; max-height: 740px;">
             <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
-
                 <ui:Button text="✕" name="Close" class="wc-close-btn"/>
-
                 <ui:VisualElement name="Header" class="wc-header">
                     <ui:Label text="Quest Rewards" name="Title" class="wc-header-label"/>
                     <ui:Button text="back to quest" name="Return" class="wc-back-btn"/>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="RewardEditor" style="flex-grow: 1; flex-direction: column; margin-top: 18px;">
-
-                    <!-- Add reward row -->
                     <ui:VisualElement name="AddRewardRow" class="wc-row" style="align-items: flex-end; margin-bottom: 14px;">
                         <ui:VisualElement name="RewardTypeGroup" class="wc-field-group" style="margin-bottom: 0;">
                             <ui:Label text="reward type" class="wc-field-label"/>
@@ -22,34 +16,24 @@
                         </ui:VisualElement>
                         <ui:Button text="add reward" name="AddRewardButton" class="wc-back-btn" style="align-self: flex-end; flex-shrink: 0;"/>
                     </ui:VisualElement>
-
-                    <!-- Gold -->
                     <ui:VisualElement name="GoldRow" class="wc-field-group">
                         <ui:Label text="gold amount" class="wc-field-label"/>
                         <ui:IntegerField value="100" name="GoldAmountField" class="wc-text-field"/>
                     </ui:VisualElement>
-
-                    <!-- Item -->
                     <ui:VisualElement name="ItemRow" class="wc-field-group" style="display: none;">
                         <ui:Label text="reward item" class="wc-field-label"/>
                         <ui:DropdownField name="ItemRewardDropdown" class="wc-dropdown"/>
                     </ui:VisualElement>
-
-                    <!-- Loot table -->
                     <ui:VisualElement name="LootTableRow" class="wc-field-group" style="display: none;">
                         <ui:Label text="loot table" class="wc-field-label"/>
                         <ui:DropdownField name="LootTableRewardDropdown" class="wc-dropdown"/>
                     </ui:VisualElement>
-
                     <ui:Label text="rewards added" class="wc-field-label" style="margin-bottom: 8px;"/>
-                    <ui:ScrollView name="RewardsScrollView" class="wc-grid-list" style="flex-grow: 1; margin-top: 0; border-color: rgba(255, 210, 80, 0.3); border-width: 1px; border-radius: 10px; padding: 6px;"/>
-
+                    <ui:ScrollView name="RewardsScrollView" class="wc-grid-list" style="flex-grow: 1; margin-top: 0; border-color: rgba(255, 210, 80, 0.3); border-width: 1px; border-radius: 10px; padding: 6px; height: 300px; min-height: 300px; max-height: 300px;"/>
                     <ui:VisualElement class="wc-footer" style="margin-top: 12px;">
                         <ui:Button text="done" name="ReturnToQuestEditor" class="wc-primary-btn"/>
                     </ui:VisualElement>
-
                 </ui:VisualElement>
-
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

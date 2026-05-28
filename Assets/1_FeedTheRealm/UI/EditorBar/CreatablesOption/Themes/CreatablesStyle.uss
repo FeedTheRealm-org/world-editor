@@ -163,11 +163,11 @@
 }
 
 .wc-field-group {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .wc-field-label {
-    font-size: 15px;
+    font-size: 18px;
     color: rgba(255, 255, 255, 0.85);
     margin-bottom: 4px;
     -unity-font-style: normal;
@@ -194,7 +194,7 @@
     border-width: 1px;
     border-radius: 22px;
     color: rgb(255, 255, 255);
-    font-size: 14px;
+    font-size: 15px;
     padding: 0 18px 0 18px;
     height: 42px;
     overflow: visible;

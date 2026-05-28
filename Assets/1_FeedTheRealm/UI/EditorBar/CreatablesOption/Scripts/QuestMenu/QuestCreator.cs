@@ -80,7 +80,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.QuestMenu
         {
             questTypeDropdown?.UnregisterValueChangedCallback(OnQuestTypeChanged);
             var root = GetComponent<UIDocument>().rootVisualElement;
-            root.Q<Button>("Return").clicked -= ReturnToList;
+            if (root != null)
+                root.Q<Button>("Return").clicked -= ReturnToList;
             if (rewardsButton != null)
                 rewardsButton.clicked -= OpenRewardsMenu;
             if (closeButton != null)
