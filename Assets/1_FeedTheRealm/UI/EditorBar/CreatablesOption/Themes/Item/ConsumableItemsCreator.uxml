@@ -34,13 +34,13 @@
                                 <ui:IntegerField value="10" name="EffectValueField" class="wc-text-field"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:VisualElement name="TimingRow" class="wc-row--3">
+                        <ui:VisualElement name="TimingRow" class="wc-row--3" style="margin-bottom: -10px;">
                             <ui:VisualElement name="EffectDurationGroup" class="wc-field-group">
-                                <ui:Label text="effect duration (seconds)" class="wc-field-label"/>
+                                <ui:Label text="effect duration" tooltip="Duration is in seconds" class="wc-field-label"/>
                                 <ui:FloatField value="60" name="EffectDurationField" class="wc-text-field"/>
                             </ui:VisualElement>
                             <ui:VisualElement name="EffectCooldownGroup" class="wc-field-group">
-                                <ui:Label text="effect cooldown (seconds)" class="wc-field-label"/>
+                                <ui:Label text="effect cooldown" tooltip="Duration is in seconds" class="wc-field-label"/>
                                 <ui:FloatField value="10" name="EffectCooldownField" class="wc-text-field"/>
                             </ui:VisualElement>
                             <ui:VisualElement name="MaxStackGroup" class="wc-field-group">
@@ -48,6 +48,7 @@
                                 <ui:IntegerField value="1" name="MaxStackField" class="wc-text-field"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
+                        <ui:Label text="All effect durations and cooldowns are in seconds." style="color: rgba(255, 255, 255, 0.5); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
                         <ui:VisualElement name="BottomRow" class="wc-row" style="align-items: flex-end; flex-direction: row-reverse;">
                             <ui:VisualElement name="SaveGroup" class="wc-field-group" style="align-items: flex-end; flex-grow: 0; flex-shrink: 0; margin-left: 20px;">
                                 <ui:Button text="create" name="SaveButton" class="wc-primary-btn"/>
