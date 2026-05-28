@@ -41,7 +41,7 @@
                         </ui:VisualElement>
                         <ui:Button text="add item" name="AddCosmeticItem" class="wc-back-btn" style="align-self: flex-end;"/>
                     </ui:VisualElement>
-                    <ui:ScrollView name="CosmeticItemContainer" class="wc-grid-list" style="flex-grow: 1;"/>
+                    <ui:ScrollView name="CosmeticItemContainer" class="wc-grid-list" style="flex-grow: 1; height: 270px; min-height: 270px; max-height: 270px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="wc-footer" style="margin-top: 10px;">
                     <ui:Button text="save" name="Save" class="wc-primary-btn"/>

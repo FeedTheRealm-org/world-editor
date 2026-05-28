@@ -11,29 +11,29 @@
                 <ui:TabView name="TabView" class="wo-tabview">
                     <ui:Tab name="Transform" label="Transform" class="wo-tab-content">
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Position" class="wo-vec3-label"/>
+                            <ui:Label text="Position" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="Position" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Label text="Rotation" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="Rotation" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Scale" class="wo-vec3-label"/>
+                            <ui:Label text="Scale" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="Scale" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                     </ui:Tab>
                     <ui:Tab name="Colliders" label="Colliders" class="wo-tab-content">
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Center" class="wo-vec3-label"/>
+                            <ui:Label text="Center" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="ColliderCenter" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Size" class="wo-vec3-label"/>
+                            <ui:Label text="Size" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="ColliderSize" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                         <ui:VisualElement class="wo-vec3-row">
-                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Label text="Rotation" class="wo-vec3-label" style="width: 80px;"/>
                             <ui:Vector3Field name="ColliderRotation" value="0,0,0" class="wo-vec3-field"/>
                         </ui:VisualElement>
                         <ui:VisualElement name="Buttons" style="flex-direction: row; align-items: center; margin-top: 10px; justify-content: space-between; width: 100%;">
