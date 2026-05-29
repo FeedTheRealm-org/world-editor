@@ -50,6 +50,8 @@ namespace FeedTheRealm.UI.PlaceableEditor
             positionField.RegisterValueChangedCallback(e => target.transform.position = e.newValue);
 
             closeButton.clicked += CloseMenu;
+            portalNameField.RegisterCallback<FocusInEvent>(_ => inputReader.ToggleInput(false));
+            portalNameField.RegisterCallback<FocusOutEvent>(_ => inputReader.ToggleInput(true));
         }
 
         public void Edit(GameObject placeable)
