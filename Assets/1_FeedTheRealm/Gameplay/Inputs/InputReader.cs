@@ -27,6 +27,7 @@ namespace FeedTheRealm.Gameplay.Inputs
         public event Action PrimaryInteractionReleasedEvent;
         public event Action<Vector2> MousePositionEvent;
         public Vector2 CurrentMousePosition { get; private set; }
+        public event Action CloseMenuEvent;
 
         private MakerControls controls;
 
@@ -203,6 +204,14 @@ namespace FeedTheRealm.Gameplay.Inputs
             if (context.performed)
             {
                 ColliderShortcutEvent?.Invoke();
+            }
+        }
+
+        public void OnCloseMenu(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                CloseMenuEvent?.Invoke();
             }
         }
     }

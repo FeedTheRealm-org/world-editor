@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e2fb800773fa2488a85ba56cde30c748, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: d01d32d803872b441b2dac82efc0f241, type: 3}
   m_SortingOrder: 2
@@ -68,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e0452b61c8a0e4783bbefeb019c984, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MessagesMenuController
+  AllowInputWhileOpen: 0
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
   createMessageMenuPrefab: {fileID: 2802280877163831150, guid: ea56cde69729ec149a20b02fe58a2b28, type: 3}
   dialogsMenuPrefab: {fileID: 2802280877163831150, guid: f885dc7f85a8ff14aa25fee1d68efd00, type: 3}

@@ -4,6 +4,7 @@ using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.Library;
 using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldEditor;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FTR.Core.Common.Config;
 using FTR.UI;
@@ -29,11 +30,16 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         [Inject]
         private PlaceablesLibrary placeablesLibrary;
 
+        [Inject]
+        private WorldPrefabProvider prefabProvider;
+
         [SerializeField]
         private VisualTreeAsset modelItemTemplate;
 
-        private ListView modelsList;
+        private TextField modelsSearchField;
+        private ScrollView modelsList;
         private Button closeButton;
+        private Button modelsSearchClearBtn;
         private DropdownField defaultClosedChestDropdown;
         private DropdownField defaultOpenChestDropdown;
         private Button saveClosedModelButton;
@@ -45,8 +51,10 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
 
+            modelsSearchField = root.Q<TextField>("ModelsSearch");
+            modelsSearchField.RegisterValueChangedCallback(e => ApplyModelsSearch(e.newValue));
             closeButton = root.Q<Button>("Close");
-            modelsList = root.Q<ListView>("ModelsList");
+            modelsList = root.Q<ScrollView>("ModelsList");
             defaultClosedChestDropdown = root.Q<DropdownField>("DefaultClosedChest");
             defaultOpenChestDropdown = root.Q<DropdownField>("DefaultOpenChest");
             saveClosedModelButton = root.Q<Button>("SaveClosedModel");
@@ -55,6 +63,23 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             closeButton.clicked += CloseMenu;
             saveClosedModelButton.clicked += OnSaveClosedModel;
             saveOpenedModelButton.clicked += OnSaveOpenedModel;
+
+            modelsSearchClearBtn = root.Q<Button>("ModelSearchClear");
+
+            modelsSearchField.RegisterValueChangedCallback(e =>
+            {
+                modelsSearchClearBtn.style.display = string.IsNullOrEmpty(e.newValue)
+                    ? DisplayStyle.None
+                    : DisplayStyle.Flex;
+                ApplyModelsSearch(e.newValue);
+            });
+
+            modelsSearchClearBtn.clicked += () =>
+            {
+                modelsSearchField.SetValueWithoutNotify(string.Empty);
+                modelsSearchClearBtn.style.display = DisplayStyle.None;
+                RenderModelsList(models);
+            };
 
             SetupChestModelDropdowns();
             PopulateModelsList();
@@ -106,74 +131,85 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.SettingsMenu
             ToastNotification.Show("Default open chest model saved.", "success", Color.green);
         }
 
-        private void PopulateModelsList()
+        private void ApplyModelsSearch(string query)
         {
-            models = modelsRepository.GetModelsData().Values.ToList();
+            var filtered = string.IsNullOrWhiteSpace(query)
+                ? models
+                : models
+                    .Where(m =>
+                        m.structureName.Contains(query, System.StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
 
-            modelsList.makeItem = () =>
+            RenderModelsList(filtered);
+        }
+
+        private void RenderModelsList(List<StructureData> source)
+        {
+            modelsList.Clear();
+
+            foreach (var model in source)
             {
+                var capturedModel = model;
                 var entry = modelItemTemplate.Instantiate();
-                entry.userData = new System.Action[2];
-                return entry;
-            };
 
-            modelsList.bindItem = (entry, index) =>
-            {
-                var model = models[index];
-                var callbacks = (System.Action[])entry.userData;
-
-                entry.Q<Label>("ModelName").text = model.structureName;
+                entry.Q<Label>("ModelName").text = capturedModel.structureName;
 
                 var hasColliders = entry.Q<Toggle>("HasColliders");
-                hasColliders.SetValueWithoutNotify(model.hasColliders);
-
                 var defaultScale = entry.Q<Vector3Field>("DefaultScale");
-                defaultScale.SetValueWithoutNotify(model.size);
-
                 var defaultRotation = entry.Q<Vector3Field>("DefaultRotation");
-                defaultRotation.SetValueWithoutNotify(model.rotation);
-
                 var saveButton = entry.Q<Button>("Save");
                 var deleteButton = entry.Q<Button>("DeleteModel");
 
-                if (callbacks[0] != null)
-                    saveButton.clicked -= callbacks[0];
-                if (callbacks[1] != null)
-                    deleteButton.clicked -= callbacks[1];
+                hasColliders.SetValueWithoutNotify(capturedModel.hasColliders);
+                defaultScale.SetValueWithoutNotify(capturedModel.size);
+                defaultRotation.SetValueWithoutNotify(capturedModel.rotation);
 
-                callbacks[0] = () =>
+                saveButton.clicked += () =>
                 {
-                    model.hasColliders = hasColliders.value;
-                    model.size = defaultScale.value;
-                    model.rotation = defaultRotation.value;
-                    modelsRepository.WriteModelToDisk(model);
+                    capturedModel.hasColliders = hasColliders.value;
+                    capturedModel.size = defaultScale.value;
+                    capturedModel.rotation = defaultRotation.value;
+                    modelsRepository.WriteModelToDisk(capturedModel);
                     ToastNotification.Show(
-                        $"'{model.structureName}' saved.",
+                        $"'{capturedModel.structureName}' saved.",
                         "success",
                         Color.green
                     );
                 };
 
-                callbacks[1] = () =>
+                deleteButton.clicked += () =>
                 {
-                    modelsRepository.DeleteModel(model);
-                    models.Remove(model);
-                    modelsList.RefreshItems();
-                    refreshPlaceableLibraryEvent.Raise();
-                    ToastNotification.Show(
-                        $"'{model.structureName}' deleted.",
-                        "success",
-                        Color.green
+                    var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                    var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+                    dialogController.Show(
+                        title: "Delete Model",
+                        question: $"Are you sure you want to delete '{capturedModel.structureName}'?",
+                        onConfirm: () =>
+                        {
+                            modelsRepository.DeleteModel(capturedModel);
+                            models.Remove(capturedModel);
+                            entry.RemoveFromHierarchy();
+                            refreshPlaceableLibraryEvent.Raise();
+                            ToastNotification.Show(
+                                $"'{capturedModel.structureName}' deleted.",
+                                "success",
+                                Color.green
+                            );
+                        },
+                        onCancel: () => { }
                     );
                 };
 
-                saveButton.clicked += callbacks[0];
-                deleteButton.clicked += callbacks[1];
-            };
+                modelsList.Add(entry);
+            }
+        }
 
-            modelsList.itemsSource = models;
-            modelsList.selectionType = SelectionType.None;
-            modelsList.RefreshItems();
+        private void PopulateModelsList()
+        {
+            models = modelsRepository.GetModelsData().Values.ToList();
+            modelsSearchField?.SetValueWithoutNotify(string.Empty);
+            RenderModelsList(models);
         }
     }
 }

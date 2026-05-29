@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: 5dbc2acccdfd72237bbae806031aa2b0, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: e8de00c9b242a2c2d9367a58f3e55bba, type: 3}
   m_SortingOrder: 100
@@ -153,7 +153,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4955614498784966237, guid: e1a9c0878c4b7c5bd839bfb151fb9e6c, type: 3}
       propertyPath: m_Name
-      value: TransformGizmo
+      value: PositionGizmo
       objectReference: {fileID: 0}
     - target: {fileID: 4955614498784966237, guid: e1a9c0878c4b7c5bd839bfb151fb9e6c, type: 3}
       propertyPath: m_IsActive

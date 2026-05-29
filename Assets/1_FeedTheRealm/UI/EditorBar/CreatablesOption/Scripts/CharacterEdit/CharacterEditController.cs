@@ -184,7 +184,7 @@ public partial class CharacterEditController : MonoBehaviour
         _bioInput = _characterContainer.Q<TextField>("BioInput");
 
         _cancelButton = buttonsContainer.Q<Button>("Cancel");
-        _saveButton = buttonsContainer.Q<Button>("Save");
+        _saveButton = _characterContainer.Q<Button>("Save");
         _backButton = body.Q<Button>("BackButton");
 
         _errorMessage = _cosmeticsContainer.Q<Label>("ErrorMessage");

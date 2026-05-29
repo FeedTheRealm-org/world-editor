@@ -23,6 +23,7 @@ MonoBehaviour:
   refreshPlaceableLibraryEvent: {fileID: 11400000, guid: d891f22fbbdab8b46b933f633c40bc7e, type: 2}
   closeAllEvent: {fileID: 11400000, guid: 28bd1ed534883b97b975e4a40cd9071b, type: 2}
   updateLoginEvent: {fileID: 11400000, guid: b42aa5696ea92ff66b8ebfd70464687b, type: 2}
+  editorStateChangedEvent: {fileID: 11400000, guid: 1c5e8d2f8c38e0137aa8a70507a5e3c4, type: 2}
   tickEvent: {fileID: 11400000, guid: 2cc95b74b8a1ad36f88f366fcbf4e8e3, type: 2}
   fixedTickEvent: {fileID: 11400000, guid: 5bcf141af277623009f9582fea19b6f1, type: 2}
   lateTickEvent: {fileID: 11400000, guid: 3ac78d2c84182126eb836dab55d71af3, type: 2}

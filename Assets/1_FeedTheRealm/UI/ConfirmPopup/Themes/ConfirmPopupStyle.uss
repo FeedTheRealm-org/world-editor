@@ -1,33 +1,29 @@
-/* dialog Card  */
 .dialog-container {
     width: 420px;
-    background-color: rgb(51, 51, 51);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    padding-top: 20px;
-    padding-right: 24px;
-    padding-bottom: 20px;
-    padding-left: 24px;
+    background-color: rgba(26, 40, 44, 0.95);
+    border-radius: 18px;
+    border-color: rgb(255, 210, 80);
+    border-width: 2px;
+    padding: 28px 32px;
     align-self: center;
+    border-left-color: rgb(15, 197, 229);
+    border-right-color: rgb(15, 197, 229);
+    border-top-color: rgb(15, 197, 229);
+    border-bottom-color: rgb(15, 197, 229);
 }
 
-/* answer area */
 .dialog-body {
     padding-top: 16px;
     padding-bottom: 16px;
 }
 
-/* answer text */
 .dialog-question {
-    font-size: 18px;
-    color: rgb(220, 220, 220);
-    -unity-text-align: middle-center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    -unity-text-align: upper-left;
     white-space: normal;
 }
 
-/* button row */
 .dialog-footer {
     flex-direction: row;
     justify-content: flex-end;
@@ -35,53 +31,39 @@
     margin-top: 8px;
 }
 
-/* Base for each button */
 .dialog-btn {
     min-width: 90px;
-    height: 36px;
-    font-size: 15px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    padding-top: 4px;
-    padding-right: 16px;
-    padding-bottom: 4px;
-    padding-left: 16px;
+    height: 34px;
+    font-size: 13px;
+    border-radius: 16px;
+    padding: 0 20px;
     margin-left: 8px;
     -unity-text-align: middle-center;
     justify-content: center;
     align-self: center;
+    cursor: link;
+    letter-spacing: 1px;
 }
 
-/* Cancel */
 .dialog-btn--cancel {
-    background-color: rgb(62, 62, 62);
-    color: rgb(255, 255, 255);
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-left-color: rgb(148, 148, 148);
-    border-right-color: rgb(148, 148, 148);
-    border-top-color: rgb(148, 148, 148);
-    border-bottom-color: rgb(148, 148, 148);
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.3);
+    border-width: 1px;
 }
 
 .dialog-btn--cancel:hover {
-    background-color: rgb(80, 80, 80);
+    background-color: rgba(255, 255, 255, 0.08);
+    color: rgb(255, 255, 255);
 }
 
-/* Confirm */
 .dialog-btn--confirm {
-    background-color: rgb(50, 100, 200);
-    color: rgb(255, 255, 255);
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 210, 80);
+    border-color: rgb(255, 210, 80);
+    border-width: 1.5px;
 }
 
 .dialog-btn--confirm:hover {
-    background-color: rgb(70, 120, 230);
+    background-color: rgba(255, 210, 80, 0.12);
 }

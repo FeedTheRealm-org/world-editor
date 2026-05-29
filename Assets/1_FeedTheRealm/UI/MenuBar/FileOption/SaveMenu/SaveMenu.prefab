@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e0f6148e9702b5f8ab88476eb3dbcbaf, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 0611e9448c2328784b9d3113acc60da5, type: 3}
   m_SortingOrder: 110
@@ -68,4 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c49b29607feb9e9f5a9c0c5e93d7d23d, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SaveMenuController
-  dataPersistenceManager: {fileID: 11400000, guid: 0b52671a31970c9fca3573603fb60a6a, type: 2}
+  AllowInputWhileOpen: 0

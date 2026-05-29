@@ -28,6 +28,7 @@ namespace FeedTheRealm.Core.EventChannels
         public RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
         public CloseAllEvent closeAllEvent;
         public UpdateLoginEvent updateLoginEvent;
+        public EditorStateChangedEvent editorStateChangedEvent;
 
         [Header("Tick Events")]
         public TickEvent tickEvent;
@@ -54,6 +55,7 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(refreshPlaceableLibraryEvent);
             builder.RegisterInstance(closeAllEvent);
             builder.RegisterInstance(updateLoginEvent);
+            builder.RegisterInstance(editorStateChangedEvent);
         }
     }
 }

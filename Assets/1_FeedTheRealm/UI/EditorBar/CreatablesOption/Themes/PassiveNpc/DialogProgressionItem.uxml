@@ -1,0 +1,36 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3CreatablesStyle"/>
+
+    <ui:VisualElement name="ProgressionItemRoot" class="wc-card" style="margin-bottom: 8px;">
+
+        <!-- Toggle row / header -->
+        <ui:VisualElement name="ItemToggleRow" class="wc-card__top" style="cursor: link;">
+            <ui:Label name="ChevronLabel" text="▶" class="wc-card__sep" style="margin-right: 8px; font-size: 10px;"/>
+            <ui:Label name="ItemTitle" text="Dialog" class="wc-card__name"/>
+            <ui:VisualElement name="ItemActions" style="flex-direction: row; align-items: center;">
+                <ui:Button name="MoveUpButton" text="▲" class="wc-card__action-btn" style="margin-right: 6px;"/>
+                <ui:Button name="MoveDownButton" text="▼" class="wc-card__action-btn" style="margin-right: 16px;"/>
+                <ui:Button name="RemoveButton" text="✕" class="wc-card__action-btn" style="color: rgb(255, 80, 80);"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Expandable content -->
+        <ui:VisualElement name="ItemContent" style="display: none; flex-direction: column; padding-top: 10px; border-top-width: 1px; border-top-color: rgba(255, 255, 255, 0.12); margin-top: 6px;">
+
+            <ui:VisualElement name="MessagesContainer" style="flex-direction: column; margin-bottom: 8px;"/>
+
+            <!-- On quest accepted -->
+            <ui:VisualElement name="OnQuestAcceptedRow" style="display: none; flex-direction: row; align-items: center; margin-top: 8px; padding-top: 8px; border-top-width: 1px; border-top-color: rgba(255, 255, 255, 0.12);">
+                <ui:Label name="OnQuestAcceptedLabel" text="dialog on quest accepted" class="wc-field-label" style="margin-right: 10px; flex-shrink: 0; margin-bottom: 0;"/>
+                <ui:DropdownField name="OnQuestAcceptedDropdown" class="wc-dropdown" style="flex-grow: 1;"/>
+            </ui:VisualElement>
+
+            <!-- Repeatable -->
+            <ui:VisualElement name="RepeatableRow" style="display: none; flex-direction: row; align-items: center; margin-top: 8px; padding-top: 8px; border-top-width: 1px; border-top-color: rgba(255, 255, 255, 0.12);">
+                <ui:Toggle name="RepeatableToggle" label="Repeatable" style="margin-right: 16px; flex-shrink: 0;"/>
+                <ui:DropdownField name="RepeatableCooldownDropdown" class="wc-dropdown" style="display: none; min-width: 120px;"/>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

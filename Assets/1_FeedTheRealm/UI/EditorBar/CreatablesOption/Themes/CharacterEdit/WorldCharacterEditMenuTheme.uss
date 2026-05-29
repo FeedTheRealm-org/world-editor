@@ -248,3 +248,59 @@
 .world-hidden-back {
     display: none;
 }
+
+.world-character-primary-btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgb(255, 210, 80);
+    border-width: 1.5px;
+    border-radius: 16px;
+    color: rgb(255, 210, 80);
+    font-size: 15px;
+    -unity-font-style: normal;
+    padding: 6px 36px 6px 36px;
+    cursor: link;
+    letter-spacing: 1px;
+}
+
+.world-character-primary-btn:hover {
+    background-color: rgba(255, 210, 80, 0.12);
+}
+
+.world-character-secondary-btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgb(15, 197, 229);
+    border-width: 1.5px;
+    border-radius: 22px;
+    color: rgb(15, 197, 229);
+    font-size: 15px;
+    -unity-font-style: normal;
+    padding: 10px 44px 10px 44px;
+    cursor: link;
+    letter-spacing: 1px;
+    height: 35px;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+.world-character-secondary-btn:hover {
+    background-color: rgba(15, 197, 229, 0.12);
+}
+
+.menu-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 22px;
+    -unity-font-style: bold;
+    padding: 0 6px 0 6px;
+    cursor: link;
+}
+
+.menu-close-btn:hover {
+    color: rgb(255, 210, 80);
+}

@@ -53,14 +53,14 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [SerializeField]
         private MaterialService materialService;
 
+        [SerializeField]
+        private VisualTreeAsset zoneItemTemplate;
+
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
         [Inject]
         private WorldSelector worldSelector;
-
-        [Inject]
-        private WorldUIObjectProvider worldUIObjectProvider;
 
         [Inject]
         private CreatablesManager creatablesManager;
@@ -73,7 +73,6 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
         private Button publishButton;
         private Button closeButton;
-        private Label worldNameLabel;
         private Toggle publishCreatablesToggle;
         private Toggle publishWorldDataToggle;
         private VisualElement zoneGroup;
@@ -89,22 +88,29 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
 
             publishButton = root.Q<Button>("Publish");
             closeButton = root.Q<Button>("Close");
-            worldNameLabel = root.Q<Label>("WorldName");
             publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
             publishWorldDataToggle = root.Q<Toggle>("PublishWorldData");
             zoneGroup = root.Q<VisualElement>("ZoneGroup");
 
             currentWorldData = dataPersistenceManager.GetWorldData(worldSelector.selectedWorld);
-            worldNameLabel.text = currentWorldData?.worldName ?? "No world loaded";
 
-            bool isFirstPublish = string.IsNullOrEmpty(currentWorldData?.worldId);
-            publishWorldDataToggle.value = true;
-            publishWorldDataToggle.SetEnabled(!isFirstPublish);
-            publishCreatablesToggle.value = true;
+            if (currentWorldData == null)
+            {
+                publishButton.SetEnabled(false);
+                publishCreatablesToggle.SetEnabled(false);
+                publishWorldDataToggle.SetEnabled(false);
+                zoneGroup.SetEnabled(false);
+            }
+            else
+            {
+                bool isFirstPublish = string.IsNullOrEmpty(currentWorldData.worldId);
+                publishWorldDataToggle.value = true;
+                publishWorldDataToggle.SetEnabled(!isFirstPublish);
+                publishCreatablesToggle.value = true;
+                publishButton.clicked += OnPublishClicked;
+                PopulateZoneGroup();
+            }
 
-            PopulateZoneGroup();
-
-            publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
         }
 
@@ -130,45 +136,36 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             selectedZones.Clear();
             publishAllZones = true;
 
-            var allButton = CreateZoneButton("All Zones", true);
+            var allEntry = CreateZoneEntry("All Zones", true);
+            var allButton = allEntry.Q<Button>("ZoneButton");
             allButton.clicked += () => OnAllZonesClicked(allButton);
-            zoneGroup.Add(allButton);
+            zoneGroup.Add(allEntry);
 
             foreach (var zoneId in availableZones)
             {
                 var id = zoneId;
-                var button = CreateZoneButton($"Zone {id}", false);
+                var entry = CreateZoneEntry($"Zone {id}", false);
+                var button = entry.Q<Button>("ZoneButton");
                 button.clicked += () => OnZoneClicked(button, id, allButton);
-                zoneGroup.Add(button);
+                zoneGroup.Add(entry);
             }
         }
 
-        private Button CreateZoneButton(string text, bool selected)
+        private VisualElement CreateZoneEntry(string text, bool selected)
         {
-            var button = new Button { text = text };
-            button.style.marginBottom = 2;
-            button.style.marginLeft = 2;
-            button.style.marginRight = 2;
-            button.style.flexShrink = 0;
-            button.style.alignSelf = Align.Stretch;
-            button.style.width = Length.Percent(100);
-            button.style.marginBottom = 4;
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
-            button.style.color = new StyleColor(Color.white);
-            button.style.borderTopLeftRadius = 6;
-            button.style.borderTopRightRadius = 6;
-            button.style.borderBottomLeftRadius = 6;
-            button.style.borderBottomRightRadius = 6;
-            return button;
+            var entry = zoneItemTemplate.Instantiate();
+            var button = entry.Q<Button>("ZoneButton");
+
+            button.text = text;
+            if (selected)
+                button.AddToClassList("menu-zone-item--active");
+
+            return entry;
         }
 
         private void SetButtonSelected(Button button, bool selected)
         {
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
+            button.EnableInClassList("menu-zone-item--active", selected);
         }
 
         private void OnAllZonesClicked(Button allButton)

@@ -36,6 +36,8 @@ namespace FeedTheRealm.UI.WorldEditor
             editorPrefabs[PlaceableObjectCategories.Portal] =
                 worldUIObjectProvider.PortalEditObject;
             editorPrefabs[PlaceableObjectCategories.Chest] = worldUIObjectProvider.ChestEditObject;
+            editorPrefabs[PlaceableObjectCategories.PlayerSpawnpointSpawner] =
+                worldUIObjectProvider.PlayerSpawnerEditObject;
 
             editPlaceableEvent.OnRaised += HandleObjectSelected;
         }

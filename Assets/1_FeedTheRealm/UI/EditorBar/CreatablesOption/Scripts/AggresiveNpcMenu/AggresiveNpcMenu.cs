@@ -47,26 +47,25 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.EnemyMenu
         private void PopulateItemsList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var enemiesList = root.Q<ListView>("EnemiesList");
+            var enemiesList = root.Q<ScrollView>("EnemiesList");
             enemiesList.Clear();
 
             foreach (AggresiveNpc enemy in creatablesManager.GetAll<AggresiveNpc>())
             {
                 VisualElement enemyEntry = itemListTemplate.Instantiate();
-                var headerLabel = enemyEntry.Q<Label>("Header");
-                headerLabel.text = enemy.data.name;
 
-                var editButton = enemyEntry.Q<Button>("Edit");
-                var deleteButton = enemyEntry.Q<Button>("Delete");
+                var weapon = creatablesManager.GetById<Weapon>(enemy.data.weaponId);
+                var lootTable = creatablesManager.GetById<LootTable>(enemy.data.lootTableId);
 
-                var typeLabel = enemyEntry.Q<Label>("Type");
-                if (typeLabel != null)
-                    typeLabel.text = "Enemy";
+                enemyEntry.Q<Label>("Header").text = enemy.data.name;
+                enemyEntry.Q<Label>("HPLabel").text = $"{enemy.data.healthPoints}";
+                enemyEntry.Q<Label>("WeaponLabel").text = $"{weapon?.data.name ?? "None"}";
+                enemyEntry.Q<Label>("LootLabel").text = $"{lootTable?.data.name ?? "None"}";
 
-                editButton.clicked += () => OnEdit(enemy);
-                deleteButton.clicked += () => OnDeleteEnemy(enemy, enemyEntry);
+                enemyEntry.Q<Button>("Edit").clicked += () => OnEdit(enemy);
+                enemyEntry.Q<Button>("Delete").clicked += () => OnDeleteEnemy(enemy, enemyEntry);
 
-                enemiesList.hierarchy.Add(enemyEntry);
+                enemiesList.Add(enemyEntry);
             }
         }
 

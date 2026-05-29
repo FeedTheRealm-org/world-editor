@@ -1,6 +1,0 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/Themes/PlacementLibraryBarStyles.uss?fileID=7433441132597879392&amp;guid=fd039e457652733bcb4a034ded83308b&amp;type=3#PlacementLibraryBarStyles"/>
-    <ui:VisualElement name="root" style="flex-grow: 1; flex-direction: column; padding-top: 0; translate: 0 60px; width: 12%; height: 100%;">
-        <ui:ListView name="LibraryBar" virtualization-method="FixedHeight" fixed-item-height="40" style="width: 100%; background-color: rgba(0, 0, 0, 0.17); height: 94.5%; border-right-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); font-size: 11px; color: rgb(255, 255, 255); -unity-text-align: middle-center; white-space: normal; min-height: auto; max-height: none;"/>
-    </ui:VisualElement>
-</ui:UXML>

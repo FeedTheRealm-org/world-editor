@@ -1,0 +1,50 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3CreatablesStyle"/>
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="Container" class="container" style="width: 65%; min-width: 500px; max-width: 920px; height: 68%; min-height: 380px; max-height: 740px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Loot Tables" name="Title" class="wc-header-label"/>
+                    <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="LootEditor" style="flex-grow: 1; flex-direction: row; margin-top: 18px;">
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+                        <ui:VisualElement name="NameGroup" class="wc-field-group">
+                            <ui:Label text="name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="New Loot Table" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="AddItemRow" class="wc-row" style="align-items: flex-end; margin-bottom: 14px;">
+                            <ui:VisualElement name="ItemSelectGroup" class="wc-field-group" style="margin-bottom: 0;">
+                                <ui:Label text="select your item" class="wc-field-label"/>
+                                <ui:DropdownField name="ItemList" class="wc-dropdown"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="ProbabilityGroup" class="wc-field-group" style="margin-bottom: 12px; margin-left: 12px;">
+                                <ui:Label text="item drop probability" class="wc-field-label"/>
+                                <ui:SliderInt name="ItemProbabilitySlider" value="50" high-value="100" show-input-field="true" class="wc-slider"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="add an item" name="AddItemButton" class="wc-back-btn" style="align-self: flex-start; margin-bottom: 14px;"/>
+                        <ui:ScrollView name="ItemsScrollView" class="wc-grid-list" style="flex-grow: 1; margin-top: 0; border-color: rgba(255, 210, 80, 0.3); border-width: 1px; border-radius: 10px; padding: 6px;"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="SidePanel" style="flex-direction: column; justify-content: space-between; margin-left: 24px; min-width: 180px; max-width: 200px;">
+                        <ui:VisualElement name="GoldBox" style="border-color: rgb(255, 210, 80); border-width: 1.5px; border-radius: 10px; padding: 14px 16px; flex-direction: column;">
+                            <ui:Label text="Gold drop amounts" class="wc-field-label" style="color: rgb(255, 210, 80); margin-bottom: 12px; -unity-text-align: middle-center;"/>
+                            <ui:VisualElement name="MinGroup" style="flex-direction: row; align-items: center; margin-bottom: 10px; justify-content: center; align-self: stretch; align-content: flex-start;">
+                                <ui:Label text="min." class="wc-field-label" style="margin-bottom: 0; margin-right: 8px; flex-shrink: 0; min-width: 30px; margin-top: 0; padding-top: 0; padding-bottom: 10px;"/>
+                                <ui:FloatField value="0" name="MinGoldDropAmount" class="wc-text-field" style="flex-grow: 1;"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="MaxGroup" style="flex-direction: row; align-items: center;">
+                                <ui:Label text="max." class="wc-field-label" style="margin-bottom: 0; margin-right: 8px; flex-shrink: 0; min-width: 30px; margin-top: 0; padding-bottom: 10px;"/>
+                                <ui:FloatField value="0" name="MaxGoldDropAmount" class="wc-text-field" style="flex-grow: 1;"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wc-footer" style="margin-top: 0;">
+                            <ui:Button text="create" name="SaveButton" class="wc-primary-btn"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -28,8 +28,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
         private Button loginButton;
         private Button signOutButton;
         private Button closeButton;
-        private Label notLoggedInLabel;
         private VisualElement loggedInContent;
+        private VisualElement notLoggedInContent;
         private Label usernameLabel;
 
         void OnEnable()
@@ -39,7 +39,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
             loginButton = root.Q<Button>("Login");
             signOutButton = root.Q<Button>("SignOut");
             closeButton = root.Q<Button>("Close");
-            notLoggedInLabel = root.Q<Label>("NotLoggedIn");
+            notLoggedInContent = root.Q<VisualElement>("NotLoggedInContent");
             loggedInContent = root.Q<VisualElement>("LoggedInContent");
             usernameLabel = root.Q<Label>("Username");
 
@@ -48,6 +48,7 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
             signOutButton.clicked += OnSignOutClicked;
             closeButton.clicked += CloseMenu;
             updateLoginEvent.OnRaised += RefreshSessionUI;
+
             RefreshSessionUI();
         }
 
@@ -64,10 +65,8 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.LoginOption
         {
             bool isLoggedIn = !string.IsNullOrEmpty(session.AccessToken);
 
-            notLoggedInLabel.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
+            notLoggedInContent.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
             loggedInContent.style.display = isLoggedIn ? DisplayStyle.Flex : DisplayStyle.None;
-            loginButton.style.display = isLoggedIn ? DisplayStyle.None : DisplayStyle.Flex;
-            signOutButton.style.display = isLoggedIn ? DisplayStyle.Flex : DisplayStyle.None;
 
             if (isLoggedIn)
                 usernameLabel.text = session.Email;

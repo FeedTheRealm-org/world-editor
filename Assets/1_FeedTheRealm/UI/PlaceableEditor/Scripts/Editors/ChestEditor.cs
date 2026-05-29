@@ -17,9 +17,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
     public class ChestEditor : MenuController, IEditable
     {
         [Inject]
-        private InputReader inputReader;
-
-        [Inject]
         private CreatablesManager creatablesManager;
 
         [Inject]
