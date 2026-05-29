@@ -60,7 +60,7 @@ make clean CLEAN_ALL=true WINDOWS=true  # Same, using Windows-compatible paths
 |---|---|
 | Cartoon Texture Pack | [Cartoon Texture HD - Megapack](https://assetstore.unity.com/packages/2d/textures-materials/cartoon-texture-hd-megapack-40870) |
 | HeroEditor4D | [Character Editor 4D \[Megapack\]](https://assetstore.unity.com/packages/2d/characters/character-editor-4d-megapack-147364) |
-| TextMesh Pro | [Documentación oficial Unity](https://docs.unity3d.com/Manual/com.unity.textmeshpro.html) |
+| TextMesh Pro | [TextMesh Pro](https://docs.unity3d.com/Manual/com.unity.textmeshpro.html) |
 
 ## External Dependencies
 
