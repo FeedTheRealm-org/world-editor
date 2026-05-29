@@ -1,4 +1,6 @@
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
 {
@@ -39,7 +41,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             Component host,
             GameObject characterEditorPrefab,
             out GameObject editorInstance,
-            out CharacterEditController editorController
+            out CharacterEditController editorController,
+            IObjectResolver resolver
         )
         {
             editorInstance = null;
@@ -51,7 +54,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
                 return false;
             }
 
-            editorInstance = Object.Instantiate(characterEditorPrefab);
+            editorInstance = resolver.Instantiate(characterEditorPrefab);
             editorInstance.name = $"{characterEditorPrefab.name}_Runtime";
             editorInstance.transform.SetParent(null, false);
             editorController = editorInstance.GetComponentInChildren<CharacterEditController>(true);

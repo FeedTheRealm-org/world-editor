@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FTRShared.Runtime.Core.Cache;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -42,6 +43,12 @@ public partial class CharacterEditController : MonoBehaviour
 
     [Inject]
     private CharacterInfoRepository characterInfoRepository;
+
+    [Inject]
+    private CacheManager cacheManager;
+
+    [Inject]
+    public IObjectResolver resolver;
 
     private ICharacterIdSource activeCharacterIdSource;
     private string activeCharacterId = string.Empty;

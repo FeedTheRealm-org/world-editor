@@ -322,7 +322,7 @@ namespace FeedTheRealm.UI.MenuBar.EditOption.ChangeFloorMaterial
                     }
                 },
                 onCancel: () => { },
-                extensions: new[] { ".png", ".jpg", ".jpeg" }
+                extensions: new[] { ".png" }
             );
         }
     }
