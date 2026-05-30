@@ -587,9 +587,6 @@ public partial class CharacterEditController
         string requestCategoryId
     )
     {
-        Debug.Log(
-            $"[populateItems] spriteManager={spriteManager}, director={director}, _itemsList={_itemsList}"
-        );
         if (!IsSpritesRequestCurrent(requestVersion, requestCategoryId))
         {
             return;
