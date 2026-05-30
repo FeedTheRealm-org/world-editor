@@ -389,7 +389,21 @@ public partial class CharacterEditController
             if (!textureCache.TryGetValue(spriteId, out texture))
             {
                 var sprite = await assetsService.GetSpriteByIdAsync(spriteId);
-                texture = await cacheManager.GetSprite(sprite.sprite_url, DateTime.UtcNow);
+
+                try
+                {
+                    var timeStamp = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                    texture = await cacheManager.GetSprite(sprite.sprite_url, timeStamp);
+                }
+                catch (Exception ex)
+                {
+                    logger?.Log(
+                        $"Error loading sprite {spriteId} from cache: {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    continue;
+                }
                 if (texture != null)
                 {
                     textureCache[spriteId] = texture;
@@ -607,7 +621,20 @@ public partial class CharacterEditController
                     continue;
                 }
 
-                texture = await cacheManager.GetSprite(sprite.sprite_url, DateTime.UtcNow);
+                try
+                {
+                    var timeStamp = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                    texture = await cacheManager.GetSprite(sprite.sprite_url, timeStamp);
+                }
+                catch (Exception ex)
+                {
+                    logger?.Log(
+                        $"Error loading sprite {sprite.sprite_id} from cache: {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    continue;
+                }
 
                 if (!IsSpritesRequestCurrent(requestVersion, requestCategoryId))
                 {

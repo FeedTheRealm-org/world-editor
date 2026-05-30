@@ -9,6 +9,8 @@
                 </ui:VisualElement>
                 <ui:VisualElement name="Content" style="flex-direction: column; margin-top: 18px;">
                     <ui:Toggle label="Fullscreen" toggle-on-label-click="true" value="true" name="FullscreenToggle" class="menu-toggle" style="font-size: 20px;"/>
+                    <ui:Button text="Clear Cache" name="ClearCacheButton" class="menu-secondary-btn" style="margin-top: 14px;"/>
+                    <ui:Label text="" name="CacheStatusLabel" class="menu-field-label" style="font-size: 15px; margin-top: 8px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
