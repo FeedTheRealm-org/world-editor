@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using API;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
+using VContainer.Unity;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
 {
@@ -10,6 +12,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
     {
         private readonly GameObject characterEditorPrefab;
         private readonly bool disableApiFetches;
+        private readonly IObjectResolver resolver;
 
         private GameObject previewInstance;
         private CharacterEditController previewController;
@@ -17,9 +20,11 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
 
         public CharacterEditorPreviewRenderer(
             GameObject characterEditorPrefab,
+            IObjectResolver resolver,
             bool disableApiFetches = false
         )
         {
+            this.resolver = resolver;
             this.characterEditorPrefab = characterEditorPrefab;
             this.disableApiFetches = disableApiFetches;
         }
@@ -101,7 +106,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CharacterEditor
             if (characterEditorPrefab == null)
                 return false;
 
-            previewInstance = UnityEngine.Object.Instantiate(characterEditorPrefab);
+            previewInstance = resolver.Instantiate(characterEditorPrefab);
             previewInstance.name = $"{characterEditorPrefab.name}_Preview";
 
             previewController = previewInstance.GetComponentInChildren<CharacterEditController>(

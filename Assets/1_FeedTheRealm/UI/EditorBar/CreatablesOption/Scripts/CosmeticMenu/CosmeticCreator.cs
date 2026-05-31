@@ -448,7 +448,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
                 this,
                 characterEditorPrefab,
                 out characterEditorInstance,
-                out characterEditor
+                out characterEditor,
+                resolver
             );
         }
 
@@ -506,6 +507,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.CosmeticMenu
 
             characterPreviewRenderer = new CharacterEditorPreviewRenderer(
                 characterEditorPrefab,
+                resolver,
                 true
             );
             return true;

@@ -12,6 +12,8 @@ using FeedTheRealm.Gameplay.Player;
 using FeedTheRealm.Gameplay.WorldLoader;
 using FeedTheRealm.Gameplay.WorldSetup;
 using FTR.Core.Common.Config;
+using FTRShared.Runtime.Core.Cache;
+using FTRShared.Runtime.Core.Interfaces;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using VContainer;
@@ -93,6 +95,8 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
                 .Register<PlayerInfoRepository>(Lifetime.Singleton)
                 .As<CharacterInfoRepository>();
             builder.Register<ZoneMaterialsRepository>(Lifetime.Singleton);
+            builder.Register<DiskService>(Lifetime.Singleton);
+            builder.Register<CacheManager>(Lifetime.Singleton);
 
             // Libraries
             builder.Register<StructureLibrary>(Lifetime.Singleton);
@@ -132,7 +136,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(worldPrefabProvider);
             builder.RegisterInstance(WorldUIObjectProvider);
             builder.RegisterInstance(playerConfig);
-            builder.RegisterInstance(gltfService);
+            builder.RegisterInstance(gltfService).As<IGltfLoader>().AsSelf();
             builder.RegisterInstance(assetsService);
             builder.RegisterInstance(playerService);
             builder.RegisterInstance(session);

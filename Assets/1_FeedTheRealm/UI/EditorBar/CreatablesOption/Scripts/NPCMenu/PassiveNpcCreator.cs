@@ -592,6 +592,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
 
             characterPreviewRenderer = new CharacterEditorPreviewRenderer(
                 characterEditorPrefab,
+                resolver,
                 false
             );
             characterPreviewRenderer.SetAssetsWorldId(worldSelector.selectedWorldId);
@@ -613,7 +614,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 this,
                 characterEditorPrefab,
                 out characterEditorInstance,
-                out characterEditorController
+                out characterEditorController,
+                resolver
             );
         }
 

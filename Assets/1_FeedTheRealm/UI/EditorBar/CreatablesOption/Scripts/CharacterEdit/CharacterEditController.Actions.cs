@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API;
 using FTR.UI;
+using FTRShared.Runtime.Core.Cache;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -386,7 +388,22 @@ public partial class CharacterEditController
             Texture2D texture = null;
             if (!textureCache.TryGetValue(spriteId, out texture))
             {
-                texture = await assetsService.DownloadTexture2D(spriteId);
+                var sprite = await assetsService.GetSpriteByIdAsync(spriteId);
+
+                try
+                {
+                    var timeStamp = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                    texture = await cacheManager.GetSprite(sprite.sprite_url, timeStamp);
+                }
+                catch (Exception ex)
+                {
+                    logger?.Log(
+                        $"Error loading sprite {spriteId} from cache: {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    continue;
+                }
                 if (texture != null)
                 {
                     textureCache[spriteId] = texture;
@@ -591,7 +608,30 @@ public partial class CharacterEditController
             var hasCachedTexture = textureCache.TryGetValue(sprite.sprite_id, out texture);
             if (!hasCachedTexture)
             {
-                texture = await assetsService.DownloadTexture2D(sprite.sprite_id);
+                if (cacheManager == null)
+                {
+                    logger?.Log(
+                        "cacheManager is null in populateItems",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    continue;
+                }
+
+                try
+                {
+                    var timeStamp = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                    texture = await cacheManager.GetSprite(sprite.sprite_url, timeStamp);
+                }
+                catch (Exception ex)
+                {
+                    logger?.Log(
+                        $"Error loading sprite {sprite.sprite_id} from cache: {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    continue;
+                }
 
                 if (!IsSpritesRequestCurrent(requestVersion, requestCategoryId))
                 {
@@ -610,6 +650,16 @@ public partial class CharacterEditController
             if (texture != null)
             {
                 _currentPageTextureKeys.Add(sprite.sprite_id);
+
+                if (spriteManager == null)
+                {
+                    logger?.Log(
+                        "spriteManager is null in populateItems",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    return;
+                }
 
                 var category = spriteManager.GetPartCategoryFromCategoryName(_selectedCategoryName);
                 var configs = GetConfigsForPart(director, category);
