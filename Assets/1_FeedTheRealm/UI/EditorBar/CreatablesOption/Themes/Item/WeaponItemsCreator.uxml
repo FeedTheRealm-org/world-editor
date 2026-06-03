@@ -1,0 +1,70 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="Container" class="container" style="width: 70%; min-width: 540px; max-width: 1000px; height: 78%; min-height: 420px; max-height: 820px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Items | weapons" name="Title" class="wc-header-label" style="-unity-font-style: normal;"/>
+                    <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="ItemEditor" class="wc-body" style="margin-top: 22px;">
+                    <ui:VisualElement name="ItemPreviewContainer" class="wc-preview-col">
+                        <ui:VisualElement name="SpriteFrame" class="wc-sprite-frame">
+                            <ui:Image name="SpritePreview" class="wc-sprite-image"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Edit your item sprite" name="LoadSprite" class="wc-edit-sprite-btn"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+                        <ui:VisualElement name="NameGroup" class="wc-field-group">
+                            <ui:Label text="name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="DescriptionGroup" class="wc-field-group">
+                            <ui:Label text="description" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 100px; height: 100px; max-height: 100px;"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="TypeRow" class="wc-row">
+                            <ui:VisualElement name="WeaponTypeGroup" class="wc-field-group">
+                                <ui:Label text="weapon type" class="wc-field-label"/>
+                                <ui:DropdownField name="WeaponTypeField" class="wc-dropdown"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="SubWeaponTypeGroup" class="wc-field-group">
+                                <ui:Label text="sub weapon type" class="wc-field-label"/>
+                                <ui:DropdownField name="SubWeaponTypeField" class="wc-dropdown"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="CombatRow" class="wc-row--3" style="margin-bottom: 0;">
+                            <ui:VisualElement name="DamageGroup" class="wc-field-group">
+                                <ui:Label text="damage" class="wc-field-label"/>
+                                <ui:IntegerField value="10" name="DamageField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="AttackSpeedGroup" class="wc-field-group">
+                                <ui:Label text="attack speed" class="wc-field-label"/>
+                                <ui:FloatField value="10" name="AttackSpeedField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="RangeGroup" class="wc-field-group">
+                                <ui:Label text="range" class="wc-field-label"/>
+                                <ui:FloatField value="10" name="RangeField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Label text="The higher the attack speed, the higher the time between hits (in seconds)." style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; color: rgba(255, 255, 255, 0.5);"/>
+                        <ui:VisualElement name="RangedFieldsContainer" class="wc-row">
+                            <ui:VisualElement name="AmmoGroup" class="wc-field-group">
+                                <ui:Label text="ammo capacity" class="wc-field-label"/>
+                                <ui:IntegerField value="10" name="AmmoField" class="wc-text-field" style="margin-right: 25px;"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="ReloadSpeedGroup" class="wc-field-group">
+                                <ui:Label text="reload speed" class="wc-field-label"/>
+                                <ui:FloatField value="10" name="ReloadSpeedField" class="wc-text-field" style="width: 260px;"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="BottomRow" class="wc-footer">
+                            <ui:Button text="Create" name="SaveButton" class="wc-primary-btn"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -4,8 +4,8 @@ using System.Linq;
 using Enums;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -42,9 +42,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
         private VisualElement _tabGoldContent;
         private VisualElement _tabCosmeticContent;
         private DropdownField itemSelector;
-        private ListView itemContainer;
+        private ScrollView itemContainer;
+        private ScrollView cosmeticItemContainer;
         private DropdownField cosmeticItemSelector;
-        private ListView cosmeticItemContainer;
 
         private bool _isGoldTabActive = true;
         private const string ItemPlaceholder = "Select an item to add";
@@ -74,9 +74,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             _tabCosmetic?.RegisterCallback<ClickEvent>(_ => SwitchTab(false));
 
             itemSelector = root.Q<DropdownField>("AddItemContaier");
-            itemContainer = root.Q<ListView>("ItemContainer");
+            itemContainer = root.Q<ScrollView>("ItemContainer");
             cosmeticItemSelector = root.Q<DropdownField>("AddCosmeticItemContainer");
-            cosmeticItemContainer = root.Q<ListView>("CosmeticItemContainer");
+            cosmeticItemContainer = root.Q<ScrollView>("CosmeticItemContainer");
 
             _initialCosmeticIds.Clear();
             editBuffer = new EditBuffer<ShopData>(
@@ -88,7 +88,6 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                     editingData.shopName = evt.newValue;
             });
 
-            SetupListViews();
             RefreshProductList();
             SwitchTab(true);
         }
@@ -297,124 +296,61 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
             cosmeticItemSelector.SetValueWithoutNotify(ItemPlaceholder);
         }
 
-        private void SetupListViews()
+        private void RefreshProductList()
         {
-            SetupGoldListView();
-            SetupCosmeticListView();
-        }
-
-        private void SetupGoldListView()
-        {
-            if (itemContainer == null)
+            if (editingData == null)
                 return;
 
-            itemContainer.fixedItemHeight = 120;
-            itemContainer.selectionType = SelectionType.None;
+            itemContainer?.Clear();
+            cosmeticItemContainer?.Clear();
 
-            itemContainer.makeItem = () =>
+            foreach (var product in editingData.products.Where(p => !p.IsCosmetic))
             {
+                var item = FindItem(product.productId);
+                if (item == null)
+                    continue;
+
                 var ve = MakeProductItem();
                 HideNameEditControls(ve);
 
-                var binding = new GoldItemBinding();
-                ve.userData = binding;
-
-                ve.Q<IntegerField>("ProductPrice")
-                    ?.RegisterValueChangedCallback(evt =>
-                    {
-                        if (binding.product != null)
-                            binding.product.price = evt.newValue;
-                    });
-                ve.Q<Button>("Delete")
-                    ?.RegisterCallback<ClickEvent>(_ =>
-                    {
-                        if (binding.product == null || editingData == null)
-                            return;
-                        editingData.products.Remove(binding.product);
-                        RefreshProductList();
-                    });
-
-                return ve;
-            };
-
-            itemContainer.bindItem = (ve, index) =>
-            {
-                if (editingData == null || index >= itemContainer.itemsSource.Count)
-                    return;
-
-                var binding = (GoldItemBinding)ve.userData;
-                binding.product = (ProductData)itemContainer.itemsSource[index];
-                binding.product.currency = CurrencyType.Gold;
-
-                var item = FindItem(binding.product.productId);
-                if (item == null)
-                    return;
+                var capturedProduct = product;
 
                 var nameLabel = ve.Q<Label>("ProductName");
                 if (nameLabel != null)
                     nameLabel.text = GetItemName(item);
 
                 ShopSpriteLoader.LoadItemSprite(item, ve.Q<Image>("Preview"));
-                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(binding.product.price);
-            };
-
-            itemContainer.unbindItem = (ve, _) =>
-            {
-                if (ve.userData is GoldItemBinding b)
-                    b.product = null;
-            };
-        }
-
-        private void SetupCosmeticListView()
-        {
-            if (cosmeticItemContainer == null)
-                return;
-
-            cosmeticItemContainer.fixedItemHeight = 120;
-            cosmeticItemContainer.selectionType = SelectionType.None;
-
-            cosmeticItemContainer.makeItem = () =>
-            {
-                var ve = MakeProductItem();
-
-                var binding = new CosmeticItemBinding();
-                ve.userData = binding;
-
+                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(capturedProduct.price);
                 ve.Q<IntegerField>("ProductPrice")
-                    ?.RegisterValueChangedCallback(evt =>
-                    {
-                        if (binding.product != null)
-                            binding.product.price = evt.newValue;
-                    });
-                ve.Q<Button>("EditName")
-                    ?.RegisterCallback<ClickEvent>(_ => binding.onEdit?.Invoke());
-                ve.Q<Button>("ConfirmName")
-                    ?.RegisterCallback<ClickEvent>(_ => binding.onConfirm?.Invoke());
+                    ?.RegisterValueChangedCallback(evt => capturedProduct.price = evt.newValue);
+
                 ve.Q<Button>("Delete")
-                    ?.RegisterCallback<ClickEvent>(_ => binding.onDelete?.Invoke());
+                    ?.RegisterCallback<ClickEvent>(_ =>
+                    {
+                        editingData.products.Remove(capturedProduct);
+                        RefreshProductList();
+                    });
 
-                return ve;
-            };
+                itemContainer?.Add(ve);
+            }
 
-            cosmeticItemContainer.bindItem = (ve, index) =>
+            foreach (var product in editingData.products.Where(p => p.IsCosmetic))
             {
-                if (editingData == null || index >= cosmeticItemContainer.itemsSource.Count)
-                    return;
+                var cosmetic = FindCosmetic(product.productId);
+                if (cosmetic == null)
+                    continue;
 
-                var binding = (CosmeticItemBinding)ve.userData;
-                binding.product = (ProductData)cosmeticItemContainer.itemsSource[index];
-                binding.cosmetic = FindCosmetic(binding.product.productId);
-                if (binding.cosmetic == null)
-                    return;
+                var ve = MakeProductItem();
+                var capturedProduct = product;
 
                 var nameLabel = ve.Q<Label>("ProductName");
                 var nameInput = ve.Q<TextField>("ProductNameInput");
                 var nameRow = ve.Q<VisualElement>("NameRow");
                 var nameEditRow = ve.Q<VisualElement>("NameEditRow");
 
-                string resolvedName = string.IsNullOrEmpty(binding.product.displayName)
-                    ? $"{binding.cosmetic.data.name} - {binding.product.categoryName}"
-                    : binding.product.displayName;
+                string resolvedName = string.IsNullOrEmpty(capturedProduct.displayName)
+                    ? $"{cosmetic.data.name} - {capturedProduct.categoryName}"
+                    : capturedProduct.displayName;
 
                 if (nameLabel != null)
                     nameLabel.text = resolvedName;
@@ -423,74 +359,45 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 nameRow?.SetDisplay(true);
                 nameEditRow?.SetDisplay(false);
 
-                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(binding.product.price);
+                ve.Q<IntegerField>("ProductPrice")?.SetValueWithoutNotify(capturedProduct.price);
+                ve.Q<IntegerField>("ProductPrice")
+                    ?.RegisterValueChangedCallback(evt => capturedProduct.price = evt.newValue);
+
                 ShopSpriteLoader.LoadCosmeticSprite(
-                    binding.cosmetic,
-                    binding.product,
+                    cosmetic,
+                    capturedProduct,
                     ve.Q<Image>("Preview")
                 );
-                binding.product.currency = CurrencyType.Gems;
+                capturedProduct.currency = CurrencyType.Gems;
 
-                binding.onEdit = () =>
-                {
-                    nameRow?.SetDisplay(false);
-                    nameEditRow?.SetDisplay(true);
-                    if (nameInput != null)
+                ve.Q<Button>("EditName")
+                    ?.RegisterCallback<ClickEvent>(_ =>
                     {
-                        nameInput.SetValueWithoutNotify(nameLabel?.text ?? "");
-                        nameInput.Focus();
-                    }
-                };
+                        nameRow?.SetDisplay(false);
+                        nameEditRow?.SetDisplay(true);
+                        nameInput?.SetValueWithoutNotify(nameLabel?.text ?? "");
+                        nameInput?.Focus();
+                    });
 
-                binding.onConfirm = () =>
-                {
-                    string newName = nameInput?.value ?? "";
-                    binding.product.displayName = newName;
-                    if (nameLabel != null)
-                        nameLabel.text = newName;
-                    nameRow?.SetDisplay(true);
-                    nameEditRow?.SetDisplay(false);
-                };
+                ve.Q<Button>("ConfirmName")
+                    ?.RegisterCallback<ClickEvent>(_ =>
+                    {
+                        string newName = nameInput?.value ?? "";
+                        capturedProduct.displayName = newName;
+                        if (nameLabel != null)
+                            nameLabel.text = newName;
+                        nameRow?.SetDisplay(true);
+                        nameEditRow?.SetDisplay(false);
+                    });
 
-                binding.onDelete = () =>
-                {
-                    editingData?.products.Remove(binding.product);
-                    RefreshProductList();
-                };
-            };
+                ve.Q<Button>("Delete")
+                    ?.RegisterCallback<ClickEvent>(_ =>
+                    {
+                        editingData.products.Remove(capturedProduct);
+                        RefreshProductList();
+                    });
 
-            cosmeticItemContainer.unbindItem = (ve, _) =>
-            {
-                if (ve.userData is CosmeticItemBinding b)
-                {
-                    b.product = null;
-                    b.cosmetic = null;
-                    b.onEdit = b.onConfirm = b.onDelete = null;
-                }
-            };
-        }
-
-        private void RefreshProductList()
-        {
-            if (editingData == null)
-                return;
-
-            if (itemContainer != null)
-            {
-                itemContainer.itemsSource = editingData
-                    .products.Where(p =>
-                        !p.IsCosmetic && FindItem(p.productId) is ConsumableItem or Weapon
-                    )
-                    .ToList();
-                itemContainer.RefreshItems();
-            }
-
-            if (cosmeticItemContainer != null)
-            {
-                cosmeticItemContainer.itemsSource = editingData
-                    .products.Where(p => p.IsCosmetic)
-                    .ToList();
-                cosmeticItemContainer.RefreshItems();
+                cosmeticItemContainer?.Add(ve);
             }
         }
 

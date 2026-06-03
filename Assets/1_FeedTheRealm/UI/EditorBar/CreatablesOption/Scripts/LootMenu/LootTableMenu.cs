@@ -1,7 +1,9 @@
 using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
+using FeedTheRealm.Gameplay.WorldObjects;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -23,6 +25,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addLootTableButton;
@@ -53,7 +58,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         private void PopulateList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var list = root.Q<ListView>("LootTablesList");
+            var list = root.Q<ScrollView>("LootTablesList");
             list.Clear();
 
             // Retrieve all LootTable creatables from the manager
@@ -70,7 +75,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
         }
 
         private void AddListEntry(
-            ListView list,
+            ScrollView list,
             LootTable creatable,
             string displayName,
             string type,
@@ -80,9 +85,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             var entry = itemListTemplate.Instantiate();
             entry.Q<Label>("Header").text = displayName;
 
-            var typeLabel = entry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = type;
+            var itemsAmountLabel = entry.Q<Label>("LootLabel");
+            itemsAmountLabel.text = creatable.data.lootItems.Count.ToString();
 
             // Handle Edit Logic
             entry.Q<Button>("Edit").clicked += () =>
@@ -94,12 +98,41 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.LootMenu
             // Handle Delete Logic
             entry.Q<Button>("Delete").clicked += () =>
             {
-                creatablesManager.Delete<LootTable>(creatable.Id);
-                entry.RemoveFromHierarchy();
-                logger.Log($"[LootTableMenu] Deleted {displayName}");
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+                dialogController.Show(
+                    title: "Delete Loot Table",
+                    question: $"Are you sure you want to delete the loot table '{displayName}'? This cannot be undone.",
+                    onConfirm: () =>
+                    {
+                        var chests = FindObjectsByType<ChestObject>(
+                            FindObjectsInactive.Exclude,
+                            FindObjectsSortMode.None
+                        );
+                        foreach (var chest in chests)
+                        {
+                            if (chest.data != null && chest.data.lootTableId == creatable.data.id)
+                            {
+                                chest.data.lootTableId = string.Empty;
+                            }
+                        }
+
+                        foreach (var enemy in creatablesManager.GetAll<AggresiveNpc>())
+                        {
+                            enemy.data.lootTableId =
+                                enemy.data.lootTableId == creatable.data.id
+                                    ? string.Empty
+                                    : enemy.data.lootTableId;
+                        }
+
+                        creatablesManager.Delete<LootTable>(creatable.Id);
+                        entry.RemoveFromHierarchy();
+                    },
+                    onCancel: () => { }
+                );
             };
 
-            list.hierarchy.Add(entry);
+            list.Add(entry);
         }
 
         private void OpenCreatorMenu(GameObject prefab)

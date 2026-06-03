@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldEditor;
 using FeedTheRealm.Gameplay.Inputs;
@@ -28,6 +29,9 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine
 
         [Inject]
         public EditPlaceableEvent editPlaceableEvent;
+
+        [Inject]
+        public EditorStateChangedEvent editorStateChangedEvent;
 
         public InputReader inputReader;
         public Camera playerCamera;

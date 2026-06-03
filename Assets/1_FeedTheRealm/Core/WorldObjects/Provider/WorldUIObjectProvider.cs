@@ -8,13 +8,12 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
     )]
     public class WorldUIObjectProvider : ScriptableObject
     {
+        [Header("HUD Elements")]
         public GameObject menuBarGameObject;
         public GameObject editorBarGameObject;
+        public GameObject editorStateDisplayObject;
         public GameObject placeableDisplayObject;
         public GameObject editorSettingsMenuObject;
-        public GameObject loginMenuObject;
-        public GameObject signUpMenuObject;
-        public GameObject verifyCodeMenuObject;
         public GameObject subscriptionMenuObject;
         public GameObject transactionsMenuObject;
 
@@ -25,5 +24,6 @@ namespace FeedTheRealm.Core.WorldObjects.Provider
         public GameObject AggresiveNpcSpawnerEditObject;
         public GameObject PortalEditObject;
         public GameObject ChestEditObject;
+        public GameObject PlayerSpawnerEditObject;
     }
 }

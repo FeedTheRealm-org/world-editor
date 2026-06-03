@@ -9,7 +9,7 @@ using VContainer;
 public class ZoneOptionController : MonoBehaviour
 {
     [SerializeField]
-    private string CreateNewOptionDisplay = "Create new zone";
+    private string CreateNewOptionDisplay = "+";
 
     [Inject]
     private DataPersistenceManager dataPersistenceManager;

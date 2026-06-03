@@ -217,6 +217,15 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""68f7d7a6-4ce3-4128-a4af-948d757e72aa"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -514,6 +523,17 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ColliderSC"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8adcdfa8-cae3-411f-9f48-345c3fc2676d"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1115,6 +1135,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         m_Player_RotateSC = m_Player.FindAction("RotateSC", throwIfNotFound: true);
         m_Player_HideSC = m_Player.FindAction("HideSC", throwIfNotFound: true);
         m_Player_ColliderSC = m_Player.FindAction("ColliderSC", throwIfNotFound: true);
+        m_Player_CloseMenu = m_Player.FindAction("CloseMenu", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1222,6 +1243,7 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_RotateSC;
     private readonly InputAction m_Player_HideSC;
     private readonly InputAction m_Player_ColliderSC;
+    private readonly InputAction m_Player_CloseMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1290,6 +1312,10 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ColliderSC => m_Wrapper.m_Player_ColliderSC;
         /// <summary>
+        /// Provides access to the underlying input action "Player/CloseMenu".
+        /// </summary>
+        public InputAction @CloseMenu => m_Wrapper.m_Player_CloseMenu;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1357,6 +1383,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @ColliderSC.started += instance.OnColliderSC;
             @ColliderSC.performed += instance.OnColliderSC;
             @ColliderSC.canceled += instance.OnColliderSC;
+            @CloseMenu.started += instance.OnCloseMenu;
+            @CloseMenu.performed += instance.OnCloseMenu;
+            @CloseMenu.canceled += instance.OnCloseMenu;
         }
 
         /// <summary>
@@ -1410,6 +1439,9 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
             @ColliderSC.started -= instance.OnColliderSC;
             @ColliderSC.performed -= instance.OnColliderSC;
             @ColliderSC.canceled -= instance.OnColliderSC;
+            @CloseMenu.started -= instance.OnCloseMenu;
+            @CloseMenu.performed -= instance.OnCloseMenu;
+            @CloseMenu.canceled -= instance.OnCloseMenu;
         }
 
         /// <summary>
@@ -1808,6 +1840,13 @@ public partial class @MakerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnColliderSC(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CloseMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCloseMenu(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

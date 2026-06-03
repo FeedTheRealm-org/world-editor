@@ -1,5 +1,5 @@
 using FeedTheRealm.Core.DataPersistence;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

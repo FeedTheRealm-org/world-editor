@@ -1,0 +1,62 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="Container" class="container" style="width: 60%; min-width: 500px; max-width: 860px; height: 70%; min-height: 380px; max-height: 700px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Items | consumables" name="Title" class="wc-header-label" style="-unity-font-style: normal;"/>
+                    <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="ItemEditor" class="wc-body" style="margin-top: 22px;">
+                    <ui:VisualElement name="ItemPreviewContainer" class="wc-preview-col">
+                        <ui:VisualElement name="SpriteFrame" class="wc-sprite-frame">
+                            <ui:Image name="SpritePreview" class="wc-sprite-image"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Edit your item sprite" name="LoadSprite" class="wc-edit-sprite-btn"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+                        <ui:VisualElement name="NameGroup" class="wc-field-group">
+                            <ui:Label text="name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="DescriptionGroup" class="wc-field-group">
+                            <ui:Label text="description" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="" name="DescriptionField" multiline="true" class="wc-description-field" style="min-height: 70px; height: 100px; max-height: 100px;"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="EffectRow" class="wc-row">
+                            <ui:VisualElement name="EffectTypeGroup" class="wc-field-group">
+                                <ui:Label text="effect type" class="wc-field-label"/>
+                                <ui:DropdownField name="EffectTypeField" class="wc-dropdown" style="margin-right: 25px;"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="EffectValueGroup" class="wc-field-group">
+                                <ui:Label text="effect value" class="wc-field-label"/>
+                                <ui:IntegerField value="10" name="EffectValueField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="TimingRow" class="wc-row--3" style="margin-bottom: -10px;">
+                            <ui:VisualElement name="EffectDurationGroup" class="wc-field-group">
+                                <ui:Label text="effect duration" tooltip="Duration is in seconds" class="wc-field-label"/>
+                                <ui:FloatField value="60" name="EffectDurationField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="EffectCooldownGroup" class="wc-field-group">
+                                <ui:Label text="effect cooldown" tooltip="Duration is in seconds" class="wc-field-label"/>
+                                <ui:FloatField value="10" name="EffectCooldownField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="MaxStackGroup" class="wc-field-group">
+                                <ui:Label text="max. stack amount" class="wc-field-label"/>
+                                <ui:IntegerField value="1" name="MaxStackField" class="wc-text-field"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Label text="All effect durations and cooldowns are in seconds." style="color: rgba(255, 255, 255, 0.5); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;"/>
+                        <ui:VisualElement name="BottomRow" class="wc-row" style="align-items: flex-end; flex-direction: row-reverse;">
+                            <ui:VisualElement name="SaveGroup" class="wc-field-group" style="align-items: flex-end; flex-grow: 0; flex-shrink: 0; margin-left: 20px;">
+                                <ui:Button text="create" name="SaveButton" class="wc-primary-btn"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

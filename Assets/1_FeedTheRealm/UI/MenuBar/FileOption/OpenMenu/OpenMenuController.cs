@@ -3,9 +3,9 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using FeedTheRealm.Core.DataPersistence;
 using FeedTheRealm.Core.EventChannels.UIEvents;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.WorldLoader;
-using FeedTheRealm.UI.Common;
-using FTRShared.Runtime.Models;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -33,8 +33,12 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
 
         [Inject]
         private RefreshZonesEvent refreshZonesEvent;
+
+        [Inject]
+        private WorldPrefabProvider prefabProvider;
+
         private Button closeButton;
-        private ListView worldsListView;
+        private ScrollView worldsListView;
         private VisualElement root;
         private List<string> loadedWorlds;
 
@@ -43,35 +47,30 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
             var uiDocument = GetComponent<UIDocument>();
             root = uiDocument.rootVisualElement;
             closeButton = root.Q<Button>("Close");
-            worldsListView = root.Q<ListView>("WorldsList");
-
-            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            worldsListView = root.Q<ScrollView>("WorldsList");
 
             closeButton.clicked += CloseMenu;
 
-            // Configure ListView
-            worldsListView.makeItem = () =>
+            loadedWorlds = dataPersistenceManager.ListAllWorlds();
+            PopulateWorldsList();
+        }
+
+        private void PopulateWorldsList()
+        {
+            worldsListView.Clear();
+
+            foreach (var world in loadedWorlds)
             {
+                var capturedWorld = world;
                 var button = new Button();
-                button.AddToClassList("open-world-button");
-                return button;
-            };
+                button.text = PrettifyName(capturedWorld);
+                button.AddToClassList("menu-world-option-button");
+                button.style.alignSelf = Align.Stretch;
 
-            worldsListView.bindItem = (element, index) =>
-            {
-                var button = element as Button;
-                button.text = PrettifyName(loadedWorlds[index]);
+                button.clicked += async () => await OnLoadWorldClicked(capturedWorld);
 
-                button.clicked -= () => { };
-                button.clicked += async () =>
-                {
-                    await OnLoadWorldClicked(loadedWorlds[index]);
-                };
-            };
-
-            worldsListView.itemsSource = loadedWorlds;
-            worldsListView.selectionType = SelectionType.None;
-            worldsListView.reorderable = false;
+                worldsListView.Add(button);
+            }
         }
 
         private void OnDisable()
@@ -80,6 +79,28 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.OpenMenu
         }
 
         private async UniTask OnLoadWorldClicked(string worldName)
+        {
+            if (
+                !string.IsNullOrEmpty(worldSelector.selectedWorld)
+                && worldSelector.selectedWorld != worldName
+            )
+            {
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+                dialogController.Show(
+                    title: "Open World",
+                    question: "Are you sure you want to open another world? Any unsaved changes in your current world will be lost.",
+                    onConfirm: async () => await ExecuteLoadWorld(worldName),
+                    onCancel: () => { }
+                );
+            }
+            else
+            {
+                await ExecuteLoadWorld(worldName);
+            }
+        }
+
+        private async UniTask ExecuteLoadWorld(string worldName)
         {
             worldSelector.selectedWorld = worldName;
             worldSelector.selectedZoneId =

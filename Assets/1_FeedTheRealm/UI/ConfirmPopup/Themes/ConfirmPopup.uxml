@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/ConfirmPopup/Themes/ConfirmPopupStyle.uss?fileID=7433441132597879392&amp;guid=e566a5d915f173049ad407d6416f7163&amp;type=3#ConfirmPopupStyle"/>
+    <ui:VisualElement name="Overlay" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.55); align-items: center; justify-content: center;">
+        <ui:VisualElement name="DialogContainer" class="dialog-container" style="color: rgb(26, 40, 44);">
+            <ui:VisualElement name="Header" class="header" style="padding-bottom: 0%; color: rgb(255, 255, 255);">
+                <ui:Label name="DialogTitle" text="Confirm Action" class="header-label" style="font-size: 20px; color: rgb(15, 197, 229); -unity-text-align: upper-left; -unity-font-style: normal;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Body" class="dialog-body">
+                <ui:Label name="QuestionLabel" text="Are you sure you want to proceed?" class="text dialog-question" style="font-size: 20px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Footer" class="dialog-footer">
+                <ui:Button name="CancelButton" text="Cancel" class="dialog-btn dialog-btn--cancel"/>
+                <ui:Button name="ConfirmButton" text="Confirm" class="dialog-btn dialog-btn--confirm"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

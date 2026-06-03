@@ -6,7 +6,7 @@ using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.Library.PlaceableObjectsLibrary;
 using FeedTheRealm.Gameplay.WorldObjects;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -16,9 +16,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
     [RequireComponent(typeof(UIDocument))]
     public class ChestEditor : MenuController, IEditable
     {
-        [Inject]
-        private InputReader inputReader;
-
         [Inject]
         private CreatablesManager creatablesManager;
 

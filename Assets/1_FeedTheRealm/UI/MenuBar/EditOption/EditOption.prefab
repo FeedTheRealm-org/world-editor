@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: Assembly-CSharp::FTR.UI.MenuOption
   label: Edit
   menuToOpen: {fileID: 8739125850922495337, guid: 94f969e5809956a63bcd99343969cdb4, type: 3}
   menuOptions:
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Settings
   menuToOpen: {fileID: 8739125850922495337, guid: 94f969e5809956a63bcd99343969cdb4, type: 3}
   menuOptions: []
@@ -83,7 +83,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Custom Model
   menuToOpen: {fileID: 4954236233821240776, guid: e9e6ed2b52fe402d0b32d625d933113f, type: 3}
   menuOptions: []
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Model Editor
   menuToOpen: {fileID: 5034267514889570202, guid: b1bf42e05107f48d284de5650b149d42, type: 3}
   menuOptions: []
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Default Content
   menuToOpen: {fileID: -6471009733461231852, guid: 9a84745387c6f4c87b3849ccf2421aaf, type: 3}
   menuOptions: []
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.Common.MenuOption
+  m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: Zone Editor
   menuToOpen: {fileID: -6710251040486823034, guid: ee5def4cac9c49c4fa1c11626f1dfe6b, type: 3}
   menuOptions: []

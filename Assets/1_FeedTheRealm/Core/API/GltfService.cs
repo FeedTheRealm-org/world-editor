@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using FTR.Core.Common.Config;
+using FTRShared.Runtime.Core.Interfaces;
 using GLTFast;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace API
         fileName = "GltLoaderService",
         menuName = "Scriptable Objects/API/GltLoaderService"
     )]
-    public class GltfService : ScriptableObject
+    public class GltfService : ScriptableObject, IGltfLoader
     {
         [SerializeField]
         private ApiConfig apiConfig;
@@ -69,6 +70,11 @@ namespace API
             ToastNotification.Show($"Model could not be loaded", "error", Color.red);
             var cube = Instantiate(errorPrefab, parent.transform.position, Quaternion.identity);
             cube.transform.SetParent(parent.transform);
+        }
+
+        public UniTask<GameObject> LoadModel(byte[] data)
+        {
+            return UniTask.FromResult<GameObject>(null);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using FeedTheRealm.Gameplay.Creatables;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -143,7 +143,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.DialogsMenu
         private void ReturnToList()
         {
             var menuInstance = resolver.Instantiate(messagesMenuPrefab);
-            menuInstance.GetComponent<MessagesMenu>()?.SetDialog(currentDialog);
+            menuInstance.GetComponent<DialogCreatorMenu>().SetupEditor(currentDialog);
             Destroy(gameObject);
         }
     }

@@ -1,4 +1,4 @@
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 
 namespace FeedTheRealm.UI.MenuBar

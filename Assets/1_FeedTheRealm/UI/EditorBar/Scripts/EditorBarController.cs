@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Gameplay.Inputs;
-using FeedTheRealm.UI.Common;
-using FeedTheRealm.UI.Common.Components;
 using FeedTheRealm.UI.EditorBar.PlacementOption;
+using FTR.UI;
+using FTR.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -15,18 +15,12 @@ namespace FeedTheRealm.UI.MenuBar
     public class EditorBarController : MonoBehaviour
     {
         [Inject]
-        private InputReader inputReader;
-
-        [Inject]
         private Logging.Logger logger;
 
         [SerializeField]
         private UIDocument menuBarUI;
 
         [Header("Menu Options")]
-        [SerializeField]
-        private GameObject PlacementOption;
-
         [SerializeField]
         private GameObject CreatablesOption;
 
@@ -49,7 +43,6 @@ namespace FeedTheRealm.UI.MenuBar
         {
             root = menuBarUI.rootVisualElement;
             menuStack = new MenuStack(root, enableEditorEvent, enableInputEvent, resolver);
-            BindButton("Placement", PlacementOption);
             BindButton("Creatables", CreatablesOption);
         }
 
@@ -60,7 +53,7 @@ namespace FeedTheRealm.UI.MenuBar
             if (button == null)
             {
                 logger.Log(
-                    $"Button '{buttonName}' not found in MenuBar UI.",
+                    $"Button '{buttonName}' not found in EditorBar UI.",
                     this,
                     Logging.LogType.Error
                 );

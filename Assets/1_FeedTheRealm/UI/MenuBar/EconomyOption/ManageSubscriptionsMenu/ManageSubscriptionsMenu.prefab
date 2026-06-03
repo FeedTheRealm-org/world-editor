@@ -67,7 +67,6 @@ MonoBehaviour:
   worldService: {fileID: 11400000, guid: 2804a6286702912a4a2e3a058c387189, type: 2}
   zoneService: {fileID: 11400000, guid: 3b2018c4bc2ec889f8c145ecf26ee6e7, type: 2}
   worldItemTemplate: {fileID: 9197481963319205126, guid: d3c04fe8b30a0d240a99bca96f74fdb5, type: 3}
-  zoneStatusBadge: {fileID: 5265124021911075093}
 --- !u!114 &-3094515843254917722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e0f6148e9702b5f8ab88476eb3dbcbaf, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 813540326b926b049b5f29d8121f2542, type: 3}
   m_SortingOrder: 0

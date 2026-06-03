@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -72,7 +72,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             BindEditMode();
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Save Consumable";
+            saveButton.text = "Save";
             saveButton.clicked += SaveExistingObject;
         }
 

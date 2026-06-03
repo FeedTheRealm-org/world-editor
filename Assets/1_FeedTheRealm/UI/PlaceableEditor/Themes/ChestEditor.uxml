@@ -1,35 +1,82 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement name="Menu" style="width: 800px; background-color: rgba(0, 0, 0, 0.3); padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; align-self: flex-end; align-content: flex-start; justify-content: space-between; bottom: 355px; right: 40px; top: 12%; height: 70%;">
-        <ui:VisualElement name="Content" style="flex-grow: 1; max-height: 220px; justify-content: space-between; margin-bottom: 2%;">
-            <ui:Label text="Chest Editor" name="Header" class="title" style="border-bottom-width: 1px; border-bottom-color: rgb(255, 255, 255); margin-bottom: 1%;"/>
-            <ui:TextField label="Chest Name" placeholder-text="new_chest" name="ChestName" style="-unity-font-style: normal; color: rgb(255, 255, 255); -unity-text-align: middle-left;"/>
-            <ui:DropdownField label="Chest Loot" name="ChestLootSelector" style="color: rgb(255, 255, 255);"/>
-            <ui:DropdownField label="Closed Model" name="ClosedModelSelector" style="color: rgb(255, 255, 255);"/>
-            <ui:DropdownField label="Opened Model" name="OpenedModelSelector" style="color: rgb(255, 255, 255);"/>
-            <ui:SliderInt label="Chest Reset Cooldown (Minutes)" value="2" high-value="100" name="ResetCooldown" show-input-field="true" style="width: 733px; -unity-font-style: bold; color: rgb(255, 255, 255);"/>
-        </ui:VisualElement>
-        <ui:TabView name="TabView" reorderable="true" tabindex="0" style="margin-top: 2%;">
-            <ui:Tab name="Chest" label="Chest Transform" tabindex="0" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Position" name="Position" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Rotation" name="Rotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Scale" name="Scale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-            </ui:Tab>
-            <ui:Tab name="ClosedChest" label="Closed Chest" tabindex="0" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Position Offset" name="ClosedPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Rotation Offset" name="ClosedRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Scale Offset" name="ClosedScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-            </ui:Tab>
-            <ui:Tab name="OpenedChest" label="Opened Chest" tabindex="0" focusable="false" class="TabContent">
-                <ui:Vector3Field label="Position Offset" name="OpenedPosition" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Rotation Offset" name="OpenedRotation" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-                <ui:Vector3Field label="Scale Offset" name="OpenedScale" value="0,0,0" class="unity-vector3-field__input" style="width: 595px;"/>
-            </ui:Tab>
-        </ui:TabView>
-        <ui:VisualElement name="Footer" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-between; align-self: flex-end; align-items: center; width: 100%; height: 0; max-height: 10%; min-height: initial;">
-            <ui:Button text="Close" name="Close" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: flex-end; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
-            <ui:Button text="Reset Transform" name="ResetTransform" style="height: 100px; max-height: 33%; min-height: 5%; aspect-ratio: auto; align-self: center; justify-content: flex-end; align-content: center; translate: 0% 0%; flex-direction: row; align-items: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%;"/>
+    <ui:VisualElement name="Root" class="wo-root">
+        <ui:VisualElement name="Menu" class="wo-container" style="width: 700px; min-width: 480px; max-width: 700px;">
+            <ui:VisualElement name="Panel" class="wo-panel">
+                <ui:Button text="✕" name="Close" class="wo-close-btn"/>
+                <ui:Label text="Chest Editor" name="Header" class="wo-title"/>
+                <ui:VisualElement class="wo-field-group">
+                    <ui:Label text="chest name" class="wo-field-label"/>
+                    <ui:TextField placeholder-text="new_chest" name="ChestName" class="wo-input"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="wo-row">
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
+                        <ui:Label text="chest loot" class="wo-field-label"/>
+                        <ui:DropdownField name="ChestLootSelector" class="wo-dropdown"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0;">
+                        <ui:Label text="closed model" class="wo-field-label"/>
+                        <ui:DropdownField name="ClosedModelSelector" class="wo-dropdown"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="wo-row">
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0; margin-right: 16px;">
+                        <ui:Label text="opened model" class="wo-field-label"/>
+                        <ui:DropdownField name="OpenedModelSelector" class="wo-dropdown"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="wo-field-group" style="flex-grow: 1; flex-basis: 0;">
+                        <ui:Label text="reset cooldown (minutes)" class="wo-field-label"/>
+                        <ui:SliderInt name="ResetCooldown" value="2" high-value="100" show-input-field="true" class="wo-slider"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:TabView name="TabView" class="wo-tabview">
+                    <ui:Tab name="Chest" label="Chest Transform" class="wo-tab-content">
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Position" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Position" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Rotation" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Scale" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="Scale" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                    </ui:Tab>
+                    <ui:Tab name="ClosedChest" label="Closed Chest" class="wo-tab-content">
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Position" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ClosedPosition" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ClosedRotation" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Scale" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="ClosedScale" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                    </ui:Tab>
+                    <ui:Tab name="OpenedChest" label="Opened Chest" class="wo-tab-content">
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Position" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="OpenedPosition" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Rotation" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="OpenedRotation" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="wo-vec3-row">
+                            <ui:Label text="Scale" class="wo-vec3-label"/>
+                            <ui:Vector3Field name="OpenedScale" value="0,0,0" class="wo-vec3-field"/>
+                        </ui:VisualElement>
+                    </ui:Tab>
+                </ui:TabView>
+                <ui:VisualElement class="wo-footer">
+                    <ui:Button text="Reset Transform" name="ResetTransform" class="wo-btn"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

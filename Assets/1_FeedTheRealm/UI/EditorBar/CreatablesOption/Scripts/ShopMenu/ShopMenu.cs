@@ -1,6 +1,7 @@
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -22,6 +23,9 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addShopButton;
@@ -48,7 +52,7 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
         private void PopulateShopList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var shopList = root.Q<ListView>("ShopList");
+            var shopList = root.Q<ScrollView>("ShopList");
             shopList.Clear();
 
             foreach (Shop shop in creatablesManager.GetAll<Shop>())
@@ -63,22 +67,30 @@ namespace FeedTheRealm.UI.EditorBar.CreatablesOption.Scripts.ShopMenu
                 entry.Q<Button>("Edit").clicked += () => OnEditShop(shop);
                 entry.Q<Button>("Delete").clicked += () => OnDeleteShop(shop, entry);
 
-                shopList.hierarchy.Add(entry);
+                shopList.Add(entry);
             }
         }
 
         private void OnEditShop(Shop shop)
         {
-            logger.Log("Editing shop: " + shop.data.shopName, this, Logging.LogType.Info);
             editingShop = shop;
             OpenMenu(shopCreatorMenuPrefab);
         }
 
         private void OnDeleteShop(Shop shop, VisualElement entry)
         {
-            logger.Log("Deleting shop: " + shop.data.shopName, this, Logging.LogType.Info);
-            creatablesManager.Delete<Shop>(shop.data.id);
-            entry.RemoveFromHierarchy();
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                title: "Delete Shop",
+                question: $"Are you sure you want to delete the shop '{shop.data.shopName}'? This cannot be undone.",
+                onConfirm: () =>
+                {
+                    creatablesManager.Delete<Shop>(shop.data.id);
+                    entry.RemoveFromHierarchy();
+                },
+                onCancel: () => { }
+            );
         }
 
         private void AddShop()

@@ -23,10 +23,14 @@ namespace FeedTheRealm.Gameplay.WorldEditor.WorldEditorStateMachine.WorldEditorS
 
         public void Enter()
         {
+            worldEditor.editorStateChangedEvent.Raise(EditorStates.Placing);
             worldEditor.Log($"Placing mode: {worldEditor.SelectedObject.id}");
         }
 
-        public void Exit() { }
+        public void Exit()
+        {
+            worldEditor.editorStateChangedEvent.Raise(EditorStates.None);
+        }
 
         public void Tick()
         {

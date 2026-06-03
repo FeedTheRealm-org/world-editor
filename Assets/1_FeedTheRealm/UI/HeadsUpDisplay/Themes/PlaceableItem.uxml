@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/HeadsUpDisplay/Themes/HudStyles.uss?fileID=7433441132597879392&amp;guid=d42d1b05564ad0267a71602f8a1f8cda&amp;type=3#HudStyles"/>
+    <ui:Button name="ItemButton" class="hud-sidebar__item" style="font-size: 10px;">
+        <ui:Label name="ItemLabel" class="hud-sidebar__item-label"/>
+    </ui:Button>
+</ui:UXML>

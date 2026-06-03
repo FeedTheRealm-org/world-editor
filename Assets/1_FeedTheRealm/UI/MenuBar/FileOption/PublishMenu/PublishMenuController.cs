@@ -9,8 +9,8 @@ using FeedTheRealm.Core.Repository;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using FTRShared.UI.AuthMenu;
 using UnityEngine;
@@ -53,6 +53,9 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         [SerializeField]
         private MaterialService materialService;
 
+        [SerializeField]
+        private VisualTreeAsset zoneItemTemplate;
+
         [Inject]
         private DataPersistenceManager dataPersistenceManager;
 
@@ -60,18 +63,16 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private WorldSelector worldSelector;
 
         [Inject]
-        private WorldUIObjectProvider worldUIObjectProvider;
-
-        [Inject]
         private CreatablesManager creatablesManager;
 
         [Inject]
         private ZoneMaterialsRepository zoneMaterialsRepository;
 
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
+
         private Button publishButton;
-        private Button loginButton;
         private Button closeButton;
-        private Label worldNameLabel;
         private Toggle publishCreatablesToggle;
         private Toggle publishWorldDataToggle;
         private VisualElement zoneGroup;
@@ -80,40 +81,43 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private List<int> availableZones;
         private HashSet<int> selectedZones = new();
         private bool publishAllZones = true;
-        private bool isAuthFlowActive;
 
         void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             publishButton = root.Q<Button>("Publish");
-            loginButton = root.Q<Button>("Login");
             closeButton = root.Q<Button>("Close");
-            worldNameLabel = root.Q<Label>("WorldName");
             publishCreatablesToggle = root.Q<Toggle>("PublishCreatables");
             publishWorldDataToggle = root.Q<Toggle>("PublishWorldData");
             zoneGroup = root.Q<VisualElement>("ZoneGroup");
 
             currentWorldData = dataPersistenceManager.GetWorldData(worldSelector.selectedWorld);
-            worldNameLabel.text = currentWorldData?.worldName ?? "No world loaded";
 
-            bool isFirstPublish = string.IsNullOrEmpty(currentWorldData?.worldId);
-            publishWorldDataToggle.value = true;
-            publishWorldDataToggle.SetEnabled(!isFirstPublish);
-            publishCreatablesToggle.value = true;
+            if (currentWorldData == null)
+            {
+                publishButton.SetEnabled(false);
+                publishCreatablesToggle.SetEnabled(false);
+                publishWorldDataToggle.SetEnabled(false);
+                zoneGroup.SetEnabled(false);
+            }
+            else
+            {
+                bool isFirstPublish = string.IsNullOrEmpty(currentWorldData.worldId);
+                publishWorldDataToggle.value = true;
+                publishWorldDataToggle.SetEnabled(!isFirstPublish);
+                publishCreatablesToggle.value = true;
+                publishButton.clicked += OnPublishClicked;
+                PopulateZoneGroup();
+            }
 
-            PopulateZoneGroup();
-
-            publishButton.clicked += OnPublishClicked;
             closeButton.clicked += CloseMenu;
-            loginButton.clicked += OnLoginClicked;
         }
 
         void OnDisable()
         {
             publishButton.clicked -= OnPublishClicked;
             closeButton.clicked -= CloseMenu;
-            loginButton.clicked -= OnLoginClicked;
         }
 
         private void PopulateZoneGroup()
@@ -132,45 +136,36 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
             selectedZones.Clear();
             publishAllZones = true;
 
-            var allButton = CreateZoneButton("All Zones", true);
+            var allEntry = CreateZoneEntry("All Zones", true);
+            var allButton = allEntry.Q<Button>("ZoneButton");
             allButton.clicked += () => OnAllZonesClicked(allButton);
-            zoneGroup.Add(allButton);
+            zoneGroup.Add(allEntry);
 
             foreach (var zoneId in availableZones)
             {
                 var id = zoneId;
-                var button = CreateZoneButton($"Zone {id}", false);
+                var entry = CreateZoneEntry($"Zone {id}", false);
+                var button = entry.Q<Button>("ZoneButton");
                 button.clicked += () => OnZoneClicked(button, id, allButton);
-                zoneGroup.Add(button);
+                zoneGroup.Add(entry);
             }
         }
 
-        private Button CreateZoneButton(string text, bool selected)
+        private VisualElement CreateZoneEntry(string text, bool selected)
         {
-            var button = new Button { text = text };
-            button.style.marginBottom = 2;
-            button.style.marginLeft = 2;
-            button.style.marginRight = 2;
-            button.style.flexShrink = 0;
-            button.style.alignSelf = Align.Stretch;
-            button.style.width = Length.Percent(100);
-            button.style.marginBottom = 4;
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
-            button.style.color = new StyleColor(Color.white);
-            button.style.borderTopLeftRadius = 6;
-            button.style.borderTopRightRadius = 6;
-            button.style.borderBottomLeftRadius = 6;
-            button.style.borderBottomRightRadius = 6;
-            return button;
+            var entry = zoneItemTemplate.Instantiate();
+            var button = entry.Q<Button>("ZoneButton");
+
+            button.text = text;
+            if (selected)
+                button.AddToClassList("menu-zone-item--active");
+
+            return entry;
         }
 
         private void SetButtonSelected(Button button, bool selected)
         {
-            button.style.backgroundColor = selected
-                ? new StyleColor(new Color(0.2f, 0.6f, 0.2f))
-                : new StyleColor(Color.black);
+            button.EnableInClassList("menu-zone-item--active", selected);
         }
 
         private void OnAllZonesClicked(Button allButton)
@@ -205,77 +200,62 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
         private List<int> GetZonesToPublish() =>
             publishAllZones ? availableZones : new List<int>(selectedZones);
 
-        private static bool IsAuthMenuOpen()
-        {
-            return GameObject.Find("LoginMenu") != null
-                || GameObject.Find("SignUpMenu") != null
-                || GameObject.Find("VerifyCodeMenu") != null;
-        }
-
-        private async void OnLoginClicked()
-        {
-            if (isAuthFlowActive || IsAuthMenuOpen())
-            {
-                return;
-            }
-            var menuBarGameObject = worldUIObjectProvider.menuBarGameObject;
-            var loginMenuObject = worldUIObjectProvider.loginMenuObject;
-            var signUpMenuObject = worldUIObjectProvider.signUpMenuObject;
-            var verifyCodeMenuObject = worldUIObjectProvider.verifyCodeMenuObject;
-            isAuthFlowActive = true;
-            try
-            {
-                GameObject loginMenu = resolver.Instantiate(loginMenuObject);
-                var loginObj = loginMenu;
-                loginObj.name = "LoginMenu";
-                var signUpObj = resolver.Instantiate(signUpMenuObject);
-                signUpObj.name = "SignUpMenu";
-                var verifyCodeObj = resolver.Instantiate(verifyCodeMenuObject);
-                verifyCodeObj.name = "VerifyCodeMenu";
-                var authFlowManager = new AuthFlowManager(loginObj, signUpObj, verifyCodeObj);
-                authFlowManager.OnAuthComplete += () =>
-                {
-                    authFlowManager.Destroy();
-                    isAuthFlowActive = false;
-                };
-                authFlowManager.Initialize();
-            }
-            catch
-            {
-                isAuthFlowActive = false;
-                throw;
-            }
-        }
-
         private async void OnPublishClicked()
         {
-            try
-            {
-                dataPersistenceManager.SaveWorldMetadata(currentWorldData);
-                dataPersistenceManager.SaveZone(
-                    currentWorldData.worldName,
-                    worldSelector.selectedZoneId
-                );
-                dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
-                publishButton.SetEnabled(false);
-                await ValidateBeforePublish();
-                await PublishWorldData();
-                await PublishCreatables();
-                await PublishSprites();
-                await PublishZoneData();
-                ToastNotification.Show("World published successfully!", "success", Color.green);
-                CloseMenu();
-                worldSelector.selectedWorldId = currentWorldData.worldId;
-            }
-            catch (Exception ex)
-            {
-                logger.Log($"[PublishMenu] Error: {ex.Message}", this, Logging.LogType.Error);
-                ToastNotification.Show($"Error publishing: {ex.Message}", "error", Color.red);
-            }
-            finally
-            {
-                publishButton.SetEnabled(true);
-            }
+            var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+            var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+            dialogController.Show(
+                title: "Publish World",
+                question: "This action can take a few minutes. Are you sure you want to publish now?",
+                onConfirm: async () =>
+                {
+                    try
+                    {
+                        dataPersistenceManager.SaveWorldMetadata(currentWorldData);
+                        dataPersistenceManager.SaveZone(
+                            currentWorldData.worldName,
+                            worldSelector.selectedZoneId
+                        );
+                        dataPersistenceManager.SaveCreatables(currentWorldData.worldName);
+                        publishButton.SetEnabled(false);
+                        await ValidateBeforePublish();
+                        await PublishWorldData();
+                        await PublishSprites();
+                        var cData = dataPersistenceManager.GetCreatables(
+                            worldSelector.selectedWorld
+                        );
+                        if (cData != null)
+                            SyncShopCosmeticIds(cData);
+                        await PublishCreatables();
+                        await PublishZoneData();
+                        ToastNotification.Show(
+                            "World published successfully!",
+                            "success",
+                            Color.green
+                        );
+                        CloseMenu();
+                        worldSelector.selectedWorldId = currentWorldData.worldId;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(
+                            $"[PublishMenu] Error: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        ToastNotification.Show(
+                            $"Error publishing: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                    }
+                    finally
+                    {
+                        publishButton.SetEnabled(true);
+                    }
+                },
+                onCancel: () => { }
+            );
         }
 
         // ---- Validation Functions ----
@@ -788,6 +768,76 @@ namespace FeedTheRealm.UI.MenuBar.FileOption.PublishMenu
                 );
 
                 inMemory.data.OnBeforeSerialize();
+            }
+        }
+
+        private void SyncShopCosmeticIds(CreatablesData creatablesData)
+        {
+            foreach (var cosmetic in creatablesData.cosmetics)
+                cosmetic.OnAfterDeserialize();
+
+            var cosmeticById = creatablesData
+                .cosmetics.Where(c => !string.IsNullOrEmpty(c.id))
+                .ToDictionary(c => c.id);
+
+            var cosmeticByCategoryUrlId =
+                new Dictionary<string, (CosmeticData cosmetic, string categoryName)>();
+            foreach (var cosmetic in creatablesData.cosmetics)
+            {
+                if (cosmetic.categories == null)
+                    continue;
+                foreach (var (categoryName, entry) in cosmetic.categories)
+                {
+                    if (!string.IsNullOrEmpty(entry.url_id))
+                        cosmeticByCategoryUrlId.TryAdd(entry.url_id, (cosmetic, categoryName));
+                }
+            }
+
+            bool modified = false;
+            foreach (var shop in creatablesData.shops)
+            {
+                foreach (var product in shop.products)
+                {
+                    if (!product.IsCosmetic)
+                        continue;
+
+                    CosmeticData cosmetic = null;
+                    string resolvedCategoryName = product.categoryName;
+
+                    if (cosmeticById.TryGetValue(product.productId, out var byId))
+                    {
+                        cosmetic = byId;
+                    }
+                    else if (cosmeticByCategoryUrlId.TryGetValue(product.productId, out var byUrl))
+                    {
+                        cosmetic = byUrl.cosmetic;
+                    }
+
+                    if (cosmetic?.categories == null)
+                        continue;
+
+                    if (!cosmetic.categories.TryGetValue(resolvedCategoryName, out var catEntry))
+                        continue;
+
+                    if (
+                        !string.IsNullOrEmpty(catEntry.url_id)
+                        && product.productId != catEntry.url_id
+                    )
+                    {
+                        product.productId = catEntry.url_id;
+                        modified = true;
+                    }
+                }
+            }
+
+            if (modified)
+            {
+                foreach (var c in creatablesData.cosmetics)
+                    c.OnBeforeSerialize();
+                dataPersistenceManager.SaveCreatablesData(
+                    worldSelector.selectedWorld,
+                    creatablesData
+                );
             }
         }
 

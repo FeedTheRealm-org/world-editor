@@ -1,0 +1,45 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3CreatablesStyle"/>
+    <ui:VisualElement name="Root" class="wc-root">
+        <ui:VisualElement name="Container" class="container" style="width: 50%; border-top-left-radius: 25px; border-top-right-radius: 25px; border-bottom-right-radius: 25px; border-bottom-left-radius: 25px;">
+            <ui:VisualElement name="Panel" class="wc-panel">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Enemy" name="Title" class="wc-header-label"/>
+                    <ui:Button text="Return To Menu" name="Return" class="wc-back-btn"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="EnemyEditor" class="wc-body">
+                    <ui:VisualElement name="EnemyPreviewContainer" class="wc-preview-col">
+                        <ui:VisualElement name="SpriteFrame" class="wc-sprite-frame">
+                            <ui:Image name="SpritePreview" class="wc-sprite-image"/>
+                        </ui:VisualElement>
+                        <ui:Button text="Edit Character" name="EditCharacter" class="wc-edit-sprite-btn"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="FormContainer" class="wc-fields-col">
+                        <ui:VisualElement name="NameGroup" class="wc-field-group">
+                            <ui:Label text="name" class="wc-field-label"/>
+                            <ui:TextField placeholder-text="Enemy name" name="NameField" class="wc-text-field"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="HPGroup" class="wc-field-group">
+                            <ui:Label text="health points" class="wc-field-label"/>
+                            <ui:IntegerField value="20" name="HealthPoints" class="wc-text-field wc-text-field--half" style="width: 223px;"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="DropdownRow" class="wc-row">
+                            <ui:VisualElement name="WeaponGroup" class="wc-field-group wc-field-group--left">
+                                <ui:Label text="weapon" class="wc-field-label"/>
+                                <ui:DropdownField name="WeaponField" class="wc-dropdown"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="LootTableGroup" class="wc-field-group">
+                                <ui:Label text="loot table" class="wc-field-label"/>
+                                <ui:DropdownField name="LootTableField" class="wc-dropdown"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Footer" class="wc-footer">
+                            <ui:Button text="create" name="SaveButton" class="wc-primary-btn"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

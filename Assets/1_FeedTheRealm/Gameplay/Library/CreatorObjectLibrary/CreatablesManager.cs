@@ -64,6 +64,14 @@ namespace FeedTheRealm.Gameplay.Library
             return registry[typeof(T)].OfType<T>().Where(c => !c.IsDeleted).ToList();
         }
 
+        public T GetById<T>(string id)
+            where T : Creatable
+        {
+            if (!registry.ContainsKey(typeof(T)))
+                return null;
+            return registry[typeof(T)].OfType<T>().FirstOrDefault(c => c.Id == id && !c.IsDeleted);
+        }
+
         /// <summary>
         /// Removes a creatable with the specified id from the registry. If no creatable with that id is found, logs a warning.
         /// Example:

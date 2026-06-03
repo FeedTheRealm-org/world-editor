@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 7ad56a001d4f20f728e771d341d9aa4c, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: e2fb800773fa2488a85ba56cde30c748, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: b07e3a8c31bddf020adeb14484121815, type: 3}
   m_SortingOrder: 110
@@ -68,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e91c88a3197582884e17503729dba6, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::LootMenuController
+  AllowInputWhileOpen: 0
   logger: {fileID: 11400000, guid: 01846303c9e853a48bbfce8757da5e68, type: 2}
-  itemListTemplate: {fileID: 9197481963319205126, guid: c07204b2ab19c5d3ab17648bb8873c3a, type: 3}
+  itemListTemplate: {fileID: 9197481963319205126, guid: a16e8ff9dfb67dae385ccea4dd9e278b, type: 3}
   lootTableCreatorMenuPrefab: {fileID: 4663751449768503000, guid: ec9f50899daf99e98abf406a9c17c8c2, type: 3}

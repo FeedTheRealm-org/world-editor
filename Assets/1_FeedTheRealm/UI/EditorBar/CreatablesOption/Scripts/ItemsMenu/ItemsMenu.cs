@@ -1,7 +1,8 @@
 using FeedTheRealm.Core.WorldObjects;
+using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -26,6 +27,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
         [Inject]
         private CreatablesManager creatablesManager;
+
+        [Inject]
+        private readonly WorldPrefabProvider prefabProvider;
 
         private Button closeButton;
         private Button addConsumableButton;
@@ -55,7 +59,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private void PopulateList()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
-            var list = root.Q<ListView>("ItemsList");
+            var list = root.Q<ScrollView>("ItemsList");
             list.Clear();
 
             foreach (var consumable in creatablesManager.GetAll<ConsumableItem>())
@@ -72,7 +76,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         }
 
         private void AddListEntry(
-            ListView list,
+            ScrollView list,
             Creatable creatable,
             string displayName,
             string type,
@@ -82,9 +86,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             var entry = itemListTemplate.Instantiate();
             entry.Q<Label>("Header").text = displayName;
 
-            var typeLabel = entry.Q<Label>("Type");
-            if (typeLabel != null)
-                typeLabel.text = type;
+            var consumableStats = entry.Q<VisualElement>("ConsumableStats");
+            var weaponStats = entry.Q<VisualElement>("WeaponStats");
+
+            consumableStats.style.display =
+                type == "Consumable" ? DisplayStyle.Flex : DisplayStyle.None;
+            weaponStats.style.display = type == "Weapon" ? DisplayStyle.Flex : DisplayStyle.None;
 
             entry.Q<Button>("Edit").clicked += () =>
             {
@@ -94,14 +101,36 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
 
             entry.Q<Button>("Delete").clicked += () =>
             {
-                if (creatable is Weapon)
-                    creatablesManager.Delete<Weapon>(creatable.Id);
-                else if (creatable is ConsumableItem)
-                    creatablesManager.Delete<ConsumableItem>(creatable.Id);
-                entry.RemoveFromHierarchy();
+                var confirmPopup = Instantiate(prefabProvider.confirmPopup);
+                var dialogController = confirmPopup.GetComponent<ConfirmPopupController>();
+
+                dialogController.Show(
+                    title: "Delete Item",
+                    question: "Are you sure you want to delete this item? This cannot be undone.",
+                    onConfirm: () =>
+                    {
+                        foreach (var lootTable in creatablesManager.GetAll<LootTable>())
+                        {
+                            lootTable.data.lootItems.RemoveAll(i => i.id == creatable.Id);
+                        }
+
+                        foreach (var shop in creatablesManager.GetAll<Shop>())
+                        {
+                            shop.data.products.RemoveAll(p =>
+                                p.productId == creatable.Id && !p.IsCosmetic
+                            );
+                        }
+                        if (creatable is Weapon)
+                            creatablesManager.Delete<Weapon>(creatable.Id);
+                        else if (creatable is ConsumableItem)
+                            creatablesManager.Delete<ConsumableItem>(creatable.Id);
+                        entry.RemoveFromHierarchy();
+                    },
+                    onCancel: () => { }
+                );
             };
 
-            list.hierarchy.Add(entry);
+            list.Add(entry);
         }
 
         private void OpenCreatorMenu(GameObject prefab)

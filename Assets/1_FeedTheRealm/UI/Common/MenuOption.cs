@@ -3,7 +3,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.Common
+namespace FTR.UI
 {
     public class MenuOption : MonoBehaviour
     {
@@ -17,6 +17,8 @@ namespace FeedTheRealm.UI.Common
         )]
         [SerializeField]
         private MenuController menuToOpen;
+
+        private MenuController activeMenuInstance;
 
         [Header("Dropdown Menu Options")]
         [Tooltip(
@@ -35,13 +37,13 @@ namespace FeedTheRealm.UI.Common
 
         public virtual async void Execute()
         {
-            if (menuToOpen != null)
+            if (menuToOpen != null && activeMenuInstance == null)
             {
                 Transform parent = FindFirstObjectByType<Canvas>()?.transform;
                 if (parent != null)
-                    objectResolver.Instantiate(menuToOpen, parent);
+                    activeMenuInstance = objectResolver.Instantiate(menuToOpen, parent);
                 else
-                    objectResolver.Instantiate(menuToOpen);
+                    activeMenuInstance = objectResolver.Instantiate(menuToOpen);
             }
         }
     }

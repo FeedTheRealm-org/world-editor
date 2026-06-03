@@ -1,38 +1,52 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/PlaceableEditor/Themes/WorldObjectMenuStyles.uss?fileID=7433441132597879392&amp;guid=2d3ff52f106d2639ba3cbf6c24423611&amp;type=3#WorldObjectMenuStyles"/>
-    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/menuStyle.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#menuStyle"/>
-    <ui:VisualElement name="root" style="flex-grow: 1; background-color: rgba(69, 69, 69, 0.4);">
-        <ui:VisualElement name="Menu" class="menuContainer" style="width: 75%; height: 75%; padding-top: 2%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%; background-color: rgba(0, 0, 0, 0.6); translate: 6% 0;">
-            <ui:VisualElement name="Header" style="flex-grow: 0; flex-direction: row; align-items: stretch; justify-content: space-between; align-self: stretch; height: 10%; min-height: 0;">
-                <ui:TextField label="Shop Name" placeholder-text="New Shop" name="ShopName" style="width: 674px; font-size: 25px; -unity-text-align: middle-center; color: rgb(255, 255, 255); height: 42px;"/>
-                <ui:Button text="Return to Menu" name="Return" style="font-size: 15px; white-space: normal; -unity-text-align: middle-center; align-self: auto; padding-bottom: 20px; padding-top: 20px; background-color: rgb(0, 0, 0); margin-top: 2px; padding-right: 30px; padding-left: 30px; margin-bottom: 2px; height: 42px; width: 220px; margin-right: 4px; margin-left: 4px; justify-content: center;"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="TabBar" style="flex-direction: row; margin-top: 10px; margin-bottom: 0; border-bottom-width: 1px; border-bottom-color: rgba(255, 255, 255, 0.2); height: -20px;">
-                <ui:VisualElement name="TabGold" class="editor-tab editor-tab--active" style="flex-direction: row; align-items: center; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px;">
-                    <ui:Label text="🪙" style="font-size: 16px; margin-right: 6px;"/>
-                    <ui:Label name="TabGoldLabel" text="Gold Items" style="font-size: 15px; -unity-font-style: bold; color: rgb(255, 210, 80);"/>
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
+    <ui:VisualElement name="root" class="wc-root">
+        <ui:VisualElement name="Menu" class="container" style="width: 65%; min-width: 500px; max-width: 900px; height: 72%; min-height: 420px; max-height: 780px;">
+            <ui:VisualElement name="Panel" class="wc-panel" style="flex-direction: column; flex-grow: 1;">
+                <ui:Button text="✕" name="Close" class="wc-close-btn"/>
+                <ui:VisualElement name="Header" class="wc-header">
+                    <ui:Label text="Shop Creator" name="Title" class="wc-header-label"/>
+                    <ui:Button text="back to menu" name="Return" class="wc-back-btn"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="TabCosmetic" class="editor-tab" style="flex-direction: row; align-items: center; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px;">
-                    <ui:Label text="💎" style="font-size: 16px; margin-right: 6px;"/>
-                    <ui:Label name="TabCosmeticLabel" text="Cosmetics" style="font-size: 15px; -unity-font-style: bold; color: rgba(255, 255, 255, 0.45);"/>
+                <ui:VisualElement name="ShopNameGroup" class="wc-field-group" style="margin-top: 14px;">
+                    <ui:Label text="name" class="wc-field-label"/>
+                    <ui:TextField placeholder-text="New Shop" name="ShopName" class="wc-text-field" style="max-width: 55%;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="TabBar" style="flex-direction: row; margin-top: 12px; margin-bottom: 0; border-bottom-width: 1px; border-bottom-color: rgba(255, 255, 255, 0.2);">
+                    <ui:VisualElement name="TabGold" style="flex-direction: row; align-items: center; padding: 6px 14px; cursor: link;">
+                        <ui:Label text="🪙" style="font-size: 13px; margin-right: 5px;"/>
+                        <ui:Label name="TabGoldLabel" text="Gold Items" style="font-size: 13px; color: rgb(255, 210, 80);"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="TabCosmetic" style="flex-direction: row; align-items: center; padding: 6px 14px; cursor: link; border-bottom-width: 2px; border-bottom-color: rgba(0, 0, 0, 0);">
+                        <ui:Label text="💎" style="font-size: 13px; margin-right: 5px;"/>
+                        <ui:Label name="TabCosmeticLabel" text="Cosmetics" style="font-size: 13px; color: rgba(255, 255, 255, 0.45);"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="TabGoldContent" style="flex-grow: 1; flex-direction: column; margin-top: 10px;">
+                    <ui:VisualElement name="GoldAddRow" style="flex-direction: row; align-items: flex-end; margin-bottom: 8px;">
+                        <ui:VisualElement style="flex-grow: 1; flex-direction: column; margin-right: 12px;">
+                            <ui:Label text="item" class="wc-field-label"/>
+                            <ui:DropdownField name="AddItemContaier" class="wc-dropdown"/>
+                        </ui:VisualElement>
+                        <ui:Button text="add item" name="AddItem" class="wc-back-btn" style="align-self: flex-end;"/>
+                    </ui:VisualElement>
+                    <ui:Label name="NoShopLabel" text="You have to create a new shop to add items" style="display: none; flex-grow: 1; font-size: 18px; color: rgba(255, 255, 255, 0.6); -unity-text-align: middle-center; white-space: normal;"/>
+                    <ui:ScrollView name="ItemContainer" class="wc-grid-list" style="flex-grow: 1; max-height: 270px; min-height: 270px; height: 270px;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="TabCosmeticContent" style="flex-grow: 1; flex-direction: column; margin-top: 10px; display: none;">
+                    <ui:VisualElement name="CosmeticAddRow" style="flex-direction: row; align-items: flex-end; margin-bottom: 8px;">
+                        <ui:VisualElement style="flex-grow: 1; flex-direction: column; margin-right: 12px;">
+                            <ui:Label text="item" class="wc-field-label"/>
+                            <ui:DropdownField name="AddCosmeticItemContainer" class="wc-dropdown"/>
+                        </ui:VisualElement>
+                        <ui:Button text="add item" name="AddCosmeticItem" class="wc-back-btn" style="align-self: flex-end;"/>
+                    </ui:VisualElement>
+                    <ui:ScrollView name="CosmeticItemContainer" class="wc-grid-list" style="flex-grow: 1; height: 270px; min-height: 270px; max-height: 270px;"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="wc-footer" style="margin-top: 10px;">
+                    <ui:Button text="save" name="Save" class="wc-primary-btn"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="TabGoldContent" style="flex-grow: 1; flex-direction: column;">
-                <ui:VisualElement name="GoldAddRow" style="flex-grow: 1; margin-bottom: 8px; flex-direction: row; align-self: auto; justify-content: flex-start; align-items: flex-end;">
-                    <ui:DropdownField label="" name="AddItemContaier" class="white-dropdown" style="width: 50%; font-size: 24px; align-self: flex-end; flex-direction: row; align-items: center;"/>
-                    <ui:Button text="Add Item" name="AddItem" style="font-size: 15px; white-space: normal; -unity-text-align: middle-center; align-self: auto; background-color: rgb(0, 0, 0); height: 23px; max-height: 14%; width: 123px;"/>
-                </ui:VisualElement>
-                <ui:Label name="NoShopLabel" text="You have to create a new shop to add items" style="display: none; flex-grow: 1; font-size: 28px; -unity-font-style: bold; color: rgb(255, 255, 255); -unity-text-align: middle-center; white-space: normal;"/>
-                <ui:ListView name="ItemContainer" fixed-item-height="200" show-add-remove-footer="false" virtualization-method="DynamicHeight" style="flex-grow: 1; min-height: 74%; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; height: -105px;"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="TabCosmeticContent" style="flex-grow: 1; flex-direction: column; display: none;">
-                <ui:VisualElement name="CosmeticAddRow" style="flex-grow: 1; margin-bottom: 8px; flex-direction: row; align-self: auto; justify-content: flex-start; align-items: flex-end;">
-                    <ui:DropdownField label="" name="AddCosmeticItemContainer" class="white-dropdown" style="width: 50%; font-size: 24px; align-self: flex-end; flex-direction: row; align-items: center;"/>
-                    <ui:Button text="Add Item" name="AddCosmeticItem" style="font-size: 15px; white-space: normal; -unity-text-align: middle-center; align-self: auto; background-color: rgb(0, 0, 0); height: 23px; max-height: 14%; width: 123px;"/>
-                </ui:VisualElement>
-                <ui:ListView name="CosmeticItemContainer" fixed-item-height="200" show-add-remove-footer="false" virtualization-method="DynamicHeight" style="flex-grow: 1; min-height: 70%; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;"/>
-            </ui:VisualElement>
-            <ui:Button text="Save" name="Save" style="font-size: 15px; white-space: normal; -unity-text-align: middle-center; align-self: flex-end; padding-bottom: 20px; padding-top: 20px; background-color: rgb(0, 0, 0); margin-top: 10px; padding-right: 30px; padding-left: 30px; margin-bottom: 0; height: 42px; width: 168px; margin-right: 0; margin-left: 0;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

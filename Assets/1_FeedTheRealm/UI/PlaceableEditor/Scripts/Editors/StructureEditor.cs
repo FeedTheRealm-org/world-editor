@@ -6,7 +6,7 @@ using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Inputs;
 using FeedTheRealm.Gameplay.Library;
 using FeedTheRealm.Gameplay.WorldObjects;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -16,9 +16,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
     [RequireComponent(typeof(UIDocument))]
     public class StructureEditor : MenuController, IEditable
     {
-        [Inject]
-        private InputReader inputReader;
-
         [Inject]
         private CreatablesManager creatablesManager;
 
@@ -165,7 +162,6 @@ namespace FeedTheRealm.UI.PlaceableEditor
             SetupShopControls();
             SetupGizmos();
             SetupColliderVisuals();
-            Debug.Log($"[StructureEditor] colliderType at edit time: {target.data.colliderType}");
             SyncColliderVisual();
             SubscribeShortcuts();
 
@@ -531,30 +527,11 @@ namespace FeedTheRealm.UI.PlaceableEditor
 
         public override void CloseMenu()
         {
-            inputReader.ScrollEvent -= OnScroll;
+            base.CloseMenu();
             UnsubscribeShortcuts();
-
-            if (positionGizmo != null)
-            {
-                positionGizmo.OnPositionChanged -= OnGizmoMoved;
-                positionGizmo.gameObject.SetActive(false);
-            }
-
-            if (scaleGizmo != null)
-            {
-                scaleGizmo.OnScaleChanged -= OnGizmoScaled;
-                scaleGizmo.gameObject.SetActive(false);
-            }
-
             SetCubeColliderActive(false);
-            activeGizmo = null;
-            focusedAxisField = null;
-            focusedVectorField = null;
             Destroy(cubeColliderInstance);
             Destroy(slopeColliderInstance);
-            cubeColliderInstance = null;
-            slopeColliderInstance = null;
-            base.CloseMenu();
         }
 
         // ---- Scroll ----

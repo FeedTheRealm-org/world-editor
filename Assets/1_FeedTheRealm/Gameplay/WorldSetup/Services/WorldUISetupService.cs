@@ -1,6 +1,8 @@
+using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
 using FeedTheRealm.Core.WorldObjects.Provider;
 using FeedTheRealm.Core.WorldSetup;
+using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,15 +14,16 @@ namespace FeedTheRealm.Gameplay.WorldSetup
         private readonly GameObject menuBarGameObject;
         private readonly GameObject editorBarGameObject;
         private readonly GameObject placeableDisplayObject;
-        private readonly GameObject editorSettingsMenuObject;
+        private readonly GameObject editorStateDisplayObject;
+
+        private readonly AuthFlowManager authFlowManager;
+        private readonly UpdateLoginEvent updateLoginEvent;
         private readonly IObjectResolver objectResolver;
-        private readonly GameObject loginMenuObject;
-        private readonly GameObject signUpMenuObject;
-        private readonly GameObject verifyCodeMenuObject;
-        private readonly GameObject subscriptionMenuObject;
 
         public WorldUISetupService(
             WorldUIObjectProvider WorldUIObjectProvider,
+            UpdateLoginEvent updateLoginEvent,
+            AuthFlowManager authFlowManager,
             IObjectResolver objectResolver
         )
         {
@@ -32,11 +35,9 @@ namespace FeedTheRealm.Gameplay.WorldSetup
             menuBarGameObject = WorldUIObjectProvider.menuBarGameObject;
             editorBarGameObject = WorldUIObjectProvider.editorBarGameObject;
             placeableDisplayObject = WorldUIObjectProvider.placeableDisplayObject;
-            editorSettingsMenuObject = WorldUIObjectProvider.editorSettingsMenuObject;
-            loginMenuObject = WorldUIObjectProvider.loginMenuObject;
-            signUpMenuObject = WorldUIObjectProvider.signUpMenuObject;
-            verifyCodeMenuObject = WorldUIObjectProvider.verifyCodeMenuObject;
-            subscriptionMenuObject = WorldUIObjectProvider.subscriptionMenuObject;
+            editorStateDisplayObject = WorldUIObjectProvider.editorStateDisplayObject;
+            this.updateLoginEvent = updateLoginEvent;
+            this.authFlowManager = authFlowManager;
             this.objectResolver = objectResolver;
         }
 
@@ -58,30 +59,23 @@ namespace FeedTheRealm.Gameplay.WorldSetup
                 );
             objectResolver.Instantiate(placeableDisplayObject).name = "PlaceableDisplay";
 
-            if (editorSettingsMenuObject == null)
+            if (editorStateDisplayObject == null)
+            {
                 throw new System.Exception(
-                    "EditorSettingsMenu GameObject not set in WorldUIObjectProvider!"
+                    "EditorStateDisplay GameObject not set in WorldUIObjectProvider!"
                 );
+            }
+            objectResolver.Instantiate(editorStateDisplayObject).name = "EditorStateDisplay";
 
-            if (loginMenuObject == null)
-                throw new System.Exception(
-                    "LoginMenu GameObject not set in WorldUIObjectProvider!"
-                );
-
-            if (signUpMenuObject == null)
-                throw new System.Exception(
-                    "SignUpMenu GameObject not set in WorldUIObjectProvider!"
-                );
-
-            if (verifyCodeMenuObject == null)
-                throw new System.Exception(
-                    "VerifyCodeMenu GameObject not set in WorldUIObjectProvider!"
-                );
-            if (subscriptionMenuObject == null)
-                throw new System.Exception(
-                    "SubscriptionMenu GameObject not set in WorldUIObjectProvider!"
-                );
-            //objectResolver.Instantiate(subscriptionMenuObject).name = "SubscriptionMenu";
+            authFlowManager.OnAuthComplete += (message) =>
+            {
+                ToastNotification.Show(message, "success", Color.green);
+                updateLoginEvent.Raise();
+            };
+            authFlowManager.OnPasswordResetComplete += (message) =>
+            {
+                ToastNotification.Show(message, "success", Color.green);
+            };
         }
     }
 }

@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
-using FeedTheRealm.UI.Common;
 using FTR.Core.Common.Config;
+using FTR.UI;
 using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -37,6 +37,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         private FloatField rangeInput;
         private IntegerField ammoInput;
         private FloatField reloadSpeedInput;
+        private VisualElement rangedFieldsContainer;
         private Image spritePreview;
         private string currentSpritePath;
         private Button saveButton;
@@ -47,6 +48,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             var root = GetComponent<UIDocument>().rootVisualElement;
             nameInput = root.Q<TextField>("NameField");
             descriptionInput = root.Q<TextField>("DescriptionField");
+            rangedFieldsContainer = root.Q<VisualElement>("RangedFieldsContainer");
             weaponTypeInput = root.Q<DropdownField>("WeaponTypeField");
             subWeaponTypeInput = root.Q<DropdownField>("SubWeaponTypeField");
             damageInput = root.Q<IntegerField>("DamageField");
@@ -97,7 +99,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
             HandleChangeWeaponType(editingData.weaponType);
 
             saveButton.clicked -= CreateNewObject;
-            saveButton.text = "Save Weapon";
+            saveButton.text = "Save";
             saveButton.clicked += SaveExistingObject;
         }
 
@@ -145,6 +147,7 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
         {
             if (editBuffer != null)
                 editBuffer.Working.weaponType = newType;
+
             switch (newType)
             {
                 case WeaponType.Melee:
@@ -154,26 +157,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.ItemsMenu
                     if (editBuffer != null)
                         editBuffer.Working.subWeaponType = SubWeaponType.HandHeld;
 
-                    ammoInput.visible = false;
-                    reloadSpeedInput.visible = false;
+                    rangedFieldsContainer.style.display = DisplayStyle.None;
                     break;
+
                 case WeaponType.Ranged:
-                    Debug.Log("Switched to Ranged: showing ammo and reload speed fields");
                     subWeaponTypeInput.choices = Enum.GetNames(typeof(ValidSubRangedWeaponType))
                         .ToList();
                     subWeaponTypeInput.value = SubWeaponType.HandHeld.ToString();
                     if (editBuffer != null)
                         editBuffer.Working.subWeaponType = SubWeaponType.HandHeld;
 
-                    ammoInput.visible = true;
-                    reloadSpeedInput.visible = true;
+                    rangedFieldsContainer.style.display = DisplayStyle.Flex;
                     ammoInput.value = editBuffer != null ? editBuffer.Working.ammo : 0;
                     reloadSpeedInput.value =
                         editBuffer != null ? editBuffer.Working.reloadSpeed : 0f;
-                    Debug.Log(
-                        $"Ranged weapon selected: ammo and reload speed fields are now visible. Ammo value: {ammoInput.value}, Reload Speed value: {reloadSpeedInput.value}"
-                    );
                     break;
+
                 default:
                     throw new Exception($"Unhandled weapon type: {newType}");
             }

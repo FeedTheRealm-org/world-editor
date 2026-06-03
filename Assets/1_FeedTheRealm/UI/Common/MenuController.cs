@@ -1,10 +1,12 @@
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
+using FeedTheRealm.Gameplay.Inputs;
 using UnityEngine;
+using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.Common
+namespace FTR.UI
 {
     public class MenuController : MonoBehaviour
     {
@@ -18,13 +20,31 @@ namespace FeedTheRealm.UI.Common
         protected IObjectResolver resolver;
 
         [Inject]
+        protected InputReader inputReader;
+
+        [Inject]
         private CloseAllEvent closeAllEvent;
 
         [SerializeField]
         private bool AllowInputWhileOpen = false;
 
+        private VisualElement root;
+        private VisualElement container;
+
         void Awake()
         {
+            root = GetComponent<UIDocument>().rootVisualElement;
+            container = root.Q<VisualElement>("Container");
+
+            container?.AddToClassList("container--hidden");
+
+            root.schedule.Execute(() =>
+                {
+                    container?.RemoveFromClassList("container--hidden");
+                    container?.AddToClassList("container--visible");
+                })
+                .ExecuteLater(16);
+
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised += OnInputEventRaised;
 
@@ -33,12 +53,14 @@ namespace FeedTheRealm.UI.Common
 
             enableEditorEvent?.Raise(false);
             closeAllEvent.OnRaised += CloseMenu;
+            inputReader.CloseMenuEvent += CloseMenu;
         }
 
         void OnDestroy()
         {
             enableInputEvent.OnRaised -= OnInputEventRaised;
             closeAllEvent.OnRaised -= CloseMenu;
+            inputReader.CloseMenuEvent -= CloseMenu;
         }
 
         private void OnInputEventRaised(bool isEnabled)
@@ -49,14 +71,17 @@ namespace FeedTheRealm.UI.Common
 
         public virtual void CloseMenu()
         {
+            container?.RemoveFromClassList("container--visible");
+            container?.AddToClassList("container--hidden");
+
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised -= OnInputEventRaised;
+
             enableInputEvent?.Raise(true);
             enableEditorEvent?.Raise(true);
-            if (this != null)
-            {
-                Destroy(gameObject);
-            }
+
+            // only one destroy, after animation completes
+            root?.schedule.Execute(() => Destroy(gameObject)).ExecuteLater(200);
         }
 
         public virtual void OpenMenu(GameObject menuPrefab)

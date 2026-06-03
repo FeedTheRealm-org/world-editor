@@ -4,6 +4,7 @@ using System.Linq;
 using FeedTheRealm.Gameplay.Creatables;
 using FeedTheRealm.Gameplay.Library;
 using FTRShared.Runtime.Models;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
@@ -65,6 +66,22 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
                 var selected = creatablesManager
                     .GetAll<Dialog>()
                     .FirstOrDefault(d => d.data.name == evt.newValue);
+
+                if (
+                    selected != null
+                    && (selected.data.messages == null || selected.data.messages.Count == 0)
+                )
+                {
+                    ToastNotification.Show(
+                        "Cannot assign this dialog because it has no messages.",
+                        "error",
+                        Color.red
+                    );
+                    dropdown.SetValueWithoutNotify("None");
+                    onValueChanged?.Invoke("");
+                    return;
+                }
+
                 onValueChanged?.Invoke(selected?.Id ?? "");
             });
 
@@ -119,15 +136,28 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         public VisualElement CreateMessageItem(MessageData message)
         {
             var container = new VisualElement();
-            container.AddToClassList("npc-message-container");
+            container.style.flexDirection = FlexDirection.Row;
+            container.style.alignItems = Align.Center;
+            container.style.justifyContent = Justify.SpaceBetween;
+            container.style.marginBottom = 6;
+            container.style.paddingTop = 6;
+            container.style.paddingBottom = 6;
+            container.style.paddingLeft = 8;
+            container.style.paddingRight = 8;
+            container.style.backgroundColor = new Color(0, 0, 0, 0.25f);
+            container.style.borderTopLeftRadius = 8;
+            container.style.borderTopRightRadius = 8;
+            container.style.borderBottomLeftRadius = 8;
+            container.style.borderBottomRightRadius = 8;
 
             string display =
-                message.content.Length > 15
-                    ? message.content.Substring(0, 15) + "..."
+                message.content.Length > 25
+                    ? message.content.Substring(0, 25) + "..."
                     : message.content;
 
             var label = new Label(display);
-            label.AddToClassList("npc-message-label");
+            label.AddToClassList("wc-card__stat");
+            label.style.flexGrow = 1;
 
             container.Add(label);
             container.Add(CreateRightContainer(message));
@@ -137,7 +167,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private VisualElement CreateRightContainer(MessageData message)
         {
             var right = new VisualElement();
-            right.AddToClassList("npc-message-right-container");
+            right.style.flexDirection = FlexDirection.Row;
+            right.style.alignItems = Align.Center;
 
             string currentQuestId = messageQuestAssignments.TryGetValue(message.id, out var qid)
                 ? qid
@@ -159,7 +190,8 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private DropdownField CreateQuestDropdown(MessageData message, string currentQuestId)
         {
             var dd = new DropdownField();
-            dd.AddToClassList("npc-quest-dropdown");
+            dd.AddToClassList("wc-dropdown");
+            dd.style.minWidth = 130;
             dd.style.display = string.IsNullOrEmpty(currentQuestId)
                 ? DisplayStyle.None
                 : DisplayStyle.Flex;
@@ -189,12 +221,12 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         )
         {
             var btn = new Button { text = "set quest" };
-            btn.AddToClassList("npc-add-quest-button");
+            btn.AddToClassList("wc-back-btn");
+            btn.style.marginLeft = 8;
 
             btn.clicked += () =>
             {
                 messageQuestAssignments.Clear();
-
                 var picked =
                     creatablesManager
                         .GetAll<Quest>()
@@ -217,7 +249,9 @@ namespace FeedTheRealm.UI.EditorBar.ElementOption.NPCMenu
         private Button CreateRemoveQuestButton(MessageData message, string currentQuestId)
         {
             var btn = new Button { text = "✕" };
-            btn.AddToClassList("npc-remove-quest-button");
+            btn.AddToClassList("wc-card__action-btn");
+            btn.style.color = new StyleColor(new Color(1f, 0.31f, 0.31f));
+            btn.style.marginLeft = 6;
 
             btn.clicked += () =>
             {

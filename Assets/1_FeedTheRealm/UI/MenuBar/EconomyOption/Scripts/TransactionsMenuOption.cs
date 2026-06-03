@@ -1,6 +1,6 @@
 using System;
 using FeedTheRealm.Core.WorldObjects.Provider;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

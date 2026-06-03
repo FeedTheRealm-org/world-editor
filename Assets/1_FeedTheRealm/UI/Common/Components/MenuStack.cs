@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using FeedTheRealm.Core.EventChannels.UIEvents;
 using FeedTheRealm.Core.EventChannels.WorldEvents;
-using FeedTheRealm.UI.Common;
+using FTR.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
 using VContainer.Unity;
 
-namespace FeedTheRealm.UI.Common.Components
+namespace FTR.UI.Components
 {
     /// <summary>
     /// Manages a stack of dropdown menus for the UI. Allows opening submenus on hover and ensures only one menu is open at a time.
@@ -50,7 +50,6 @@ namespace FeedTheRealm.UI.Common.Components
         // -------------------- Private Methods --------------------
         private void ToggleMenuStack(bool enabled)
         {
-            Debug.Log($"Setting menu interaction lock to {(enabled ? "unlocked" : "locked")}.");
             this.enabled = enabled;
             if (!enabled)
                 CloseAll();
@@ -106,17 +105,32 @@ namespace FeedTheRealm.UI.Common.Components
 
         private void PositionMenu(VisualElement menu, VisualElement anchor, int depth)
         {
-            Rect bounds = anchor.worldBound;
+            // Wait for layout to be calculated
+            menu.RegisterCallback<GeometryChangedEvent>(OnMenuGeometryChanged);
 
-            if (depth == 0)
+            void OnMenuGeometryChanged(GeometryChangedEvent _)
             {
-                menu.style.left = bounds.x + menuSpacingX;
-                menu.style.top = bounds.yMax + menuSpacingY;
-            }
-            else
-            {
-                menu.style.left = bounds.xMax + menuSpacingX;
-                menu.style.top = bounds.y;
+                menu.UnregisterCallback<GeometryChangedEvent>(OnMenuGeometryChanged);
+
+                Rect anchorBounds = anchor.worldBound;
+                Rect rootBounds = root.worldBound;
+
+                // Convert from world space to root-local space
+                float localX = anchorBounds.x - rootBounds.x;
+                float localY = anchorBounds.y - rootBounds.y;
+
+                if (depth == 0)
+                {
+                    // Center under the anchor
+                    menu.style.left =
+                        localX + (anchorBounds.width / 2) - (menu.resolvedStyle.width / 2);
+                    menu.style.top = localY + anchorBounds.height + menuSpacingY;
+                }
+                else
+                {
+                    menu.style.left = localX + anchorBounds.width + menuSpacingX;
+                    menu.style.top = localY;
+                }
             }
         }
 
