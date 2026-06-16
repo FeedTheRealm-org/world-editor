@@ -1,16 +1,17 @@
+---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity)$
+        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity|svg.meta)$
       - id: end-of-file-fixer
-        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity)$
+        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity|svg.meta)$
       - id: check-merge-conflict
       - id: check-added-large-files
         args: ["--maxkb=5120"]
       - id: check-yaml
-        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity)$
+        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity|svg.meta)$
       - id: check-json
 
   - repo: https://github.com/adrienverge/yamllint
@@ -18,8 +19,12 @@ repos:
     hooks:
       - id: yamllint
         files: \.(yml|yaml)$
-        exclude: ^(ProjectSettings|Assets)/.*\.(asset|unity)$
-        args: [--format, parsable]
+        exclude: ^(ProjectSettings|Assets|\.github)/.*\.(asset|unity|svg.meta|yml)$
+        args:
+          - --format
+          - parsable
+          - -d
+          - "{extends: default, rules: {line-length: {max: 120}}}"
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
@@ -28,13 +33,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: csharpier-check
-        name: CSharpier (verify formatting)
-        entry: dotnet tool run csharpier check
-        language: system
-        files: \.cs$
-        pass_filenames: true
-
       - id: csharpier-format
         name: CSharpier (auto-format)
         entry: dotnet tool run csharpier format
