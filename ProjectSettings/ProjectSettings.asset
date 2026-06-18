@@ -13,13 +13,13 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: AtusGames
-  productName: World creator
+  productName: Feed the Realm - World Editor
   defaultCursor: {fileID: 2800000, guid: 0966942c1b6b7216396d7273d81f2116, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 0
-  m_SplashScreenOverlayOpacity: 0
+  m_SplashScreenOverlayOpacity: 0.5
   m_SplashScreenAnimation: 1
   m_SplashScreenLogoStyle: 1
   m_SplashScreenDrawMode: 0
@@ -40,8 +40,8 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos:
-  - logo: {fileID: 0}
-    duration: 2
+  - logo: {fileID: -1867981298, guid: dd713b942dda909aaa8ece1098d15c3b, type: 3}
+    duration: 4
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
   defaultScreenWidth: 1280
@@ -303,7 +303,7 @@ PlayerSettings:
   - m_BuildTarget: Standalone
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: f62a07dab911a2d37ab9f511fd6e47b6, type: 3}
+      m_Icon: {fileID: 2800000, guid: 5aad1e8878c812c4ebdbc90db430928a, type: 3}
       m_Width: 1024
       m_Height: 1024
       m_Kind: 0
