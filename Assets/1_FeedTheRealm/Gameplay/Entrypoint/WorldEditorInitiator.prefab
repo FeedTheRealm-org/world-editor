@@ -42,10 +42,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bd1207e0fde2445799c722ebc0c8951, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: FTR.Gameplay::FeedTheRealm.Gameplay.WorldEditor.WorldEditorEntrypoint
   parentReference:
-    TypeName: 
+    TypeName:
   autoRun: 1
   autoInjectGameObjects: []
   worldSelector: {fileID: 11400000, guid: c6b0c024f5b13c25f99fbd1c5b915f15, type: 2}
