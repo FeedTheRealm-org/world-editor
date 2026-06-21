@@ -60,6 +60,7 @@ MonoBehaviour:
   modelService: {fileID: 11400000, guid: b1619d689b787c164a6f849382fa2f32, type: 2}
   materialService: {fileID: 11400000, guid: e751ed34f66de10e0989ef652228e679, type: 2}
   playerService: {fileID: 11400000, guid: c32e41c719d74440b9719caf3db30295, type: 2}
+  exportsService: {fileID: 11400000, guid: 0c08114a2e9efbccf89c2d454dd67c5a, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
   AuthFlowManager: {fileID: 7798777532646108241, guid: bee3944f6aaa8f0f39979e4395c8ffc8, type: 3}
   eventChannelRegistry: {fileID: 11400000, guid: 0485cfe168ab7e2d48f3982acb4b2a85, type: 2}
