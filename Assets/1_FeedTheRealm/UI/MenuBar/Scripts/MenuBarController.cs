@@ -36,6 +36,9 @@ namespace FeedTheRealm.UI.MenuBar
         [Inject]
         private EnableEditorEvent editorEvent;
 
+        [Inject]
+        private API.ExportsService exportsService;
+
         [Header("UI References")]
         [SerializeField]
         private UIDocument menuBarUI;
@@ -59,11 +62,20 @@ namespace FeedTheRealm.UI.MenuBar
         [SerializeField]
         private GameObject loginOptionController;
 
+        private const string UpdateDownloadUrl = "https://www.feedtherealm.world/";
+
         // UI Elements
         private VisualElement root;
         private Image defaultUserIcon;
         private MenuStack menuStack;
         private Button loginButton;
+
+        private VisualElement updateNotice;
+        private Label updateNoticeText;
+        private Button updateNoticeLink;
+        private Button updateNoticeCloseButton;
+
+        private const string UpdateNoticeHiddenClass = "update-notice--hidden";
 
         void Awake()
         {
@@ -84,12 +96,29 @@ namespace FeedTheRealm.UI.MenuBar
             UpdateLoginButton();
 
             updateLoginEvent.OnRaised += UpdateLoginButton;
+
+            updateNotice = root.Q<VisualElement>("UpdateNotice");
+            updateNoticeText = root.Q<Label>("UpdateNoticeText");
+            updateNoticeLink = root.Q<Button>("UpdateNoticeLink");
+            updateNoticeCloseButton = root.Q<Button>("UpdateNoticeCloseButton");
+
+            if (updateNoticeLink != null)
+                updateNoticeLink.clicked += OnUpdateNoticeLinkClicked;
+            if (updateNoticeCloseButton != null)
+                updateNoticeCloseButton.clicked += OnUpdateNoticeCloseClicked;
+
+            CheckForUpdates();
         }
 
         private void OnDestroy()
         {
             if (updateLoginEvent != null)
                 updateLoginEvent.OnRaised -= UpdateLoginButton;
+
+            if (updateNoticeLink != null)
+                updateNoticeLink.clicked -= OnUpdateNoticeLinkClicked;
+            if (updateNoticeCloseButton != null)
+                updateNoticeCloseButton.clicked -= OnUpdateNoticeCloseClicked;
         }
 
         private void BindButton(string buttonName, GameObject option)
@@ -157,6 +186,72 @@ namespace FeedTheRealm.UI.MenuBar
 
             // Show first initial if logged in
             loginButton.text = isLoggedIn ? session.Email[0].ToString().ToUpper() : "";
+        }
+
+        private async void CheckForUpdates()
+        {
+            if (exportsService == null)
+            {
+                logger.Log(
+                    "[MenuBarController] ExportsService is not assigned.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            var (latestVersion, error) = await exportsService.GetLatestVersion();
+
+            // Guard against the component being disabled/destroyed while awaiting.
+            if (this == null || updateNotice == null)
+                return;
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                logger.Log(
+                    $"[MenuBarController] Failed to check latest version: {error}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                ShowUpdateNotice("Version could not be validated.");
+                return;
+            }
+
+            string current = NormalizeVersion(Application.version);
+            string latest = NormalizeVersion(latestVersion);
+
+            if (current != latest)
+                ShowUpdateNotice("A new version is available.");
+        }
+
+        // Strips a leading "v"/"V" so e.g. "v0.7.0" and "0.7.0" compare as equal.
+        private static string NormalizeVersion(string version)
+        {
+            if (string.IsNullOrEmpty(version))
+                return string.Empty;
+
+            version = version.Trim();
+            return version.StartsWith("v", System.StringComparison.OrdinalIgnoreCase)
+                ? version.Substring(1)
+                : version;
+        }
+
+        private void ShowUpdateNotice(string message)
+        {
+            if (updateNoticeText != null)
+                updateNoticeText.text = message;
+
+            updateNotice?.RemoveFromClassList(UpdateNoticeHiddenClass);
+        }
+
+        private void OnUpdateNoticeLinkClicked()
+        {
+            Application.OpenURL(UpdateDownloadUrl);
+        }
+
+        private void OnUpdateNoticeCloseClicked()
+        {
+            updateNotice?.AddToClassList(UpdateNoticeHiddenClass);
         }
     }
 }

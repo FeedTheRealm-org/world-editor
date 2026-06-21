@@ -63,6 +63,9 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
         private PlayerService playerService;
 
         [SerializeField]
+        private ExportsService exportsService;
+
+        [SerializeField]
         private Session.Session session;
 
         [Header("Auth")]
@@ -139,6 +142,7 @@ namespace FeedTheRealm.Gameplay.Entrypoint.Scopes
             builder.RegisterInstance(gltfService).As<IGltfLoader>().AsSelf();
             builder.RegisterInstance(assetsService);
             builder.RegisterInstance(playerService);
+            builder.RegisterInstance(exportsService);
             builder.RegisterInstance(session);
             builder.RegisterInstance(modelService);
             builder.RegisterInstance(materialService);
