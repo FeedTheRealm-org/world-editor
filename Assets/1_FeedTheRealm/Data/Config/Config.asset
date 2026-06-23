@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0353640ebff8a9ce08a837377517c4e3, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: FTR.Core::FTR.Core.Common.Config.Config
+  apiConfig: {fileID: 11400000, guid: 14669f095c2d5c830993f253ff8bbfab, type: 2}
+  devDirectory: Dev
+  prodDirectory: Prod
   modelsDataDirectory: Models
   spritesDirectory: Sprites
   materialsDirectory: Materials
