@@ -1,20 +1,20 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
     <ui:VisualElement name="Root" class="menu-root">
-        <ui:VisualElement name="Container" class="container" style="width: 781px; min-width: 480px; max-width: 780px; height: 505px; min-height: 320px;">
+        <ui:VisualElement name="Container" class="container" style="width: 900px; min-width: 508px; max-width: 900px; height: 505px; min-height: 320px;">
             <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); padding-bottom: 12px; padding-top: 15px;">
                 <ui:Button text="✕" name="Close" class="menu-close-btn"/>
                 <ui:VisualElement name="Header" class="menu-header">
                     <ui:Label text="Help" name="Title" class="menu-header-label" style="margin-top: 10px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="Content" style="flex-direction: column; flex-grow: 1; margin-top: 18px; align-self: stretch; justify-content: space-between;">
-                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center;">
+                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between; align-self: stretch; align-items: center; padding-left: 40px; padding-right: 40px;">
                         <ui:Image source="project://database/Assets/1_FeedTheRealm/UI/MenuBar/HelpOption/assets/Movement.png?fileID=2800000&amp;guid=a0cd60ae89f49b2bb9c2e18a1bfc0759&amp;type=3#Movement" scale-mode="StretchToFill" style="width: 300px; height: 220px; margin-right: 0;"/>
-                        <ui:Image source="project://database/Assets/1_FeedTheRealm/UI/MenuBar/HelpOption/assets/Actions.png?fileID=2800000&amp;guid=8e10d415bb1ba6d0c982bf3ccc5cd73d&amp;type=3#Actions" scale-mode="StretchToFill" style="height: 220px; width: 265px; position: relative;"/>
+                        <ui:Image source="project://database/Assets/1_FeedTheRealm/UI/MenuBar/HelpOption/assets/Actions.png?fileID=2800000&amp;guid=8e10d415bb1ba6d0c982bf3ccc5cd73d&amp;type=3#Actions" scale-mode="StretchToFill" style="height: 230px; width: 265px; position: relative;"/>
                     </ui:VisualElement>
                     <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.1); padding-left: 20px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; margin-top: 11px; padding-top: 0; padding-right: 10px; padding-bottom: 0; justify-content: center;">
-                        <ui:Label text="left click: select placeable objects and menu panels" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 20px;"/>
-                        <ui:Label text="hold down right click: look around" name="Label" style="color: rgb(255, 255, 255); padding-top: 10px; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; font-size: 20px;"/>
+                        <ui:Label text="left click: select placeable objects and menu panels" style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 20px; -unity-text-align: upper-center;"/>
+                        <ui:Label text="hold down right click: look around" name="Label" style="color: rgb(255, 255, 255); padding-top: 10px; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; font-size: 20px; -unity-text-align: upper-center;"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>

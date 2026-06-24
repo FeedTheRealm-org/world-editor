@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 198210166898971669}
   - component: {fileID: 4803093572343354384}
-  - component: {fileID: -2406456244934858733}
+  - component: {fileID: 9156216847400330683}
   m_Layer: 0
   m_Name: AboutMenu
   m_TagString: Untagged
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &-2406456244934858733
+--- !u!114 &9156216847400330683
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3092455468846421062}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00c4c14b91f155f71bebf9514365a2df, type: 3}
+  m_Script: {fileID: 11500000, guid: c3c0b1b6f8309f022a258ec15098f59d, type: 3}
   m_Name:
-  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.FileOption.LoginOption.HelpMenu
+  m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.FileOption.LoginOption.AboutMenu
   AllowInputWhileOpen: 0

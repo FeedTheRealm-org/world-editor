@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
   label: About
-  menuToOpen: {fileID: -2406456244934858733, guid: 4a4a6c4c597583863922d08c8eb4abf8, type: 3}
+  menuToOpen: {fileID: 9156216847400330683, guid: 4a4a6c4c597583863922d08c8eb4abf8, type: 3}
   menuOptions: []

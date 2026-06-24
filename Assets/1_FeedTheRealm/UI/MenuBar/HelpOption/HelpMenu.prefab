@@ -48,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 3020cf97143634959a9ddf7f96eb3290, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 35e0283cd5e9d03a09733dabc246fc44, type: 3}
-  m_SortingOrder: 300
+  m_SortingOrder: 1000
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -69,4 +69,3 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.FileOption.LoginOption.HelpMenu
   AllowInputWhileOpen: 0
-  session: {fileID: 0}
