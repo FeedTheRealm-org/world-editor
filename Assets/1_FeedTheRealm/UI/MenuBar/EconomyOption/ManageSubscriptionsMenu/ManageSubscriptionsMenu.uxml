@@ -18,7 +18,7 @@
                 <ui:VisualElement name="CreateSubscriptionPanel" style="flex-grow: 1; align-items: center; justify-content: center; display: none;">
                     <ui:VisualElement style="max-width: 480px; width: 100%; flex-direction: column; align-items: center; border-color: rgba(15, 197, 229, 0.3); border-width: 1px; border-radius: 10px; padding: 24px; background-color: rgba(0, 0, 0, 0.2);">
                         <ui:Label text="No active subscription found." class="menu-header-label" style="font-size: 20px; margin-bottom: 8px; -unity-text-align: middle-center;"/>
-                        <ui:Label text="Create a subscription to unlock zone slots and billing details for this account." class="menu-field-label" style="-unity-text-align: middle-center; margin-bottom: 20px; font-size: 15px;"/>
+                        <ui:Label text="Create a subscription to unlock zone slots and billing details for this account." class="menu-field-label" style="-unity-text-align: middle-center; margin-bottom: 20px; font-size: 15px; text-wrap: wrap; white-space: pre-wrap;"/>
                         <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 20px;">
                             <ui:Label text="INITIAL SLOTS" class="menu-field-label" style="margin-bottom: 0; margin-right: 14px; letter-spacing: 1px; font-size: 15px;"/>
                             <ui:Button text="−" name="DecreaseCreateSlots" class="menu-secondary-btn" style="min-width: 32px; max-width: 32px; padding: 0; -unity-text-align: middle-center;"/>
@@ -49,7 +49,7 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement class="menu-divider" style="flex-shrink: 0;"/>
-                    <ui:VisualElement style="flex-direction: row; align-items: center; padding: 8px 0; margin-bottom: 4px; flex-shrink: 0;">
+                    <ui:VisualElement name="SlotsRow" style="flex-direction: row; align-items: center; padding: 8px 0; margin-bottom: 4px; flex-shrink: 0;">
                         <ui:Label text="SLOTS" class="menu-field-label" style="margin-bottom: 0; margin-right: 14px; letter-spacing: 1px; font-size: 15px;"/>
                         <ui:Button text="−" name="DecreaseSlots" class="menu-secondary-btn" style="min-width: 32px; max-width: 32px; padding: 0; -unity-text-align: middle-center;"/>
                         <ui:Label name="SlotCountLabel" text="1" style="min-width: 40px; -unity-text-align: middle-center; font-size: 20px; color: rgb(255, 255, 255); -unity-font-style: bold;"/>
@@ -57,6 +57,10 @@
                         <ui:Button text="Update" name="UpdateSlots" class="menu-secondary-btn" style="margin-left: 12px; padding-left: 18px; padding-right: 18px;"/>
                         <ui:Label name="SlotFeedbackLabel" text="" style="margin-left: 12px; font-size: 15px; color: rgb(100, 220, 130); flex-grow: 1;"/>
                         <ui:Button text="Cancel Subscription" name="CancelSubscriptionButton" class="menu-danger-btn"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="CancellationBanner" style="display: none; flex-direction: row; align-items: center; justify-content: space-between; background-color: rgba(186, 117, 23, 0.15); border-color: rgba(186, 117, 23, 0.5); border-width: 1px; border-radius: 6px; padding: 8px 12px; margin-bottom: 6px; flex-shrink: 0;">
+                        <ui:Label text="Your subscription will be cancelled at the end of the billing period." style="font-size: 13px; color: rgb(220, 150, 40); flex-shrink: 1; white-space: normal;"/>
+                        <ui:Button text="Reactivate" name="ReactivateSubscriptionButton" class="menu-secondary-btn" style="margin-left: 12px; flex-shrink: 0;"/>
                     </ui:VisualElement>
                     <ui:VisualElement class="menu-divider" style="flex-shrink: 0;"/>
                     <ui:VisualElement style="flex-direction: row; align-items: center; padding: 8px 4px 4px 4px; flex-shrink: 0;">

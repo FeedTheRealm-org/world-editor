@@ -316,6 +316,49 @@ namespace API
             return (null, statusCode);
         }
 
+        public async Task<(string error, long statusCode)> ReactivateSubscription()
+        {
+            string url = GetBaseUrl() + "/reactivate";
+
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "POST",
+                session.AccessToken,
+                null,
+                "ReactivateSubscription"
+            );
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"[SubscriptionService] ReactivateSubscription connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    "Unable to connect to server. Please check your internet connection.",
+                    statusCode
+                );
+            }
+
+            if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                var err = ParseError(responseText, statusCode);
+                logger.Log(
+                    $"[SubscriptionService] ReactivateSubscription error ({statusCode}): {err}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (err, statusCode);
+            }
+
+            logger.Log(
+                $"[SubscriptionService] Subscription reactivated for user {session.UserID}",
+                this
+            );
+            return (null, statusCode);
+        }
+
         // ── Helper ────────────────────────────────────────────────────────────
 
         private static string ParseError(string responseText, long statusCode)
