@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4803093572343354384}
   - component: {fileID: -2406456244934858733}
   m_Layer: 0
-  m_Name: HelpMenu
+  m_Name: AboutMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
   m_PanelSettings: {fileID: 11400000, guid: 3020cf97143634959a9ddf7f96eb3290, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 35e0283cd5e9d03a09733dabc246fc44, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 4ceef8e78a9fee406b9a5b956092fc00, type: 3}
   m_SortingOrder: 300
   m_Position: 0
   m_WorldSpaceSizeMode: 1
@@ -69,4 +69,3 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.MenuBar.FileOption.LoginOption.HelpMenu
   AllowInputWhileOpen: 0
-  session: {fileID: 0}

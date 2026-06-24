@@ -9,6 +9,9 @@ namespace FTR.Core.Common.Config
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private string landingPageUrl = "https://www.feedtherealm.world/";
+
         [Header("Environment Config")]
         [SerializeField]
         private string devDirectory = "Dev";
@@ -82,5 +85,6 @@ namespace FTR.Core.Common.Config
         public string ZoneFilePrefix => zoneFilePrefix;
         public LayerMask PlaceableLayerMask => placeableLayerMask;
         public LayerMask WorldObjectLayerMask => worldObjectLayerMask;
+        public string LandingPageUrl => landingPageUrl;
     }
 }

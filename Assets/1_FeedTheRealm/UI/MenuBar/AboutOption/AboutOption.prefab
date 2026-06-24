@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2072338526968878991}
   - component: {fileID: 241400012502659388}
   m_Layer: 0
-  m_Name: HelpOption
+  m_Name: AboutOption
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed81fa946a6f275f9a1036df916d0a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FTR.UI.MenuOption
-  label: Help
-  menuToOpen: {fileID: -2406456244934858733, guid: 8e566a7c544ad372d8d9fce167780053, type: 3}
+  label: About
+  menuToOpen: {fileID: -2406456244934858733, guid: 4a4a6c4c597583863922d08c8eb4abf8, type: 3}
   menuOptions: []
