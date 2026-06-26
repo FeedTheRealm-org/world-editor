@@ -10,7 +10,7 @@
                 </ui:VisualElement>
                 <ui:VisualElement name="LoggedInContent" style="flex-direction: column; align-items: center; display: none;">
                     <ui:Label text="welcome back" name="WelcomeBackText" class="menu-field-label" style="-unity-text-align: middle-center; margin-bottom: 10px;"/>
-                    <ui:Label text="" name="Username" class="menu-secondary-btn" style="align-self: stretch; -unity-text-align: middle-center; cursor: default; margin-bottom: 12px; padding-top: 6px; padding-bottom: 6px; padding-left: 0; padding-right: 0;"/>
+                    <ui:Label text="" name="Username" class="menu-secondary-btn" style="align-self: stretch; -unity-text-align: middle-center; cursor: default; margin-bottom: 12px; padding-top: 6px; padding-bottom: 6px; padding-left: 0; padding-right: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; font-size: 20px;"/>
                     <ui:Button text="Logout" name="SignOut" class="menu-primary-btn" style="align-self: stretch; -unity-text-align: middle-center; padding-left: 0; padding-right: 0;"/>
                 </ui:VisualElement>
             </ui:VisualElement>

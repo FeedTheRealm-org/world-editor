@@ -6,9 +6,22 @@ namespace FTR.Core.Common.Config
     [CreateAssetMenu(menuName = "Scriptable Objects/Config/Config")]
     public class Config : ScriptableObject
     {
-        [Header("StreamingAssets directories")]
         [SerializeField]
-        private string modelsDataDirectory = "Models";
+        private ApiConfig apiConfig;
+
+        [SerializeField]
+        private string landingPageUrl = "https://www.feedtherealm.world/";
+
+        [Header("Environment Config")]
+        [SerializeField]
+        private string devDirectory = "Dev";
+
+        [SerializeField]
+        private string prodDirectory = "Prod";
+
+        [Header("Assets directories")]
+        [SerializeField]
+        private string modelsDataDirectory = "ModelsData";
 
         [SerializeField]
         private string spritesDirectory = "Sprites";
@@ -55,21 +68,23 @@ namespace FTR.Core.Common.Config
         [SerializeField]
         public Material defaultSkyboxMaterial;
 
-        public string WorldDirectory =>
-            Path.Combine(Application.persistentDataPath, worldsDirectory);
-        public string ModelsDataDirectory =>
-            Path.Combine(Application.persistentDataPath, modelsDataDirectory);
-        public string ModelsDirectory =>
-            Path.Combine(Application.streamingAssetsPath, modelsDirectory);
-        public string SpritesDirectory =>
-            Path.Combine(Application.streamingAssetsPath, spritesDirectory);
-        public string MaterialsDirectory =>
-            Path.Combine(Application.streamingAssetsPath, materialsDirectory);
+        private string EnvironmentDirectory =>
+            apiConfig.Environment == ApiEnvironment.Local ? devDirectory : prodDirectory;
+
+        private string EnvironmentRoot =>
+            Path.Combine(Application.persistentDataPath, EnvironmentDirectory);
+
+        public string WorldDirectory => Path.Combine(EnvironmentRoot, worldsDirectory);
+        public string ModelsDataDirectory => Path.Combine(EnvironmentRoot, modelsDataDirectory);
+        public string ModelsDirectory => Path.Combine(EnvironmentRoot, modelsDirectory);
+        public string SpritesDirectory => Path.Combine(EnvironmentRoot, spritesDirectory);
+        public string MaterialsDirectory => Path.Combine(EnvironmentRoot, materialsDirectory);
         public string WorldFileExtension => worldsFileExtension;
         public string WorldDataFilename => worldDataFileName;
         public string CreatablesFileName => creatablesFileName;
         public string ZoneFilePrefix => zoneFilePrefix;
         public LayerMask PlaceableLayerMask => placeableLayerMask;
         public LayerMask WorldObjectLayerMask => worldObjectLayerMask;
+        public string LandingPageUrl => landingPageUrl;
     }
 }

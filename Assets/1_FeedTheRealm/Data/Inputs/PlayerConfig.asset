@@ -15,9 +15,9 @@ MonoBehaviour:
   positionX: 0
   positionY: 20
   positionZ: 0
-  moveSpeed: 30
+  moveSpeed: 50
   acceleration: 10
   deceleration: 10
   verticalSpeed: 12
-  lookSensitivity: {x: 1, y: 1}
+  lookSensitivity: {x: 0.5, y: 0.5}
   pitchLimit: 85
