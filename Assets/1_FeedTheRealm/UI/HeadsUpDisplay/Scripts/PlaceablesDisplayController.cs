@@ -94,10 +94,18 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
                 ApplySearch(evt.newValue);
             });
 
-            searchField.RegisterCallback<FocusInEvent>(_ => inputReader.ToggleInput(false));
-            searchField.RegisterCallback<FocusOutEvent>(_ => inputReader.ToggleInput(true));
-            sidebar.RegisterCallback<PointerEnterEvent>(_ => inputReader.ToggleInput(false));
-            sidebar.RegisterCallback<PointerLeaveEvent>(_ => inputReader.ToggleInput(true));
+            searchField.RegisterCallback<FocusInEvent>(_ =>
+                inputReader.ToggleExternalInputs(false)
+            );
+            searchField.RegisterCallback<FocusOutEvent>(_ =>
+                inputReader.ToggleExternalInputs(true)
+            );
+            sidebar.RegisterCallback<PointerEnterEvent>(_ =>
+                inputReader.ToggleExternalInputs(false)
+            );
+            sidebar.RegisterCallback<PointerLeaveEvent>(_ =>
+                inputReader.ToggleExternalInputs(true)
+            );
 
             // Events
             refreshPlaceableLibraryEvent.OnRaised += OnRefresh;

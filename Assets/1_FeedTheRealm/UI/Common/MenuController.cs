@@ -14,6 +14,9 @@ namespace FTR.UI
         protected EnableInputEvent enableInputEvent;
 
         [Inject]
+        protected EnableExternalInputsEvent enableExternalInputsEvent;
+
+        [Inject]
         protected EnableEditorEvent enableEditorEvent;
 
         [Inject]
@@ -27,6 +30,8 @@ namespace FTR.UI
 
         [SerializeField]
         private bool AllowInputWhileOpen = false;
+
+        private bool AllowExternalInputWhileOpen = false;
 
         private VisualElement root;
         private VisualElement container;
@@ -51,6 +56,12 @@ namespace FTR.UI
             if (enableInputEvent != null && !AllowInputWhileOpen)
                 enableInputEvent.Raise(false);
 
+            if (enableExternalInputsEvent != null)
+                enableExternalInputsEvent.OnRaised += OnExternalInputEventRaised;
+
+            if (enableExternalInputsEvent != null && !AllowExternalInputWhileOpen)
+                enableExternalInputsEvent.Raise(false);
+
             enableEditorEvent?.Raise(false);
             closeAllEvent.OnRaised += CloseMenu;
             inputReader.CloseMenuEvent += CloseMenu;
@@ -59,6 +70,7 @@ namespace FTR.UI
         void OnDestroy()
         {
             enableInputEvent.OnRaised -= OnInputEventRaised;
+            enableExternalInputsEvent.OnRaised -= OnExternalInputEventRaised;
             closeAllEvent.OnRaised -= CloseMenu;
             inputReader.CloseMenuEvent -= CloseMenu;
         }
@@ -69,6 +81,12 @@ namespace FTR.UI
                 enableInputEvent?.Raise(false);
         }
 
+        private void OnExternalInputEventRaised(bool isEnabled)
+        {
+            if (isEnabled && !AllowExternalInputWhileOpen)
+                enableExternalInputsEvent?.Raise(false);
+        }
+
         public virtual void CloseMenu()
         {
             container?.RemoveFromClassList("container--visible");
@@ -77,7 +95,11 @@ namespace FTR.UI
             if (enableInputEvent != null)
                 enableInputEvent.OnRaised -= OnInputEventRaised;
 
+            if (enableExternalInputsEvent != null)
+                enableExternalInputsEvent.OnRaised -= OnExternalInputEventRaised;
+
             enableInputEvent?.Raise(true);
+            enableExternalInputsEvent?.Raise(true);
             enableEditorEvent?.Raise(true);
 
             // only one destroy, after animation completes
@@ -92,7 +114,7 @@ namespace FTR.UI
 
         public void EnableMovementToggle(bool enableMovement)
         {
-            enableInputEvent.Raise(enableMovement);
+            enableExternalInputsEvent.Raise(enableMovement);
         }
     }
 }
