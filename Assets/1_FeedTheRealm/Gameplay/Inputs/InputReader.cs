@@ -14,6 +14,9 @@ namespace FeedTheRealm.Gameplay.Inputs
 
         [SerializeField]
         private EnableExternalInputsEvent enableMovementEvent;
+
+        [SerializeField]
+        private EnableMovementEvent enablePlayerMovementEvent;
         public event Action<Vector2> MoveEvent;
         public event Action<Vector2> LookEvent;
         public event Action PrimaryInteractionEvent;
@@ -44,15 +47,15 @@ namespace FeedTheRealm.Gameplay.Inputs
             controls.Player.Enable();
             enableInputEvent.OnRaised += ToggleInteractions;
             enableMovementEvent.OnRaised += ToggleExternalInputs;
+            enablePlayerMovementEvent.OnRaised += ToggleMovement;
         }
 
         private void OnDisable()
         {
             controls.Player.Disable();
-            if (enableInputEvent != null)
-                enableInputEvent.OnRaised -= ToggleInteractions;
-            if (enableMovementEvent != null)
-                enableMovementEvent.OnRaised -= ToggleExternalInputs;
+            enableInputEvent.OnRaised -= ToggleInteractions;
+            enableMovementEvent.OnRaised -= ToggleExternalInputs;
+            enablePlayerMovementEvent.OnRaised -= ToggleMovement;
         }
 
         public void ToggleExternalInputs(bool isEnabled)

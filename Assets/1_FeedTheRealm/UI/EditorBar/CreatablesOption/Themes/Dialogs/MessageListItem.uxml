@@ -2,8 +2,8 @@
     <Style src="project://database/Assets/1_FeedTheRealm/UI/EditorBar/CreatablesOption/Themes/CreatablesStyle.uss?fileID=7433441132597879392&amp;guid=2128304147047c5aaaee2c1184e67931&amp;type=3#CreatablesStyle"/>
     <ui:VisualElement name="MessageEntry" class="wc-card" style="margin-top: 8px; margin-right: 0; width: 95%; margin-left: 5px;">
         <ui:VisualElement name="CardTop" class="wc-card__top">
-            <ui:Label text="Message Name" name="Header" class="wc-card__name" style="text-overflow: ellipsis; width: 200%; max-width: 200px; min-width: 200px;"/>
-            <ui:Button text="" name="Edit" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); height: 12px; width: 11px; margin-right: 25px;"/>
+            <ui:Label text="Message Name" name="Header" class="wc-card__name" style="-unity-font-style: normal;"/>
+            <ui:Button text="" name="Edit" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Edit.svg?fileID=7388822144124034973&amp;guid=99658fffd9753f09abeb41caf607b4a4&amp;type=3#Edit&quot;); height: 12px; width: 15px; margin-right: 15px;"/>
             <ui:Button text="" name="Delete" class="wc-card__delete-btn wc-card__action-btn" style="background-image: url(&quot;project://database/Assets/1_FeedTheRealm/UI/Icons/Trash.svg?fileID=7388822144124034973&amp;guid=83a588d6c415950c19e6f191a46c7f12&amp;type=3#Trash&quot;); height: 12px; width: 11px;"/>
         </ui:VisualElement>
     </ui:VisualElement>
