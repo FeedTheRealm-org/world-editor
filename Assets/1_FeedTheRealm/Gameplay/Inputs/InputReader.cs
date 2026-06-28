@@ -45,17 +45,23 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.SetCallbacks(this);
             }
             controls.Player.Enable();
-            enableInputEvent.OnRaised += ToggleInteractions;
-            enableMovementEvent.OnRaised += ToggleExternalInputs;
-            enablePlayerMovementEvent.OnRaised += ToggleMovement;
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised += ToggleInteractions;
+            if (enableMovementEvent != null)
+                enableMovementEvent.OnRaised += ToggleExternalInputs;
+            if (enablePlayerMovementEvent != null)
+                enablePlayerMovementEvent.OnRaised += ToggleMovement;
         }
 
         private void OnDisable()
         {
             controls.Player.Disable();
-            enableInputEvent.OnRaised -= ToggleInteractions;
-            enableMovementEvent.OnRaised -= ToggleExternalInputs;
-            enablePlayerMovementEvent.OnRaised -= ToggleMovement;
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised -= ToggleInteractions;
+            if (enableMovementEvent != null)
+                enableMovementEvent.OnRaised -= ToggleExternalInputs;
+            if (enablePlayerMovementEvent != null)
+                enablePlayerMovementEvent.OnRaised -= ToggleMovement;
         }
 
         public void ToggleExternalInputs(bool isEnabled)
