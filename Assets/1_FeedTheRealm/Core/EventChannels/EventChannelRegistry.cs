@@ -23,8 +23,9 @@ namespace FeedTheRealm.Core.EventChannels
 
         [Header("UI Events")]
         public CategorySelectedEvent categorySelectedEvent;
-        public EnableInputEvent enableInputEvent;
+        public EnableInteractionsEvent enableInteractionsEvent;
         public EnableExternalInputsEvent enableExternalInputsEvent;
+        public EnableMovementEvent enableMovementEvent;
         public RefreshZonesEvent refreshZonesEvent;
         public RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
         public CloseAllEvent closeAllEvent;
@@ -48,8 +49,9 @@ namespace FeedTheRealm.Core.EventChannels
             builder.RegisterInstance(objectSelectedEvent);
             builder.RegisterInstance(enableEditorEvent);
             builder.RegisterInstance(categorySelectedEvent);
-            builder.RegisterInstance(enableInputEvent);
+            builder.RegisterInstance(enableInteractionsEvent);
             builder.RegisterInstance(enableExternalInputsEvent);
+            builder.RegisterInstance(enableMovementEvent);
             builder.RegisterInstance(tickEvent);
             builder.RegisterInstance(fixedTickEvent);
             builder.RegisterInstance(lateTickEvent);

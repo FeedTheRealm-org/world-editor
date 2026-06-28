@@ -27,7 +27,7 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
         private ObjectSelectedEvent objectSelectedEvent;
 
         [Inject]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
 
         [Inject]
         private RefreshPlaceableLibraryEvent refreshPlaceableLibraryEvent;
@@ -40,6 +40,10 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
         private TextField searchField;
         private Button searchClearBtn;
         private DropdownField categoryDropdown;
+        private const string DropdownOverlayClass = "unity-base-dropdown__container-outer";
+
+        private bool pointerOverSidebar;
+        private bool dropdownOpen;
 
         private List<PlaceableOption> allItems = new();
         private List<PlaceableOption> filteredItems = new();
@@ -73,6 +77,11 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
                 searchField.value = string.Empty;
             });
 
+            // The opened dropdown renders as a full-screen overlay outside the sidebar, so
+            // the sidebar's PointerLeave fires while it is open. Track it separately so world
+            // interaction stays disabled until the menu actually closes.
+            categoryDropdown.RegisterCallback<PointerDownEvent>(_ => OnDropdownOpened());
+
             // Search field
             searchClearBtn = new Button(() =>
             {
@@ -100,17 +109,26 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
             searchField.RegisterCallback<FocusOutEvent>(_ =>
                 inputReader.ToggleExternalInputs(true)
             );
+            // While the pointer is over the sidebar, block world interaction so clicking a
+            // list item / the dropdown doesn't also select the placeable behind the panel.
             sidebar.RegisterCallback<PointerEnterEvent>(_ =>
-                inputReader.ToggleExternalInputs(false)
-            );
+            {
+                inputReader.ToggleExternalInputs(false);
+                pointerOverSidebar = true;
+                UpdateWorldInteraction();
+            });
             sidebar.RegisterCallback<PointerLeaveEvent>(_ =>
-                inputReader.ToggleExternalInputs(true)
-            );
+            {
+                inputReader.ToggleExternalInputs(true);
+                pointerOverSidebar = false;
+                UpdateWorldInteraction();
+            });
 
             // Events
             refreshPlaceableLibraryEvent.OnRaised += OnRefresh;
 
             LoadObjectsForCategory(currentCategory);
+            libraryBar.focusable = false;
         }
 
         void OnDestroy()
@@ -143,11 +161,45 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
                 var label = entry.Q<Label>("ItemLabel");
 
                 label.text = option.displayName;
+                button.focusable = false;
                 button.clicked += () => objectSelectedEvent.Raise(option);
                 libraryBar.Add(entry);
             }
         }
 
         private void OnRefresh() => LoadObjectsForCategory(currentCategory);
+
+        private void UpdateWorldInteraction()
+        {
+            enableInputEvent.Raise(!(pointerOverSidebar || dropdownOpen));
+        }
+
+        private void OnDropdownOpened()
+        {
+            dropdownOpen = true;
+            UpdateWorldInteraction();
+
+            // DropdownField has no "closed" callback. The menu overlay is created during this
+            // same pointer-down dispatch, so grab it on the next frame and clear the flag when
+            // it detaches from the panel (which happens when the dropdown closes, however it
+            // closed). One deferred call + one event beats continuous polling.
+            categoryDropdown.schedule.Execute(() =>
+            {
+                var overlay = categoryDropdown.panel?.visualTree.Q(className: DropdownOverlayClass);
+                if (overlay == null)
+                {
+                    // Menu didn't open (or already gone) — restore world interaction now.
+                    dropdownOpen = false;
+                    UpdateWorldInteraction();
+                    return;
+                }
+
+                overlay.RegisterCallback<DetachFromPanelEvent>(_ =>
+                {
+                    dropdownOpen = false;
+                    UpdateWorldInteraction();
+                });
+            });
+        }
     }
 }

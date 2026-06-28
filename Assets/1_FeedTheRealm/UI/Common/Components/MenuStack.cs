@@ -16,7 +16,7 @@ namespace FTR.UI.Components
     {
         private readonly VisualElement root;
         private readonly IObjectResolver resolver;
-        private readonly EnableInputEvent enableInputEvent;
+        private readonly EnableInteractionsEvent enableInputEvent;
         private readonly List<VisualElement> openMenus = new();
         private int menuSpacingX = 20;
         private int menuSpacingY = 6;
@@ -26,7 +26,7 @@ namespace FTR.UI.Components
         public MenuStack(
             VisualElement root,
             EnableEditorEvent enableEditorEvent,
-            EnableInputEvent enableInputEvent,
+            EnableInteractionsEvent enableInputEvent,
             IObjectResolver resolver
         )
         {

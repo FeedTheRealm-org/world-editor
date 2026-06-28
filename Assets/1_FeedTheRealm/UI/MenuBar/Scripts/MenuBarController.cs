@@ -19,7 +19,7 @@ namespace FeedTheRealm.UI.MenuBar
         private IObjectResolver resolver;
 
         [Inject]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
 
         [Inject]
         private InputReader inputReader;

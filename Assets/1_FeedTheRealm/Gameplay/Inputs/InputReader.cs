@@ -10,7 +10,7 @@ namespace FeedTheRealm.Gameplay.Inputs
     public class InputReader : ScriptableObject, MakerControls.IPlayerActions
     {
         [SerializeField]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
 
         [SerializeField]
         private EnableExternalInputsEvent enableMovementEvent;
@@ -42,7 +42,7 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.SetCallbacks(this);
             }
             controls.Player.Enable();
-            enableInputEvent.OnRaised += ToggleInput;
+            enableInputEvent.OnRaised += ToggleInteractions;
             enableMovementEvent.OnRaised += ToggleExternalInputs;
         }
 
@@ -50,7 +50,7 @@ namespace FeedTheRealm.Gameplay.Inputs
         {
             controls.Player.Disable();
             if (enableInputEvent != null)
-                enableInputEvent.OnRaised -= ToggleInput;
+                enableInputEvent.OnRaised -= ToggleInteractions;
             if (enableMovementEvent != null)
                 enableMovementEvent.OnRaised -= ToggleExternalInputs;
         }
@@ -67,12 +67,24 @@ namespace FeedTheRealm.Gameplay.Inputs
             }
         }
 
-        public void ToggleInput(bool isEnabled)
+        public void ToggleInteractions(bool isEnabled)
         {
             if (isEnabled)
             {
                 controls.Player.SecondaryInteraction.Enable();
                 controls.Player.PrimaryInteraction.Enable();
+            }
+            else
+            {
+                controls.Player.SecondaryInteraction.Disable();
+                controls.Player.PrimaryInteraction.Disable();
+            }
+        }
+
+        public void ToggleMovement(bool isEnabled)
+        {
+            if (isEnabled)
+            {
                 controls.Player.Move.Enable();
                 controls.Player.MoveUp.Enable();
                 controls.Player.Look.Enable();
@@ -84,8 +96,6 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.MoveUp.Disable();
                 controls.Player.Look.Disable();
                 controls.Player.MoveDown.Disable();
-                controls.Player.SecondaryInteraction.Disable();
-                controls.Player.PrimaryInteraction.Disable();
             }
         }
 
