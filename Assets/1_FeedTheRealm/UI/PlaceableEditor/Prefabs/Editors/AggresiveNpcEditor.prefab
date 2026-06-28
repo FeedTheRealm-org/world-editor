@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.PlaceableEditor.AggresiveNpcSpawnerEditor
   AllowInputWhileOpen: 1
+  AllowMovementWhileOpen: 1
 --- !u!1001 &8878971681479908395
 PrefabInstance:
   m_ObjectHideFlags: 0

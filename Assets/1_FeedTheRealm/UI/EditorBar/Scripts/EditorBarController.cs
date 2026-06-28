@@ -28,7 +28,7 @@ namespace FeedTheRealm.UI.MenuBar
         private CategorySelectedEvent categorySelectedEvent;
 
         [Inject]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
 
         [Inject]
         private EnableEditorEvent enableEditorEvent;

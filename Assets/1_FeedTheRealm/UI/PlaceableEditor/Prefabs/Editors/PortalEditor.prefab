@@ -70,6 +70,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: FTR.UI::FeedTheRealm.UI.PlaceableEditor.PortalEditor
   AllowInputWhileOpen: 1
+  AllowMovementWhileOpen: 1
 --- !u!1001 &7354002412933240623
 PrefabInstance:
   m_ObjectHideFlags: 0
