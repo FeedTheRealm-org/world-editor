@@ -10,7 +10,13 @@ namespace FeedTheRealm.Gameplay.Inputs
     public class InputReader : ScriptableObject, MakerControls.IPlayerActions
     {
         [SerializeField]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
+
+        [SerializeField]
+        private EnableExternalInputsEvent enableMovementEvent;
+
+        [SerializeField]
+        private EnableMovementEvent enablePlayerMovementEvent;
         public event Action<Vector2> MoveEvent;
         public event Action<Vector2> LookEvent;
         public event Action PrimaryInteractionEvent;
@@ -39,35 +45,66 @@ namespace FeedTheRealm.Gameplay.Inputs
                 controls.Player.SetCallbacks(this);
             }
             controls.Player.Enable();
-            enableInputEvent.OnRaised += ToggleInput;
+            if (enableInputEvent != null)
+                enableInputEvent.OnRaised += ToggleInteractions;
+            if (enableMovementEvent != null)
+                enableMovementEvent.OnRaised += ToggleExternalInputs;
+            if (enablePlayerMovementEvent != null)
+                enablePlayerMovementEvent.OnRaised += ToggleMovement;
         }
 
         private void OnDisable()
         {
             controls.Player.Disable();
             if (enableInputEvent != null)
-                enableInputEvent.OnRaised -= ToggleInput;
+                enableInputEvent.OnRaised -= ToggleInteractions;
+            if (enableMovementEvent != null)
+                enableMovementEvent.OnRaised -= ToggleExternalInputs;
+            if (enablePlayerMovementEvent != null)
+                enablePlayerMovementEvent.OnRaised -= ToggleMovement;
         }
 
-        public void ToggleInput(bool isEnabled)
+        public void ToggleExternalInputs(bool isEnabled)
         {
             if (isEnabled)
             {
-                controls.Player.Move.Enable();
-                controls.Player.Look.Enable();
-                controls.Player.MoveUp.Enable();
-                controls.Player.MoveDown.Enable();
+                controls.Player.RemoveAction.Enable();
+            }
+            else
+            {
+                controls.Player.RemoveAction.Disable();
+            }
+        }
+
+        public void ToggleInteractions(bool isEnabled)
+        {
+            if (isEnabled)
+            {
                 controls.Player.SecondaryInteraction.Enable();
                 controls.Player.PrimaryInteraction.Enable();
             }
             else
             {
-                controls.Player.Move.Disable();
-                controls.Player.Look.Disable();
-                controls.Player.MoveUp.Disable();
-                controls.Player.MoveDown.Disable();
                 controls.Player.SecondaryInteraction.Disable();
                 controls.Player.PrimaryInteraction.Disable();
+            }
+        }
+
+        public void ToggleMovement(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                controls.Player.Move.Enable();
+                controls.Player.MoveUp.Enable();
+                controls.Player.Look.Enable();
+                controls.Player.MoveDown.Enable();
+            }
+            else
+            {
+                controls.Player.Move.Disable();
+                controls.Player.MoveUp.Disable();
+                controls.Player.Look.Disable();
+                controls.Player.MoveDown.Disable();
             }
         }
 

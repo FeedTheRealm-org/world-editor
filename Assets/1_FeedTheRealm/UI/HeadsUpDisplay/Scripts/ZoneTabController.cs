@@ -10,7 +10,7 @@ namespace FeedTheRealm.UI.HeadsUpDisplay
     public class ZoneTabController : MonoBehaviour
     {
         [Inject]
-        private EnableInputEvent enableInputEvent;
+        private EnableInteractionsEvent enableInputEvent;
 
         [Inject]
         private Logging.Logger logger;

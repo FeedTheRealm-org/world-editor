@@ -18,7 +18,9 @@ MonoBehaviour:
   CreatablesDataRegistryEvent: {fileID: 11400000, guid: b8ddf3cce44998d30bb07ef23110e7a3, type: 2}
   editPlaceableEvent: {fileID: 11400000, guid: c4e7a3400f8643cd2a70d71d4f3c1552, type: 2}
   categorySelectedEvent: {fileID: 11400000, guid: 9c40dcb755848f4249665728d6806c50, type: 2}
-  enableInputEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}
+  enableInteractionsEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}
+  enableExternalInputsEvent: {fileID: 11400000, guid: 8b417bd3571a13e1ca9221995c19f8d4, type: 2}
+  enableMovementEvent: {fileID: 11400000, guid: 80f41b8546c832a499cc84ffa79c4514, type: 2}
   refreshZonesEvent: {fileID: 11400000, guid: f828652c704830b158870a29769c0e61, type: 2}
   refreshPlaceableLibraryEvent: {fileID: 11400000, guid: d891f22fbbdab8b46b933f633c40bc7e, type: 2}
   closeAllEvent: {fileID: 11400000, guid: 28bd1ed534883b97b975e4a40cd9071b, type: 2}

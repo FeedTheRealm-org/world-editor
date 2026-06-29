@@ -1,59 +1,44 @@
 #!/bin/bash
 
-# Clean downloaded model assets from StreamingAssets and persistent data
+# Clean downloaded model and material assets from persistent data for a given environment
 
-STREAMING_ASSETS_MODELS="$(dirname "$0")/../Assets/StreamingAssets/Models"
-STREAMING_ASSETS_MATERIALS="$(dirname "$0")/../Assets/StreamingAssets/Materials"
-LINUX_PERSISTENT_DATA_MODELS="$HOME/.config/unity3d/AtusGames/World creator/Models"
-WINDOWS_PERSISTENT_DATA_MODELS="/mnt/c/Users/$USER/AppData/LocalLow/AtusGames/World creator/Models"
-
+ENV_NAME=""
 USE_WINDOWS=false
 
-for arg in "$@"; do
-    case $arg in
-        --windows)
-            USE_WINDOWS=true
-            ;;
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --env)     ENV_NAME="$2"; shift 2 ;;
+        --windows) USE_WINDOWS=true; shift ;;
         *)
-            echo "Unknown flag: $arg"
-            echo "Usage: clean_assets.sh [--windows]"
+            echo "Unknown flag: $1"
+            echo "Usage: clean_assets.sh --env <dev|prod> [--windows]"
             exit 1
             ;;
     esac
 done
 
-echo "Cleaning StreamingAssets models..."
-if [ -d "$STREAMING_ASSETS_MODELS" ]; then
-    rm -rf "$STREAMING_ASSETS_MODELS"
-    echo "  ✓ Removed: $STREAMING_ASSETS_MODELS"
-else
-    echo "  - Not found, skipping: $STREAMING_ASSETS_MODELS"
-fi
-
-echo "Cleaning StreamingAssets materials..."
-if [ -d "$STREAMING_ASSETS_MATERIALS" ]; then
-    rm -rf "$STREAMING_ASSETS_MATERIALS"
-    echo "  ✓ Removed: $STREAMING_ASSETS_MATERIALS"
-else
-    echo "  - Not found, skipping: $STREAMING_ASSETS_MATERIALS"
-fi
+case "$ENV_NAME" in
+    dev)  ENV_DIR="Dev" ;;
+    prod) ENV_DIR="Prod" ;;
+    "")   echo "an envrioment is required to run"; exit 1 ;;
+    *)    echo "Invalid environment: $ENV_NAME (expected dev or prod)"; exit 1 ;;
+esac
 
 if [ "$USE_WINDOWS" = true ]; then
-    echo "Cleaning Windows persistent data models... (you really code on Windows?)"
-    if [ -d "$WINDOWS_PERSISTENT_DATA_MODELS" ]; then
-        rm -rf "$WINDOWS_PERSISTENT_DATA_MODELS"
-        echo "  ✓ Removed: $WINDOWS_PERSISTENT_DATA_MODELS"
-    else
-        echo "  - Not found, skipping: $WINDOWS_PERSISTENT_DATA_MODELS"
-    fi
+    BASE="/mnt/c/Users/$USER/AppData/LocalLow/AtusGames/World creator"
 else
-    echo "Cleaning Linux persistent data models..."
-    if [ -d "$LINUX_PERSISTENT_DATA_MODELS" ]; then
-        rm -rf "$LINUX_PERSISTENT_DATA_MODELS"
-        echo "  ✓ Removed: $LINUX_PERSISTENT_DATA_MODELS"
-    else
-        echo "  - Not found, skipping: $LINUX_PERSISTENT_DATA_MODELS"
-    fi
+    BASE="$HOME/.config/unity3d/AtusGames/World creator"
 fi
+
+echo "Cleaning assets for environment: $ENV_DIR"
+for sub in Models Materials; do
+    DIR="$BASE/$ENV_DIR/$sub"
+    if [ -d "$DIR" ]; then
+        rm -rf "$DIR"
+        echo "  ✓ Removed: $DIR"
+    else
+        echo "  - Not found, skipping: $DIR"
+    fi
+done
 
 echo "Done."

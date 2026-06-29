@@ -1,0 +1,21 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/1_FeedTheRealm/UI/Common/Themes/MenuStyles.uss?fileID=7433441132597879392&amp;guid=6b7e654547706d266a894867f8097fbd&amp;type=3#MenuStyles"/>
+    <ui:VisualElement name="Root" class="menu-root">
+        <ui:VisualElement name="Container" class="container" style="width: 1000px; min-width: 480px; max-width: 1000px; height: 490px; min-height: 320px;">
+            <ui:VisualElement name="Panel" class="menu-panel" style="flex-direction: column; flex-grow: 1; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(15, 197, 229); border-right-color: rgb(15, 197, 229); border-top-color: rgb(15, 197, 229); border-bottom-color: rgb(15, 197, 229); padding-bottom: 12px; padding-top: 15px;">
+                <ui:Button text="✕" name="Close" class="menu-close-btn"/>
+                <ui:VisualElement name="Header" class="menu-header">
+                    <ui:Label text="About Us" name="Title" class="menu-header-label" style="margin-top: 10px;"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="Content" style="flex-direction: column; flex-grow: 1; margin-top: 18px;">
+                    <ui:Label text="Feed the Realm is a revolutionary MMO game where players can explore countless worlds created by the community. With our world creator tool, anyone can design and publish their own worlds for others to enjoy." style="color: rgb(255, 255, 255); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 20px; height: 100px; white-space: normal; -unity-text-align: middle-center; width: 100%;"/>
+                    <ui:Label text="This is the world creator tool, meant as a useful tool to allow different players to create their own world! You can add your own custom models, or textures, place them wherever and however you want! The only is your imagination!" style="color: rgb(255, 255, 255); font-size: 20px; height: 100px; white-space: normal; -unity-text-align: middle-left; width: 100%;"/>
+                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: space-between;">
+                        <ui:Label text="Developed By:&#10;Agustín Barbalase, Maximo Damián Utrera, &#10;Nicolas Ramirez Sánchez, Santiago Sevitz," style="color: rgb(15, 197, 229); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 20px; height: 100px; white-space: normal; -unity-text-align: middle-left; width: 478px; -unity-font-style: normal;"/>
+                        <ui:Button text="Visit our Landing Page!" name="LandingPageButton" style="width: 300px; border-left-color: rgb(255, 210, 80); border-right-color: rgb(255, 210, 80); border-top-color: rgb(255, 210, 80); border-bottom-color: rgb(255, 210, 80); border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; background-color: rgba(9, 17, 19, 0.76); color: rgb(255, 210, 80); font-size: 25px;"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
