@@ -65,6 +65,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             loginButton,
             createSubscriptionButton,
             cancelSubscriptionButton;
+        private VisualElement cancellationBanner;
+        private Button reactivateSubscriptionButton;
         private Button decreaseSlotsButton,
             increaseSlotsButton,
             updateSlotsButton;
@@ -82,6 +84,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private Label createSubscriptionFeedbackLabel,
             pageLabel;
         private ScrollView worldsList;
+        private VisualElement slotsRow;
 
         // ── State ─────────────────────────────────────────────────────────────
         private SubscriptionResponse currentSubscription;
@@ -89,6 +92,14 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
         private int pendingCreateSlotCount = MinSlots;
         private int currentPage;
         private SubscriptionsCallbackServer callbackServer;
+
+        private bool IsPendingCancellation =>
+            currentSubscription != null
+            && string.Equals(
+                currentSubscription.status,
+                "pending_cancellation",
+                StringComparison.OrdinalIgnoreCase
+            );
 
         private const int MinSlots = 1;
         private const int MaxSlots = 50;
@@ -127,6 +138,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             loginButton = root.Q<Button>("LoginButton");
             createSubscriptionButton = root.Q<Button>("CreateSubscriptionButton");
             cancelSubscriptionButton = root.Q<Button>("CancelSubscriptionButton");
+            cancellationBanner = root.Q<VisualElement>("CancellationBanner");
+            reactivateSubscriptionButton = root.Q<Button>("ReactivateSubscriptionButton");
             decreaseSlotsButton = root.Q<Button>("DecreaseSlots");
             increaseSlotsButton = root.Q<Button>("IncreaseSlots");
             updateSlotsButton = root.Q<Button>("UpdateSlots");
@@ -144,6 +157,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             createSlotCountLabel = root.Q<Label>("CreateSlotCountLabel");
             createSubscriptionFeedbackLabel = root.Q<Label>("CreateSubscriptionFeedbackLabel");
             pageLabel = root.Q<Label>("PageLabel");
+            slotsRow = root.Q<VisualElement>("SlotsRow");
 
             worldsList = root.Q<ScrollView>("WorldsList");
         }
@@ -162,6 +176,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             nextPageButton.clicked += OnNextPage;
             if (cancelSubscriptionButton != null)
                 cancelSubscriptionButton.clicked += OnCancelSubscriptionClicked;
+            if (reactivateSubscriptionButton != null)
+                reactivateSubscriptionButton.clicked += OnReactivateSubscriptionClicked;
         }
 
         private void UnregisterCallbacks()
@@ -178,6 +194,8 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
             nextPageButton.clicked -= OnNextPage;
             if (cancelSubscriptionButton != null)
                 cancelSubscriptionButton.clicked -= OnCancelSubscriptionClicked;
+            if (reactivateSubscriptionButton != null)
+                reactivateSubscriptionButton.clicked -= OnReactivateSubscriptionClicked;
         }
 
         // ── Load subscription ─────────────────────────────────────────────────
@@ -205,8 +223,15 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                 bool isActive =
                     data != null
                     && string.Equals(data.status, "active", StringComparison.OrdinalIgnoreCase);
+                bool isPendingCancellation =
+                    data != null
+                    && string.Equals(
+                        data.status,
+                        "pending_cancellation",
+                        StringComparison.OrdinalIgnoreCase
+                    );
 
-                if (noSub || data == null || !isActive)
+                if (noSub || data == null || (!isActive && !isPendingCancellation))
                 {
                     RefreshCreateSubscriptionPanel();
                     ShowPanel(createSubscriptionPanel);
@@ -218,6 +243,7 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
 
                 RefreshBillingSummary();
                 RefreshSlotControls();
+                RefreshCancellationBanner(); // ← nuevo
                 await LoadWorldsAsync();
                 ShowPanel(subscriptionPanel);
             }
@@ -860,6 +886,71 @@ namespace FeedTheRealm.UI.MenuBar.SubscriptionMenu
                             Color.red
                         );
                         button.SetEnabled(true);
+                    }
+                }
+            );
+        }
+
+        private void RefreshCancellationBanner()
+        {
+            bool pending = IsPendingCancellation;
+
+            if (cancellationBanner != null)
+                cancellationBanner.style.display = pending ? DisplayStyle.Flex : DisplayStyle.None;
+
+            cancelSubscriptionButton?.SetEnabled(!pending);
+            if (cancelSubscriptionButton != null)
+                cancelSubscriptionButton.style.display = pending
+                    ? DisplayStyle.None
+                    : DisplayStyle.Flex;
+
+            if (reactivateSubscriptionButton != null)
+                reactivateSubscriptionButton.style.display = pending
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+
+            if (slotsRow != null)
+                slotsRow.style.display = pending ? DisplayStyle.None : DisplayStyle.Flex;
+
+            decreaseSlotsButton?.SetEnabled(!pending);
+            increaseSlotsButton?.SetEnabled(!pending);
+            updateSlotsButton?.SetEnabled(!pending);
+            prevPageButton?.SetEnabled(!pending);
+            nextPageButton?.SetEnabled(!pending);
+        }
+
+        private void OnReactivateSubscriptionClicked()
+        {
+            ConfirmAction(
+                "Reactivate subscription",
+                "Are you sure you want to reactivate your subscription? Your billing cycle will continue as before.",
+                async () =>
+                {
+                    reactivateSubscriptionButton?.SetEnabled(false);
+
+                    try
+                    {
+                        var (error, statusCode) =
+                            await subscriptionService.ReactivateSubscription();
+                        if (!string.IsNullOrEmpty(error))
+                            throw new Exception($"{error} (status {statusCode})");
+
+                        ToastNotification.Show("Subscription reactivated!", "success", Color.green);
+                        await LoadSubscriptionAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(
+                            $"[SubscriptionMenu] Reactivate error: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        ToastNotification.Show(
+                            $"Failed to reactivate: {ex.Message}",
+                            "error",
+                            Color.red
+                        );
+                        reactivateSubscriptionButton?.SetEnabled(true);
                     }
                 }
             );
