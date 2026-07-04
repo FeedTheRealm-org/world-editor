@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MakerInputReader
   enableInputEvent: {fileID: 11400000, guid: 3c138eb01ceb37c8e8970be2ef93b277, type: 2}
   enableMovementEvent: {fileID: 11400000, guid: 8b417bd3571a13e1ca9221995c19f8d4, type: 2}
+  enablePlayerMovementEvent: {fileID: 11400000, guid: 80f41b8546c832a499cc84ffa79c4514, type: 2}

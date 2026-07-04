@@ -69,3 +69,4 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SaveMenuController
   AllowInputWhileOpen: 0
+  AllowMovementWhileOpen: 0
